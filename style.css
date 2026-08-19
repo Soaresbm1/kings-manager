@@ -1,0 +1,910 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Rajdhani:wght@500;600;700&display=swap');
+
+:root {
+  --accent: #8b5cf6;
+  --accent2: #00ff88;
+  --bg1: #0b1622;
+  --bg2: #16263d;
+  --panel: rgba(255,255,255,0.05);
+  --panel-border: rgba(255,255,255,0.08);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* La page elle-même ne défile jamais : #app occupe exactement la hauteur de la fenêtre, et
+   chaque écran/onglet gère son propre défilement interne (voir .screen.active / .tab.active). */
+html, body { height: 100%; overflow: hidden; }
+
+body {
+  font-family: "Poppins", "Segoe UI", Arial, sans-serif;
+  background: linear-gradient(160deg, var(--bg1) 0%, var(--bg2) 55%, #0b1622 100%);
+  background-attachment: fixed;
+  color: #eee;
+}
+
+#app {
+  width: 100%; max-width: none; margin: 0 auto; padding: 20px 40px; box-sizing: border-box;
+  height: 100vh; display: flex; flex-direction: column;
+}
+
+h1, h2, h3 { margin-bottom: 10px; font-family: "Rajdhani", "Poppins", sans-serif; letter-spacing: 0.5px; }
+h2 { color: #fff; border-left: 4px solid var(--accent); padding-left: 10px; }
+h3 { color: #cfe8ff; }
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: rgba(255,255,255,0.03); border-radius: 8px; }
+::-webkit-scrollbar-thumb { background: rgba(139,92,246,0.4); border-radius: 8px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(139,92,246,0.7); }
+
+/* Par défaut un écran actif défile lui-même (parfait pour Accueil/Résumé, simples panneaux
+   empilés). Les écrans avec une mise en page interne plus riche (#screen-main, #screen-lineup,
+   #screen-match) désactivent ce défilement de premier niveau et délèguent à leurs propres
+   sous-panneaux (.tab.active, .tactics-bench-list, #commentary...), qui restent, eux, bornés et
+   défilables — jamais la page entière. */
+.screen { display: none; }
+.screen.active { display: flex; flex-direction: column; flex: 1; min-height: 0; overflow-y: auto; animation: fadeIn 0.35s ease; }
+#screen-main.active, #screen-lineup.active, #screen-match.active { overflow: hidden; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ----- Accueil ----- */
+.title {
+  text-align: center; font-family: "Rajdhani", sans-serif;
+  font-size: 3em; font-weight: 800; letter-spacing: 3px;
+  margin: 30px 0 10px;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  text-shadow: 0 0 25px rgba(139,92,246,0.35);
+}
+.title-logo {
+  height: 0.9em; width: 0.9em; object-fit: cover; border-radius: 10px;
+  vertical-align: -0.15em; margin-right: 14px;
+}
+
+.team-choice {
+  display: flex; flex-wrap: wrap; gap: 12px; align-content: flex-start;
+}
+
+.card {
+  background: rgba(255,255,255,0.06);
+  border: 2px solid transparent;
+  border-radius: 12px;
+  padding: 15px;
+  width: 180px;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+.card:hover { border-color: var(--accent); transform: translateY(-4px); box-shadow: 0 8px 20px rgba(139,92,246,0.2); }
+.card.selected {
+  border-color: var(--accent2);
+  background: rgba(0,255,136,0.1);
+  box-shadow: 0 0 0 1px var(--accent2), 0 8px 20px rgba(0,255,136,0.15);
+}
+.card h3 { font-size: 1.05em; margin: 0; }
+
+/* ----- Sélection ligue/équipe façon Football Manager : sidebar de ligues à gauche, grille de
+   blasons à droite (au lieu de deux panels empilés avec des cartes texte). ----- */
+.team-select-layout { display: flex; gap: 18px; }
+
+.league-sidebar {
+  flex: 0 0 210px; display: flex; flex-direction: column; gap: 3px;
+  max-height: 430px; overflow-y: auto; padding-right: 4px;
+}
+.league-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 10px; border-radius: 8px; cursor: pointer;
+  border: 1px solid transparent; transition: background 0.15s ease, border-color 0.15s ease;
+}
+.league-row:hover { background: rgba(255,255,255,0.06); }
+.league-row.selected {
+  background: rgba(139,92,246,0.15); border-color: var(--accent);
+}
+.league-row-flag { font-size: 1.25em; line-height: 1; }
+.league-row-name {
+  flex: 1; font-family: "Rajdhani", sans-serif; font-weight: 700; letter-spacing: 0.3px; color: #eee;
+}
+.league-row-count {
+  font-size: 0.72em; color: #8391a8; background: rgba(255,255,255,0.06);
+  border: 1px solid var(--panel-border); border-radius: 20px; padding: 2px 8px;
+  font-family: "Rajdhani", sans-serif; font-weight: 700;
+}
+
+.team-select-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.team-select-header {
+  display: flex; align-items: center; gap: 10px;
+  padding-bottom: 12px; margin-bottom: 14px; border-bottom: 1px solid var(--panel-border);
+}
+.team-select-header h3 { margin: 0; font-size: 1.3em; }
+.team-select-header .league-flag-lg { font-size: 1.7em; line-height: 1; }
+.team-select-hint { color: #8391a8; font-size: 0.95em; }
+
+.team-select-main .team-choice { max-height: 380px; overflow-y: auto; padding: 2px 4px 2px 2px; }
+.card.team-card { width: 128px; padding: 14px 10px; }
+.card.team-card h3 { margin-top: 8px; font-size: 0.92em; }
+
+/* ----- Top bar (façon Football Manager : identité + méta en haut, onglets soulignés en dessous) ----- */
+.topbar {
+  background: linear-gradient(100deg, #150c2e 0%, #0a0f1e 55%, #05070d 100%);
+  border: 1px solid var(--panel-border);
+  border-radius: 10px; margin-bottom: 15px; padding: 12px 16px 0;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+}
+.topbar-top { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; padding-bottom: 12px; }
+.topbar-identity { display: flex; align-items: center; gap: 10px; }
+/* ----- Blasons de club : forme "écusson", image réelle si dispo (images/clubs/...),
+   sinon dégradé couleur club + initiales générées (voir teamCrestUrl / renderTeamCrest). ----- */
+.crest-wrap {
+  position: relative; display: inline-flex; align-items: center; justify-content: center;
+  flex-shrink: 0; overflow: hidden;
+  clip-path: polygon(50% 0%, 100% 15%, 100% 58%, 50% 100%, 0% 58%, 0% 15%);
+  border: 2px solid rgba(255,255,255,0.28);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.45), inset 0 1px 2px rgba(255,255,255,0.18);
+}
+.crest-fallback {
+  width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
+  font-family: "Rajdhani", sans-serif; font-weight: 800; color: #fff;
+}
+.crest-img { width: 100%; height: 100%; object-fit: cover; display: none; }
+.crest-wrap.crest-lg { width: 56px; height: 56px; font-size: 1.1em; }
+.crest-wrap.crest-md { width: 38px; height: 38px; font-size: 0.85em; }
+.crest-wrap.crest-sm { width: 20px; height: 20px; font-size: 0.55em; }
+
+.topbar .info { display: flex; gap: 10px; flex-wrap: wrap; }
+.topbar .badge {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--panel-border);
+  padding: 6px 12px; border-radius: 20px; font-size: 0.85em; font-weight: 600;
+  font-family: "Rajdhani", sans-serif; letter-spacing: 0.5px; color: #cfd8e8;
+}
+.team-name-badge { background: transparent !important; border: none !important; padding: 0 !important; font-size: 1.08em; font-weight: 700; color: #fff !important; }
+#topbar-budget { color: #ffd166; }
+
+.nav { display: flex; gap: 4px; flex-wrap: wrap; }
+.topbar .nav { border-top: 1px solid var(--panel-border); }
+.nav button {
+  background: transparent; color: #8391a8; border: none; border-bottom: 3px solid transparent;
+  padding: 10px 16px 8px; cursor: pointer; font-size: 0.92em;
+  font-family: "Rajdhani", sans-serif; font-weight: 700; letter-spacing: 0.5px;
+  text-transform: uppercase; transition: all 0.15s ease;
+}
+.nav button.active {
+  background: transparent; color: #fff; border-bottom-color: var(--accent);
+}
+.nav button:hover:not(.active) { color: #d8ceff; border-bottom-color: rgba(139,92,246,0.35); }
+
+/* Même principe qu'au niveau écran : un onglet actif défile lui-même par défaut (Classement,
+   Effectif, Mercato). Calendrier et Tactique gèrent leur propre défilement interne plus finement
+   (voir plus bas) et désactivent donc ce défilement de premier niveau. */
+.tab { display: none; }
+.tab.active { display: flex; flex-direction: column; flex: 1; min-height: 0; overflow-y: auto; animation: fadeIn 0.3s ease; }
+#tab-calendar.active, #tab-tactics.active { overflow: hidden; }
+
+/* ----- Tableaux ----- */
+table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 0.9em; }
+th, td { padding: 8px 10px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.07); }
+th {
+  background: rgba(255,255,255,0.06); color: #9fd8ff;
+  font-family: "Rajdhani", sans-serif; letter-spacing: 0.5px; font-weight: 600;
+  text-transform: uppercase; font-size: 0.78em;
+}
+tbody tr { transition: background 0.12s ease; }
+tbody tr:hover { background: rgba(255,255,255,0.04); }
+tbody tr.clickable { cursor: pointer; }
+tr.user-team { background: rgba(139,92,246,0.12); font-weight: bold; }
+tr.user-team:hover { background: rgba(139,92,246,0.18); }
+td.name, th.name { text-align: left; }
+
+/* ----- Classement ----- */
+.standing-pos { font-weight: 800; font-family: "Rajdhani", sans-serif; color: #8391a8; }
+.standing-diff { font-weight: 700; font-family: "Rajdhani", sans-serif; }
+.standing-pts { color: #ffd166; font-weight: 800; font-family: "Rajdhani", sans-serif; font-size: 1.05em; }
+
+/* ----- Boutons généraux ----- */
+button.primary {
+  background: linear-gradient(135deg, var(--accent), #4c1d95);
+  color: #fff; border: none; padding: 11px 22px; border-radius: 8px;
+  cursor: pointer; font-size: 1em; font-weight: 700;
+  font-family: "Rajdhani", sans-serif; letter-spacing: 0.5px;
+  box-shadow: 0 4px 14px rgba(139,92,246,0.3);
+  transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease;
+}
+button.primary:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(139,92,246,0.45); }
+button.primary:active { transform: translateY(0); }
+
+button.secondary {
+  background: rgba(255,255,255,0.06); color: #eee; border: 1px solid #4a6584;
+  padding: 9px 18px; border-radius: 8px; cursor: pointer;
+  font-family: "Rajdhani", sans-serif; font-weight: 600; letter-spacing: 0.5px;
+  transition: all 0.15s ease;
+}
+button.secondary:hover { background: rgba(255,255,255,0.14); border-color: var(--accent); }
+button:disabled { opacity: 0.35; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
+
+button.danger {
+  background: linear-gradient(135deg, #ff4444, #a11e1e);
+  color: #fff; border: none; padding: 11px 22px; border-radius: 8px;
+  cursor: pointer; font-size: 1em; font-weight: 700;
+  font-family: "Rajdhani", sans-serif; letter-spacing: 0.5px;
+  box-shadow: 0 4px 14px rgba(255,68,68,0.3);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+button.danger:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(255,68,68,0.45); }
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 12px; padding: 18px; margin-bottom: 15px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+}
+
+/* ----- Calendrier / tableau de bord façon Football Manager -----
+   #tab-calendar.active est déjà borné en hauteur (flex:1 + overflow:hidden, cf. règle .tab plus
+   haut) : le calendrier défile dans son propre panneau, et la colonne Classement s'étire pour
+   occuper toute la hauteur disponible, ce qui pousse "Forme récente" en bas — aligné avec le bas
+   du calendrier. */
+.dashboard-grid { display: flex; gap: 15px; flex: 1; min-height: 0; }
+.dashboard-main { flex: 2 1 500px; min-width: 0; display: flex; flex-direction: column; min-height: 0; }
+.dashboard-main > .panel:last-child { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+.dashboard-main > .panel:last-child #calendar-list { flex: 1; overflow-y: auto; min-height: 0; }
+.dashboard-side { flex: 1 1 280px; min-width: 260px; display: flex; flex-direction: column; min-height: 0; }
+.dashboard-side > .panel:first-child { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+.dashboard-side > .panel:first-child #mini-standings-list { flex: 1; overflow-y: auto; min-height: 0; }
+.dashboard-side > .panel:last-child { flex: 0 0 auto; }
+
+@media (max-width: 1000px) {
+  .dashboard-grid { flex-direction: column; }
+  .dashboard-main > .panel:last-child #calendar-list { max-height: 50vh; }
+}
+
+.hero-match-panel { text-align: center; }
+.hero-match-panel h3 { text-align: left; }
+.hero-match-header {
+  display: flex; justify-content: space-between; font-size: 0.78em; color: #9fd8ff;
+  text-transform: uppercase; letter-spacing: 1px; font-family: "Rajdhani", sans-serif; font-weight: 700;
+}
+.hero-match-teams { display: flex; align-items: center; justify-content: center; gap: 24px; margin: 14px 0 18px; }
+.hero-team { display: flex; flex-direction: column; align-items: center; gap: 8px; flex: 1; max-width: 180px; }
+.hero-team-name { font-weight: 700; font-family: "Rajdhani", sans-serif; letter-spacing: 0.5px; }
+.hero-vs { font-family: "Rajdhani", sans-serif; font-weight: 800; font-size: 1.3em; color: #8391a8; }
+
+.mini-standing-row { display: flex; align-items: center; gap: 8px; padding: 6px 4px; border-bottom: 1px solid rgba(255,255,255,0.06); font-size: 0.88em; }
+.mini-standing-row.user-team { background: rgba(139,92,246,0.12); border-radius: 6px; font-weight: 700; }
+.mini-standing-pos { width: 18px; color: #8391a8; font-family: "Rajdhani", sans-serif; font-weight: 700; }
+.mini-standing-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mini-standing-pts { color: #ffd166; font-weight: 700; font-family: "Rajdhani", sans-serif; }
+
+.form-strip { display: flex; gap: 6px; flex-wrap: wrap; }
+.form-dot {
+  width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-family: "Rajdhani", sans-serif; font-weight: 800; font-size: 0.8em; cursor: default;
+}
+.form-win { background: rgba(0,255,136,0.18); color: #b6ffd9; border: 1px solid rgba(0,255,136,0.4); }
+.form-loss { background: rgba(255,90,90,0.18); color: #ffd6d6; border: 1px solid rgba(255,90,90,0.4); }
+
+.fixture {
+  display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 12px;
+  padding: 8px 12px; border-bottom: 1px solid rgba(255,255,255,0.06); font-size: 0.9em;
+  border-radius: 6px; transition: background 0.12s ease;
+}
+.fixture:hover { background: rgba(255,255,255,0.04); }
+.fixture.user { color: var(--accent2); font-weight: bold; background: rgba(0,255,136,0.06); }
+.fixture-team { display: inline-flex; align-items: center; gap: 6px; }
+.fixture-team.home { justify-content: flex-end; }
+.fixture-team.away { justify-content: flex-start; }
+/* ----- Tournoi de fin de saison ----- */
+.tourn-league-tag {
+  font-size: 0.72em; color: #8391a8; background: rgba(255,255,255,0.06);
+  border: 1px solid var(--panel-border); border-radius: 20px; padding: 1px 8px;
+  font-family: "Rajdhani", sans-serif; font-weight: 700; white-space: nowrap;
+}
+
+.fixture .score {
+  font-weight: bold; min-width: 64px; text-align: center;
+  font-family: "Rajdhani", sans-serif; font-size: 1.05em;
+  background: rgba(0,0,0,0.25); border-radius: 6px; padding: 2px 6px;
+  justify-self: center;
+}
+#calendar-list h4 {
+  color: #9fd8ff; font-family: "Rajdhani", sans-serif; letter-spacing: 1px;
+  border-bottom: 1px solid var(--panel-border); padding-bottom: 4px;
+}
+
+/* ----- Sélection XI ----- */
+.lineup-grid { display: flex; gap: 20px; flex-wrap: wrap; }
+.pitch-wrap { flex: 1.3; min-width: 320px; }
+.bench-wrap { flex: 1; min-width: 280px; max-height: 640px; overflow-y: auto; }
+
+/* ----- Onglet Tactique / Préparation du match -----
+   #tab-tactics.active et #screen-lineup.active sont déjà bornés en hauteur (règles .tab/.screen
+   plus haut) ; .tactics-layout propage cette hauteur jusqu'au terrain et au banc ci-dessous. */
+
+.lineup-info-group { flex: 1.4 1 280px; }
+.lineup-match-info-compact h3 { font-size: 1em; margin-bottom: 2px; }
+.lineup-match-info-compact p { display: none; }
+
+.card-grid-compact { gap: 6px; }
+.card-grid-compact .secret-card { min-width: 110px; padding: 6px 8px; flex: 0 0 auto; }
+.card-grid-compact .secret-card .icon { font-size: 1.3em; }
+.card-grid-compact .secret-card h4 { font-size: 0.78em; margin: 2px 0; }
+.card-grid-compact .secret-card p { display: none; }
+.card-grid-compact .secret-card .risk { font-size: 0.7em; margin-top: 2px; }
+.card-grid-compact .secret-card-hidden .icon { font-size: 1.3em; }
+
+.tactics-toolbar { display: flex; gap: 24px; flex-wrap: wrap; align-items: flex-start; }
+.tactics-toolbar-group { display: flex; flex-direction: column; gap: 6px; }
+.tactics-toolbar-label {
+  font-size: 0.75em; color: #9fd8ff; text-transform: uppercase; letter-spacing: 1px;
+  font-family: "Rajdhani", sans-serif; font-weight: 700;
+}
+.tactics-chip-group { display: flex; gap: 8px; flex-wrap: wrap; }
+.tactics-chip-group .option-card {
+  padding: 7px 14px; margin-bottom: 0; border-radius: 20px; min-width: 0;
+}
+.tactics-chip-group .option-card h4 { font-size: 0.85em; margin: 0; white-space: nowrap; }
+.tactics-chip-group .option-card p { display: none; }
+
+.tactics-layout { display: flex; gap: 15px; flex: 1; min-height: 0; }
+.tactics-pitch-panel {
+  flex: 2 1 420px; min-width: 0; display: flex; flex-direction: column; min-height: 0;
+  margin-bottom: 0;
+}
+
+/* ----- Plateau "avec balle" / "sans balle" : empilés par défaut, côte à côte en vue "Les deux" ----- */
+.tactics-pitch-row { display: flex; flex-direction: column; flex: 1; min-height: 0; gap: 10px; }
+.iop-wrap { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+.iop-wrap h4 { font-size: 0.85em; color: #9fd8ff; margin-bottom: 6px; }
+.iop-wrap .pitch-field { flex: 1; aspect-ratio: auto; min-height: 0; }
+
+button.secondary.selected { border-color: var(--accent2); background: rgba(0,255,136,0.12); color: #d6ffe9; }
+.oop-preview { display: flex; flex-direction: column; flex: 0 0 200px; min-height: 0; margin-top: 10px; }
+.oop-preview h4 { font-size: 0.85em; color: #9fd8ff; margin-bottom: 6px; }
+.oop-preview-field { flex: 1; min-height: 0; aspect-ratio: auto; }
+.oop-preview-field .pitch-slot { cursor: default; }
+/* Vue "sans ballon" seule : le plateau "sans balle" prend toute la place du plateau principal */
+.tactics-pitch-row.oop-only .oop-preview { flex: 1; margin-top: 0; }
+/* Vue "les deux" : les deux plateaux côte à côte */
+.tactics-pitch-row.view-both { flex-direction: row; gap: 12px; }
+.tactics-pitch-row.view-both .oop-preview { flex: 1; margin-top: 0; min-width: 0; }
+.tactics-bench-panel {
+  flex: 1 1 320px; max-width: 420px; min-width: 0; display: flex; flex-direction: column; min-height: 0;
+  margin-bottom: 0;
+}
+.tactics-bench-panel .tactics-bench-list { flex: 1; overflow-y: auto; min-height: 0; }
+@media (max-width: 1100px) {
+  .tactics-layout { flex-direction: column; }
+  .tactics-pitch-panel, .tactics-bench-panel { max-width: 100%; }
+  .tactics-pitch-row.view-both { flex-direction: column; }
+  .tactics-pitch-panel .pitch-field { aspect-ratio: 3 / 4; min-height: 380px; }
+}
+
+/* ----- Terrain tactique ----- */
+.pitch-field {
+  position: relative; width: 100%; aspect-ratio: 3 / 4;
+  background: linear-gradient(180deg, #1f8a3a, #146228);
+  border: 2px solid rgba(255,255,255,0.25); border-radius: 10px;
+  overflow: hidden;
+  box-shadow: inset 0 0 60px rgba(0,0,0,0.35);
+}
+.pitch-field::before {
+  content: ""; position: absolute; inset: 0;
+  background-image:
+    repeating-linear-gradient(180deg, rgba(255,255,255,0.05) 0 12.5%, transparent 12.5% 25%);
+}
+.pitch-field::after {
+  content: ""; position: absolute; left: 50%; top: 50%;
+  width: 28%; aspect-ratio: 1; transform: translate(-50%, -50%);
+  border: 2px solid rgba(255,255,255,0.3); border-radius: 50%;
+}
+
+.pitch-slot {
+  position: absolute; transform: translate(-50%, -50%);
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  width: 90px; padding: 6px 4px; border-radius: 8px;
+  background: rgba(0,0,0,0.45); border: 2px solid rgba(255,255,255,0.25);
+  cursor: pointer; text-align: center; font-size: 0.78em;
+  transition: all 0.12s ease; z-index: 1;
+}
+.pitch-slot:hover { border-color: var(--accent); box-shadow: 0 0 12px rgba(139,92,246,0.3); }
+.pitch-slot.selected {
+  border-color: var(--accent2); box-shadow: 0 0 14px rgba(0,255,136,0.45);
+  background: rgba(0,255,136,0.12);
+}
+.pitch-slot.empty { border-style: dashed; opacity: 0.75; }
+.pitch-slot .slot-name { color: #fff; font-weight: 700; line-height: 1.1; }
+.pitch-slot .slot-empty { color: #ccc; font-style: italic; }
+.pitch-slot .slot-tag {
+  display: inline-block; border-radius: 10px; font-size: 0.7em; font-weight: 800;
+  padding: 2px 8px; font-family: "Rajdhani", sans-serif; letter-spacing: 0.5px;
+}
+.slot-tag.bench { background: rgba(255,255,255,0.12); color: #ccc; }
+.pitch-slot .star-rating { font-size: 0.68em; }
+
+.player-row {
+  position: relative; display: flex; justify-content: space-between; align-items: center;
+  padding: 8px 10px; border-radius: 8px; margin-bottom: 5px;
+  background: rgba(255,255,255,0.05); border: 1px solid transparent;
+  cursor: pointer; font-size: 0.9em;
+  transition: all 0.12s ease;
+}
+.player-row:hover { background: rgba(255,255,255,0.09); border-color: rgba(139,92,246,0.3); }
+.player-row-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.rating-chip {
+  display: inline-block; min-width: 34px; text-align: center; padding: 4px 8px; border-radius: 8px;
+  font-family: "Rajdhani", sans-serif; font-weight: 800; font-size: 0.85em; letter-spacing: 0.3px;
+}
+.rating-chip.rc-high { background: rgba(0,255,136,0.18); color: #b6ffd9; border: 1px solid rgba(0,255,136,0.4); }
+.rating-chip.rc-mid { background: rgba(255,209,102,0.18); color: #ffe9b3; border: 1px solid rgba(255,209,102,0.4); }
+.rating-chip.rc-low { background: rgba(255,90,90,0.18); color: #ffd6d6; border: 1px solid rgba(255,90,90,0.4); }
+.rating-chip.rc-none { background: rgba(255,255,255,0.05); color: #888; border: 1px solid var(--panel-border); }
+.player-row.selected {
+  background: rgba(0,255,136,0.15); border: 1px solid var(--accent2);
+  box-shadow: 0 0 10px rgba(0,255,136,0.15);
+}
+.player-row .stats { font-size: 0.8em; color: #aaa; }
+
+/* Sélecteur de poste : liste de boutons cliquables quand plusieurs emplacements compatibles
+   sont libres (ex. DEF (D) / DEF (C) / DEF (G)) pour choisir directement le poste visé. */
+.position-picker {
+  position: absolute; top: 100%; right: 10px; z-index: 20; margin-top: 4px;
+  display: flex; flex-direction: column; gap: 4px;
+  background: rgba(10,16,24,0.97); border: 1px solid rgba(139,92,246,0.4);
+  border-radius: 8px; padding: 6px; box-shadow: 0 6px 18px rgba(0,0,0,0.5);
+}
+.position-picker-btn {
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.18); color: #fff;
+  border-radius: 10px; padding: 5px 16px; font-family: "Rajdhani", sans-serif;
+  font-weight: 700; font-size: 0.85em; letter-spacing: 0.5px; cursor: pointer;
+  transition: all 0.12s ease; white-space: nowrap;
+}
+.position-picker-btn:hover { border-color: var(--accent2); background: rgba(0,255,136,0.15); color: #d6ffe9; }
+.position-picker-occupant { font-size: 0.75em; font-weight: 600; color: #aaa; }
+.position-picker-btn:hover .position-picker-occupant { color: #d6ffe9; }
+.position-picker-btn.current { border-color: var(--accent2); background: rgba(0,255,136,0.12); }
+.position-picker-remove { border-color: rgba(255,90,90,0.4); }
+.position-picker-remove:hover { border-color: #ff5a5a; background: rgba(255,90,90,0.15); color: #ffd6d6; }
+
+/* Carrés "avec balle" / "sans balle" affichés à côté de chaque joueur de l'effectif :
+   cliquer ouvre le sélecteur de poste pour la phase correspondante. */
+.player-phase-squares { display: flex; gap: 6px; flex-shrink: 0; margin-left: 10px; }
+.phase-square {
+  width: 46px; height: 34px; border-radius: 6px; cursor: pointer;
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); color: #888;
+  font-family: "Rajdhani", sans-serif; font-weight: 700; font-size: 0.72em; letter-spacing: 0.3px;
+  transition: all 0.12s ease;
+}
+.phase-square:hover { border-color: var(--accent); box-shadow: 0 0 8px rgba(139,92,246,0.3); }
+.phase-square.phase-in.filled { border-color: var(--accent); background: rgba(139,92,246,0.15); color: #d8f3ff; }
+.phase-square.phase-out.filled { border-color: var(--accent2); background: rgba(0,255,136,0.15); color: #d6ffe9; }
+.pos-tag {
+  display: inline-block; min-width: 34px; text-align: center; border-radius: 20px;
+  font-size: 0.72em; padding: 3px 10px; margin-right: 6px; font-weight: 700;
+  font-family: "Rajdhani", sans-serif; letter-spacing: 0.5px;
+}
+.pos-GK { background: #ffaa00; color: #000; }
+.pos-DEF { background: #3399ff; color: #000; }
+.pos-MID { background: #33cc66; color: #000; }
+.pos-ATT { background: #ff4444; color: #fff; }
+
+/* ----- Note générale (overall) ----- */
+.ovr-badge {
+  display: inline-block; min-width: 30px; text-align: center; border-radius: 5px;
+  font-size: 0.78em; font-weight: 800; padding: 2px 5px; margin-right: 4px;
+  font-family: "Rajdhani", sans-serif; letter-spacing: 0.5px;
+  border: 1px solid rgba(255,255,255,0.15);
+}
+.ovr-elite { background: linear-gradient(135deg, #00ff88, #00aa55); color: #00190d; }
+.ovr-good { background: linear-gradient(135deg, #8b5cf6, #4c1d95); color: #fff; }
+.ovr-avg { background: rgba(255,255,255,0.12); color: #dde8f5; }
+.ovr-low { background: rgba(255,80,80,0.25); color: #ffd6d6; }
+
+/* ----- Effectif façon Football Manager : photo, étoiles, tri par colonne ----- */
+.player-cell { display: flex; align-items: center; gap: 10px; text-align: left; }
+.player-cell-name { font-weight: 600; }
+
+.avatar-sm {
+  width: 34px; height: 34px; border-radius: 8px; overflow: hidden; flex-shrink: 0;
+  position: relative; border: 1px solid var(--panel-border); background: #0e1a2b;
+}
+.avatar-sm-img { width: 100%; height: 100%; object-fit: cover; display: none; }
+.avatar-sm-fallback {
+  width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 0.8em; color: var(--accent2); background: #0e1a2b;
+}
+
+.star-rating { position: relative; display: inline-block; font-size: 0.95em; line-height: 1; letter-spacing: 1px; white-space: nowrap; }
+.star-rating .star-bg { color: rgba(255,255,255,0.15); }
+.star-rating .star-fill {
+  position: absolute; top: 0; left: 0; overflow: hidden; white-space: nowrap;
+  color: #ffc94d; text-shadow: 0 0 6px rgba(255,201,77,0.4);
+}
+
+/* Table dense façon Football Manager, réutilisée par Effectif et Mercato : en-têtes triables
+   collants, lignes zébrées. */
+.fm-table thead th.sortable { cursor: pointer; user-select: none; position: relative; padding-right: 16px; }
+.fm-table thead th.sortable:hover { color: #fff; }
+.fm-table thead th.sortable::after { content: "↕"; position: absolute; right: 3px; opacity: 0.3; font-size: 0.85em; }
+.fm-table thead th.sortable.sort-active::after { opacity: 1; color: var(--accent2); }
+.fm-table thead th.sortable.sort-asc::after { content: "▲"; }
+.fm-table thead th.sortable.sort-desc::after { content: "▼"; }
+.fm-table thead th { position: sticky; top: 0; background: #0d1220; z-index: 1; }
+.fm-table tbody tr:nth-child(even) { background: rgba(255,255,255,0.02); }
+.fm-table tbody tr:nth-child(even):hover { background: rgba(255,255,255,0.05); }
+
+.options-grid { display: flex; gap: 15px; flex-wrap: wrap; margin: 10px 0; }
+.option-group { flex: 1; min-width: 220px; }
+.option-card {
+  border: 2px solid #2e4258; border-radius: 10px; padding: 12px; margin-bottom: 8px; cursor: pointer;
+  background: rgba(255,255,255,0.02);
+  transition: all 0.15s ease;
+}
+.option-card:hover { border-color: rgba(139,92,246,0.5); background: rgba(139,92,246,0.05); }
+.option-card.selected {
+  border-color: var(--accent2); background: rgba(0,255,136,0.1);
+  box-shadow: 0 0 12px rgba(0,255,136,0.15);
+}
+.option-card h4 { font-size: 0.95em; font-family: "Rajdhani", sans-serif; letter-spacing: 0.5px; }
+.option-card p { font-size: 0.8em; color: #aaa; margin-top: 4px; }
+
+/* ----- Simulation de match -----
+   #screen-match.active est déjà borné en hauteur (règle .screen plus haut). */
+.match-layout { display: flex; gap: 20px; align-items: stretch; justify-content: center; flex: 1; min-height: 0; }
+.match-center {
+  flex: 1 1 550px; max-width: 850px; min-width: 0; min-height: 0; margin-bottom: 0;
+  display: flex; flex-direction: column;
+}
+.match-center #commentary { flex: 1; height: auto; min-height: 0; }
+
+/* Bannière indiquant à qui c'est le tour, mise à jour par updateTurnBanner() à chaque
+   changement de tour (beginTurn) et à la mise en pause. */
+.turn-banner {
+  flex-shrink: 0; text-align: center; padding: 8px 12px; margin-bottom: 10px;
+  border-radius: 8px; font-family: "Rajdhani", sans-serif; font-weight: 800;
+  letter-spacing: 1px; text-transform: uppercase; font-size: 0.9em;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+.turn-banner.user-turn {
+  background: rgba(0,255,136,0.16); color: #b6ffd9; border: 1px solid rgba(0,255,136,0.45);
+  box-shadow: 0 0 14px rgba(0,255,136,0.15);
+}
+.turn-banner.ai-turn {
+  background: rgba(255,255,255,0.05); color: #9fabc0; border: 1px solid var(--panel-border);
+}
+.turn-banner.paused {
+  background: rgba(255,209,102,0.16); color: #ffe9b3; border: 1px solid rgba(255,209,102,0.45);
+}
+
+.phase-tag {
+  display: inline-block; background: rgba(255,209,102,0.18); color: #ffd166;
+  border: 1px solid rgba(255,209,102,0.4); border-radius: 10px;
+  font-size: 0.8em; font-weight: 800; padding: 1px 8px; margin-left: 4px;
+}
+
+/* ----- Terrain de match : plateau physique persistant (disques + ballon sur canvas) ----- */
+.match-pitch-panel {
+  flex: 2 1 600px; min-width: 0; display: flex; flex-direction: column; min-height: 0; margin-bottom: 0;
+}
+/* Aspect-ratio fixe carré (coordonnées logiques 0-100 × 0-100) : indispensable pour que les
+   collisions cercle-cercle du plateau physique restent à l'échelle uniforme en x/y — un
+   rectangle déformerait les distances. max-width plafonne sa taille affichée (sinon il remplit
+   tout le panneau, bien plus grand que nécessaire sur les écrans larges) ; centré via
+   margin:auto puisqu'il ne s'étire plus pour remplir la largeur du panneau. */
+.match-pitch { flex: 1; aspect-ratio: 1 / 1; min-height: 240px; max-width: 460px; margin: 0 auto; overflow: hidden; }
+/* SVG des marquages : couche la plus basse, le canvas (disques/ballon) passe au-dessus */
+.pitch-markings { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; overflow: visible; }
+/* Le rond central CSS ::after passe au-dessus du SVG */
+#match-pitch.pitch-field::after { z-index: 1; }
+#match-pitch-canvas {
+  position: absolute; inset: 0; width: 100%; height: 100%; z-index: 2;
+  cursor: grab; touch-action: none;
+}
+
+@media (max-width: 1100px) {
+  .match-layout { flex-direction: column; }
+  .match-pitch { min-height: 240px; }
+}
+.match-header {
+  display: flex; justify-content: space-around; align-items: center; margin-bottom: 15px;
+  padding: 10px 0;
+}
+.match-header .team-name {
+  font-size: 1.3em; font-weight: 700; font-family: "Rajdhani", sans-serif; letter-spacing: 0.5px;
+  flex: 1; text-align: center;
+}
+.match-header .score {
+  font-size: 2.8em; font-weight: 800; font-family: "Rajdhani", sans-serif;
+  color: var(--accent); text-shadow: 0 0 18px rgba(139,92,246,0.4);
+  min-width: 140px; text-align: center;
+}
+.match-header .score-block { display: flex; flex-direction: column; align-items: center; min-width: 140px; }
+.match-minute {
+  font-size: 1em; font-weight: 700; font-family: "Rajdhani", sans-serif;
+  color: #9fd8ff; letter-spacing: 1px; margin-top: 2px;
+}
+
+/* ----- Armes secrètes ----- */
+.card-grid { display: flex; gap: 12px; flex-wrap: wrap; }
+.secret-card {
+  flex: 1; min-width: 150px; border: 2px solid #2e4258; border-radius: 10px;
+  padding: 12px; cursor: pointer; background: rgba(255,255,255,0.02);
+  transition: all 0.15s ease; text-align: center;
+}
+.secret-card:hover { border-color: rgba(139,92,246,0.5); background: rgba(139,92,246,0.05); }
+.secret-card.selected {
+  border-color: var(--accent2); background: rgba(0,255,136,0.1);
+  box-shadow: 0 0 12px rgba(0,255,136,0.15);
+}
+.secret-card .icon { font-size: 1.8em; }
+.secret-card h4 { font-size: 0.95em; font-family: "Rajdhani", sans-serif; margin: 4px 0; }
+.secret-card p { font-size: 0.78em; color: #aaa; }
+.secret-card .risk { font-size: 0.75em; color: #ffd166; margin-top: 4px; }
+
+.secret-card-hidden {
+  border-style: dashed; border-color: rgba(255,255,255,0.25);
+  background: repeating-linear-gradient(135deg, rgba(255,255,255,0.03) 0 10px, transparent 10px 20px);
+}
+.secret-card-hidden:hover { border-color: var(--accent2); }
+.secret-card-hidden .icon { opacity: 0.6; }
+
+#btn-secret-card.used, #btn-president-penalty.used { opacity: 0.5; }
+
+#commentary .ev.cardevent {
+  background: rgba(0,255,136,0.08); border-left: 3px solid var(--accent2);
+  font-weight: bold; color: #d6ffe9;
+}
+
+.match-controls {
+  display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 15px;
+}
+
+.match-overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.65); backdrop-filter: blur(2px);
+  display: none; align-items: center; justify-content: center; z-index: 100;
+}
+.match-overlay.active { display: flex; animation: fadeIn 0.2s ease; }
+
+#commentary {
+  height: 280px; overflow-y: auto; background: rgba(0,0,0,0.35);
+  border: 1px solid var(--panel-border);
+  border-radius: 10px; padding: 12px; font-size: 0.9em; line-height: 1.7;
+}
+#commentary .ev { padding: 4px 8px; border-radius: 6px; margin-bottom: 3px; animation: slideIn 0.25s ease; }
+#commentary .ev.goal {
+  background: rgba(0,255,136,0.15); font-weight: bold; color: #b6ffd9;
+  border-left: 3px solid var(--accent2);
+}
+#commentary .ev.red {
+  background: rgba(255,50,50,0.18); font-weight: bold; color: #ffb3b3;
+  border-left: 3px solid #ff4444;
+}
+#commentary .ev.yellow {
+  background: rgba(255,209,102,0.15); color: #ffe9b3;
+  border-left: 3px solid #ffd166;
+}
+#commentary .ev.owngoal {
+  background: rgba(255,150,0,0.18); font-weight: bold; color: #ffd9a3;
+  border-left: 3px solid #ff9900;
+}
+#commentary .ev.save { border-left: 3px solid #3399ff; }
+#commentary .ev.miss { color: #b8c4d4; }
+#commentary .ev.phase {
+  text-align: center; font-weight: 800; color: #9fd8ff;
+  background: rgba(139,92,246,0.1); border: 1px solid var(--panel-border);
+  text-transform: uppercase; letter-spacing: 2px; font-size: 0.85em;
+  margin: 10px 0 6px; padding: 6px 8px;
+  font-family: "Rajdhani", sans-serif;
+}
+#commentary .ev.shootout {
+  background: rgba(255,209,102,0.12); border-left: 3px solid #ffd166; color: #ffe9b3;
+}
+#commentary .ev.shootout.miss { background: rgba(255,80,80,0.12); border-left: 3px solid #ff4444; color: #ffd6d6; }
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-6px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.stat-bar { display: flex; align-items: center; gap: 10px; margin: 8px 0; font-size: 0.85em; }
+.stat-bar span:first-child { min-width: 90px; color: #9fd8ff; font-family: "Rajdhani", sans-serif; letter-spacing: 0.5px; }
+.stat-bar .bar-bg { flex: 1; background: rgba(255,255,255,0.08); border-radius: 6px; height: 12px; overflow: hidden; }
+.stat-bar .bar-fill {
+  height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2));
+  border-radius: 6px; transition: width 0.4s ease;
+}
+.stat-bar span:last-child { min-width: 70px; text-align: right; font-weight: 600; }
+
+/* ----- Mercato ----- */
+.transfer-filters {
+  display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 12px;
+}
+.filter-group { display: flex; flex-direction: column; gap: 4px; }
+.filter-group label {
+  font-size: 0.75em; color: #aaa; text-transform: uppercase; letter-spacing: 0.5px;
+  font-family: "Rajdhani", sans-serif; font-weight: 700;
+}
+.filter-group select, .filter-group input[type="text"] {
+  background: rgba(255,255,255,0.06); color: #fff; border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 6px; padding: 6px 10px; font-size: 0.9em; font-family: inherit; cursor: pointer;
+}
+.filter-group input[type="text"] { cursor: text; min-width: 180px; }
+.filter-group select:focus, .filter-group input[type="text"]:focus { outline: 2px solid var(--accent); }
+/* Le menu déroulant natif d'un <select> ne reprend pas le fond du champ (fond système clair par
+   défaut) : sans ceci, le texte blanc devient illisible sur fond blanc, sauf l'option survolée. */
+.filter-group select option { background: #0d1220; color: #fff; }
+
+.table-scroll { max-height: 420px; overflow-y: auto; }
+.fm-table td button { font-size: 0.8em; padding: 6px 14px; white-space: nowrap; }
+.market-club-cell { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+.mercato-empty { color: #8391a8; font-size: 0.9em; margin-top: 10px; }
+
+/* ----- Liste "Mes carrières" (écran d'accueil) : réutilise le style de ligne du Mercato ----- */
+.transfer-list { max-height: 400px; overflow-y: auto; }
+.transfer-row {
+  display: flex; justify-content: space-between; align-items: center; gap: 10px;
+  padding: 10px 12px; border-radius: 8px; background: rgba(255,255,255,0.04);
+  border: 1px solid transparent;
+  margin-bottom: 6px; font-size: 0.9em; transition: all 0.12s ease;
+}
+.transfer-row:hover { background: rgba(255,255,255,0.08); border-color: rgba(139,92,246,0.25); }
+.transfer-row .actions { display: flex; gap: 5px; flex-shrink: 0; }
+.transfer-row button { font-size: 0.8em; padding: 6px 12px; }
+
+.form-bar {
+  display: inline-block; width: 60px; height: 8px; border-radius: 4px;
+  background: rgba(255,255,255,0.1); overflow: hidden; vertical-align: middle;
+}
+.form-bar .fill { height: 100%; transition: width 0.3s ease; }
+
+#offer-modal, #market-info-modal {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.65); backdrop-filter: blur(2px);
+  display: none; align-items: center; justify-content: center; z-index: 100;
+}
+#offer-modal.active, #market-info-modal.active { display: flex; animation: fadeIn 0.2s ease; }
+.modal-box {
+  background: linear-gradient(160deg, #1a2f4a, #122236);
+  border: 1px solid var(--panel-border);
+  border-radius: 12px; padding: 22px; max-width: 400px; width: 90%;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+}
+.modal-box h3 { color: var(--accent2); }
+
+/* ----- Notifications (interviews, messages de joueurs, demandes de transfert IA) -----
+   Bordure gauche colorée selon le type (posée dynamiquement en JS via notif-type-<type>), et
+   réponses en cartes pleine largeur empilées pour les interviews (phrases longues) plutôt qu'en
+   rangée de boutons étroits qui obligeaient le texte à retourner à la ligne n'importe comment. */
+.modal-notification { max-width: 460px; border-left: 4px solid var(--accent); }
+.modal-notification.notif-type-message { border-left-color: #3399ff; }
+.modal-notification.notif-type-transferRequest { border-left-color: #ffaa00; }
+.notif-header { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.notif-header h3 { margin-bottom: 0; }
+/* Le titre reprend la couleur d'accent du type, cohérent avec la bordure gauche. */
+.notif-type-message .notif-header h3 { color: #6db8ff; }
+.notif-type-transferRequest .notif-header h3 { color: #ffc94d; }
+.notif-queue-badge {
+  flex-shrink: 0; background: rgba(255,255,255,0.08); color: #9fabc0;
+  font-family: "Rajdhani", sans-serif; font-weight: 700; font-size: 0.78em;
+  padding: 3px 10px; border-radius: 20px; border: 1px solid var(--panel-border); white-space: nowrap;
+}
+
+/* En-tête joueur (photo + poste + club) affiché pour les notifications "message" et
+   "transferRequest", au-dessus du texte — remplace le pavé de texte brut par une identité
+   visuelle immédiate du joueur concerné. */
+.notif-player-row { display: flex; align-items: center; gap: 12px; margin: 8px 0 14px; }
+.notif-player-avatar { width: 48px; height: 48px; }
+.notif-player-id { min-width: 0; }
+.notif-offer-compare { display: flex; gap: 10px; margin-bottom: 14px; }
+.stat-tile.stat-tile-good { background: rgba(0,255,136,0.12); border-color: rgba(0,255,136,0.4); }
+.stat-tile.stat-tile-good .stat-tile-value { color: #b6ffd9; }
+.stat-tile.stat-tile-bad { background: rgba(255,90,90,0.12); border-color: rgba(255,90,90,0.4); }
+.stat-tile.stat-tile-bad .stat-tile-value { color: #ffd6d6; }
+
+.notif-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 14px; flex-wrap: wrap; }
+.notif-actions.stacked { flex-direction: column; align-items: stretch; }
+.notif-actions.stacked button {
+  text-align: left; white-space: normal; padding: 12px 16px; line-height: 1.35;
+}
+.player-photo-wrap {
+  width: 64px; height: 64px; border-radius: 50%; overflow: hidden; flex-shrink: 0;
+  position: relative; border: 2px solid var(--panel-border); background: #0e1a2b;
+}
+.player-photo { width: 100%; height: 100%; object-fit: cover; display: none; }
+.player-photo-fallback {
+  width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 1.2em; color: var(--accent2); background: #0e1a2b;
+}
+
+/* ----- Fiche joueur façon Football Manager (modal #player-info-modal) ----- */
+.modal-player-card { max-width: 640px; width: 92vw; }
+.player-card-layout { display: flex; gap: 20px; align-items: flex-start; }
+
+/* Colonne photo : image affichée dans ses proportions naturelles (pas de recadrage) — le cadre
+   s'adapte à l'image plutôt que l'inverse, pour toujours voir la photo en entier. */
+.player-card-photo-col { flex: 0 0 180px; display: flex; flex-direction: column; align-items: center; }
+.player-photo-fallback-lg {
+  width: 100%; aspect-ratio: 3 / 4; border-radius: 12px; background: #0e1a2b;
+  border: 1px solid var(--panel-border);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 2.4em; color: var(--accent2);
+}
+.player-photo-lg { display: none; width: 100%; height: auto; border-radius: 12px; border: 1px solid var(--panel-border); }
+
+.player-card-info-col { flex: 1; min-width: 0; }
+.player-card-name-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.player-card-name { font-weight: 800; font-size: 1.25em; font-family: "Rajdhani", sans-serif; letter-spacing: 0.3px; color: #fff; }
+.player-card-club { display: flex; align-items: center; gap: 6px; margin-top: 8px; font-size: 0.85em; color: #9fd8ff; }
+.player-card-stars { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+.star-rating-num { font-size: 0.75em; color: #8391a8; font-family: "Rajdhani", sans-serif; }
+
+.attr-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 16px 0 12px; }
+.attr-tile { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+.attr-tile-label {
+  font-size: 0.68em; color: #9fd8ff; text-transform: uppercase; letter-spacing: 0.5px;
+  font-family: "Rajdhani", sans-serif; font-weight: 700;
+}
+.player-card-form { display: flex; align-items: center; gap: 10px; margin: 4px 0 14px; }
+
+.player-card-stats { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 4px; }
+.stat-tile {
+  flex: 1; min-width: 62px; text-align: center; background: rgba(255,255,255,0.04);
+  border: 1px solid var(--panel-border); border-radius: 8px; padding: 8px 4px;
+}
+.stat-tile-value { display: block; font-weight: 800; font-family: "Rajdhani", sans-serif; font-size: 1.02em; color: #fff; }
+.stat-tile-label {
+  display: block; font-size: 0.65em; color: #8391a8; text-transform: uppercase; letter-spacing: 0.4px;
+  font-family: "Rajdhani", sans-serif; font-weight: 700; margin-top: 2px;
+}
+@media (max-width: 560px) {
+  .player-card-layout { flex-direction: column; align-items: center; }
+  .player-card-photo-col { flex: 0 0 auto; width: 160px; }
+  .player-card-info-col { width: 100%; }
+}
+.modal-tactics { max-width: 90vw; width: 1400px; max-height: 90vh; overflow-y: auto; }
+.modal-tactics-layout { height: 50vh; min-height: 360px; }
+.modal-tactics-layout .pitch-field { min-height: 0; }
+
+#offer-amount {
+  background: rgba(255,255,255,0.07); color: #eee; border: 1px solid var(--panel-border) !important;
+  font-family: "Rajdhani", sans-serif; font-size: 1.05em; font-weight: 600;
+}
+#offer-amount:focus { outline: 2px solid var(--accent); }
+
+.mercato-banner {
+  background: linear-gradient(135deg, #ffaa00, #ff6600); color: #1a1200; padding: 12px; border-radius: 10px;
+  text-align: center; font-weight: 700; margin-bottom: 15px;
+  font-family: "Rajdhani", sans-serif; letter-spacing: 1px; text-transform: uppercase;
+  box-shadow: 0 4px 16px rgba(255,150,0,0.3);
+  animation: pulse 2.4s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 4px 16px rgba(255,150,0,0.3); }
+  50% { box-shadow: 0 4px 24px rgba(255,150,0,0.55); }
+}
+
+/* ----- Import de sauvegarde ----- */
+#import-save-input {
+  color: #cfe8ff; font-family: inherit; font-size: 0.9em;
+  background: rgba(255,255,255,0.04); border: 1px solid var(--panel-border);
+  border-radius: 8px; padding: 8px 10px; cursor: pointer;
+}
+#import-save-input::file-selector-button {
+  background: linear-gradient(135deg, var(--accent), #4c1d95);
+  color: #00121f; border: none; padding: 9px 18px; border-radius: 8px;
+  cursor: pointer; font-weight: 700; font-family: "Rajdhani", sans-serif;
+  letter-spacing: 0.5px; margin-right: 12px;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+#import-save-input::file-selector-button:hover {
+  transform: translateY(-2px); box-shadow: 0 4px 14px rgba(139,92,246,0.35);
+}
+
+.summary-grid { display: flex; gap: 20px; flex-wrap: wrap; }
+.summary-grid > div { flex: 1; min-width: 250px; }
+.summary-grid h3 { border-bottom: 2px solid var(--panel-border); padding-bottom: 6px; }
