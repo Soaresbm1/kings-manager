@@ -1,12 +1,7 @@
 Joueurs Espagne sans photo trouvée sur kingsleague.pro (le jeu affichera leurs initiales) :
 
-- M. Jiménez  (1k-fc/m-jimenez.png)
-- I. Sugranyes  (rayo-de-barcelona/i-sugranyes.png)
-- A. Sisay  (rayo-de-barcelona/a-sisay.png)
+- M. Jiménez  (1k-fc/m-jimenez.png) pas trouvé
+- I. Sugranyes  (rayo-de-barcelona/i-sugranyes.png) pas trouvé
+- A. Sisay  (rayo-de-barcelona/a-sisay.png) pas trouvé
 - Roc Bancells  (rayo-de-barcelona/roc-bancells.png) / la capital 
-- Marcelo  (skull-fc/marcelo.png)
-- Israel de la Riva  (skull-fc/israel-de-la-riva.png)
-- Eric Pérez  (xbuyer-team/eric-perez.png)
-- Héctor Rodríguez  (xbuyer-team/hector-rodriguez.png)
-- Pol Tolrà  (xbuyer-team/pol-tolra.png)
-- Stelios Orgianos  (xbuyer-team/stelios-orgianos.png)
+- Eric Pérez  (xbuyer-team/eric-perez.png) pas de photo
