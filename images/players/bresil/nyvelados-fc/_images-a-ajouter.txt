@@ -1,0 +1,18 @@
+# Nyvelados FC — images attendues (format .png)
+# Dépose simplement les fichiers PNG ci-dessous avec ces noms exacts.
+
+   (GK — Bruno "Gan")
+   (GK — Igor "BB")
+   (DEF — Ailton José)
+   (DEF — Everton "Chiclete" Araújo)
+  (DEF — Maicon Macabeu)
+   (MID — Lucas "Japa")
+   (MID — Luisinho Barreiros)
+   (MID — Léo "Gol")
+   (MID — Luandrio "Pé Fino")
+   (MID — Vanderson "Neguiim Jr")
+  (ATT — Matheus Klynsmann)
+   (ATT — Carlos "Ferrão")
+   (ATT — Daniel Coringa)
+   (ATT — Danilo Belém)
+   (ATT — Dieguinho Assis)

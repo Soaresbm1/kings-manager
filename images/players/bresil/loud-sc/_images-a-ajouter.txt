@@ -1,0 +1,18 @@
+# LOUD SC — images attendues (format .png)
+# Dépose simplement les fichiers PNG ci-dessous avec ces noms exacts.
+
+   (GK — Esaú Nascimento)
+   (GK — Arthur Facas)
+   (GK — Davi "Major" Natã)
+   (GK — Thiago Oliveira)
+   (DEF — Maicon "Barata")
+   (DEF — Matheus "Biro")
+   (MID — Caio Felipe)
+   (MID — Felipe Cassiano)
+   (MID — Paulo "Pulão")
+   (MID — Daniel Shiraishi)
+   (MID — Sam Silva)
+   (MID — Rômulo Kohagura)
+  (ATT — Rafinha Cunha)
+   (ATT — Felipe Viana)
+   (ATT — Walid Jaadi)

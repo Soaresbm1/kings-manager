@@ -1,0 +1,19 @@
+# DesimpaiN — images attendues (format .png)
+# Dépose simplement les fichiers PNG ci-dessous avec ces noms exacts.
+
+   (GK — Gui Nascimento)
+   (GK — Kaiky Souza)
+   (DEF — Andrey Profeta)
+   (DEF — Victor "Bolt")
+   (DEF — Wellinton "Gigante")
+   (DEF — Juvenal Oliveira)
+   (MID — Henry "Japa")
+   (MID — William Costa)
+   (MID — Christian Santos)
+   (MID — Danilo Alemão)
+   (MID — Gabriel Lopes)
+   (ATT — Davi Ilario)
+   (ATT — Victor "VB" Bueno)
+   (ATT — Douglinhas Melo)
+   (ATT — Luisinho Alves)
+

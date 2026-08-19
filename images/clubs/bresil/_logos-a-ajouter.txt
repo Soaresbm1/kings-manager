@@ -1,0 +1,15 @@
+# Blasons des clubs Brésil — un fichier PNG par club, dans ce dossier.
+# Dépose simplement les fichiers avec ces noms exacts (comme pour les photos de joueurs).
+# Tant qu'un fichier n'existe pas pour un club, le jeu affiche un blason généré
+# (dégradé de la couleur du club + initiales) à la place — aucun changement de code requis.
+
+                (Furia FC)
+                (Fluxo FC)
+                (G3X FC)
+                (Nyvelados FC)
+                (DesimpaiN)
+                (Capim FC)
+                (LOUD SC)
+                (Podpah Funkbol Clube)
+                (Dendele FC)
+                (Dibrados FC)

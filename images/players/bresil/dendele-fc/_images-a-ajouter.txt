@@ -1,0 +1,15 @@
+# Dendele FC — images attendues (format .png)
+# Dépose simplement les fichiers PNG ci-dessous avec ces noms exacts.
+
+   (GK — Maikon Santos)
+   (DEF — Gui Carvalho)
+  (DEF — Leonardo "Belletti")
+  (DEF — Lyncoln Oliveira)
+   (MID — Bruninho Mandarino)
+   (MID — Cristhian "Canhoto")
+   (MID — Marquinhos Samora)
+   (ATT — Gabriel Repulho)
+   (ATT — Luís Henrique "Boolt")
+  (ATT — Nicollas Nascimento)
+   (ATT — Lucas "L7")
+  (ATT — Ryan Soares)

@@ -1,0 +1,17 @@
+# Fluxo FC — images attendues (format .png)
+# Dépose simplement les fichiers PNG ci-dessous avec ces noms exacts.
+
+   (GK — João Pedro)
+   (GK — Douglas "Doth")
+   (DEF — Murillo Pulino)
+   (MID — Matheus "Chaveirinho")
+   (MID — Marcos "MV")
+   (MID — Paulo "Pinguinho")
+   (MID — Jheferson Falcão)
+   (MID — Well Andrade)
+   (MID — Renan Augusto)
+   (MID — Bruno Ferreira)
+   (ATT — Helber Júnior)
+   (ATT — Gustavinho Henrique)
+   (ATT — Tuco Magalhães)
+   (ATT — Patrick Habibi)

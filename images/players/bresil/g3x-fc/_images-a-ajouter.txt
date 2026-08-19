@@ -1,0 +1,16 @@
+# G3X FC — images attendues (format .png)
+# Dépose simplement les fichiers PNG ci-dessous avec ces noms exacts.
+
+   (GK — Gabriel Braga)
+   (GK — Josildo Barata)
+   (DEF — Gabriel Medeiros)
+   (DEF — Gabriel Messias)
+   (DEF — Marinho Filho)
+   (DEF — Wembley Luiz)
+   (MID — Thiago "TH" Brito)
+   (MID — Andreas Vaz)
+   (MID — Matheus Rufino)
+   (ATT — João Guimarães)
+   (ATT — Ryan Lima)
+   (ATT — Kelvin Oliveira)
+  (ATT — Ton "Spider")

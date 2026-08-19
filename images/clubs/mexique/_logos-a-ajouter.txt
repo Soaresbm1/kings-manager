@@ -1,0 +1,17 @@
+# Blasons des clubs Mexique — un fichier PNG par club, dans ce dossier.
+# Dépose simplement les fichiers avec ces noms exacts (comme pour les photos de joueurs).
+# Tant qu'un fichier n'existe pas pour un club, le jeu affiche un blason généré
+# (dégradé de la couleur du club + initiales) à la place — aucun changement de code requis.
+
+          (Aniquiladores FC)
+      (Atlético Parceros FC)
+           (Club de Cuervos)
+     (Galácticos del Caribe)
+              (Guerrilla FC)
+                    (KRÜ FC)
+            (Los Aliens FC)
+             (Los Chamos FC)
+          (Peluche Caligari)
+                 (Persas FC)
+                (Raniza FC)
+                 (Simios FC)

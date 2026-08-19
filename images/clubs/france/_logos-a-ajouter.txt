@@ -1,0 +1,13 @@
+# Blasons des clubs France — un fichier PNG par club, dans ce dossier.
+# Dépose simplement les fichiers avec ces noms exacts (comme pour les photos de joueurs).
+# Tant qu'un fichier n'existe pas pour un club, le jeu affiche un blason généré
+# (dégradé de la couleur du club + initiales) à la place — aucun changement de code requis.
+
+             (360 Nation)
+   (Athletic Dragon Blanc)
+                (FC Silmi)
+        (Generation Seven)
+                  (Karasu)
+         (Panam All Starz)
+                  (Unit3d)
+            (Wolf Pack FC)

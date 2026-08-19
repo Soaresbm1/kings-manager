@@ -1,0 +1,17 @@
+# Blasons des clubs Espagne — un fichier PNG par club, dans ce dossier.
+# Dépose simplement les fichiers avec ces noms exacts (comme pour les photos de joueurs).
+# Tant qu'un fichier n'existe pas pour un club, le jeu affiche un blason généré
+# (dégradé de la couleur du club + initiales) à la place — aucun changement de code requis.
+
+                     (1K FC)
+                 (El Barrio)
+              (Jijantes FC)
+             (La Capital CF)
+            (Los Troncos FC)
+                    (PIO FC)
+               (Porcinos FC)
+         (Rayo de Barcelona)
+                (Saiyans FC)
+                  (Skull FC)
+         (Ultimate Móstoles)
+               (xBuyer Team)
