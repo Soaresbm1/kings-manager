@@ -1,0 +1,429 @@
+desimpain : 
+
+Felipe Góes
+
+Entraîneur
+
+Gui Nascimento#83
+Gui Nascimento
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+9
+
+Buts enc.
+
+5
+
+Ratio
+
+0.56
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Andrey Profeta#3
+Andrey Profeta
+Défenseur
+
+Moyenne
+
+79
+
+Matchs
+
+7
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Victor 'Bolt'#5
+Victor 'Bolt'
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+11
+
+Buts
+
+3
+
+Passes dé.
+
+4
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Wellinton 'Gigante'#16
+Wellinton 'Gigante'
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+11
+
+Buts
+
+5
+
+Passes dé.
+
+1
+
+Jaunes
+
+2
+
+Rouges
+
+0
+
+Henry 'Japa'#17
+Henry 'Japa'
+Milieu de terrain
+
+Moyenne
+
+75
+
+Matchs
+
+2
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+William Costa#26
+William Costa
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+11
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Victor 'VB' Bueno#77
+Victor 'VB' Bueno
+Attaquant
+
+Moyenne
+
+82
+
+Matchs
+
+5
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Kaiky Souza#1
+Kaiky Souza
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+11
+
+Buts enc.
+
+36
+
+Ratio
+
+3.27
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Danilo Alemão#14
+Danilo Alemão
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+10
+
+Buts
+
+4
+
+Passes dé.
+
+2
+
+Jaunes
+
+2
+
+Rouges
+
+0
+
+Juvenal Oliveira#8
+Juvenal Oliveira
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+8
+
+Buts
+
+2
+
+Passes dé.
+
+1
+
+Jaunes
+
+2
+
+Rouges
+
+0
+
+Christian Santos#11
+Christian Santos
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+11
+
+Buts
+
+8
+
+Passes dé.
+
+3
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Gabriel Lopes#60
+Gabriel Lopes
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+3
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Davi Ilario#10
+Davi Ilario
+Attaquant
+
+Moyenne
+
+-
+
+MVP du jour
+2
+MVP du match
+8
+Matchs
+
+11
+
+Buts
+
+21
+
+Passes dé.
+
+10
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Douglinhas Melo#9
+Douglinhas Melo
+Attaquant
+
+Moyenne
+
+78
+
+Matchs
+
+4
+
+Buts
+
+1
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Luisinho Alves#7
+Luisinho Alves
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+11
+
+Buts
+
+10
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0

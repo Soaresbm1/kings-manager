@@ -1,0 +1,513 @@
+united : 
+
+Grégory Campi
+
+Entraîneur
+
+Florian Verplanck#15
+Florian Verplanck
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+9
+
+Buts enc.
+
+27
+
+Ratio
+
+3.00
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Jessy Moulin#30
+Jessy Moulin
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+8
+
+Buts enc.
+
+18
+
+Ratio
+
+2.25
+
+Jaunes
+
+2
+
+Rouges
+
+0
+
+Alseny Sano#78
+Alseny Sano
+Défenseur
+
+Moyenne
+
+75
+
+Matchs
+
+9
+
+Buts
+
+1
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Yannick Mbone#33
+Yannick Mbone
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+9
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+2
+
+Rouges
+
+0
+
+Youssef Khatiri#48
+Youssef Khatiri
+Défenseur
+
+Moyenne
+
+72
+
+Matchs
+
+9
+
+Buts
+
+1
+
+Passes dé.
+
+0
+
+Jaunes
+
+2
+
+Rouges
+
+0
+
+Amine Kheche#27
+Amine Kheche
+Milieu de terrain
+
+Moyenne
+
+-
+
+MVP du match
+1
+Matchs
+
+9
+
+Buts
+
+10
+
+Passes dé.
+
+2
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+José Pereira#3
+José Pereira
+Milieu de terrain
+
+Moyenne
+
+77
+
+Matchs
+
+8
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+2
+
+Rouges
+
+0
+
+Nicolas Martins#10
+Nicolas Martins
+Milieu de terrain
+
+Moyenne
+
+83
+
+Matchs
+
+1
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Yassine Skira#92
+Yassine Skira
+Milieu de terrain
+
+Moyenne
+
+72
+
+Matchs
+
+9
+
+Buts
+
+0
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+1
+
+Damani Toure#26
+Damani Toure
+Attaquant
+
+Moyenne
+
+82
+
+MVP du match
+1
+Matchs
+
+6
+
+Buts
+
+4
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Marvin Emmanuel#23
+Marvin Emmanuel
+Attaquant
+
+Moyenne
+
+82
+
+Matchs
+
+5
+
+Buts
+
+5
+
+Passes dé.
+
+5
+
+Jaunes
+
+2
+
+Rouges
+
+0
+
+Bryan Goncalves #7
+Bryan Goncalves
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts
+
+1
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Amara Fofana#9
+Amara Fofana
+Attaquant
+
+Moyenne
+
+76
+
+Matchs
+
+1
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Clément Dragon#25
+Clément Dragon
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+7
+
+Buts
+
+1
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Enzo Arbona#99
+Enzo Arbona
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+4
+
+Buts
+
+0
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Nassim Labidi#21
+Nassim Labidi
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Valère Germain#98
+Valère Germain
+Attaquant
+
+Moyenne
+
+-
+
+MVP du match
+1
+Matchs
+
+8
+
+Buts
+
+6
+
+Passes dé.
+
+4
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Maxime Corain#80
+Maxime Corain
+Moyenne
+
+-
+
+Matchs
+
+2
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0

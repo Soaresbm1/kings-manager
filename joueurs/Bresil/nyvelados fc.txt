@@ -1,0 +1,427 @@
+nyvelados fc : 
+
+Dabá
+
+Entraîneur
+
+Bruno 'Gan'#13
+Bruno 'Gan'
+Gardien de but
+
+Moyenne
+
+79
+
+Matchs
+
+2
+
+Buts enc.
+
+2
+
+Ratio
+
+1.00
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Ailton José#16
+Ailton José
+Défenseur
+
+Moyenne
+
+83
+
+Matchs
+
+8
+
+Buts
+
+4
+
+Passes dé.
+
+2
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Everton 'Chiclete' Araújo#29
+Everton 'Chiclete' Araújo
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+2
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Maicon Macabeu#8
+Maicon Macabeu
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+8
+
+Buts
+
+0
+
+Passes dé.
+
+1
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Lucas 'Japa'#28
+Lucas 'Japa'
+Milieu de terrain
+
+Moyenne
+
+80
+
+Matchs
+
+7
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Luisinho Barreiros#5
+Luisinho Barreiros
+Milieu de terrain
+
+Moyenne
+
+67
+
+Matchs
+
+7
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Matheus Klynsmann#14
+Matheus Klynsmann
+Attaquant
+
+Moyenne
+
+71
+
+Matchs
+
+9
+
+Buts
+
+1
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Igor 'BB'#1
+Igor 'BB'
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+9
+
+Buts enc.
+
+49
+
+Ratio
+
+5.44
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Léo 'Gol'#9
+Léo 'Gol'
+Milieu de terrain
+
+Moyenne
+
+-
+
+MVP du match
+1
+Matchs
+
+9
+
+Buts
+
+9
+
+Passes dé.
+
+5
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Luandrio 'Pé Fino'#7
+Luandrio 'Pé Fino'
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+4
+
+Buts
+
+1
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Vanderson 'Neguiim Jr'#19
+Vanderson 'Neguiim Jr'
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+10
+
+Buts
+
+6
+
+Passes dé.
+
+2
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Carlos 'Ferrão'#11
+Carlos 'Ferrão'
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+7
+
+Buts
+
+8
+
+Passes dé.
+
+0
+
+Jaunes
+
+3
+
+Rouges
+
+0
+
+Daniel Coringa#90
+Daniel Coringa
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts
+
+0
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Danilo Belém#10
+Danilo Belém
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+4
+
+Buts
+
+1
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Dieguinho Assis#10
+Dieguinho Assis
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+3
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0

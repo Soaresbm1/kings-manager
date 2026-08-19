@@ -1,0 +1,519 @@
+podpah funkbol clube : 
+
+Gustavo da Silva
+
+Entraîneur
+
+Gustavo Silva#12
+Gustavo Silva
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+4
+
+Buts enc.
+
+4
+
+Ratio
+
+1.00
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Jhonatas 'MlkJhoow' Goes
+Jhonatas 'MlkJhoow' Goes
+Défenseur
+
+Moyenne
+
+81
+
+Matchs
+
+1
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Ramon Goveia#27
+Ramon Goveia
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+2
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Thiago Magalhães
+Thiago Magalhães
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Leléo Moura#18
+Leléo Moura
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+11
+
+Buts
+
+2
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Martín Lara
+Martín Lara
+Milieu de terrain
+
+Moyenne
+
+79
+
+Matchs
+
+3
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Rafão 'Portuga'#5
+Rafão 'Portuga'
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+6
+
+Buts
+
+1
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Willy dos Santos
+Willy dos Santos
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+4
+
+Buts
+
+1
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+João 'Choco'#31
+João 'Choco'
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+11
+
+Buts
+
+3
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Ronaldinho Reis#9
+Ronaldinho Reis
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+6
+
+Buts
+
+2
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Yan 'Coringa'#14
+Yan 'Coringa'
+Attaquant
+
+Moyenne
+
+-
+
+MVP du match
+2
+Matchs
+
+11
+
+Buts
+
+7
+
+Passes dé.
+
+3
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Igor Campos#1
+Igor Campos
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+11
+
+Buts enc.
+
+48
+
+Ratio
+
+4.36
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+William Jesus#3
+William Jesus
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+9
+
+Buts
+
+2
+
+Passes dé.
+
+1
+
+Jaunes
+
+1
+
+Rouges
+
+1
+
+Caio Miranda#29
+Caio Miranda
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+11
+
+Buts
+
+1
+
+Passes dé.
+
+1
+
+Jaunes
+
+2
+
+Rouges
+
+0
+
+Luan 'Mestre'#10
+Luan 'Mestre'
+Milieu de terrain
+
+Moyenne
+
+-
+
+MVP du jour
+1
+MVP du match
+4
+Matchs
+
+11
+
+Buts
+
+19
+
+Passes dé.
+
+5
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Vini Alexandre#77
+Vini Alexandre
+Milieu de terrain
+
+Moyenne
+
+77
+
+MVP du jour
+1
+MVP du match
+1
+Matchs
+
+11
+
+Buts
+
+4
+
+Passes dé.
+
+0
+
+Jaunes
+
+2
+
+Rouges
+
+0
+
+Deives Moraes#60
+Deives Moraes
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+2
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Juninho Antunes#7
+Juninho Antunes
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+11
+
+Buts
+
+4
+
+Passes dé.
+
+7
+
+Jaunes
+
+1
+
+Rouges
+
+0

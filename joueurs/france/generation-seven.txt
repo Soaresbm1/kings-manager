@@ -1,0 +1,515 @@
+generation-seven :
+
+Jefferson Roch
+
+Entraîneur
+
+Christian Nsapu#1
+Christian Nsapu
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+7
+
+Buts enc.
+
+14
+
+Ratio
+
+2.00
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Ilhan Benbraham#51
+Ilhan Benbraham
+Gardien de but
+
+Moyenne
+
+76
+
+Matchs
+
+1
+
+Buts enc.
+
+1
+
+Ratio
+
+1.00
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Yonni Bouguerra#30
+Yonni Bouguerra
+Gardien de but
+
+Moyenne
+
+80
+
+Matchs
+
+6
+
+Buts enc.
+
+15
+
+Ratio
+
+2.50
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Bilal Hadraoui#93
+Bilal Hadraoui
+Défenseur
+
+Moyenne
+
+71
+
+Matchs
+
+4
+
+Buts
+
+0
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Mehdi Tenniche#6
+Mehdi Tenniche
+Défenseur
+
+Moyenne
+
+73
+
+Matchs
+
+6
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+1
+
+Walid Soudi#26
+Walid Soudi
+Défenseur
+
+Moyenne
+
+-
+
+MVP du jour
+1
+MVP du match
+1
+Matchs
+
+7
+
+Buts
+
+3
+
+Passes dé.
+
+2
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Boucif El Afghani#63
+Boucif El Afghani
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts
+
+1
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Clément Goguey#23
+Clément Goguey
+Milieu de terrain
+
+Moyenne
+
+82
+
+Matchs
+
+7
+
+Buts
+
+4
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Enzo Dron#17
+Enzo Dron
+Milieu de terrain
+
+Moyenne
+
+82
+
+Matchs
+
+6
+
+Buts
+
+1
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+1
+
+Ismaïl Haddou#99
+Ismaïl Haddou
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+2
+
+Buts
+
+2
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Nyls Gomez#27
+Nyls Gomez
+Milieu de terrain
+
+Moyenne
+
+71
+
+Matchs
+
+4
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Haris El mouttaqi#0
+Haris El mouttaqi
+Attaquant
+
+Moyenne
+
+81
+
+Matchs
+
+1
+
+Buts
+
+4
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Oscar Le Guillou#35
+Oscar Le Guillou
+Attaquant
+
+Moyenne
+
+75
+
+Matchs
+
+4
+
+Buts
+
+1
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Carl Medjani#4
+Carl Medjani
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+4
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Dalvin Fellice#98
+Dalvin Fellice
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+2
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Youba Soumaré#10
+Youba Soumaré
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+7
+
+Buts
+
+1
+
+Passes dé.
+
+1
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Boutaleb Mohamed#9
+Boutaleb Mohamed
+Attaquant
+
+Moyenne
+
+-
+
+MVP du match
+1
+Matchs
+
+7
+
+Buts
+
+4
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Mamadou Kebe#11
+Mamadou Kebe
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+5
+
+Buts
+
+2
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0

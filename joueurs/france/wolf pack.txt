@@ -1,0 +1,509 @@
+wolf pack :
+
+Richard Pascal
+
+Entraîneur
+
+Guillaume Lesec#19
+Guillaume Lesec
+Gardien de but
+
+Moyenne
+
+79
+
+MVP du match
+3
+Matchs
+
+8
+
+Buts enc.
+
+28
+
+Ratio
+
+3.50
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Sebastien Renot#20
+Sebastien Renot
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+8
+
+Buts enc.
+
+9
+
+Ratio
+
+1.13
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Mohamed Bencherif#6
+Mohamed Bencherif
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+6
+
+Buts
+
+2
+
+Passes dé.
+
+2
+
+Jaunes
+
+0
+
+Rouges
+
+1
+
+Giannelli Imbula#16
+Giannelli Imbula
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+6
+
+Buts
+
+5
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Idir Ahmin#95
+Idir Ahmin
+Milieu de terrain
+
+Moyenne
+
+77
+
+Matchs
+
+8
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Lucas De Ataïde#81
+Lucas De Ataïde
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+7
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Sofiane Bendaoud#18
+Sofiane Bendaoud
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+8
+
+Buts
+
+4
+
+Passes dé.
+
+3
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Théo Chendri#8
+Théo Chendri
+Milieu de terrain
+
+Moyenne
+
+83
+
+Matchs
+
+6
+
+Buts
+
+0
+
+Passes dé.
+
+2
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Jonathan Kodjia#89
+Jonathan Kodjia
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+6
+
+Buts
+
+2
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Moussa Sao#10
+Moussa Sao
+Attaquant
+
+Moyenne
+
+-
+
+MVP du match
+2
+Matchs
+
+8
+
+Buts
+
+12
+
+Passes dé.
+
+3
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Noé Clerge#79
+Noé Clerge
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Franck Noel#26
+Franck Noel
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+3
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+2
+
+Rouges
+
+0
+
+Denis-Will Poha#97
+Denis-Will Poha
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+3
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+2
+
+Rouges
+
+0
+
+Enzo Ferrara#93
+Enzo Ferrara
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Mehdi Chahiri#11
+Mehdi Chahiri
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+5
+
+Buts
+
+2
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Sabry Tolgui#99
+Sabry Tolgui
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+3
+
+Buts
+
+0
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Wanis Aïssa#17
+Wanis Aïssa
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Souleymane Karamoko#23
+Souleymane Karamoko
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0

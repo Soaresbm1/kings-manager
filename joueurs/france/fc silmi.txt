@@ -1,0 +1,457 @@
+fc silmi : 
+
+Sabry Bezahaf
+
+Entraîneur
+
+Ali Ahamada#91
+Ali Ahamada
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+8
+
+Buts enc.
+
+34
+
+Ratio
+
+4.25
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Axel Bamba#88
+Axel Bamba
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Hakim Bacar#18
+Hakim Bacar
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+8
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Mohammed-Karim Berrabah#26
+Mohammed-Karim Berrabah
+Défenseur
+
+Moyenne
+
+84
+
+Matchs
+
+5
+
+Buts
+
+1
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Aboubakar Toure#8
+Aboubakar Toure
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+6
+
+Buts
+
+0
+
+Passes dé.
+
+1
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Adel Berkane#0
+Adel Berkane
+Milieu de terrain
+
+Moyenne
+
+-
+
+MVP du jour
+1
+MVP du match
+1
+Matchs
+
+7
+
+Buts
+
+7
+
+Passes dé.
+
+1
+
+Jaunes
+
+1
+
+Rouges
+
+1
+
+Chain Ghrissi#33
+Chain Ghrissi
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+8
+
+Buts
+
+1
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Guilherme Carvalho#10
+Guilherme Carvalho
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+5
+
+Buts
+
+6
+
+Passes dé.
+
+2
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Kevin Bru#20
+Kevin Bru
+Milieu de terrain
+
+Moyenne
+
+83
+
+Matchs
+
+3
+
+Buts
+
+1
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Mehdi Marin#98
+Mehdi Marin
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+8
+
+Buts
+
+1
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Youcef Kara#7
+Youcef Kara
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+8
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Mohamed Sanou#9
+Mohamed Sanou
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+2
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Damien Mesplé#99
+Damien Mesplé
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+2
+
+Buts enc.
+
+2
+
+Ratio
+
+1.00
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Florian Forestier#23
+Florian Forestier
+Gardien de but
+
+Moyenne
+
+83
+
+Matchs
+
+5
+
+Buts enc.
+
+9
+
+Ratio
+
+1.80
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Bakary Sako#94
+Bakary Sako
+Attaquant
+
+Moyenne
+
+-
+
+MVP du match
+2
+Matchs
+
+8
+
+Buts
+
+16
+
+Passes dé.
+
+2
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Jimmy Briand#85
+Jimmy Briand
+Moyenne
+
+-
+
+Matchs
+
+2
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0

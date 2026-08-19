@@ -1,0 +1,545 @@
+karasu : 
+
+Benjamin Garault
+
+Entraîneur
+
+Sasha Bernard#22
+Sasha Bernard
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+9
+
+Buts enc.
+
+34
+
+Ratio
+
+3.78
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Simon Pontdeme#88
+Simon Pontdeme
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+0
+
+Buts enc.
+
+0
+
+Ratio
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Vivien Cedille#30
+Vivien Cedille
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts enc.
+
+1
+
+Ratio
+
+1.00
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Mehdi Gacem#6
+Mehdi Gacem
+Défenseur
+
+Moyenne
+
+76
+
+Matchs
+
+9
+
+Buts
+
+3
+
+Passes dé.
+
+1
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Sahir Boumhand#4
+Sahir Boumhand
+Défenseur
+
+Moyenne
+
+83
+
+Matchs
+
+9
+
+Buts
+
+1
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Christopher Baptista#24
+Christopher Baptista
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+0
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Guillaume Yenoussi#7
+Guillaume Yenoussi
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+2
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Ilyes Kallouche#17
+Ilyes Kallouche
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+8
+
+Buts
+
+1
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Joseph Evens#7
+Joseph Evens
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts
+
+0
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Lucas Valeri#8
+Lucas Valeri
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+7
+
+Buts
+
+2
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+1
+
+Dramane Kone#90
+Dramane Kone
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts
+
+1
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Sita Diarra#11
+Sita Diarra
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+9
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Driss Khalid#31
+Driss Khalid
+Milieu de terrain
+
+Moyenne
+
+-
+
+MVP du match
+1
+Matchs
+
+9
+
+Buts
+
+5
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Lyes Hocine#20
+Lyes Hocine
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+2
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Youssef Hidasse#21
+Youssef Hidasse
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+2
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Ali Ouarti#19
+Ali Ouarti
+Attaquant
+
+Moyenne
+
+-
+
+MVP du match
+3
+Matchs
+
+9
+
+Buts
+
+10
+
+Passes dé.
+
+4
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Marvin Gakpa#9
+Marvin Gakpa
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+0
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Matisse	Henry#10
+Matisse Henry
+Attaquant
+
+Moyenne
+
+-
+
+MVP du jour
+4
+MVP du match
+4
+Matchs
+
+9
+
+Buts
+
+16
+
+Passes dé.
+
+7
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Samy Mahour#98
+Samy Mahour
+Attaquant
+
+Moyenne
+
+72
+
+Matchs
+
+4
+
+Buts
+
+1
+
+Passes dé.
+
+0
+
+Jaunes
+
+2
+
+Rouges
+
+0

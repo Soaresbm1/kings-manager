@@ -1,0 +1,457 @@
+capim :
+
+Charles Cruz
+
+Entraîneur
+
+Lucas 'Caroço'#5
+Lucas 'Caroço'
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+10
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Gabriel 'Dudu'#11
+Gabriel 'Dudu'
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+10
+
+Buts
+
+2
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Rafa Sousa#17
+Rafa Sousa
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+7
+
+Buts
+
+0
+
+Passes dé.
+
+2
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Williams 'Vassoura'#22
+Williams 'Vassoura'
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Erick 'Kaká'
+Erick 'Kaká'
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Jeferson Titon#7
+Jeferson Titon
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+10
+
+Buts
+
+2
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Murillo Donato#9
+Murillo Donato
+Attaquant
+
+Moyenne
+
+80
+
+Matchs
+
+8
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Marcos 'Bolivia'#12
+Marcos 'Bolivia'
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+10
+
+Buts enc.
+
+35
+
+Ratio
+
+3.50
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Thiago Santos#21
+Thiago Santos
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+6
+
+Buts enc.
+
+9
+
+Ratio
+
+1.50
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Álex Guti#16
+Álex Guti
+Défenseur
+
+Moyenne
+
+84
+
+MVP du match
+2
+Matchs
+
+8
+
+Buts
+
+3
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Breno Arantes#47
+Breno Arantes
+Défenseur
+
+Moyenne
+
+79
+
+Matchs
+
+6
+
+Buts
+
+1
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Wallace Rafael
+Wallace Rafael
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+4
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Dani Liñares#10
+Dani Liñares
+Milieu de terrain
+
+Moyenne
+
+85
+
+Matchs
+
+10
+
+Buts
+
+8
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Gerard Nolla#30
+Gerard Nolla
+Attaquant
+
+Moyenne
+
+83
+
+MVP du match
+1
+Matchs
+
+10
+
+Buts
+
+10
+
+Passes dé.
+
+4
+
+Jaunes
+
+2
+
+Rouges
+
+0
+
+Igo Canindé
+Igo Canindé
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+3
+
+Buts
+
+1
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Lucas Hector#29
+Lucas Hector
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+10
+
+Buts
+
+8
+
+Passes dé.
+
+2
+
+Jaunes
+
+1
+
+Rouges
+
+0

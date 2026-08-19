@@ -1,0 +1,569 @@
+dibrados : 
+
+Silton Filho
+
+Entraîneur
+
+Bruno Mota#99
+Bruno Mota
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+2
+
+Buts enc.
+
+8
+
+Ratio
+
+4.00
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Luan Teles#1
+Luan Teles
+Gardien de but
+
+Moyenne
+
+-
+
+MVP du match
+1
+Matchs
+
+8
+
+Buts enc.
+
+33
+
+Ratio
+
+4.13
+
+Jaunes
+
+0
+
+Rouges
+
+1
+
+Sidney Pages#6
+Sidney Pages
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+9
+
+Buts
+
+2
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Edda Marcelino#8
+Edda Marcelino
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+8
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Fael Magalhães#19
+Fael Magalhães
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+4
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Henrique Wruck#12
+Henrique Wruck
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Matheus 'Índio'#10
+Matheus 'Índio'
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+0
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Matheus Bueno#5
+Matheus Bueno
+Milieu de terrain
+
+Moyenne
+
+78
+
+Matchs
+
+0
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Lucas 'Pulguinha'#26
+Lucas 'Pulguinha'
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+9
+
+Buts
+
+1
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Marcello 'Marcelinho' Junior#30
+Marcello 'Marcelinho' Junior
+Attaquant
+
+Moyenne
+
+73
+
+Matchs
+
+2
+
+Buts
+
+1
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Ivo Alves
+Ivo Alves
+Gardien de but
+
+Moyenne
+
+76
+
+Matchs
+
+3
+
+Buts enc.
+
+11
+
+Ratio
+
+3.67
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Daniel Ferreira#13
+Daniel Ferreira
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+9
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Jonatas 'Batman'#77
+Jonatas 'Batman'
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+5
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Luiggi Longo#7
+Luiggi Longo
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+9
+
+Buts
+
+5
+
+Passes dé.
+
+1
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Raphael Augusto#80
+Raphael Augusto
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+2
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Ricardinho Braga#10
+Ricardinho Braga
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+2
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Ruan Major#49
+Ruan Major
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+9
+
+Buts
+
+0
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Chay Medeiros#14
+Chay Medeiros
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+6
+
+Buts
+
+4
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Etinho Lima#22
+Etinho Lima
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+3
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Gabriel Costa#11
+Gabriel Costa
+Attaquant
+
+Moyenne
+
+84
+
+MVP du match
+1
+Matchs
+
+9
+
+Buts
+
+5
+
+Passes dé.
+
+3
+
+Jaunes
+
+0
+
+Rouges
+
+0

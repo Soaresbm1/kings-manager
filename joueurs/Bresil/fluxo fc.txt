@@ -1,0 +1,403 @@
+fluxo fc : 
+
+Paulo Netto
+
+Entraîneur
+
+Douglas 'Doth'#20
+Douglas 'Doth'
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+4
+
+Buts enc.
+
+3
+
+Ratio
+
+0.75
+
+Jaunes
+
+0
+
+Rouges
+
+1
+
+Bruno Ferreira#60
+Bruno Ferreira
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Jheferson Falcão#94
+Jheferson Falcão
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+11
+
+Buts
+
+0
+
+Passes dé.
+
+1
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Marcos 'MV'#11
+Marcos 'MV'
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+10
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Paulo 'Pinguinho'#5
+Paulo 'Pinguinho'
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+9
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+1
+
+Renan Augusto#7
+Renan Augusto
+Milieu de terrain
+
+Moyenne
+
+-
+
+MVP du match
+1
+Matchs
+
+9
+
+Buts
+
+2
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Gustavinho Henrique#17
+Gustavinho Henrique
+Attaquant
+
+Moyenne
+
+80
+
+Matchs
+
+11
+
+Buts
+
+2
+
+Passes dé.
+
+1
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Patrick Habibi
+Patrick Habibi
+Attaquant
+
+Moyenne
+
+-
+
+MVP du match
+1
+Matchs
+
+3
+
+Buts
+
+1
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+João Pedro#22
+João Pedro
+Gardien de but
+
+Moyenne
+
+85
+
+Matchs
+
+11
+
+Buts enc.
+
+46
+
+Ratio
+
+4.18
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Murillo Pulino#3
+Murillo Pulino
+Défenseur
+
+Moyenne
+
+74
+
+Matchs
+
+11
+
+Buts
+
+2
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Matheus 'Chaveirinho'#10
+Matheus 'Chaveirinho'
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+11
+
+Buts
+
+6
+
+Passes dé.
+
+6
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Well Andrade#8
+Well Andrade
+Milieu de terrain
+
+Moyenne
+
+-
+
+MVP du match
+3
+Matchs
+
+11
+
+Buts
+
+17
+
+Passes dé.
+
+4
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Helber Júnior#96
+Helber Júnior
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+11
+
+Buts
+
+11
+
+Passes dé.
+
+1
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Tuco Magalhães#92
+Tuco Magalhães
+Attaquant
+
+Moyenne
+
+70
+
+Matchs
+
+11
+
+Buts
+
+1
+
+Passes dé.
+
+1
+
+Jaunes
+
+1
+
+Rouges
+
+0

@@ -1,0 +1,571 @@
+furia : 
+
+Dudu Oliveira
+
+Entraîneur
+
+Vitor 'Barba'#26
+Vitor 'Barba'
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+6
+
+Buts enc.
+
+24
+
+Ratio
+
+4.00
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Jefferson 'Gegeu' Silva#88
+Jefferson 'Gegeu' Silva
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+0
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+João Pelegrini#22
+João Pelegrini
+Défenseur
+
+Moyenne
+
+73
+
+Matchs
+
+8
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Kenu Leandro#13
+Kenu Leandro
+Milieu de terrain
+
+Moyenne
+
+76
+
+Matchs
+
+9
+
+Buts
+
+1
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Lucas Nascimento#7
+Lucas Nascimento
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+6
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Rafael 'Tambinha'#8
+Rafael 'Tambinha'
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+9
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Thiago 'Major'#2
+Thiago 'Major'
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+6
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Gabriel Felipe#62
+Gabriel Felipe
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Jhow Love
+Jhow Love
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Ivo Alves
+Ivo Alves
+Gardien de but
+
+Moyenne
+
+76
+
+Matchs
+
+3
+
+Buts enc.
+
+11
+
+Ratio
+
+3.67
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Tiago Marinho#81
+Tiago Marinho
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+3
+
+Buts enc.
+
+9
+
+Ratio
+
+3.00
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Victor Hugo#33
+Victor Hugo
+Gardien de but
+
+Moyenne
+
+79
+
+Matchs
+
+3
+
+Buts enc.
+
+5
+
+Ratio
+
+1.67
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Matheus 'Dedo'#14
+Matheus 'Dedo'
+Défenseur
+
+Moyenne
+
+73
+
+MVP du jour
+1
+MVP du match
+1
+Matchs
+
+9
+
+Buts
+
+6
+
+Passes dé.
+
+2
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Jeffinho Honorato#12
+Jeffinho Honorato
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+9
+
+Buts
+
+3
+
+Passes dé.
+
+3
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Renan Pizzo#61
+Renan Pizzo
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+2
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Cleberson 'C99'
+Cleberson 'C99'
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+4
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Juninho Manella#17
+Juninho Manella
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Leleti Garcia#11
+Leleti Garcia
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+6
+
+Buts
+
+3
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Lipão Pinheiro#10
+Lipão Pinheiro
+Attaquant
+
+Moyenne
+
+-
+
+MVP du match
+5
+Matchs
+
+8
+
+Buts
+
+17
+
+Passes dé.
+
+0
+
+Jaunes
+
+3
+
+Rouges
+
+0
+
+Luiz Camilo#9
+Luiz Camilo
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+4
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0

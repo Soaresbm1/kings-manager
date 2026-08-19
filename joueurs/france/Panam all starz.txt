@@ -1,0 +1,597 @@
+Panam all starz :
+
+Yassine Mohammed
+
+Entraîneur
+
+Adama Wagui#16
+Adama Wagui
+Gardien de but
+
+Moyenne
+
+73
+
+MVP du jour
+2
+MVP du match
+2
+Matchs
+
+9
+
+Buts enc.
+
+35
+
+Ratio
+
+3.89
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Hidris Buy-Kante#93
+Hidris Buy-Kante
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+3
+
+Buts enc.
+
+8
+
+Ratio
+
+2.67
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Jordy Gaspar#69
+Jordy Gaspar
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+5
+
+Buts
+
+0
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Nzaba Lungituka#7
+Nzaba Lungituka
+Défenseur
+
+Moyenne
+
+78
+
+Matchs
+
+9
+
+Buts
+
+0
+
+Passes dé.
+
+2
+
+Jaunes
+
+2
+
+Rouges
+
+0
+
+Yazid Ali Abdallah#18
+Yazid Ali Abdallah
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+8
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Andre De Oliveira#27
+Andre De Oliveira
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+9
+
+Buts
+
+3
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Daniel Mendy#87
+Daniel Mendy
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+9
+
+Buts
+
+4
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Hamza Chaib#8
+Hamza Chaib
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+4
+
+Buts
+
+1
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Harrison Manzala
+Harrison Manzala
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+3
+
+Buts
+
+1
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Mohamed Sakkouh#24
+Mohamed Sakkouh
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+9
+
+Buts
+
+2
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Sofiane Ahmed-kadi#10
+Sofiane Ahmed-kadi
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+8
+
+Buts
+
+2
+
+Passes dé.
+
+1
+
+Jaunes
+
+2
+
+Rouges
+
+0
+
+Elijah Boimbo#99
+Elijah Boimbo
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+5
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Souleymane Ouattara#23
+Souleymane Ouattara
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+3
+
+Buts enc.
+
+2
+
+Ratio
+
+0.67
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Yaya Doucoure#75
+Yaya Doucoure
+Gardien de but
+
+Moyenne
+
+75
+
+Matchs
+
+1
+
+Buts enc.
+
+2
+
+Ratio
+
+2.00
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Alaixys Romao#4
+Alaixys Romao
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+4
+
+Buts
+
+1
+
+Passes dé.
+
+1
+
+Jaunes
+
+2
+
+Rouges
+
+0
+
+Rachid Bouhenna#60
+Rachid Bouhenna
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+4
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Eric Mathieu#19
+Eric Mathieu
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+4
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Rayan Forsa
+Rayan Forsa
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+2
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Walid Betterki#9
+Walid Betterki
+Milieu de terrain
+
+Moyenne
+
+-
+
+MVP du match
+1
+Matchs
+
+8
+
+Buts
+
+5
+
+Passes dé.
+
+2
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Florent SINAMA-PONGOLLE#14
+Florent SINAMA-PONGOLLE
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Emmanuel Louisir#95
+Emmanuel Louisir
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0

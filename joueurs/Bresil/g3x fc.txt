@@ -1,0 +1,379 @@
+g3x fc : 
+
+Velho Vamp
+
+Entraîneur
+
+Gabriel Braga#1
+Gabriel Braga
+Gardien de but
+
+Moyenne
+
+79
+
+Matchs
+
+6
+
+Buts enc.
+
+1
+
+Ratio
+
+0.17
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Gabriel Medeiros
+Gabriel Medeiros
+Défenseur
+
+Moyenne
+
+79
+
+Matchs
+
+4
+
+Buts
+
+0
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Gabriel Messias#5
+Gabriel Messias
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+11
+
+Buts
+
+0
+
+Passes dé.
+
+1
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Marinho Filho#4
+Marinho Filho
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+7
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Thiago 'TH' Brito#33
+Thiago 'TH' Brito
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+12
+
+Buts
+
+2
+
+Passes dé.
+
+2
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+João Guimarães#11
+João Guimarães
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+9
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Ryan Lima#77
+Ryan Lima
+Attaquant
+
+Moyenne
+
+75
+
+Matchs
+
+11
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Josildo Barata#98
+Josildo Barata
+Gardien de but
+
+Moyenne
+
+-
+
+MVP du match
+1
+Matchs
+
+12
+
+Buts enc.
+
+40
+
+Ratio
+
+3.33
+
+Jaunes
+
+2
+
+Rouges
+
+0
+
+Wembley Luiz#3
+Wembley Luiz
+Défenseur
+
+Moyenne
+
+82
+
+Matchs
+
+12
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Andreas Vaz#10
+Andreas Vaz
+Milieu de terrain
+
+Moyenne
+
+82
+
+MVP du jour
+1
+MVP du match
+1
+Matchs
+
+12
+
+Buts
+
+10
+
+Passes dé.
+
+3
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Matheus Rufino#8
+Matheus Rufino
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+11
+
+Buts
+
+1
+
+Passes dé.
+
+2
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Kelvin Oliveira#9
+Kelvin Oliveira
+Attaquant
+
+Moyenne
+
+88
+
+MVP du jour
+3
+MVP du match
+8
+Matchs
+
+12
+
+Buts
+
+33
+
+Passes dé.
+
+6
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Ton 'Spider'#12
+Ton 'Spider'
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+11
+
+Buts
+
+9
+
+Passes dé.
+
+3
+
+Jaunes
+
+1
+
+Rouges
+
+0

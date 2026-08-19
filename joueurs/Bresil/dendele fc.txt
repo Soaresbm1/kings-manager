@@ -1,0 +1,371 @@
+dendele fc :
+
+Preto
+
+Entraîneur
+
+Maikon Santos#30
+Maikon Santos
+Gardien de but
+
+Moyenne
+
+77
+
+Matchs
+
+2
+
+Buts enc.
+
+1
+
+Ratio
+
+0.50
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Gui Carvalho#14
+Gui Carvalho
+Défenseur
+
+Moyenne
+
+77
+
+Matchs
+
+10
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Leonardo 'Belletti'#4
+Leonardo 'Belletti'
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+8
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Bruninho Mandarino#70
+Bruninho Mandarino
+Milieu de terrain
+
+Moyenne
+
+66
+
+Matchs
+
+8
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Gabriel Repulho#16
+Gabriel Repulho
+Attaquant
+
+Moyenne
+
+78
+
+Matchs
+
+8
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+1
+
+Luís Henrique 'Boolt'#19
+Luís Henrique 'Boolt'
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+3
+
+Buts
+
+1
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Nicollas Nascimento#9
+Nicollas Nascimento
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+10
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Gustavo Húngaro#1
+Gustavo Húngaro
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+10
+
+Buts enc.
+
+44
+
+Ratio
+
+4.40
+
+Jaunes
+
+2
+
+Rouges
+
+0
+
+Lyncoln Oliveira#2
+Lyncoln Oliveira
+Défenseur
+
+Moyenne
+
+-
+
+MVP du match
+2
+Matchs
+
+9
+
+Buts
+
+12
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Cristhian 'Canhoto'#6
+Cristhian 'Canhoto'
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+9
+
+Buts
+
+4
+
+Passes dé.
+
+3
+
+Jaunes
+
+3
+
+Rouges
+
+0
+
+Marquinhos Samora#12
+Marquinhos Samora
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+10
+
+Buts
+
+1
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Lucas 'L7'#7
+Lucas 'L7'
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+10
+
+Buts
+
+6
+
+Passes dé.
+
+4
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Ryan Soares#11
+Ryan Soares
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+10
+
+Buts
+
+6
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
