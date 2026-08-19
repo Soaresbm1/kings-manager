@@ -1,24 +1,32 @@
 #
-# Telecharge les photos des joueurs Kings League Espagne (source officielle
-# kingsleague.pro) et les place au bon endroit dans le repo kings-manager,
-# puis (optionnel) commit + push.
+# Telecharge les photos des joueurs Kings League (source officielle
+# kingsleague.pro) pour un pays donne, et les place au bon endroit dans le
+# repo kings-manager, puis (optionnel) commit + push.
 #
 # Utilisation :
-#   1. Place ce script et "espagne_manifest.csv" a la racine de ton clone
-#      local du repo kings-manager (le dossier qui contient index.html).
-#   2. Dans le terminal PowerShell, lance :
-#        powershell -ExecutionPolicy Bypass -File .\download_and_push.ps1
-#      (ou clique droit sur le fichier > "Executer avec PowerShell")
+#   1. Place ce script et le(s) fichier(s) "<pays>_manifest.csv" a la racine
+#      de ton clone local du repo kings-manager (a cote de index.html).
+#   2. Dans le terminal PowerShell, lance (exemple pour l'Italie) :
+#        powershell -ExecutionPolicy Bypass -File .\download_and_push.ps1 -Country italie
+#      Pays possibles : espagne, italie, allemagne, mexique (au fur et a
+#      mesure qu'on les traite).
 #
+
+param(
+    [Parameter(Mandatory=$true)]
+    [string]$Country
+)
 
 $ErrorActionPreference = "Stop"
 
-$Manifest  = "espagne_manifest.csv"
-$TargetDir = "images/players/espagne"
+$Manifest  = "${Country}_manifest.csv"
+$NotFound  = "${Country}_not_found.txt"
+$TargetDir = "images/players/$Country"
 $UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"
 
 if (-not (Test-Path $Manifest)) {
-    Write-Host "Erreur : $Manifest introuvable. Lance ce script depuis le dossier ou tu l'as copie." -ForegroundColor Red
+    Write-Host "Erreur : $Manifest introuvable. Lance ce script depuis le dossier ou tu l'as copie," -ForegroundColor Red
+    Write-Host "et verifie que le fichier CSV du bon pays est bien a cote." -ForegroundColor Red
     exit 1
 }
 
@@ -74,20 +82,22 @@ foreach ($row in $rows) {
 }
 
 Write-Host ""
-Write-Host "Termine : $okCount photos telechargees, $($failList.Count) echecs."
+Write-Host "Termine ($Country) : $okCount photos telechargees, $($failList.Count) echecs."
 if ($failList.Count -gt 0) {
     Write-Host "Fichiers en echec (reseau/URL invalide) :"
     $failList | ForEach-Object { Write-Host " - $_" }
 }
 Write-Host ""
-Write-Host "Les joueurs sans photo officielle disponible (39) sont listes dans espagne_not_found.txt"
-Write-Host "(le jeu affiche automatiquement leurs initiales, rien a faire de plus pour eux)."
-Write-Host ""
+if (Test-Path $NotFound) {
+    Write-Host "Les joueurs sans photo officielle disponible sont listes dans $NotFound"
+    Write-Host "(le jeu affiche automatiquement leurs initiales, rien a faire de plus pour eux)."
+    Write-Host ""
+}
 
 $reply = Read-Host "Committer et pousser ces changements sur GitHub maintenant ? [y/N]"
 if ($reply -match '^[Yy]$') {
     git add $TargetDir
-    git commit -m "Ajout des photos des joueurs Espagne (Kings League, source officielle kingsleague.pro)"
+    git commit -m "Ajout des photos des joueurs $Country (Kings League, source officielle kingsleague.pro)"
     git push
     Write-Host "Pousse sur GitHub."
 } else {
