@@ -1,0 +1,5526 @@
+equipe Mexique :
+
+
+aniquiladores fc :
+
+Sergio Verdirame
+
+Entraîneur
+
+Erik Fraire#1
+Erik Fraire
+Gardien de but
+
+Moyenne
+
+82
+
+Matchs
+
+2
+
+Buts enc.
+
+6
+
+Ratio
+
+3.00
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Nelson Velandia#12
+Nelson Velandia
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+2
+
+Buts enc.
+
+5
+
+Ratio
+
+2.50
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Denilson Lobón#47
+Denilson Lobón
+Défenseur
+
+Moyenne
+
+82
+
+Matchs
+
+2
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Martín 'Cani' Rodríguez#5
+Martín 'Cani' Rodríguez
+Défenseur
+
+Moyenne
+
+82
+
+Matchs
+
+2
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Patricio 'Pato' Arias#21
+Patricio 'Pato' Arias
+Défenseur
+
+Moyenne
+
+83
+
+Matchs
+
+2
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Brayan González#20
+Brayan González
+Milieu de terrain
+
+Moyenne
+
+80
+
+Matchs
+
+2
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Brayan Hernández#7
+Brayan Hernández
+Milieu de terrain
+
+Moyenne
+
+83
+
+Matchs
+
+2
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Brihan Gutiérrez#11
+Brihan Gutiérrez
+Milieu de terrain
+
+Moyenne
+
+82
+
+Matchs
+
+2
+
+Buts
+
+1
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Daviz Junco#10
+Daviz Junco
+Milieu de terrain
+
+Moyenne
+
+83
+
+Matchs
+
+2
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Obed Martínez#30
+Obed Martínez
+Milieu de terrain
+
+Moyenne
+
+85
+
+Matchs
+
+2
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Axur Quintero#80
+Axur Quintero
+Attaquant
+
+Moyenne
+
+82
+
+Matchs
+
+2
+
+Buts
+
+1
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Diego Martínez#77
+Diego Martínez
+Attaquant
+
+Moyenne
+
+85
+
+Matchs
+
+2
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Jacob 'Lobo' Morales#19
+Jacob 'Lobo' Morales
+Attaquant
+
+Moyenne
+
+83
+
+Matchs
+
+2
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+
+Atlético Parceros FC :
+
+Luis Alfonso Álvarez
+
+Entraîneur
+
+Felipe Urán#1
+Felipe Urán
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+3
+
+Buts enc.
+
+4
+
+Ratio
+
+1.33
+
+Jaunes
+
+0
+
+Rouges
+
+1
+
+Simón Duque#12
+Simón Duque
+Gardien de but
+
+Moyenne
+
+85
+
+Matchs
+
+4
+
+Buts enc.
+
+17
+
+Ratio
+
+4.25
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Andrés Osorno#8
+Andrés Osorno
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+4
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Cristian Hernández#88
+Cristian Hernández
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+4
+
+Buts
+
+3
+
+Passes dé.
+
+2
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+David Loaiza#17
+David Loaiza
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+4
+
+Buts
+
+3
+
+Passes dé.
+
+1
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Juan Tilano#18
+Juan Tilano
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+4
+
+Buts
+
+0
+
+Passes dé.
+
+1
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Kevin Mejía#9
+Kevin Mejía
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+3
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Marlon Ramírez#20
+Marlon Ramírez
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+4
+
+Buts
+
+1
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Alexis Gómez#99
+Alexis Gómez
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+4
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Angellot Caro#10
+Angellot Caro
+Attaquant
+
+Moyenne
+
+83
+
+Matchs
+
+4
+
+Buts
+
+2
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Jhon Palacios#24
+Jhon Palacios
+Attaquant
+
+Moyenne
+
+82
+
+Matchs
+
+2
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Julio Perea#7
+Julio Perea
+Attaquant
+
+Moyenne
+
+82
+
+Matchs
+
+1
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Maicol Hernández#11
+Maicol Hernández
+Attaquant
+
+Moyenne
+
+-
+
+MVP du match
+1
+Matchs
+
+4
+
+Buts
+
+7
+
+Passes dé.
+
+3
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Club de Cuervos :
+
+Jorge González
+
+Entraîneur
+
+Armando Chávez#27
+Armando Chávez
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts enc.
+
+3
+
+Ratio
+
+3.00
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Bernaldino Valdovinos#1
+Bernaldino Valdovinos
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+7
+
+Buts enc.
+
+28
+
+Ratio
+
+4.00
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Hugo Murga#23
+Hugo Murga
+Gardien de but
+
+Moyenne
+
+83
+
+Matchs
+
+9
+
+Buts enc.
+
+42
+
+Ratio
+
+4.67
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+César Romo#7
+César Romo
+Défenseur
+
+Moyenne
+
+82
+
+Matchs
+
+16
+
+Buts
+
+6
+
+Passes dé.
+
+3
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Edson González#21
+Edson González
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+9
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Jorge Escamilla#5
+Jorge Escamilla
+Défenseur
+
+Moyenne
+
+81
+
+Matchs
+
+10
+
+Buts
+
+4
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Marlon Castillo#2
+Marlon Castillo
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+9
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Adriano Nunes#19
+Adriano Nunes
+Milieu de terrain
+
+Moyenne
+
+-
+
+MVP du jour
+1
+MVP du match
+4
+Matchs
+
+16
+
+Buts
+
+21
+
+Passes dé.
+
+15
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Ángel Ayala#93
+Ángel Ayala
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+13
+
+Buts
+
+5
+
+Passes dé.
+
+2
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Brandon Magaña#15
+Brandon Magaña
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+15
+
+Buts
+
+4
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Edder Vargas#20
+Edder Vargas
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+11
+
+Buts
+
+2
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Fausto Alemán#99
+Fausto Alemán
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+4
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+José Askenazi#10
+José Askenazi
+Milieu de terrain
+
+Moyenne
+
+81
+
+MVP du jour
+1
+MVP du match
+5
+Matchs
+
+14
+
+Buts
+
+24
+
+Passes dé.
+
+3
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Roberto Uribe#6
+Roberto Uribe
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+12
+
+Buts
+
+1
+
+Passes dé.
+
+3
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Baruc Ochoa#9
+Baruc Ochoa
+Attaquant
+
+Moyenne
+
+83
+
+Matchs
+
+3
+
+Buts
+
+3
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Diego Velázquez#13
+Diego Velázquez
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+4
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Miguel Morales#77
+Miguel Morales
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+6
+
+Buts
+
+0
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Mixtly Cruz#22
+Mixtly Cruz
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+2
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Luis Valdés#98
+Luis Valdés
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+2
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Salvador Navarro#17
+Salvador Navarro
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+11
+
+Buts
+
+2
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Galácticos del Caribe :
+
+
+Lucas Ayala
+
+Entraîneur
+
+Baruc Mateos#18
+Baruc Mateos
+Gardien de but
+
+Moyenne
+
+82
+
+Matchs
+
+4
+
+Buts enc.
+
+6
+
+Ratio
+
+1.50
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Iván Muñoz#1
+Iván Muñoz
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+5
+
+Buts enc.
+
+12
+
+Ratio
+
+2.40
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Jesús Carbajal#46
+Jesús Carbajal
+Gardien de but
+
+Moyenne
+
+79
+
+MVP du match
+2
+Matchs
+
+13
+
+Buts enc.
+
+43
+
+Ratio
+
+3.31
+
+Jaunes
+
+2
+
+Rouges
+
+0
+
+Daniel Mendoza#26
+Daniel Mendoza
+Défenseur
+
+Moyenne
+
+80
+
+Matchs
+
+13
+
+Buts
+
+1
+
+Passes dé.
+
+1
+
+Jaunes
+
+2
+
+Rouges
+
+0
+
+Erick Madrigal#7
+Erick Madrigal
+Défenseur
+
+Moyenne
+
+81
+
+Matchs
+
+13
+
+Buts
+
+1
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Jairo Tapie#17
+Jairo Tapie
+Défenseur
+
+Moyenne
+
+81
+
+Matchs
+
+13
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Alejandro 'Maro' Ortega#11
+Alejandro 'Maro' Ortega
+Milieu de terrain
+
+Moyenne
+
+83
+
+Matchs
+
+13
+
+Buts
+
+4
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Diego Franco#10
+Diego Franco
+Milieu de terrain
+
+Moyenne
+
+81
+
+Matchs
+
+12
+
+Buts
+
+2
+
+Passes dé.
+
+0
+
+Jaunes
+
+2
+
+Rouges
+
+0
+
+Erick Guzmán#6
+Erick Guzmán
+Milieu de terrain
+
+Moyenne
+
+83
+
+Matchs
+
+13
+
+Buts
+
+4
+
+Passes dé.
+
+3
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+José Hernández#88
+José Hernández
+Milieu de terrain
+
+Moyenne
+
+-
+
+MVP du match
+1
+Matchs
+
+13
+
+Buts
+
+11
+
+Passes dé.
+
+10
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Pabel Montes#8
+Pabel Montes
+Milieu de terrain
+
+Moyenne
+
+81
+
+Matchs
+
+13
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Pablo Gómez#9
+Pablo Gómez
+Milieu de terrain
+
+Moyenne
+
+83
+
+MVP du match
+3
+Matchs
+
+13
+
+Buts
+
+17
+
+Passes dé.
+
+4
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Kevin Cardona#16
+Kevin Cardona
+Attaquant
+
+Moyenne
+
+-
+
+MVP du match
+1
+Matchs
+
+12
+
+Buts
+
+11
+
+Passes dé.
+
+4
+
+Jaunes
+
+3
+
+Rouges
+
+0
+
+Andres Valiente#32
+Andres Valiente
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Jhon Miranda#24
+Jhon Miranda
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+2
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+
+Guerrilla FC :
+
+Rodrigo Ávila
+
+Entraîneur
+
+Jair Peláez#33
+Jair Peláez
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+3
+
+Buts enc.
+
+5
+
+Ratio
+
+1.67
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Omar Láscari#1
+Omar Láscari
+Gardien de but
+
+Moyenne
+
+81
+
+Matchs
+
+9
+
+Buts enc.
+
+18
+
+Ratio
+
+2.00
+
+Jaunes
+
+0
+
+Rouges
+
+1
+
+Said Zamora#27
+Said Zamora
+Gardien de but
+
+Moyenne
+
+-
+
+MVP du match
+1
+Matchs
+
+7
+
+Buts enc.
+
+26
+
+Ratio
+
+3.71
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Adrián Mora#16
+Adrián Mora
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+8
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Alejandro Chimal#25
+Alejandro Chimal
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+4
+
+Buts
+
+1
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Eduardo Velarde#3
+Eduardo Velarde
+Défenseur
+
+Moyenne
+
+81
+
+Matchs
+
+11
+
+Buts
+
+2
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Juan Carlos Silva#15
+Juan Carlos Silva
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+4
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Miguel Lizardo#22
+Miguel Lizardo
+Défenseur
+
+Moyenne
+
+82
+
+Matchs
+
+0
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Rafael Cid#26
+Rafael Cid
+Défenseur
+
+Moyenne
+
+82
+
+MVP du match
+1
+Matchs
+
+5
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Abraham Morales#10
+Abraham Morales
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+10
+
+Buts
+
+11
+
+Passes dé.
+
+6
+
+Jaunes
+
+3
+
+Rouges
+
+0
+
+Gerardo Ramírez#9
+Gerardo Ramírez
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+10
+
+Buts
+
+4
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+1
+
+Gustavo 'Furby' Guillén#7
+Gustavo 'Furby' Guillén
+Milieu de terrain
+
+Moyenne
+
+84
+
+MVP du match
+1
+Matchs
+
+11
+
+Buts
+
+10
+
+Passes dé.
+
+4
+
+Jaunes
+
+2
+
+Rouges
+
+0
+
+Abel Vega#4
+Abel Vega
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+4
+
+Buts
+
+1
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Isaac Zepeda#19
+Isaac Zepeda
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+7
+
+Buts
+
+2
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Morrison Palma#8
+Morrison Palma
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+9
+
+Buts
+
+1
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Patricio Zerecero#11
+Patricio Zerecero
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+4
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Yudier Prado#91
+Yudier Prado
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+7
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Albano Rodríguez#6
+Albano Rodríguez
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+7
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Alain Villanueva#72
+Alain Villanueva
+Milieu de terrain
+
+Moyenne
+
+78
+
+Matchs
+
+1
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Carlos Mata#36
+Carlos Mata
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts
+
+1
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+
+kru fc :
+
+Juan Manuel Miranda
+
+Entraîneur
+
+Erik Lugo#12
+Erik Lugo
+Gardien de but
+
+Moyenne
+
+81
+
+Matchs
+
+9
+
+Buts enc.
+
+9
+
+Ratio
+
+1.00
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Jeancob Ramírez#1
+Jeancob Ramírez
+Gardien de but
+
+Moyenne
+
+80
+
+MVP du match
+1
+Matchs
+
+11
+
+Buts enc.
+
+39
+
+Ratio
+
+3.55
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Dago Campari#5
+Dago Campari
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+12
+
+Buts
+
+1
+
+Passes dé.
+
+0
+
+Jaunes
+
+3
+
+Rouges
+
+1
+
+Mauricio Reyna#45
+Mauricio Reyna
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+12
+
+Buts
+
+0
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Christopher Pedraza#13
+Christopher Pedraza
+Milieu de terrain
+
+Moyenne
+
+81
+
+Matchs
+
+11
+
+Buts
+
+5
+
+Passes dé.
+
+2
+
+Jaunes
+
+2
+
+Rouges
+
+0
+
+Edson Trejo#11
+Edson Trejo
+Milieu de terrain
+
+Moyenne
+
+79
+
+Matchs
+
+12
+
+Buts
+
+1
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Gonzalo Lescano#27
+Gonzalo Lescano
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+11
+
+Buts
+
+8
+
+Passes dé.
+
+4
+
+Jaunes
+
+2
+
+Rouges
+
+0
+
+Santiago Rotemberg#6
+Santiago Rotemberg
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+10
+
+Buts
+
+1
+
+Passes dé.
+
+1
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Aaron Martínez#9
+Aaron Martínez
+Attaquant
+
+Moyenne
+
+-
+
+MVP du match
+1
+Matchs
+
+12
+
+Buts
+
+14
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Alberto García#28
+Alberto García
+Attaquant
+
+Moyenne
+
+83
+
+Matchs
+
+11
+
+Buts
+
+3
+
+Passes dé.
+
+3
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Facu Romero#17
+Facu Romero
+Attaquant
+
+Moyenne
+
+79
+
+MVP du jour
+1
+MVP du match
+6
+Matchs
+
+12
+
+Buts
+
+21
+
+Passes dé.
+
+9
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Tomás Sandoval#7
+Tomás Sandoval
+Attaquant
+
+Moyenne
+
+-
+
+MVP du match
+1
+Matchs
+
+11
+
+Buts
+
+4
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Donovan Hernandez#23
+Donovan Hernandez
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts enc.
+
+0
+
+Ratio
+
+0.00
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Alonso Ferreira#14
+Alonso Ferreira
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+
+Los Aliens FC :
+
+David Cabrera
+
+Entraîneur
+
+James Hernández#12
+James Hernández
+Gardien de but
+
+Moyenne
+
+82
+
+Matchs
+
+1
+
+Buts enc.
+
+2
+
+Ratio
+
+2.00
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Julio Torres#1
+Julio Torres
+Gardien de but
+
+Moyenne
+
+81
+
+Matchs
+
+12
+
+Buts enc.
+
+50
+
+Ratio
+
+4.17
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Alan Mendoza#28
+Alan Mendoza
+Défenseur
+
+Moyenne
+
+84
+
+Matchs
+
+12
+
+Buts
+
+5
+
+Passes dé.
+
+0
+
+Jaunes
+
+2
+
+Rouges
+
+0
+
+Daniel Ríos#42
+Daniel Ríos
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+4
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Erik Vera#17
+Erik Vera
+Défenseur
+
+Moyenne
+
+83
+
+Matchs
+
+11
+
+Buts
+
+1
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Brayam Nazarit#19
+Brayam Nazarit
+Milieu de terrain
+
+Moyenne
+
+81
+
+MVP du match
+1
+Matchs
+
+12
+
+Buts
+
+6
+
+Passes dé.
+
+5
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+David Ortiz#10
+David Ortiz
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+11
+
+Buts
+
+5
+
+Passes dé.
+
+2
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Jesús 'Chuy' Pérez#8
+Jesús 'Chuy' Pérez
+Milieu de terrain
+
+Moyenne
+
+83
+
+MVP du match
+1
+Matchs
+
+12
+
+Buts
+
+9
+
+Passes dé.
+
+3
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Jorge Meléndez#20
+Jorge Meléndez
+Milieu de terrain
+
+Moyenne
+
+80
+
+Matchs
+
+12
+
+Buts
+
+4
+
+Passes dé.
+
+2
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Juan Ramírez#7
+Juan Ramírez
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+11
+
+Buts
+
+8
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+1
+
+Ricardo Valencia#11
+Ricardo Valencia
+Milieu de terrain
+
+Moyenne
+
+79
+
+Matchs
+
+11
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Diego Abella#9
+Diego Abella
+Attaquant
+
+Moyenne
+
+-
+
+MVP du match
+1
+Matchs
+
+11
+
+Buts
+
+3
+
+Passes dé.
+
+2
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Alejandro Sanchez#80
+Alejandro Sanchez
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Devin Vega#98
+Devin Vega
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+2
+
+Buts
+
+1
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Los Chamos FC :
+
+Jos Gartland
+
+Entraîneur
+
+Carlos Escalona#77
+Carlos Escalona
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+11
+
+Buts enc.
+
+13
+
+Ratio
+
+1.18
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Cristian Hernández#1
+Cristian Hernández
+Gardien de but
+
+Moyenne
+
+-
+
+MVP du match
+1
+Matchs
+
+12
+
+Buts enc.
+
+48
+
+Ratio
+
+4.00
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Alexis López#14
+Alexis López
+Défenseur
+
+Moyenne
+
+80
+
+Matchs
+
+12
+
+Buts
+
+1
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Tonatiuh Mejía#19
+Tonatiuh Mejía
+Défenseur
+
+Moyenne
+
+83
+
+MVP du match
+2
+Matchs
+
+11
+
+Buts
+
+8
+
+Passes dé.
+
+3
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Uriel Zuart#5
+Uriel Zuart
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+9
+
+Buts
+
+4
+
+Passes dé.
+
+1
+
+Jaunes
+
+3
+
+Rouges
+
+0
+
+Álvaro Bocanegra#17
+Álvaro Bocanegra
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+12
+
+Buts
+
+3
+
+Passes dé.
+
+2
+
+Jaunes
+
+2
+
+Rouges
+
+0
+
+Christian Lagunas#6
+Christian Lagunas
+Milieu de terrain
+
+Moyenne
+
+80
+
+Matchs
+
+12
+
+Buts
+
+6
+
+Passes dé.
+
+7
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Irvin Mojica#10
+Irvin Mojica
+Milieu de terrain
+
+Moyenne
+
+83
+
+Matchs
+
+6
+
+Buts
+
+1
+
+Passes dé.
+
+1
+
+Jaunes
+
+2
+
+Rouges
+
+0
+
+Jesús López#18
+Jesús López
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+12
+
+Buts
+
+3
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Juan Cisneros#22
+Juan Cisneros
+Milieu de terrain
+
+Moyenne
+
+82
+
+Matchs
+
+11
+
+Buts
+
+5
+
+Passes dé.
+
+2
+
+Jaunes
+
+0
+
+Rouges
+
+1
+
+Román Ramírez#8
+Román Ramírez
+Milieu de terrain
+
+Moyenne
+
+82
+
+Matchs
+
+6
+
+Buts
+
+2
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+1
+
+Donovan Alba#7
+Donovan Alba
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+2
+
+Buts
+
+1
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Genaro Castillo#34
+Genaro Castillo
+Attaquant
+
+Moyenne
+
+83
+
+Matchs
+
+12
+
+Buts
+
+15
+
+Passes dé.
+
+4
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Leo 'Makina' Herrlein#99
+Leo 'Makina' Herrlein
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+2
+
+Buts
+
+2
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Alan Sanchez#86
+Alan Sanchez
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Gustavo Miranda#9
+Gustavo Miranda
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts
+
+2
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Salvador Navarro#29
+Salvador Navarro
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+11
+
+Buts
+
+2
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+José Vizcarra#9
+José Vizcarra
+Attaquant
+
+Moyenne
+
+83
+
+Matchs
+
+1
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Peluche Caligari :
+Fernando Espinosa
+
+Entraîneur
+
+Daniel Quiroz#19
+Daniel Quiroz
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+0
+
+Buts enc.
+
+0
+
+Ratio
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Moisés Dabbah#1
+Moisés Dabbah
+Gardien de but
+
+Moyenne
+
+84
+
+MVP du match
+1
+Matchs
+
+12
+
+Buts enc.
+
+53
+
+Ratio
+
+4.42
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Carlos 'Camello' Valdez#6
+Carlos 'Camello' Valdez
+Défenseur
+
+Moyenne
+
+-
+
+MVP du match
+1
+Matchs
+
+10
+
+Buts
+
+1
+
+Passes dé.
+
+1
+
+Jaunes
+
+2
+
+Rouges
+
+0
+
+Josecarlos Van Rankin#2
+Josecarlos Van Rankin
+Défenseur
+
+Moyenne
+
+83
+
+Matchs
+
+11
+
+Buts
+
+6
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Aldair Giorgana#8
+Aldair Giorgana
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+10
+
+Buts
+
+8
+
+Passes dé.
+
+3
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Ángel 'Curry' Castro#70
+Ángel 'Curry' Castro
+Milieu de terrain
+
+Moyenne
+
+83
+
+Matchs
+
+6
+
+Buts
+
+2
+
+Passes dé.
+
+0
+
+Jaunes
+
+2
+
+Rouges
+
+0
+
+Eder Giorgana#9
+Eder Giorgana
+Milieu de terrain
+
+Moyenne
+
+-
+
+MVP du match
+2
+Matchs
+
+10
+
+Buts
+
+7
+
+Passes dé.
+
+3
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Fernando Morales#11
+Fernando Morales
+Milieu de terrain
+
+Moyenne
+
+79
+
+Matchs
+
+12
+
+Buts
+
+4
+
+Passes dé.
+
+2
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Hugo Rodríguez#17
+Hugo Rodríguez
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+11
+
+Buts
+
+1
+
+Passes dé.
+
+4
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Mauricio Huitrón#94
+Mauricio Huitrón
+Milieu de terrain
+
+Moyenne
+
+81
+
+Matchs
+
+12
+
+Buts
+
+2
+
+Passes dé.
+
+2
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Michelle 'Chucky' Castro#81
+Michelle 'Chucky' Castro
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+9
+
+Buts
+
+2
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Pablo Barrera#18
+Pablo Barrera
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+2
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Eddie Sánchez#13
+Eddie Sánchez
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+7
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Santiago Lagarde#10
+Santiago Lagarde
+Attaquant
+
+Moyenne
+
+80
+
+Matchs
+
+11
+
+Buts
+
+8
+
+Passes dé.
+
+2
+
+Jaunes
+
+2
+
+Rouges
+
+0
+
+Aarón Del Real#31
+Aarón Del Real
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Christian Gimenez#7
+Christian Gimenez
+Milieu de terrain
+
+Moyenne
+
+-
+
+MVP du jour
+1
+MVP du match
+1
+Matchs
+
+8
+
+Buts
+
+2
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+César Vallejo#14
+César Vallejo
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+
+
+Persas FC :
+
+Gabriela Batocletti
+
+Entraîneur
+
+Antonio Monterde#1
+Antonio Monterde
+Gardien de but
+
+Moyenne
+
+83
+
+Matchs
+
+12
+
+Buts enc.
+
+58
+
+Ratio
+
+4.83
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+David Acuña#30
+David Acuña
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+3
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Gustavo Ramos#4
+Gustavo Ramos
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+12
+
+Buts
+
+1
+
+Passes dé.
+
+1
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Iván Monroy#20
+Iván Monroy
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Kevin Valdez#99
+Kevin Valdez
+Défenseur
+
+Moyenne
+
+81
+
+Matchs
+
+5
+
+Buts
+
+6
+
+Passes dé.
+
+2
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Rodrigo González#2
+Rodrigo González
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+9
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Irving Zurita#34
+Irving Zurita
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+5
+
+Buts
+
+0
+
+Passes dé.
+
+1
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Luis Amador#8
+Luis Amador
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+9
+
+Buts
+
+3
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+1
+
+Obed Martínez#10
+Obed Martínez
+Milieu de terrain
+
+Moyenne
+
+85
+
+MVP du match
+5
+Matchs
+
+12
+
+Buts
+
+9
+
+Passes dé.
+
+6
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Óscar Gómez#13
+Óscar Gómez
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+5
+
+Buts
+
+2
+
+Passes dé.
+
+2
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Yair Arias#22
+Yair Arias
+Milieu de terrain
+
+Moyenne
+
+81
+
+Matchs
+
+12
+
+Buts
+
+5
+
+Passes dé.
+
+2
+
+Jaunes
+
+2
+
+Rouges
+
+0
+
+Diego Rodríguez#9
+Diego Rodríguez
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+10
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+José Rochín#7
+José Rochín
+Attaquant
+
+Moyenne
+
+82
+
+Matchs
+
+10
+
+Buts
+
+6
+
+Passes dé.
+
+1
+
+Jaunes
+
+1
+
+Rouges
+
+1
+
+Josenildo Santos#11
+Josenildo Santos
+Attaquant
+
+Moyenne
+
+-
+
+MVP du match
+1
+Matchs
+
+10
+
+Buts
+
+14
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Marco Granados#17
+Marco Granados
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+4
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Gerardo Chávez#25
+Gerardo Chávez
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts
+
+1
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Irving Rodríguez#77
+Irving Rodríguez
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+2
+
+Buts
+
+2
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+José Juan Vázquez#23
+José Juan Vázquez
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Paulo Santos#17
+Paulo Santos
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+3
+
+Buts
+
+1
+
+Passes dé.
+
+2
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Raniza FC :
+
+Manu Lanzarote
+
+Entraîneur
+
+Jonathan Sánchez#1
+Jonathan Sánchez
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+2
+
+Buts enc.
+
+3
+
+Ratio
+
+1.50
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Matías Herrera#99
+Matías Herrera
+Gardien de but
+
+Moyenne
+
+-
+
+MVP du match
+1
+Matchs
+
+12
+
+Buts enc.
+
+64
+
+Ratio
+
+5.33
+
+Jaunes
+
+3
+
+Rouges
+
+0
+
+Eder López#4
+Eder López
+Défenseur
+
+Moyenne
+
+81
+
+Matchs
+
+12
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Ezequiel Luna#19
+Ezequiel Luna
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+13
+
+Buts
+
+7
+
+Passes dé.
+
+1
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Héctor de la Fuente#16
+Héctor de la Fuente
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+3
+
+Buts
+
+1
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Juande Martínez#23
+Juande Martínez
+Défenseur
+
+Moyenne
+
+81
+
+Matchs
+
+12
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+3
+
+Rouges
+
+0
+
+Lautaro Martínez#22
+Lautaro Martínez
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+12
+
+Buts
+
+1
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Matias Rojas#80
+Matias Rojas
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+2
+
+Buts
+
+2
+
+Passes dé.
+
+2
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Donovan Martínez#21
+Donovan Martínez
+Milieu de terrain
+
+Moyenne
+
+80
+
+Matchs
+
+13
+
+Buts
+
+2
+
+Passes dé.
+
+5
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Juan Araya#8
+Juan Araya
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+13
+
+Buts
+
+9
+
+Passes dé.
+
+6
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Mathías Vidangossy#10
+Mathías Vidangossy
+Milieu de terrain
+
+Moyenne
+
+85
+
+Matchs
+
+11
+
+Buts
+
+6
+
+Passes dé.
+
+4
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Alexis Silva#90
+Alexis Silva
+Attaquant
+
+Moyenne
+
+-
+
+MVP du jour
+1
+MVP du match
+5
+Matchs
+
+13
+
+Buts
+
+17
+
+Passes dé.
+
+8
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Alfonso Nieto#14
+Alfonso Nieto
+Attaquant
+
+Moyenne
+
+81
+
+Matchs
+
+13
+
+Buts
+
+6
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Obeth Rojas#12
+Obeth Rojas
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts enc.
+
+4
+
+Ratio
+
+4.00
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Manu Lanzarote#67
+Manu Lanzarote
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+2
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Simios FC :
+
+Omar Flores
+
+Entraîneur
+
+Jorge Lima#13
+Jorge Lima
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+3
+
+Buts enc.
+
+9
+
+Ratio
+
+3.00
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Luis Huerta#19
+Luis Huerta
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+0
+
+Buts enc.
+
+0
+
+Ratio
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Óscar Medina#1
+Óscar Medina
+Gardien de but
+
+Moyenne
+
+82
+
+MVP du jour
+1
+MVP du match
+2
+Matchs
+
+10
+
+Buts enc.
+
+45
+
+Ratio
+
+4.50
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Erick Sámano#5
+Erick Sámano
+Défenseur
+
+Moyenne
+
+81
+
+Matchs
+
+10
+
+Buts
+
+0
+
+Passes dé.
+
+2
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+George Corral#4
+George Corral
+Défenseur
+
+Moyenne
+
+84
+
+Matchs
+
+10
+
+Buts
+
+1
+
+Passes dé.
+
+2
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Andrés Suárez#11
+Andrés Suárez
+Milieu de terrain
+
+Moyenne
+
+-
+
+MVP du match
+2
+Matchs
+
+11
+
+Buts
+
+18
+
+Passes dé.
+
+2
+
+Jaunes
+
+3
+
+Rouges
+
+0
+
+Gerson García#7
+Gerson García
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+11
+
+Buts
+
+0
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Hatzel Roque#88
+Hatzel Roque
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+7
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+José 'Shaggy' Martínez#12
+José 'Shaggy' Martínez
+Milieu de terrain
+
+Moyenne
+
+83
+
+Matchs
+
+11
+
+Buts
+
+0
+
+Passes dé.
+
+3
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Luis Olascoaga#26
+Luis Olascoaga
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+11
+
+Buts
+
+1
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Cristian González#76
+Cristian González
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+10
+
+Buts
+
+10
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Miguel Rebollo#93
+Miguel Rebollo
+Attaquant
+
+Moyenne
+
+84
+
+Matchs
+
+8
+
+Buts
+
+12
+
+Passes dé.
+
+2
+
+Jaunes
+
+0
+
+Rouges
+
+1
+
+Roberto Pérez#14
+Roberto Pérez
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+11
+
+Buts
+
+3
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Sebastián Sáez#28
+Sebastián Sáez
+Défenseur
+
+Moyenne
+
+80
+
+Matchs
+
+4
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
