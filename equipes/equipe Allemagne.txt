@@ -1,0 +1,3767 @@
+equipe Allemagne :
+
+era colonia : 
+
+Ilija Simunovic
+
+Entraîneur
+
+Dylan Bos#23
+Dylan Bos
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+2
+
+Buts enc.
+
+23
+
+Ratio
+
+11.50
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Jakov Suver#5
+Jakov Suver
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+2
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Nico Czichi#31
+Nico Czichi
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+6
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Joshua Holtby#8
+Joshua Holtby
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+3
+
+Buts
+
+1
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Yoel Yilma#4
+Yoel Yilma
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+7
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Abdelaziz Slimi#7
+Abdelaziz Slimi
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+7
+
+Buts
+
+0
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Ahmed Azirar#11
+Ahmed Azirar
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+7
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Dennis de Sousa#22
+Dennis de Sousa
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+5
+
+Buts
+
+3
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Elias Römers#8
+Elias Römers
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+0
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Erkan Kurucam#46
+Erkan Kurucam
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+2
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Etienne Reck#9
+Etienne Reck
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+5
+
+Buts
+
+3
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Mounir Bouziane#50
+Mounir Bouziane
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+6
+
+Buts
+
+1
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Daniel Maus#1
+Daniel Maus
+Gardien de but
+
+Moyenne
+
+-
+
+MVP du match
+1
+Matchs
+
+5
+
+Buts enc.
+
+28
+
+Ratio
+
+5.60
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Moritz Leitner#10
+Moritz Leitner
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+5
+
+Buts
+
+5
+
+Passes dé.
+
+4
+
+Jaunes
+
+2
+
+Rouges
+
+0
+
+Philipp Klement#21
+Philipp Klement
+Milieu de terrain
+
+Moyenne
+
+-
+
+MVP du match
+1
+Matchs
+
+7
+
+Buts
+
+18
+
+Passes dé.
+
+3
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Fatjon Celani#49
+Fatjon Celani
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+
+g2 fc : 
+
+Malik Hadziavdic
+
+Entraîneur
+
+Ben Zöllner#99
+Ben Zöllner
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+4
+
+Buts enc.
+
+10
+
+Ratio
+
+2.50
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Jack Krause#18
+Jack Krause
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+9
+
+Buts enc.
+
+50
+
+Ratio
+
+5.56
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Ahmed Omairat#47
+Ahmed Omairat
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+9
+
+Buts
+
+1
+
+Passes dé.
+
+1
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Cihan Ucar#61
+Cihan Ucar
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+9
+
+Buts
+
+4
+
+Passes dé.
+
+3
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Mehmet-Can Senocak#77
+Mehmet-Can Senocak
+Milieu de terrain
+
+Moyenne
+
+-
+
+MVP du jour
+1
+MVP du match
+4
+Matchs
+
+9
+
+Buts
+
+21
+
+Passes dé.
+
+1
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Staas Mitko#19
+Staas Mitko
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+9
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Tarik Hadziavdic#10
+Tarik Hadziavdic
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+9
+
+Buts
+
+4
+
+Passes dé.
+
+5
+
+Jaunes
+
+3
+
+Rouges
+
+0
+
+Dennis Öztürk#7
+Dennis Öztürk
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+9
+
+Buts
+
+4
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Halit Bacak#44
+Halit Bacak
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+9
+
+Buts
+
+1
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Smajo Jakupovic#49
+Smajo Jakupovic
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Artin Zardoshtian#27
+Artin Zardoshtian
+Attaquant
+
+Moyenne
+
+-
+
+MVP du match
+1
+Matchs
+
+4
+
+Buts
+
+4
+
+Passes dé.
+
+4
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Kenan Smajlovic#33
+Kenan Smajlovic
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+9
+
+Buts
+
+4
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Mohammed Izal#11
+Mohammed Izal
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+9
+
+Buts
+
+5
+
+Passes dé.
+
+2
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+istanbul united : 
+Ali Amir Mostowfi
+
+Entraîneur
+
+Niklas Reichel#33
+Niklas Reichel
+Gardien de but
+
+Moyenne
+
+-
+
+MVP du jour
+1
+MVP du match
+5
+Matchs
+
+7
+
+Buts enc.
+
+29
+
+Ratio
+
+4.14
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Burak Mus#7
+Burak Mus
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+6
+
+Buts
+
+1
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Kerem Sengün#67
+Kerem Sengün
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+7
+
+Buts
+
+5
+
+Passes dé.
+
+2
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Mardochee Tchakoumi#8
+Mardochee Tchakoumi
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+6
+
+Buts
+
+0
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Murat Saglam#10
+Murat Saglam
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+8
+
+Buts
+
+5
+
+Passes dé.
+
+3
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Oliver Lanwer#42
+Oliver Lanwer
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+8
+
+Buts
+
+1
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Yousef Keshta#14
+Yousef Keshta
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+8
+
+Buts
+
+2
+
+Passes dé.
+
+1
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Max Wilschrey#9
+Max Wilschrey
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+6
+
+Buts
+
+1
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Umut Yildiz#34
+Umut Yildiz
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+8
+
+Buts
+
+3
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Eric Ulrich#52
+Eric Ulrich
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts enc.
+
+9
+
+Ratio
+
+9.00
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Burak Özmen#24
+Burak Özmen
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Ilias Arssi#77
+Ilias Arssi
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+4
+
+Buts
+
+0
+
+Passes dé.
+
+1
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Ali Hassan Hammoud#99
+Ali Hassan Hammoud
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+3
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Amir Ahmadi#29
+Amir Ahmadi
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+7
+
+Buts
+
+4
+
+Passes dé.
+
+1
+
+Jaunes
+
+1
+
+Rouges
+
+1
+
+Jama Telli#49
+Jama Telli
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+4
+
+Buts
+
+2
+
+Passes dé.
+
+1
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Sangar Aziz#80
+Sangar Aziz
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+8
+
+Buts
+
+10
+
+Passes dé.
+
+3
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+kaktus kickers : 
+Dominic Reinold
+
+Entraîneur
+
+
+David Strack
+
+Entraîneur
+
+Kaan Gökcesin#12
+Kaan Gökcesin
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+7
+
+Buts enc.
+
+43
+
+Ratio
+
+6.14
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Lennard Hövel#1
+Lennard Hövel
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts enc.
+
+9
+
+Ratio
+
+9.00
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Daniel Bleja#99
+Daniel Bleja
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+8
+
+Buts
+
+0
+
+Passes dé.
+
+1
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Dario Bezerra#57
+Dario Bezerra
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+8
+
+Buts
+
+1
+
+Passes dé.
+
+1
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Taner Yalcin#8
+Taner Yalcin
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+6
+
+Buts
+
+1
+
+Passes dé.
+
+2
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Bilal Abdallah#26
+Bilal Abdallah
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+4
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Gaspard Fehlinger#36
+Gaspard Fehlinger
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+8
+
+Buts
+
+7
+
+Passes dé.
+
+4
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Mohamed Dahas#19
+Mohamed Dahas
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+6
+
+Buts
+
+3
+
+Passes dé.
+
+4
+
+Jaunes
+
+2
+
+Rouges
+
+1
+
+Noah Can#16
+Noah Can
+Attaquant
+
+Moyenne
+
+-
+
+MVP du match
+2
+Matchs
+
+8
+
+Buts
+
+3
+
+Passes dé.
+
+1
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Yazid Tambo#10
+Yazid Tambo
+Attaquant
+
+Moyenne
+
+-
+
+MVP du match
+1
+Matchs
+
+7
+
+Buts
+
+3
+
+Passes dé.
+
+2
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Fabian Djemail#17
+Fabian Djemail
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+4
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Mohamed Rabia#27
+Mohamed Rabia
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+4
+
+Buts
+
+1
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Thomas Haas#20
+Thomas Haas
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+5
+
+Buts
+
+4
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Bilal Akgüvercin#7
+Bilal Akgüvercin
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Jacob Göker#5
+Jacob Göker
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+5
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Nick Mwaura Hirschfeld#50
+Nick Mwaura Hirschfeld
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+2
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Bernad Gllogjani#49
+Bernad Gllogjani
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+2
+
+Buts
+
+1
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Elias Beck#23
+Elias Beck
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+6
+
+Buts
+
+8
+
+Passes dé.
+
+2
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+No rules fc : 
+Francisco Copado
+
+Entraîneur
+
+Fabio Rasic#1
+Fabio Rasic
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+3
+
+Buts enc.
+
+18
+
+Ratio
+
+6.00
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Daniel Jelisic#6
+Daniel Jelisic
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+3
+
+Buts
+
+0
+
+Passes dé.
+
+1
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Diego de la Mata#21
+Diego de la Mata
+Défenseur
+
+Moyenne
+
+78
+
+Matchs
+
+3
+
+Buts
+
+0
+
+Passes dé.
+
+1
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Diren Günay#77
+Diren Günay
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+3
+
+Buts
+
+2
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Ensar Skrijelj#9
+Ensar Skrijelj
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+3
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Albin Zekiri#20
+Albin Zekiri
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+3
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Amar Cekic#10
+Amar Cekic
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+3
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Nick Salihamidžić#7
+Nick Salihamidžić
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+3
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Anthony Manuba#25
+Anthony Manuba
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+3
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Gabriel Costa#8
+Gabriel Costa
+Attaquant
+
+Moyenne
+
+84
+
+Matchs
+
+3
+
+Buts
+
+5
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Gilles Vidal#11
+Gilles Vidal
+Attaquant
+
+Moyenne
+
+82
+
+MVP du match
+1
+Matchs
+
+3
+
+Buts
+
+3
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Nam Nguyen#19
+Nam Nguyen
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+2
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Serhat Imsak#17
+Serhat Imsak
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+3
+
+Buts
+
+2
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+
+tiki tracker ff : 
+
+Selçuk Turan
+
+Entraîneur
+
+Aboubakar Fofana#29
+Aboubakar Fofana
+Gardien de but
+
+Moyenne
+
+-
+
+MVP du jour
+1
+MVP du match
+1
+Matchs
+
+8
+
+Buts enc.
+
+26
+
+Ratio
+
+3.25
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Finn Hanke#25
+Finn Hanke
+Défenseur
+
+Moyenne
+
+-
+
+MVP du match
+1
+Matchs
+
+8
+
+Buts
+
+4
+
+Passes dé.
+
+1
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Nikola Stankovic#4
+Nikola Stankovic
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+4
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+1
+
+Noah Dahaba#6
+Noah Dahaba
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+8
+
+Buts
+
+2
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Philip Koch#13
+Philip Koch
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+6
+
+Buts
+
+2
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Zinedine Hukporti#10
+Zinedine Hukporti
+Défenseur
+
+Moyenne
+
+-
+
+MVP du jour
+1
+MVP du match
+3
+Matchs
+
+8
+
+Buts
+
+9
+
+Passes dé.
+
+9
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Diego Larralde#8
+Diego Larralde
+Milieu de terrain
+
+Moyenne
+
+-
+
+MVP du jour
+1
+MVP du match
+1
+Matchs
+
+8
+
+Buts
+
+2
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Fabio Lopes#27
+Fabio Lopes
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+8
+
+Buts
+
+5
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Marko Tadic#7
+Marko Tadic
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+8
+
+Buts
+
+3
+
+Passes dé.
+
+1
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Bennett Schauer#23
+Bennett Schauer
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+0
+
+Buts enc.
+
+0
+
+Ratio
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Jean Atohoun#36
+Jean Atohoun
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+2
+
+Buts enc.
+
+5
+
+Ratio
+
+2.50
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Ephrahim Asante#47
+Ephrahim Asante
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+7
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Farukhan Bulut#74
+Farukhan Bulut
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+6
+
+Buts
+
+3
+
+Passes dé.
+
+3
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Lionel Lingani#40
+Lionel Lingani
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+2
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Luca Freese#5
+Luca Freese
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+3
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+1
+
+Mustafa Zazai#17
+Mustafa Zazai
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+vice versa fc : 
+
+
+Sebastian Sander
+
+Entraîneur
+
+Marvin Gomoluch#44
+Marvin Gomoluch
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+4
+
+Buts enc.
+
+27
+
+Ratio
+
+6.75
+
+Jaunes
+
+0
+
+Rouges
+
+1
+
+Ali Alawie#7
+Ali Alawie
+Défenseur
+
+Moyenne
+
+-
+
+MVP du match
+1
+Matchs
+
+8
+
+Buts
+
+8
+
+Passes dé.
+
+3
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Constantin Pennartz#8
+Constantin Pennartz
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+8
+
+Buts
+
+1
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Hagen Blohm#3
+Hagen Blohm
+Défenseur
+
+Moyenne
+
+-
+
+MVP du match
+1
+Matchs
+
+8
+
+Buts
+
+10
+
+Passes dé.
+
+2
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Jannis Becker#5
+Jannis Becker
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+8
+
+Buts
+
+2
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Maurice Pluntke#6
+Maurice Pluntke
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+7
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Saif-Ayadi#27
+Saif-Ayadi
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+4
+
+Buts
+
+0
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Francisco Garcia#11
+Francisco Garcia
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+0
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Hussain Alawie#9
+Hussain Alawie
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+8
+
+Buts
+
+2
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Nuredin Ali Khan#47
+Nuredin Ali Khan
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+0
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Yassine Gnondi#17
+Yassine Gnondi
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+8
+
+Buts
+
+2
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Yannick Marko#52
+Yannick Marko
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+4
+
+Buts enc.
+
+18
+
+Ratio
+
+4.50
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Bo Lasse Henrichs#49
+Bo Lasse Henrichs
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+2
+
+Buts
+
+1
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Nils Schütte#50
+Nils Schütte
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+2
+
+Buts
+
+2
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Phil Spillmann#51
+Phil Spillmann
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts
+
+0
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Sven Wurm#4
+Sven Wurm
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+6
+
+Buts
+
+3
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+David Pütz#51
+David Pütz
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+2
+
+Buts
+
+1
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Halil Doğan#49
+Halil Doğan
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+4
+
+Buts
+
+1
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Thomas Idel#51
+Thomas Idel
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+3
+
+Buts
+
+1
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Cem Sabanci#50
+Cem Sabanci
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Marvin Iskra#50
+Marvin Iskra
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Shpend Hasani#51
+Shpend Hasani
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Youniors f.c. :
+
+
+Mimoun Azaouagh
+
+Entraîneur
+
+Max Wißmann#99
+Max Wißmann
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+4
+
+Buts enc.
+
+16
+
+Ratio
+
+4.00
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Maximilian Krapf#1
+Maximilian Krapf
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+9
+
+Buts enc.
+
+27
+
+Ratio
+
+3.00
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Ahmed Azaouagh#27
+Ahmed Azaouagh
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+8
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Emir Sejdovic#22
+Emir Sejdovic
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+10
+
+Buts
+
+3
+
+Passes dé.
+
+2
+
+Jaunes
+
+2
+
+Rouges
+
+0
+
+Henoc Agbessi#50
+Henoc Agbessi
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+2
+
+Buts
+
+1
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Sokratis Papastathopoulos#3
+Sokratis Papastathopoulos
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+3
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Christian Clemens#17
+Christian Clemens
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+10
+
+Buts
+
+3
+
+Passes dé.
+
+1
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Julien Vercauteren#82
+Julien Vercauteren
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+0
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Naoufal Azzagari#34
+Naoufal Azzagari
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+7
+
+Buts
+
+5
+
+Passes dé.
+
+2
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Jhon Palacios#7
+Jhon Palacios
+Attaquant
+
+Moyenne
+
+82
+
+Matchs
+
+9
+
+Buts
+
+5
+
+Passes dé.
+
+1
+
+Jaunes
+
+3
+
+Rouges
+
+0
+
+Lordan Handanovic#74
+Lordan Handanovic
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+4
+
+Buts
+
+1
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Marco Terrazzino#10
+Marco Terrazzino
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+5
+
+Buts
+
+2
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Danny Blum#8
+Danny Blum
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+4
+
+Buts
+
+1
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+David 'Brinquinho'#20
+David 'Brinquinho'
+Milieu de terrain
+
+Moyenne
+
+77
+
+MVP du jour
+1
+MVP du match
+2
+Matchs
+
+10
+
+Buts
+
+9
+
+Passes dé.
+
+5
+
+Jaunes
+
+2
+
+Rouges
+
+0
+
+Luiz 'Pepinho' Souza#11
+Luiz 'Pepinho' Souza
+Milieu de terrain
+
+Moyenne
+
+67
+
+MVP du match
+1
+Matchs
+
+10
+
+Buts
+
+10
+
+Passes dé.
+
+3
+
+Jaunes
+
+0
+
+Rouges
+
+1
+
+Kevin Moreira#33
+Kevin Moreira
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+3
+
+Buts
+
+1
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Maicon Silva#13
+Maicon Silva
+Attaquant
+
+Moyenne
+
+81
+
+Matchs
+
+6
+
+Buts
+
+1
+
+Passes dé.
+
+1
+
+Jaunes
+
+1
+
+Rouges
+
+0

@@ -1,0 +1,5356 @@
+equipe Italie :
+
+alpak fc :
+
+Mauro Micheli
+
+Entraîneur
+
+Luigi Castelli#1
+Luigi Castelli
+Gardien de but
+
+Moyenne
+
+69
+
+Matchs
+
+0
+
+Buts enc.
+
+0
+
+Ratio
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Vittorio Gilli#97
+Vittorio Gilli
+Gardien de but
+
+Moyenne
+
+-
+
+MVP du match
+1
+Matchs
+
+6
+
+Buts enc.
+
+28
+
+Ratio
+
+4.67
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Thomas Salvaterra#13
+Thomas Salvaterra
+Défenseur
+
+Moyenne
+
+82
+
+Matchs
+
+6
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Vlad Marin#3
+Vlad Marin
+Défenseur
+
+Moyenne
+
+79
+
+Matchs
+
+6
+
+Buts
+
+2
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Alessandro Gelsi#23
+Alessandro Gelsi
+Milieu de terrain
+
+Moyenne
+
+-
+
+MVP du match
+1
+Matchs
+
+6
+
+Buts
+
+4
+
+Passes dé.
+
+1
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Andrea Benedetti#22
+Andrea Benedetti
+Milieu de terrain
+
+Moyenne
+
+77
+
+Matchs
+
+6
+
+Buts
+
+1
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Federico Lorenzani#4
+Federico Lorenzani
+Milieu de terrain
+
+Moyenne
+
+76
+
+Matchs
+
+6
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Jero Martín#9
+Jero Martín
+Milieu de terrain
+
+Moyenne
+
+70
+
+MVP du match
+1
+Matchs
+
+6
+
+Buts
+
+3
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Nicola Cutrignelli#17
+Nicola Cutrignelli
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+6
+
+Buts
+
+1
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Christian Ronchi#10
+Christian Ronchi
+Attaquant
+
+Moyenne
+
+-
+
+MVP du match
+1
+Matchs
+
+6
+
+Buts
+
+4
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Gianmarco Massa#27
+Gianmarco Massa
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+6
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Mauro Veneroso#33
+Mauro Veneroso
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+6
+
+Buts
+
+2
+
+Passes dé.
+
+2
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Paolo Scienza#70
+Paolo Scienza
+Attaquant
+
+Moyenne
+
+-
+
+MVP du match
+1
+Matchs
+
+6
+
+Buts
+
+2
+
+Passes dé.
+
+2
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+bigbro :
+
+Emanuele Di Vittorio
+
+Entraîneur
+
+Leandro Casapieri#22
+Leandro Casapieri
+Gardien de but
+
+Moyenne
+
+-
+
+MVP du match
+2
+Matchs
+
+12
+
+Buts enc.
+
+45
+
+Ratio
+
+3.75
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Alessandro Garilli#14
+Alessandro Garilli
+Défenseur
+
+Moyenne
+
+82
+
+MVP du match
+4
+Matchs
+
+12
+
+Buts
+
+4
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Alessandro Tuia#13
+Alessandro Tuia
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+8
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Yasin Zougui#23
+Yasin Zougui
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+9
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Andrea Strada#21
+Andrea Strada
+Milieu de terrain
+
+Moyenne
+
+84
+
+Matchs
+
+12
+
+Buts
+
+2
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Sebastiano Finardi#4
+Sebastiano Finardi
+Milieu de terrain
+
+Moyenne
+
+-
+
+MVP du match
+1
+Matchs
+
+11
+
+Buts
+
+3
+
+Passes dé.
+
+1
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Spizzi#24
+Spizzi
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+10
+
+Buts
+
+8
+
+Passes dé.
+
+3
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Tiziano Merlonghi#16
+Tiziano Merlonghi
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+11
+
+Buts
+
+7
+
+Passes dé.
+
+3
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+⁠Alessandro Sigurtà#11
+⁠Alessandro Sigurtà
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+12
+
+Buts
+
+6
+
+Passes dé.
+
+0
+
+Jaunes
+
+2
+
+Rouges
+
+0
+
+Andrea Maggioni#64
+Andrea Maggioni
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+9
+
+Buts
+
+4
+
+Passes dé.
+
+1
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Davide Moscardelli#9
+Davide Moscardelli
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+10
+
+Buts
+
+4
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Gianluca Piro#90
+Gianluca Piro
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+12
+
+Buts
+
+2
+
+Passes dé.
+
+3
+
+Jaunes
+
+2
+
+Rouges
+
+0
+
+Cheick Fofana#5
+Cheick Fofana
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Fabrizio Olivera#45
+Fabrizio Olivera
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Antonio Quartesan#7
+Antonio Quartesan
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Ibrahim Ghouati#20
+Ibrahim Ghouati
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+boomers :
+Mattia Mangone
+
+Entraîneur
+
+Antonio Iuliano#28
+Antonio Iuliano
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+14
+
+Buts enc.
+
+58
+
+Ratio
+
+4.14
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Edoardo Ciancio#1
+Edoardo Ciancio
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+6
+
+Buts enc.
+
+14
+
+Ratio
+
+2.33
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Alessio De Petri#3
+Alessio De Petri
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+14
+
+Buts
+
+3
+
+Passes dé.
+
+4
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Andrea Tarasco#14
+Andrea Tarasco
+Défenseur
+
+Moyenne
+
+79
+
+Matchs
+
+14
+
+Buts
+
+1
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Pietro Pizzamiglio#6
+Pietro Pizzamiglio
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+7
+
+Buts
+
+2
+
+Passes dé.
+
+1
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Stefano Sberna#19
+Stefano Sberna
+Défenseur
+
+Moyenne
+
+79
+
+Matchs
+
+14
+
+Buts
+
+4
+
+Passes dé.
+
+2
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Bryan Mecca#17
+Bryan Mecca
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+9
+
+Buts
+
+8
+
+Passes dé.
+
+2
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Gabriele Pasello#22
+Gabriele Pasello
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+2
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Nicholas Martini#8
+Nicholas Martini
+Milieu de terrain
+
+Moyenne
+
+-
+
+MVP du match
+1
+Matchs
+
+7
+
+Buts
+
+8
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Davide Bonolis#7
+Davide Bonolis
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+13
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Nicolas Kalaja#9
+Nicolas Kalaja
+Attaquant
+
+Moyenne
+
+81
+
+Matchs
+
+13
+
+Buts
+
+4
+
+Passes dé.
+
+1
+
+Jaunes
+
+2
+
+Rouges
+
+0
+
+Simone Lo Faso#77
+Simone Lo Faso
+Attaquant
+
+Moyenne
+
+-
+
+MVP du jour
+2
+MVP du match
+6
+Matchs
+
+14
+
+Buts
+
+24
+
+Passes dé.
+
+5
+
+Jaunes
+
+3
+
+Rouges
+
+0
+
+Dexter#11
+Dexter
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Manolo Mosciaro#33
+Manolo Mosciaro
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+10
+
+Buts
+
+2
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Fiodor Grimaldi#45
+Fiodor Grimaldi
+Moyenne
+
+-
+
+Matchs
+
+2
+
+Buts
+
+2
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Faisal Abdul Amide Bangal#54
+Faisal Abdul Amide Bangal
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+circus fc : 
+
+Alan Rigo
+
+Entraîneur
+
+Roberto Gherardi#1
+Roberto Gherardi
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+11
+
+Buts enc.
+
+35
+
+Ratio
+
+3.18
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Simone Martino#18
+Simone Martino
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+12
+
+Buts enc.
+
+34
+
+Ratio
+
+2.83
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Giorgio Belotti#37
+Giorgio Belotti
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+3
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Lorenzo Mantovani#82
+Lorenzo Mantovani
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+12
+
+Buts
+
+5
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Matteo Rossi#13
+Matteo Rossi
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+6
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Tommaso Conte#4
+Tommaso Conte
+Défenseur
+
+Moyenne
+
+-
+
+MVP du match
+3
+Matchs
+
+12
+
+Buts
+
+7
+
+Passes dé.
+
+2
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Giulio Uras#44
+Giulio Uras
+Milieu de terrain
+
+Moyenne
+
+82
+
+Matchs
+
+8
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Nico Federici#8
+Nico Federici
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+11
+
+Buts
+
+2
+
+Passes dé.
+
+3
+
+Jaunes
+
+2
+
+Rouges
+
+0
+
+Riccardo Ruggeri#27
+Riccardo Ruggeri
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+12
+
+Buts
+
+2
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Christian Calì#10
+Christian Calì
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+12
+
+Buts
+
+6
+
+Passes dé.
+
+1
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Davide Bertocchi#7
+Davide Bertocchi
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+9
+
+Buts
+
+9
+
+Passes dé.
+
+2
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Francesco Giangaspero#9
+Francesco Giangaspero
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+3
+
+Buts
+
+0
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Lorenzo Berra#11
+Lorenzo Berra
+Attaquant
+
+Moyenne
+
+81
+
+MVP du match
+1
+Matchs
+
+12
+
+Buts
+
+19
+
+Passes dé.
+
+2
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Matteo Rossoni#22
+Matteo Rossoni
+Attaquant
+
+Moyenne
+
+80
+
+MVP du match
+1
+Matchs
+
+10
+
+Buts
+
+2
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Giovanni Scotti#77
+Giovanni Scotti
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+0
+
+Buts enc.
+
+0
+
+Ratio
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Giacomo Fabiani#88
+Giacomo Fabiani
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Mattia Bergamaschi#23
+Mattia Bergamaschi
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+0
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Simone Pontiggia#99
+Simone Pontiggia
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+2
+
+Buts
+
+1
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+d-power :
+Umberto Chiaramonte
+
+Entraîneur
+
+
+Luca Buongiorno
+
+Entraîneur
+
+Filippo Manzoni#22
+Filippo Manzoni
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+2
+
+Buts enc.
+
+4
+
+Ratio
+
+2.00
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Valerio Vimercati#3
+Valerio Vimercati
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+10
+
+Buts enc.
+
+57
+
+Ratio
+
+5.70
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Alessandro Marocco#28
+Alessandro Marocco
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+11
+
+Buts
+
+1
+
+Passes dé.
+
+2
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Angelo Carpani#19
+Angelo Carpani
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Antonio Mihaylov#8
+Antonio Mihaylov
+Défenseur
+
+Moyenne
+
+73
+
+Matchs
+
+10
+
+Buts
+
+0
+
+Passes dé.
+
+1
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Riccardo Ammirati#4
+Riccardo Ammirati
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+10
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Andrea Montagna#42
+Andrea Montagna
+Milieu de terrain
+
+Moyenne
+
+78
+
+Matchs
+
+11
+
+Buts
+
+1
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Imad Tijani#11
+Imad Tijani
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+11
+
+Buts
+
+2
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Soufiane El Jadi#10
+Soufiane El Jadi
+Milieu de terrain
+
+Moyenne
+
+-
+
+MVP du jour
+1
+MVP du match
+1
+Matchs
+
+11
+
+Buts
+
+18
+
+Passes dé.
+
+10
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Alessandro Patacchini#69
+Alessandro Patacchini
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+11
+
+Buts
+
+0
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Daniel Santoro#14
+Daniel Santoro
+Attaquant
+
+Moyenne
+
+82
+
+MVP du match
+1
+Matchs
+
+11
+
+Buts
+
+15
+
+Passes dé.
+
+5
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Filippo Falco#20
+Filippo Falco
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+3
+
+Buts
+
+2
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Matteo Siano#9
+Matteo Siano
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+11
+
+Buts
+
+5
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Andrea Vicini#1
+Andrea Vicini
+Gardien de but
+
+Moyenne
+
+74
+
+Matchs
+
+1
+
+Buts enc.
+
+5
+
+Ratio
+
+5.00
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Emanuele Calaiò#7
+Emanuele Calaiò
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+fc ceasar :
+
+Emiliano Viviano
+
+Entraîneur
+
+Danilo Tunno#24
+Danilo Tunno
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+9
+
+Buts enc.
+
+16
+
+Ratio
+
+1.78
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Mattia Valentini#16
+Mattia Valentini
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+4
+
+Buts enc.
+
+12
+
+Ratio
+
+3.00
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Guido Davì#6
+Guido Davì
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+13
+
+Buts
+
+2
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Melvyn Remy#69
+Melvyn Remy
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+12
+
+Buts
+
+3
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Moad Moussaif#77
+Moad Moussaif
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Fran Hernández#14
+Fran Hernández
+Milieu de terrain
+
+Moyenne
+
+84
+
+MVP du match
+1
+Matchs
+
+13
+
+Buts
+
+10
+
+Passes dé.
+
+6
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Gabriel Nunes#4
+Gabriel Nunes
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+4
+
+Buts
+
+1
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Nicola Cutrignelli#17
+Nicola Cutrignelli
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+12
+
+Buts
+
+4
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Radja Nainggolan#4
+Radja Nainggolan
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Antonio Picci#9
+Antonio Picci
+Attaquant
+
+Moyenne
+
+-
+
+MVP du match
+1
+Matchs
+
+13
+
+Buts
+
+3
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Boubacar Coulibaly#11
+Boubacar Coulibaly
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+3
+
+Buts
+
+1
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Enrico Brignola#7
+Enrico Brignola
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+4
+
+Buts
+
+2
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Matteo Zunino#27
+Matteo Zunino
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+13
+
+Buts
+
+7
+
+Passes dé.
+
+2
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Nicola Loiodice#10
+Nicola Loiodice
+Attaquant
+
+Moyenne
+
+-
+
+MVP du match
+2
+Matchs
+
+11
+
+Buts
+
+11
+
+Passes dé.
+
+4
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Nigel Kyeremateng#45
+Nigel Kyeremateng
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+3
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Mattia Parretti#81
+Mattia Parretti
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Alberto Panzani#99
+Alberto Panzani
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Juan Fernández#22
+Juan Fernández
+Attaquant
+
+Moyenne
+
+73
+
+Matchs
+
+1
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Mohamed Rabbas#21
+Mohamed Rabbas
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+gear 7 fc :
+
+Ivan Brocchieri
+
+Entraîneur
+
+Alessandro Feleppa#23
+Alessandro Feleppa
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts enc.
+
+10
+
+Ratio
+
+10.00
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Valerio Anane#96
+Valerio Anane
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+10
+
+Buts enc.
+
+43
+
+Ratio
+
+4.30
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Angelo Panarello#5
+Angelo Panarello
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+11
+
+Buts
+
+4
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Riccardo Bozzuto#77
+Riccardo Bozzuto
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+10
+
+Buts
+
+1
+
+Passes dé.
+
+2
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Tiziano Prinari#7
+Tiziano Prinari
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+9
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Christophe Renault#8
+Christophe Renault
+Milieu de terrain
+
+Moyenne
+
+-
+
+MVP du match
+1
+Matchs
+
+11
+
+Buts
+
+7
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Alessandro Iacuaniello#22
+Alessandro Iacuaniello
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+2
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Alessandro Sala#14
+Alessandro Sala
+Attaquant
+
+Moyenne
+
+-
+
+MVP du match
+1
+Matchs
+
+9
+
+Buts
+
+7
+
+Passes dé.
+
+4
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Andrea Bertazzoli#10
+Andrea Bertazzoli
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+7
+
+Buts
+
+6
+
+Passes dé.
+
+4
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Gabriele Folla#11
+Gabriele Folla
+Attaquant
+
+Moyenne
+
+80
+
+Matchs
+
+10
+
+Buts
+
+2
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Giovanni Kean#19
+Giovanni Kean
+Attaquant
+
+Moyenne
+
+-
+
+MVP du jour
+1
+MVP du match
+2
+Matchs
+
+8
+
+Buts
+
+5
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Roberto Ratti#99
+Roberto Ratti
+Attaquant
+
+Moyenne
+
+81
+
+Matchs
+
+11
+
+Buts
+
+4
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Niccolò Ciceri#27
+Niccolò Ciceri
+Défenseur
+
+Moyenne
+
+77
+
+Matchs
+
+3
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Leandro Cosenza#9
+Leandro Cosenza
+Attaquant
+
+Moyenne
+
+78
+
+Matchs
+
+3
+
+Buts
+
+1
+
+Passes dé.
+
+1
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+stallions :
+
+Diego Franzè
+
+Entraîneur
+
+Gianluca Bressan#0
+Gianluca Bressan
+Gardien de but
+
+Moyenne
+
+77
+
+Matchs
+
+0
+
+Buts enc.
+
+0
+
+Ratio
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Samuele Guddo#25
+Samuele Guddo
+Gardien de but
+
+Moyenne
+
+-
+
+MVP du match
+1
+Matchs
+
+3
+
+Buts enc.
+
+22
+
+Ratio
+
+7.33
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Alessandro Di Dio#52
+Alessandro Di Dio
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+3
+
+Buts
+
+1
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Andrea Becchi#5
+Andrea Becchi
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+3
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Filippo Adamo#73
+Filippo Adamo
+Défenseur
+
+Moyenne
+
+73
+
+Matchs
+
+3
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Marco Evangelisti#6
+Marco Evangelisti
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+3
+
+Buts
+
+0
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Giacomo Pennetta#19
+Giacomo Pennetta
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+2
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Niccolò Marino#30
+Niccolò Marino
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+3
+
+Buts
+
+1
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Pietro Brusadelli#17
+Pietro Brusadelli
+Milieu de terrain
+
+Moyenne
+
+81
+
+Matchs
+
+2
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Alessandro Colombo#10
+Alessandro Colombo
+Attaquant
+
+Moyenne
+
+-
+
+MVP du match
+1
+Matchs
+
+3
+
+Buts
+
+7
+
+Passes dé.
+
+4
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Dennis Stojkovic#7
+Dennis Stojkovic
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+3
+
+Buts
+
+2
+
+Passes dé.
+
+3
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Leandro Cosenza#9
+Leandro Cosenza
+Attaquant
+
+Moyenne
+
+78
+
+Matchs
+
+3
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Simone Lo Faso#77
+Simone Lo Faso
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+3
+
+Buts
+
+2
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+trm fc :
+Marco Bertoni
+
+Entraîneur
+
+Alessandro Vagge#1
+Alessandro Vagge
+Gardien de but
+
+Moyenne
+
+-
+
+MVP du match
+1
+Matchs
+
+12
+
+Buts enc.
+
+55
+
+Ratio
+
+4.58
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Mateo Seitaj#28
+Mateo Seitaj
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+4
+
+Buts enc.
+
+2
+
+Ratio
+
+0.50
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Alberto Muscas#5
+Alberto Muscas
+Défenseur
+
+Moyenne
+
+79
+
+Matchs
+
+12
+
+Buts
+
+0
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Alessandro Di Dio#25
+Alessandro Di Dio
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+12
+
+Buts
+
+1
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Alessio Marcone#3
+Alessio Marcone
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+11
+
+Buts
+
+1
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Alessio Zefi#4
+Alessio Zefi
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+11
+
+Buts
+
+2
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Carlos Filippi#21
+Carlos Filippi
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+10
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Pietro Martirani#7
+Pietro Martirani
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+5
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Riccardo Vono#70
+Riccardo Vono
+Milieu de terrain
+
+Moyenne
+
+-
+
+MVP du match
+2
+Matchs
+
+11
+
+Buts
+
+12
+
+Passes dé.
+
+6
+
+Jaunes
+
+3
+
+Rouges
+
+0
+
+Paolo Scienza#10
+Paolo Scienza
+Attaquant
+
+Moyenne
+
+-
+
+MVP du match
+4
+Matchs
+
+11
+
+Buts
+
+17
+
+Passes dé.
+
+5
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Walid Khribech#20
+Walid Khribech
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+10
+
+Buts
+
+0
+
+Passes dé.
+
+1
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Piero Concialdi
+Piero Concialdi
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+2
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Antonio Ferrara#17
+Antonio Ferrara
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+5
+
+Buts
+
+3
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Vincenzo Corvino#45
+Vincenzo Corvino
+Attaquant
+
+Moyenne
+
+-
+
+MVP du match
+2
+Matchs
+
+3
+
+Buts
+
+4
+
+Passes dé.
+
+2
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+
+
+underdogs fc :
+
+Dario Sibio
+
+Entraîneur
+
+Gianmarco Chironi#22
+Gianmarco Chironi
+Gardien de but
+
+Moyenne
+
+-
+
+MVP du match
+1
+Matchs
+
+3
+
+Buts enc.
+
+9
+
+Ratio
+
+3.00
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Roberto Taliento#99
+Roberto Taliento
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts enc.
+
+1
+
+Ratio
+
+1.00
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Andrea Gorgoglione#19
+Andrea Gorgoglione
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+3
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Lyncoln Oliveira#2
+Lyncoln Oliveira
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+3
+
+Buts
+
+4
+
+Passes dé.
+
+1
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Riccardo Bertaglio#24
+Riccardo Bertaglio
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+3
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Tommaso Caldera#32
+Tommaso Caldera
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+2
+
+Buts
+
+1
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Alessandro Cannataro#8
+Alessandro Cannataro
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+3
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Andrea D'errico#14
+Andrea D'errico
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+3
+
+Buts
+
+1
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Cristhian 'Canhoto'#6
+Cristhian 'Canhoto'
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+3
+
+Buts
+
+0
+
+Passes dé.
+
+2
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Domenico Rossi#11
+Domenico Rossi
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+3
+
+Buts
+
+2
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Mario Prezioso#17
+Mario Prezioso
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+3
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Jorginho Fernandes#9
+Jorginho Fernandes
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+3
+
+Buts
+
+1
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Matteo Perrotti#10
+Matteo Perrotti
+Attaquant
+
+Moyenne
+
+-
+
+MVP du match
+1
+Matchs
+
+3
+
+Buts
+
+4
+
+Passes dé.
+
+4
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+zébras fc :
+
+Mareglen Mhillaj
+
+Entraîneur
+
+Alberto Calabrò#96
+Alberto Calabrò
+Gardien de but
+
+Moyenne
+
+-
+
+MVP du jour
+1
+MVP du match
+1
+Matchs
+
+11
+
+Buts enc.
+
+51
+
+Ratio
+
+4.64
+
+Jaunes
+
+0
+
+Rouges
+
+1
+
+Luca Mascherpa#74
+Luca Mascherpa
+Gardien de but
+
+Moyenne
+
+82
+
+Matchs
+
+4
+
+Buts enc.
+
+21
+
+Ratio
+
+5.25
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Carlo Alletto#6
+Carlo Alletto
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+11
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Christian Negri#2
+Christian Negri
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+8
+
+Buts
+
+1
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Jacopo Tirapelle#12
+Jacopo Tirapelle
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+4
+
+Buts
+
+2
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Lorenzo Pagani#33
+Lorenzo Pagani
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+12
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Luca Meregalli#61
+Luca Meregalli
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+12
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Andrea D'errico#14
+Andrea D'errico
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+5
+
+Buts
+
+2
+
+Passes dé.
+
+1
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Matia Iervolino#70
+Matia Iervolino
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+11
+
+Buts
+
+1
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Vittorio Mehmetaj#8
+Vittorio Mehmetaj
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+13
+
+Buts
+
+3
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Andrea Vairani#7
+Andrea Vairani
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+4
+
+Buts
+
+2
+
+Passes dé.
+
+2
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Andrea Zingari#10
+Andrea Zingari
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+7
+
+Buts
+
+3
+
+Passes dé.
+
+2
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Elia Galligani#11
+Elia Galligani
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+9
+
+Buts
+
+2
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Emanuele Bardelloni#21
+Emanuele Bardelloni
+Attaquant
+
+Moyenne
+
+-
+
+MVP du jour
+1
+MVP du match
+1
+Matchs
+
+13
+
+Buts
+
+13
+
+Passes dé.
+
+3
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Salvatore Lillo#77
+Salvatore Lillo
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+11
+
+Buts
+
+9
+
+Passes dé.
+
+3
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Lorenzo Matera#16
+Lorenzo Matera
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+0
+
+Buts enc.
+
+0
+
+Ratio
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Marco Gallizia#5
+Marco Gallizia
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Andrea Tremolada#9
+Andrea Tremolada
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Roberto Maffioletti#22
+Roberto Maffioletti
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+zeta como :
+
+Cristian Brocchi
+
+Entraîneur
+
+Alessio Buono#1
+Alessio Buono
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+12
+
+Buts enc.
+
+51
+
+Ratio
+
+4.25
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Francesco Ambrosio#22
+Francesco Ambrosio
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+0
+
+Buts enc.
+
+0
+
+Ratio
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Matteo Manzoni#23
+Matteo Manzoni
+Défenseur
+
+Moyenne
+
+79
+
+Matchs
+
+10
+
+Buts
+
+0
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Mattia El Hilali#5
+Mattia El Hilali
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+12
+
+Buts
+
+0
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Michael Kabamba#21
+Michael Kabamba
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+10
+
+Buts
+
+1
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Stefan Kladar#29
+Stefan Kladar
+Défenseur
+
+Moyenne
+
+-
+
+Matchs
+
+11
+
+Buts
+
+5
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+1
+
+Corrado Marrulli#19
+Corrado Marrulli
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+2
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Gabriele Geraci#4
+Gabriele Geraci
+Milieu de terrain
+
+Moyenne
+
+-
+
+MVP du match
+1
+Matchs
+
+12
+
+Buts
+
+4
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Oussama M'Hamsi#7
+Oussama M'Hamsi
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+12
+
+Buts
+
+7
+
+Passes dé.
+
+2
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Samuele Oltremarini#9
+Samuele Oltremarini
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+4
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Andrea Filipi#11
+Andrea Filipi
+Attaquant
+
+Moyenne
+
+-
+
+MVP du match
+1
+Matchs
+
+8
+
+Buts
+
+8
+
+Passes dé.
+
+3
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Gabriele Giacchino#27
+Gabriele Giacchino
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+12
+
+Buts
+
+15
+
+Passes dé.
+
+4
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Kevin Girgenti#10
+Kevin Girgenti
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+12
+
+Buts
+
+8
+
+Passes dé.
+
+2
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Nelson Dida#12
+Nelson Dida
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts enc.
+
+0
+
+Ratio
+
+0.00
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Cristian Brocchi#32
+Cristian Brocchi
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Federico Nardi#99
+Federico Nardi
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+1
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
