@@ -1620,6 +1620,12 @@ function sellPlayer(playerId) {
   showConfirm(`Vendre ${player.name} pour ${formatMoney(player.value)} ?`, () => {
     team.players = team.players.filter(p => p.id !== playerId);
     team.budget += player.value;
+    // le joueur rejoint l'équipe IA la plus faible à son poste plutôt que de disparaître du jeu
+    const buyer = neediestTeamForPosition(STATE.league, player.pos, team.id);
+    if (buyer) {
+      buyer.budget -= player.value;
+      buyer.players.push(player);
+    }
     updateTopbar();
     renderTransfersTab();
     saveGame();

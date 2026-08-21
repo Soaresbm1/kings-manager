@@ -1285,6 +1285,21 @@ function weakestPosition(team) {
   return weakestPos;
 }
 
+// Parmi toutes les équipes de la ligue (hors excludeTeamId), renvoie celle qui a le plus besoin
+// de renfort à ce poste précis — le niveau moyen des joueurs déjà présents à ce poste le plus
+// bas (une équipe sans aucun joueur à ce poste est considérée en besoin maximal). Utilisé pour
+// qu'un joueur vendu par l'utilisateur rejoigne une vraie équipe plutôt que de disparaître du jeu.
+function neediestTeamForPosition(league, pos, excludeTeamId) {
+  let best = null, bestAvg = Infinity;
+  league.teams.forEach(team => {
+    if (team.id === excludeTeamId) return;
+    const players = team.players.filter(p => p.pos === pos);
+    const avg = players.length === 0 ? -1 : players.reduce((sum, p) => sum + p.overall, 0) / players.length;
+    if (avg < bestAvg) { bestAvg = avg; best = team; }
+  });
+  return best;
+}
+
 // --- IA Mercato: les autres équipes achètent/vendent pour renforcer leur effectif ---
 function simulateAITransfers(league, humanTeamId) {
   fillPositionGaps(league, humanTeamId);
