@@ -616,17 +616,23 @@ function findPendingUserTournamentMatch() {
   return round.matches.find(m => !m.played && (m.home.isUser || m.away.isUser)) || null;
 }
 
+// Retrouve l'équipe réelle (pas une copie) à partir de sa ligue + son id — une équipe hors de
+// STATE.league.teams vit dans STATE.otherLeagues, indexé par leagueKey (voir buildOtherLeagues).
+// Nécessaire dès qu'on référence une équipe d'une AUTRE ligue que celle du joueur (tournoi,
+// marché des transferts inter-ligues) : les id de club sont courts et propres à data.js, un
+// simple id ne suffit pas à lever toute ambiguïté entre deux ligues différentes.
+function findLeagueTeam(leagueKey, teamId) {
+  if (leagueKey === STATE.leagueKey) return STATE.league.teams.find(t => t.id === teamId);
+  const ol = (STATE.otherLeagues || []).find(x => x.key === leagueKey);
+  return ol ? ol.league.teams.find(t => t.id === teamId) : null;
+}
+
 // Après un chargement de sauvegarde, les qualifieurs du tournoi pointent vers des copies JSON
 // des équipes (pas les objets réels de STATE.league/STATE.otherLeagues) : on les ré-associe pour
 // que les stats/forme continuent de se mettre à jour sur la vraie équipe pendant le reste du tournoi.
 function relinkTournamentTeamRefs() {
   if (!STATE.tournament) return;
-  const findLiveTeam = (leagueKey, teamId) => {
-    if (leagueKey === STATE.leagueKey) return STATE.league.teams.find(t => t.id === teamId);
-    const ol = (STATE.otherLeagues || []).find(x => x.key === leagueKey);
-    return ol ? ol.league.teams.find(t => t.id === teamId) : null;
-  };
-  const relink = q => { if (q) { const live = findLiveTeam(q.leagueKey, q.team.id); if (live) q.team = live; } };
+  const relink = q => { if (q) { const live = findLeagueTeam(q.leagueKey, q.team.id); if (live) q.team = live; } };
   STATE.tournament.byes.forEach(relink);
   STATE.tournament.rounds.forEach(round => round.matches.forEach(m => { relink(m.home); relink(m.away); }));
   relink(STATE.tournament.champion);
@@ -1480,8 +1486,21 @@ let sellSortState = { key: "overall", dir: -1 };
 
 function renderTransfersTab() {
   const team = getUserTeam();
+  populateMarketLeagueFilter();
   renderMarketTable(team);
   renderSellTable(team);
+}
+
+// Peuple le filtre "Ligue" une seule fois (les ligues d'une carrière ne changent pas en cours de
+// saison) : ré-exécuter au clic recréerait les options et perdrait la sélection en cours.
+function populateMarketLeagueFilter() {
+  const select = document.getElementById("filter-league");
+  if (select.options.length > 1) return;
+  select.innerHTML = `<option value="all">Toutes</option>
+    <option value="${STATE.leagueKey}">${LEAGUE_FLAGS[STATE.leagueKey] || "⚽"} ${STATE.league.name}</option>`;
+  (STATE.otherLeagues || []).forEach(ol => {
+    select.innerHTML += `<option value="${ol.key}">${LEAGUE_FLAGS[ol.key] || "⚽"} ${ol.name}</option>`;
+  });
 }
 
 function marketSortValue(entry, key) {
@@ -1498,16 +1517,22 @@ function renderMarketTable(team) {
   const posFilter = document.getElementById("filter-pos").value;
   const ovrFilter = parseInt(document.getElementById("filter-ovr").value, 10);
   const nameFilter = document.getElementById("filter-name").value.trim().toLowerCase();
+  const leagueFilter = document.getElementById("filter-league").value;
 
   const entries = [];
-  STATE.league.teams.forEach(otherTeam => {
+  const addFromTeam = (otherTeam, leagueKey, leagueName) => {
     if (otherTeam.id === team.id) return;
+    if (leagueFilter !== "all" && leagueKey !== leagueFilter) return;
     otherTeam.players.forEach(p => {
       if (posFilter !== "all" && p.pos !== posFilter) return;
       if (p.overall < ovrFilter) return;
       if (nameFilter && !p.name.toLowerCase().includes(nameFilter)) return;
-      entries.push({ p, team: otherTeam });
+      entries.push({ p, team: otherTeam, leagueKey, leagueName });
     });
+  };
+  STATE.league.teams.forEach(otherTeam => addFromTeam(otherTeam, STATE.leagueKey, STATE.league.name));
+  (STATE.otherLeagues || []).forEach(ol => {
+    ol.league.teams.forEach(otherTeam => addFromTeam(otherTeam, ol.key, ol.name));
   });
 
   const { key, dir } = marketSortState;
@@ -1520,10 +1545,12 @@ function renderMarketTable(team) {
 
   emptyMsg.style.display = entries.length ? "none" : "block";
 
-  entries.forEach(({ p, team: otherTeam }) => {
+  entries.forEach(({ p, team: otherTeam, leagueKey, leagueName }) => {
     const tr = document.createElement("tr");
     tr.className = "clickable";
     tr.title = "Voir la fiche technique";
+    const leagueTag = leagueKey !== STATE.leagueKey
+      ? `<span class="tourn-league-tag">${LEAGUE_FLAGS[leagueKey] || "⚽"} ${leagueName}</span>` : "";
     tr.innerHTML = `<td class="name">
         <div class="player-cell">
           <div class="avatar-sm">
@@ -1535,13 +1562,13 @@ function renderMarketTable(team) {
           <span class="player-cell-name">${p.name}</span>
         </div>
       </td>
-      <td><div class="market-club-cell">${renderTeamCrest(otherTeam, "crest-sm")}<span>${otherTeam.name}</span></div></td>
+      <td><div class="market-club-cell">${renderTeamCrest(otherTeam, "crest-sm")}<span>${otherTeam.name}</span>${leagueTag}</div></td>
       <td><span class="pos-tag pos-${p.pos}">${p.pos}</span></td>
       <td>${renderStarRating(p.overall)}</td>
       <td>${renderFormBar(p.form)}</td>
       <td>${p.age}</td>
       <td>${formatMoney(p.value)}</td>
-      <td><button class="primary" data-action="buy" data-team="${otherTeam.id}" data-player="${p.id}">Offre</button></td>`;
+      <td><button class="primary" data-action="buy" data-league="${leagueKey}" data-team="${otherTeam.id}" data-player="${p.id}">Offre</button></td>`;
     tr.onclick = () => openPlayerInfoModal(p, otherTeam);
     tbody.appendChild(tr);
   });
@@ -1550,7 +1577,7 @@ function renderMarketTable(team) {
   tbody.querySelectorAll("[data-action='buy']").forEach(btn => {
     btn.onclick = (e) => {
       e.stopPropagation();
-      openOfferModal(btn.dataset.team, btn.dataset.player, "buy");
+      openOfferModal(btn.dataset.league, btn.dataset.team, btn.dataset.player);
     };
   });
 
@@ -1634,10 +1661,10 @@ function sellPlayer(playerId) {
 
 let currentOffer = null;
 
-function openOfferModal(otherTeamId, playerId, action) {
-  const otherTeam = STATE.league.teams.find(t => t.id === otherTeamId);
+function openOfferModal(leagueKey, otherTeamId, playerId) {
+  const otherTeam = findLeagueTeam(leagueKey, otherTeamId);
   const player = otherTeam.players.find(p => p.id === playerId);
-  currentOffer = { otherTeamId, playerId };
+  currentOffer = { leagueKey, otherTeamId, playerId };
 
   document.getElementById("offer-title").textContent = `Offre pour ${player.name}`;
   document.getElementById("offer-text").textContent = `${player.name} (${player.pos}) — ${otherTeam.name}. Valeur estimée : ${formatMoney(player.value)}. Ton budget : ${formatMoney(getUserTeam().budget)}`;
@@ -1648,8 +1675,8 @@ function openOfferModal(otherTeamId, playerId, action) {
 }
 
 function submitOffer() {
-  const { otherTeamId, playerId } = currentOffer;
-  const otherTeam = STATE.league.teams.find(t => t.id === otherTeamId);
+  const { leagueKey, otherTeamId, playerId } = currentOffer;
+  const otherTeam = findLeagueTeam(leagueKey, otherTeamId);
   const player = otherTeam.players.find(p => p.id === playerId);
   const team = getUserTeam();
   const amount = parseFloat(document.getElementById("offer-amount").value);
@@ -3967,6 +3994,7 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("filter-pos").onchange = renderTransfersTab;
   document.getElementById("filter-ovr").onchange = renderTransfersTab;
   document.getElementById("filter-name").oninput = renderTransfersTab;
+  document.getElementById("filter-league").onchange = renderTransfersTab;
 
   window.addEventListener("beforeunload", saveGame);
 });
