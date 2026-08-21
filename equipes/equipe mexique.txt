@@ -5524,3 +5524,408 @@ Jaunes
 Rouges
 
 0
+
+
+Simios FC :
+
+Omar Flores
+
+Entraîneur
+
+Jorge Lima#13
+Jorge Lima
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+3
+
+Buts enc.
+
+9
+
+Ratio
+
+3.00
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Luis Huerta#19
+Luis Huerta
+Gardien de but
+
+Moyenne
+
+-
+
+Matchs
+
+0
+
+Buts enc.
+
+0
+
+Ratio
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Óscar Medina#1
+Óscar Medina
+Gardien de but
+
+Moyenne
+
+82
+
+MVP du jour
+1
+MVP du match
+2
+Matchs
+
+10
+
+Buts enc.
+
+45
+
+Ratio
+
+4.50
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Erick Sámano#5
+Erick Sámano
+Défenseur
+
+Moyenne
+
+81
+
+Matchs
+
+10
+
+Buts
+
+0
+
+Passes dé.
+
+2
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+George Corral#4
+George Corral
+Défenseur
+
+Moyenne
+
+84
+
+Matchs
+
+10
+
+Buts
+
+1
+
+Passes dé.
+
+2
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Andrés Suárez#11
+Andrés Suárez
+Milieu de terrain
+
+Moyenne
+
+-
+
+MVP du match
+2
+Matchs
+
+11
+
+Buts
+
+18
+
+Passes dé.
+
+2
+
+Jaunes
+
+3
+
+Rouges
+
+0
+
+Gerson García#7
+Gerson García
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+11
+
+Buts
+
+0
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Hatzel Roque#88
+Hatzel Roque
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+7
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+José 'Shaggy' Martínez#12
+José 'Shaggy' Martínez
+Milieu de terrain
+
+Moyenne
+
+83
+
+Matchs
+
+11
+
+Buts
+
+0
+
+Passes dé.
+
+3
+
+Jaunes
+
+1
+
+Rouges
+
+0
+
+Luis Olascoaga#26
+Luis Olascoaga
+Milieu de terrain
+
+Moyenne
+
+-
+
+Matchs
+
+11
+
+Buts
+
+1
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Cristian González#76
+Cristian González
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+10
+
+Buts
+
+10
+
+Passes dé.
+
+1
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Miguel Rebollo#93
+Miguel Rebollo
+Attaquant
+
+Moyenne
+
+84
+
+Matchs
+
+8
+
+Buts
+
+12
+
+Passes dé.
+
+2
+
+Jaunes
+
+0
+
+Rouges
+
+1
+
+Roberto Pérez#14
+Roberto Pérez
+Attaquant
+
+Moyenne
+
+-
+
+Matchs
+
+11
+
+Buts
+
+3
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0
+
+Sebastián Sáez#28
+Sebastián Sáez
+Défenseur
+
+Moyenne
+
+80
+
+Matchs
+
+4
+
+Buts
+
+0
+
+Passes dé.
+
+0
+
+Jaunes
+
+0
+
+Rouges
+
+0

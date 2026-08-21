@@ -142,6 +142,7 @@
                 <th class="sortable" data-sort-key="goals">Buts</th>
                 <th class="sortable" data-sort-key="assists">Passes</th>
                 <th class="sortable" data-sort-key="avgRating">Note moy.</th>
+                <th></th>
               </tr>
             </thead>
             <tbody></tbody>
@@ -197,78 +198,96 @@
 
       <!-- Onglet Mercato -->
       <div class="tab" id="tab-transfers">
-        <div class="panel">
-          <h3>Marché des transferts</h3>
-          <div class="transfer-filters">
-            <div class="filter-group">
-              <label>Recherche</label>
-              <input type="text" id="filter-name" placeholder="Nom du joueur...">
-            </div>
-            <div class="filter-group">
-              <label>Poste</label>
-              <select id="filter-pos">
-                <option value="all">Tous</option>
-                <option value="GK">GK</option>
-                <option value="DEF">DEF</option>
-                <option value="MID">MID</option>
-                <option value="ATT">ATT</option>
-              </select>
-            </div>
-            <div class="filter-group">
-              <label>Note min.</label>
-              <select id="filter-ovr">
-                <option value="0">Toutes</option>
-                <option value="60">60+</option>
-                <option value="65">65+</option>
-                <option value="70">70+</option>
-                <option value="75">75+</option>
-                <option value="80">80+</option>
-                <option value="85">85+</option>
-              </select>
-            </div>
-            <div class="filter-group">
-              <label>Ligue</label>
-              <select id="filter-league">
-                <option value="all">Toutes</option>
-              </select>
-            </div>
-          </div>
-          <div class="table-scroll">
-            <table id="market-table" class="fm-table">
-              <thead>
-                <tr>
-                  <th class="name sortable" data-sort-key="name">Joueur</th>
-                  <th class="sortable" data-sort-key="club">Club</th>
-                  <th class="sortable" data-sort-key="pos">Pos</th>
-                  <th class="sortable" data-sort-key="overall">Niveau</th>
-                  <th class="sortable" data-sort-key="form">Forme</th>
-                  <th class="sortable" data-sort-key="age">Âge</th>
-                  <th class="sortable" data-sort-key="value">Valeur</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody id="market-list"></tbody>
-            </table>
-          </div>
-          <p class="mercato-empty" id="market-empty" style="display:none;">Aucun joueur ne correspond à ces filtres.</p>
+        <div class="mercato-subnav">
+          <button class="mercato-subtab-btn active" data-subtab="search">Rechercher</button>
+          <button class="mercato-subtab-btn" data-subtab="shortlist">Ma liste <span class="subtab-count" id="shortlist-count"></span></button>
         </div>
-        <div class="panel">
-          <h3>Vendre un joueur de mon effectif</h3>
-          <div class="table-scroll">
-            <table id="sell-table" class="fm-table">
-              <thead>
-                <tr>
-                  <th class="name sortable" data-sort-key="name">Joueur</th>
-                  <th class="sortable" data-sort-key="pos">Pos</th>
-                  <th class="sortable" data-sort-key="overall">Niveau</th>
-                  <th class="sortable" data-sort-key="form">Forme</th>
-                  <th class="sortable" data-sort-key="age">Âge</th>
-                  <th class="sortable" data-sort-key="value">Valeur</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody id="sell-list"></tbody>
-            </table>
+
+        <div class="mercato-subpanel active" id="mercato-subtab-search">
+          <div class="panel">
+            <h3>Rechercher des joueurs</h3>
+            <div class="filter-tile-grid">
+              <div class="filter-tile">
+                <span class="filter-tile-icon">🔎</span>
+                <div class="filter-tile-body">
+                  <label>Nom</label>
+                  <input type="text" id="filter-name" placeholder="Nom du joueur...">
+                </div>
+              </div>
+              <div class="filter-tile">
+                <span class="filter-tile-icon">🧤</span>
+                <div class="filter-tile-body">
+                  <label>Poste</label>
+                  <select id="filter-pos">
+                    <option value="all">Tous</option>
+                    <option value="GK">GK</option>
+                    <option value="DEF">DEF</option>
+                    <option value="MID">MID</option>
+                    <option value="ATT">ATT</option>
+                  </select>
+                </div>
+              </div>
+              <div class="filter-tile">
+                <span class="filter-tile-icon">⭐</span>
+                <div class="filter-tile-body">
+                  <label>Note min.</label>
+                  <select id="filter-ovr">
+                    <option value="0">Toutes</option>
+                    <option value="60">60+</option>
+                    <option value="65">65+</option>
+                    <option value="70">70+</option>
+                    <option value="75">75+</option>
+                    <option value="80">80+</option>
+                    <option value="85">85+</option>
+                  </select>
+                </div>
+              </div>
+              <div class="filter-tile">
+                <span class="filter-tile-icon">🏆</span>
+                <div class="filter-tile-body">
+                  <label>Ligue</label>
+                  <select id="filter-league">
+                    <option value="all">Toutes</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="table-scroll">
+              <table id="market-table" class="fm-table">
+                <thead>
+                  <tr>
+                    <th class="name sortable" data-sort-key="name">Joueur</th>
+                    <th class="sortable" data-sort-key="club">Club</th>
+                    <th class="sortable" data-sort-key="pos">Pos</th>
+                    <th class="sortable" data-sort-key="overall">Niveau</th>
+                    <th class="sortable" data-sort-key="form">Forme</th>
+                    <th class="sortable" data-sort-key="age">Âge</th>
+                    <th class="sortable" data-sort-key="value">Valeur</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="market-list"></tbody>
+              </table>
+            </div>
+            <p class="mercato-empty" id="market-empty" style="display:none;">Aucun joueur ne correspond à ces filtres.</p>
+          </div>
+        </div>
+
+        <div class="mercato-subpanel" id="mercato-subtab-shortlist">
+          <div class="panel">
+            <h3>Ma liste de suivi</h3>
+            <p class="mercato-window-notice" id="mercato-window-notice" style="display:none;">
+              🔒 Le mercato est fermé — tu peux repérer des joueurs mais pas encore faire d'offre. Reviens pendant une fenêtre de transferts.
+            </p>
+            <div class="shortlist-layout">
+              <div class="shortlist-list-col">
+                <div id="shortlist-rows"></div>
+                <p class="mercato-empty" id="shortlist-empty" style="display:none;">Ta liste est vide — ajoute des joueurs depuis l'onglet Rechercher.</p>
+              </div>
+              <div class="shortlist-detail-col" id="shortlist-detail">
+                <p class="shortlist-detail-placeholder">Sélectionne un joueur dans la liste pour voir sa fiche.</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>

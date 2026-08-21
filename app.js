@@ -12,6 +12,7 @@ let STATE = {
   pendingLineup: null,  // setup en cours de préparation
   pendingResult: null,
   mercatoOpen: false,
+  shortlist: [],        // ids de joueurs (n'importe quelle ligue) ajoutés à la liste de suivi
   savedTactic: null,    // { formation, assignments, attackPlan, defensePlan }
   currentSlotId: null   // identifiant de la carrière active (parmi plusieurs)
 };
@@ -56,6 +57,7 @@ function buildSaveData() {
     currentDay: STATE.currentDay,
     notifications: STATE.notifications,
     mercatoOpen: STATE.mercatoOpen,
+    shortlist: STATE.shortlist,
     savedTactic: STATE.savedTactic,
     otherLeagues: STATE.otherLeagues,
     tournament: STATE.tournament
@@ -92,33 +94,43 @@ function applySaveData(data) {
   STATE.currentDay = data.currentDay !== undefined ? data.currentDay : matchDayForRound(data.currentRound || 0);
   STATE.notifications = data.notifications || [];
   STATE.mercatoOpen = data.mercatoOpen;
+  STATE.shortlist = data.shortlist || [];
   STATE.savedTactic = data.savedTactic || null;
   STATE.pendingLineup = null;
   STATE.pendingResult = null;
   STATE.otherLeagues = data.otherLeagues || null;
   STATE.tournament = data.tournament || null;
   STATE.tournamentMatchRef = null;
-  backfillPhotoClub();
-  backfillSeasonStats();
   // migration : sauvegardes créées avant les ligues en arrière-plan — démarre leur saison
   // maintenant plutôt que de laisser cette carrière sans classement pour le futur tournoi.
   if (!STATE.otherLeagues) STATE.otherLeagues = buildOtherLeagues(STATE.leagueKey);
+  backfillPhotoClub();
+  backfillSeasonStats();
   // JSON a rompu les références d'objets équipe du bracket (cf. relinkTournamentTeamRefs) : on
   // les ré-associe aux vraies équipes maintenant que STATE.league/STATE.otherLeagues sont prêts.
   relinkTournamentTeamRefs();
 }
 
-// Migration pour les sauvegardes créées avant l'ajout de photoClub (voir startCareer/playerPhotoUrl) :
-// retrouve le club d'origine de chaque joueur qui n'en a pas encore en le cherchant par nom dans
-// les données sources de sa ligue (ne touche pas les joueurs qui ont déjà leur photoClub).
+// Migration pour les sauvegardes créées avant l'ajout de photoClub/photoLeague (voir
+// startCareer/playerPhotoUrl) : retrouve le club ET la ligue d'origine de chaque joueur qui n'en a
+// pas encore, en le cherchant par nom dans TOUTES les ligues (pas seulement la sienne — un joueur
+// recruté sur le mercato depuis une autre ligue doit garder la photo de son vrai club d'origine,
+// pas être rattaché à tort à la ligue de l'équipe qui l'a acheté).
 function backfillPhotoClub() {
-  const league = LEAGUES[STATE.leagueKey];
-  if (!league || !STATE.league) return;
-  const clubByName = {};
-  league.teams.forEach(t => t.players.forEach(p => { clubByName[p.name] = t.name; }));
-  STATE.league.teams.forEach(t => t.players.forEach(p => {
-    if (!p.photoClub) p.photoClub = clubByName[p.name] || t.name;
-  }));
+  if (!STATE.league) return;
+  const originByName = {};
+  Object.keys(LEAGUES).forEach(key => {
+    LEAGUES[key].teams.forEach(t => t.players.forEach(p => {
+      if (!(p.name in originByName)) originByName[p.name] = { club: t.name, league: key };
+    }));
+  });
+  const fillPlayer = (t, leagueKey) => p => {
+    const origin = originByName[p.name];
+    if (!p.photoClub) p.photoClub = origin ? origin.club : t.name;
+    if (!p.photoLeague) p.photoLeague = origin ? origin.league : leagueKey;
+  };
+  STATE.league.teams.forEach(t => t.players.forEach(fillPlayer(t, STATE.leagueKey)));
+  (STATE.otherLeagues || []).forEach(ol => ol.league.teams.forEach(t => t.players.forEach(fillPlayer(t, ol.key))));
 }
 
 // Migration pour les sauvegardes créées avant que startCareer() ne remette les stats de saison à
@@ -380,10 +392,12 @@ function startCareer() {
   const teams = JSON.parse(JSON.stringify(sourceTeams));
 
   teams.forEach(t => t.players.forEach(p => {
-    // le dossier des photos est organisé par club d'origine (images/players/<ligue>/<club>/...) ;
-    // on fige ce club sur chaque joueur dès la création de la carrière, pour que sa photo reste
-    // trouvable même après un transfert vers une autre équipe (cf. playerPhotoUrl)
+    // le dossier des photos est organisé par ligue puis par club d'origine
+    // (images/players/<ligue>/<club>/...) ; on fige club ET ligue sur chaque joueur dès la
+    // création de la carrière, pour que sa photo reste trouvable même après un transfert vers une
+    // autre équipe — y compris une équipe d'une AUTRE ligue via le mercato (cf. playerPhotoUrl)
     p.photoClub = t.name;
+    p.photoLeague = STATE.leagueKey;
     // data.js encode les vraies stats de la saison 2025/26 (via withStats) uniquement pour
     // calibrer la note de départ des joueurs connus — cette carrière doit repartir de zéro,
     // pas hériter des buts/passes/matchs déjà joués dans la vraie vie (cf. backfillSeasonStats
@@ -411,6 +425,7 @@ function startCareer() {
   STATE.currentRound = 0;
   STATE.currentDay = 0;
   STATE.notifications = [];
+  STATE.shortlist = [];
   STATE.mercatoOpen = false;
   STATE.otherLeagues = buildOtherLeagues(STATE.leagueKey);
 
@@ -431,6 +446,7 @@ function buildOtherLeagues(userLeagueKey) {
       t.photoLeague = key;
       t.players.forEach(p => {
         p.photoClub = t.name;
+        p.photoLeague = key;
         p.goals = 0; p.assists = 0; p.matches = 0; p.ratingSum = 0; p.rating = 0;
         p.statsBaselineCleared = true;
       });
@@ -1105,18 +1121,6 @@ function updateTopbar() {
   STATE.mercatoOpen = open;
   banner.style.display = open ? "block" : "none";
   banner.textContent = message;
-
-  updateMercatoTabVisibility();
-}
-
-// Affiche ou masque l'onglet Mercato selon la fenêtre de transferts
-function updateMercatoTabVisibility() {
-  const btn = document.querySelector(".nav button[data-tab='transfers']");
-  btn.style.display = STATE.mercatoOpen ? "" : "none";
-  // si l'onglet Mercato est actif mais devient masqué, on bascule vers le calendrier
-  if (!STATE.mercatoOpen && btn.classList.contains("active")) {
-    showTab("calendar");
-  }
 }
 
 function formatMoney(v) {
@@ -1403,9 +1407,14 @@ function renderSquadTab() {
       <td>${renderStarRating(p.overall)}</td>
       <td>${p.speed}</td><td>${p.technique}</td><td>${p.physical}</td><td>${p.mental}</td>
       <td>${renderFormBar(p.form)}</td><td>${p.age}</td><td>${formatMoney(p.value)}</td>
-      <td>${p.goals}</td><td>${p.assists}</td><td>${avgRating}</td>`;
+      <td>${p.goals}</td><td>${p.assists}</td><td>${avgRating}</td>
+      <td><button class="secondary" data-action="sell" data-player="${p.id}">Vendre</button></td>`;
     tr.onclick = () => openPlayerInfoModal(p, team);
     tbody.appendChild(tr);
+  });
+  // clic sur "Vendre" : ne doit pas aussi ouvrir la fiche technique de la ligne
+  tbody.querySelectorAll("[data-action='sell']").forEach(btn => {
+    btn.onclick = (e) => { e.stopPropagation(); sellPlayer(btn.dataset.player); };
   });
   bindSortableTable("squad-table", squadSortState, renderSquadTab);
 }
@@ -1480,15 +1489,24 @@ function renderStatTile(value, label) {
 }
 
 // ----------------- ONGLET MERCATO -----------------
-// Tri courant des deux tables Mercato (indépendants l'un de l'autre, pas sauvegardés).
+// Tri courant de la table de recherche (pas sauvegardé).
 let marketSortState = { key: "overall", dir: -1 };
-let sellSortState = { key: "overall", dir: -1 };
 
 function renderTransfersTab() {
   const team = getUserTeam();
   populateMarketLeagueFilter();
   renderMarketTable(team);
-  renderSellTable(team);
+  renderShortlistTable(team);
+  updateShortlistCount();
+}
+
+// Bascule entre les deux sous-onglets du Mercato (Rechercher / Ma liste) — les deux restent
+// toujours accessibles, contrairement à l'ancien onglet Mercato qui se masquait hors fenêtre
+// de transferts (seule l'action "Offre" dans Ma liste reste bloquée hors fenêtre, voir
+// renderShortlistTable/STATE.mercatoOpen).
+function showMercatoSubtab(name) {
+  document.querySelectorAll(".mercato-subtab-btn").forEach(b => b.classList.toggle("active", b.dataset.subtab === name));
+  document.querySelectorAll(".mercato-subpanel").forEach(p => p.classList.toggle("active", p.id === "mercato-subtab-" + name));
 }
 
 // Peuple le filtre "Ligue" une seule fois (les ligues d'une carrière ne changent pas en cours de
@@ -1568,75 +1586,119 @@ function renderMarketTable(team) {
       <td>${renderFormBar(p.form)}</td>
       <td>${p.age}</td>
       <td>${formatMoney(p.value)}</td>
-      <td><button class="primary" data-action="buy" data-league="${leagueKey}" data-team="${otherTeam.id}" data-player="${p.id}">Offre</button></td>`;
+      <td><button class="secondary${STATE.shortlist.includes(p.id) ? " selected" : ""}" data-action="shortlist" data-player="${p.id}">${STATE.shortlist.includes(p.id) ? "✓ Dans ma liste" : "+ Ajouter"}</button></td>`;
     tr.onclick = () => openPlayerInfoModal(p, otherTeam);
     tbody.appendChild(tr);
   });
 
-  // clic sur le bouton "Offre" : ne doit pas aussi ouvrir la fiche technique de la ligne
-  tbody.querySelectorAll("[data-action='buy']").forEach(btn => {
+  // clic sur le bouton d'ajout : ne doit pas aussi ouvrir la fiche technique de la ligne
+  tbody.querySelectorAll("[data-action='shortlist']").forEach(btn => {
     btn.onclick = (e) => {
       e.stopPropagation();
-      openOfferModal(btn.dataset.league, btn.dataset.team, btn.dataset.player);
+      toggleShortlist(btn.dataset.player);
     };
   });
 
   bindSortableTable("market-table", marketSortState, () => renderMarketTable(team));
 }
 
-function sellSortValue(p, key) {
-  if (key === "pos") return POS_ORDER[p.pos];
-  return p[key];
+// Retrouve un joueur n'importe où dans la ligue du joueur ou les 5 autres ligues (les shortlists
+// stockent uniquement un id de joueur, pas une référence figée club/ligue, pour rester valides
+// même si le joueur est transféré ailleurs par l'IA entre-temps).
+function findPlayerAnywhere(playerId) {
+  let found = null;
+  const scan = (teams, leagueKey, leagueName) => {
+    teams.forEach(t => {
+      if (found) return;
+      const p = t.players.find(pl => pl.id === playerId);
+      if (p) found = { p, team: t, leagueKey, leagueName };
+    });
+  };
+  scan(STATE.league.teams, STATE.leagueKey, STATE.league.name);
+  (STATE.otherLeagues || []).forEach(ol => { if (!found) scan(ol.league.teams, ol.key, ol.name); });
+  return found;
 }
 
-function renderSellTable(team) {
-  const tbody = document.getElementById("sell-list");
-  tbody.innerHTML = "";
-
-  const { key, dir } = sellSortState;
-  const sorted = [...team.players].sort((a, b) => {
-    const av = sellSortValue(a, key), bv = sellSortValue(b, key);
-    if (av < bv) return -1 * dir;
-    if (av > bv) return 1 * dir;
-    return b.overall - a.overall;
-  });
-
-  sorted.forEach(p => {
-    const tr = document.createElement("tr");
-    tr.className = "clickable";
-    tr.title = "Voir la fiche technique";
-    tr.innerHTML = `<td class="name">
-        <div class="player-cell">
-          <div class="avatar-sm">
-            <div class="avatar-sm-fallback">${playerInitials(p.name)}</div>
-            <img src="${playerPhotoUrl(p, team)}" alt="" class="avatar-sm-img"
-              onload="this.style.display='block'; this.previousElementSibling.style.display='none';"
-              onerror="this.style.display='none';">
-          </div>
-          <span class="player-cell-name">${p.name}</span>
-        </div>
-      </td>
-      <td><span class="pos-tag pos-${p.pos}">${p.pos}</span></td>
-      <td>${renderStarRating(p.overall)}</td>
-      <td>${renderFormBar(p.form)}</td>
-      <td>${p.age}</td>
-      <td>${formatMoney(p.value)}</td>
-      <td><button class="secondary" data-action="sell" data-player="${p.id}">Vendre</button></td>`;
-    tr.onclick = () => openPlayerInfoModal(p, team);
-    tbody.appendChild(tr);
-  });
-
-  // clic sur "Vendre" : ne doit pas aussi ouvrir la fiche technique de la ligne
-  tbody.querySelectorAll("[data-action='sell']").forEach(btn => {
-    btn.onclick = (e) => {
-      e.stopPropagation();
-      sellPlayer(btn.dataset.player);
-    };
-  });
-
-  bindSortableTable("sell-table", sellSortState, () => renderSellTable(team));
+function toggleShortlist(playerId) {
+  const idx = STATE.shortlist.indexOf(playerId);
+  if (idx === -1) STATE.shortlist.push(playerId); else STATE.shortlist.splice(idx, 1);
+  if (selectedShortlistId === playerId && idx !== -1) selectedShortlistId = null;
+  saveGame();
+  const team = getUserTeam();
+  renderMarketTable(team);
+  renderShortlistTable(team);
+  updateShortlistCount();
 }
 
+function updateShortlistCount() {
+  document.getElementById("shortlist-count").textContent = STATE.shortlist.length ? `(${STATE.shortlist.length})` : "";
+}
+
+// Joueur actuellement sélectionné dans la liste de gauche de "Ma liste" (dont la fiche
+// détaillée s'affiche dans le panneau de droite) — façon EA FC : liste compacte + fiche.
+let selectedShortlistId = null;
+
+function renderShortlistTable(team) {
+  const wrap = document.getElementById("shortlist-rows");
+  const emptyMsg = document.getElementById("shortlist-empty");
+  const notice = document.getElementById("mercato-window-notice");
+  wrap.innerHTML = "";
+  notice.style.display = STATE.mercatoOpen ? "none" : "block";
+
+  // nettoie les entrées obsolètes : joueur déjà recruté par l'utilisateur (n'a plus de sens dans
+  // une liste de repérage) ou introuvable (ne devrait pas arriver, les joueurs ne sont jamais
+  // supprimés, juste transférés — filet de sécurité).
+  STATE.shortlist = STATE.shortlist.filter(id => {
+    const found = findPlayerAnywhere(id);
+    return found && found.team.id !== team.id;
+  });
+
+  const rows = STATE.shortlist.map(id => findPlayerAnywhere(id)).filter(Boolean);
+  emptyMsg.style.display = rows.length ? "none" : "block";
+
+  if (rows.length && !rows.some(r => r.p.id === selectedShortlistId)) selectedShortlistId = rows[0].p.id;
+  if (!rows.length) selectedShortlistId = null;
+
+  rows.forEach(({ p, team: otherTeam }) => {
+    const row = document.createElement("div");
+    row.className = "shortlist-row" + (p.id === selectedShortlistId ? " selected" : "");
+    row.innerHTML = `${renderTeamCrest(otherTeam, "crest-sm")}
+      <span class="pos-tag pos-${p.pos}">${p.pos}</span>
+      <span class="shortlist-row-name">${p.name}</span>
+      <span class="shortlist-row-age">${p.age} ans</span>
+      <span class="shortlist-row-ovr">${p.overall}</span>`;
+    row.onclick = () => { selectedShortlistId = p.id; renderShortlistTable(team); };
+    wrap.appendChild(row);
+  });
+
+  renderShortlistDetail();
+}
+
+// Panneau de droite de "Ma liste" : réutilise la fiche joueur complète (buildPlayerCardHTML,
+// partagée avec la modale d'info joueur) façon fiche de scouting EA FC/FM, avec l'étiquette de
+// ligue d'origine et les actions Offre/Retirer directement en bas de la fiche.
+function renderShortlistDetail() {
+  const wrap = document.getElementById("shortlist-detail");
+  const found = selectedShortlistId ? findPlayerAnywhere(selectedShortlistId) : null;
+  if (!found) {
+    wrap.innerHTML = `<p class="shortlist-detail-placeholder">Sélectionne un joueur dans la liste pour voir sa fiche.</p>`;
+    return;
+  }
+  const { p, team: otherTeam, leagueKey, leagueName } = found;
+  const leagueTag = leagueKey !== STATE.leagueKey
+    ? `<div class="tourn-league-tag" style="margin-top:8px;">${LEAGUE_FLAGS[leagueKey] || "⚽"} ${leagueName}</div>` : "";
+  const actionsHtml = `
+    <div class="shortlist-detail-actions">
+      <button class="primary" id="shortlist-detail-offer"${STATE.mercatoOpen ? "" : " disabled"}>Offre</button>
+      <button class="secondary" id="shortlist-detail-remove">Retirer de ma liste</button>
+    </div>`;
+  wrap.innerHTML = buildPlayerCardHTML(p, otherTeam, leagueTag + actionsHtml);
+  document.getElementById("shortlist-detail-offer").onclick = () => openOfferModal(leagueKey, otherTeam.id, p.id);
+  document.getElementById("shortlist-detail-remove").onclick = () => toggleShortlist(p.id);
+}
+
+// Vendre un joueur se fait maintenant directement depuis l'onglet Effectif (voir renderSquadTab)
+// plutôt que via une table dédiée dans le Mercato.
 function sellPlayer(playerId) {
   const team = getUserTeam();
   if (team.players.length <= 7) {
@@ -1654,7 +1716,7 @@ function sellPlayer(playerId) {
       buyer.players.push(player);
     }
     updateTopbar();
-    renderTransfersTab();
+    renderSquadTab();
     saveGame();
   }, { title: "Vendre ce joueur ?", confirmLabel: "Vendre" });
 }
@@ -1662,6 +1724,12 @@ function sellPlayer(playerId) {
 let currentOffer = null;
 
 function openOfferModal(leagueKey, otherTeamId, playerId) {
+  // garde-fou : même si l'UI est restée affichée après la fermeture du mercato (l'utilisateur
+  // était sur l'onglet Mercato quand la fenêtre s'est refermée), aucune offre ne doit passer.
+  if (!STATE.mercatoOpen) {
+    showAlert("Le mercato est fermé — reviens pendant une fenêtre de transferts pour faire une offre.");
+    return;
+  }
   const otherTeam = findLeagueTeam(leagueKey, otherTeamId);
   const player = otherTeam.players.find(p => p.id === playerId);
   currentOffer = { leagueKey, otherTeamId, playerId };
@@ -1686,6 +1754,7 @@ function submitOffer() {
   // automatique de la modale) : il n'y a plus rien à proposer, on referme simplement.
   if (!player) { closeOfferModal(); return; }
 
+  if (!STATE.mercatoOpen) { resultEl.textContent = "Le mercato est fermé."; return; }
   if (!amount || amount <= 0) { resultEl.textContent = "Montant invalide."; return; }
   if (amount > team.budget) { resultEl.textContent = "Tu n'as pas assez de budget !"; return; }
   if (otherTeam.players.length <= 7) { resultEl.textContent = `${otherTeam.name} ne peut pas vendre, effectif trop juste.`; return; }
@@ -1706,7 +1775,9 @@ function submitOffer() {
     otherTeam.budget += amount;
     otherTeam.players = otherTeam.players.filter(p => p.id !== player.id);
     team.players.push(player);
-    resultEl.style.color = "#00ff88";
+    const shortlistIdx = STATE.shortlist.indexOf(player.id);
+    if (shortlistIdx !== -1) STATE.shortlist.splice(shortlistIdx, 1);
+    resultEl.style.color = "#ffc700";
     resultEl.textContent = `Transfert accepté ! ${player.name} rejoint ${team.name}.`;
     updateTopbar();
     saveGame();
@@ -2588,11 +2659,13 @@ function slugifyName(str) {
 }
 
 function playerPhotoUrl(player, team) {
-  // team.photoLeague : posé sur les équipes des ligues en arrière-plan (buildOtherLeagues), qui
-  // n'appartiennent pas à STATE.leagueKey (le tournoi de fin de saison peut opposer le joueur à
-  // n'importe laquelle des 5 autres ligues) — sans ça le dossier d'images serait celui de la
-  // mauvaise ligue pour ces équipes-là.
-  const leagueKey = team.photoLeague || STATE.leagueKey;
+  // player.photoLeague : ligue d'origine du joueur, figée à la création de la carrière (voir
+  // startCareer/buildOtherLeagues) — prioritaire sur team.photoLeague, car un joueur recruté sur
+  // le mercato depuis une AUTRE ligue change d'équipe (donc de team.photoLeague) mais sa photo
+  // reste dans le dossier de sa ligue d'origine, pas celle de l'équipe qui l'a acheté.
+  // team.photoLeague reste utile en repli pour les équipes des ligues en arrière-plan
+  // (buildOtherLeagues) quand le joueur n'a pas encore ce champ (vieille sauvegarde non migrée).
+  const leagueKey = player.photoLeague || team.photoLeague || STATE.leagueKey;
   const leagueFolder = LEAGUE_IMAGE_FOLDER[leagueKey] || leagueKey;
   // photoClub = club d'origine du joueur (fixé à la création de la carrière) : un joueur recruté
   // depuis une autre équipe garde la photo de son club de départ, là où le fichier existe réellement.
@@ -2633,14 +2706,13 @@ function renderTeamCrest(team, sizeClass) {
   </span>`;
 }
 
-// Affiche les statistiques détaillées d'un joueur dans une petite fenêtre,
-// utilisable aussi bien pendant la préparation que pendant le match.
-function openPlayerInfoModal(player, team, liveStat) {
+// Fiche joueur détaillée (photo, poste, club, étoiles, attributs, forme, stats) — partagée entre
+// la modale d'info joueur et le panneau de détail de "Ma liste" au Mercato (voir
+// renderShortlistDetail). extraHtml s'insère en bas de la colonne info (live-stat de match,
+// étiquette de ligue, boutons d'action...).
+function buildPlayerCardHTML(player, team, extraHtml) {
   const avgRating = player.matches > 0 ? (player.ratingSum / player.matches).toFixed(1) : "-";
-  const liveHtml = liveStat
-    ? `<p style="margin-top:10px; color:var(--accent2); font-weight:700;">Ce match : ⚽ ${liveStat.goals || 0} but(s) — 🅰️ ${liveStat.assists || 0} passe(s) décisive(s)</p>`
-    : "";
-  document.getElementById("player-info-body").innerHTML = `
+  return `
     <div class="player-card-layout">
       <div class="player-card-photo-col">
         <div class="player-photo-fallback-lg">${playerInitials(player.name)}</div>
@@ -2672,10 +2744,19 @@ function openPlayerInfoModal(player, team, liveStat) {
           ${renderStatTile(player.assists, "Passes")}
           ${renderStatTile(avgRating, "Note moy.")}
         </div>
-        ${liveHtml}
+        ${extraHtml || ""}
       </div>
     </div>
   `;
+}
+
+// Affiche les statistiques détaillées d'un joueur dans une petite fenêtre,
+// utilisable aussi bien pendant la préparation que pendant le match.
+function openPlayerInfoModal(player, team, liveStat) {
+  const liveHtml = liveStat
+    ? `<p style="margin-top:10px; color:var(--accent); font-weight:700;">Ce match : ⚽ ${liveStat.goals || 0} but(s) — 🅰️ ${liveStat.assists || 0} passe(s) décisive(s)</p>`
+    : "";
+  document.getElementById("player-info-body").innerHTML = buildPlayerCardHTML(player, team, liveHtml);
   document.getElementById("player-info-modal").classList.add("active");
 }
 
@@ -3995,6 +4076,10 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("filter-ovr").onchange = renderTransfersTab;
   document.getElementById("filter-name").oninput = renderTransfersTab;
   document.getElementById("filter-league").onchange = renderTransfersTab;
+
+  document.querySelectorAll(".mercato-subtab-btn").forEach(btn => {
+    btn.onclick = () => showMercatoSubtab(btn.dataset.subtab);
+  });
 
   window.addEventListener("beforeunload", saveGame);
 });
