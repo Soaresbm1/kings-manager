@@ -784,11 +784,21 @@ function awardSeasonPrizeMoney() {
     objective, objectiveMet, objectiveAmount, total
   };
   STATE.seasonPrizeAwarded = true;
+
+  // records de saison : meilleur buteur/passeur du CLUB cette saison — capturés maintenant (stats
+  // encore scopées à la saison qui vient de se terminer, avant que startNewSeason() ne les remette
+  // à zéro) pour alimenter le "livre des records" du palmarès (voir renderPalmaresPanel, qui
+  // recalcule les records de CARRIÈRE en comparant ces entrées entre elles à l'affichage).
+  const scorers = team.players.filter(p => p.goals > 0).sort((a, b) => b.goals - a.goals);
+  const topScorer = scorers.length ? { name: scorers[0].name, goals: scorers[0].goals } : null;
+  const assisters = team.players.filter(p => p.assists > 0).sort((a, b) => b.assists - a.assists);
+  const topAssister = assisters.length ? { name: assisters[0].name, assists: assisters[0].assists } : null;
+
   // palmarès : un résumé permanent de cette saison (jamais remis à zéro sauf startCareer, contrairement
   // à STATE.lastSeasonPrize qui ne garde que la toute dernière) — voir renderPalmaresPanel.
   STATE.trophyHistory.push({
     season: STATE.season, leagueName: STATE.league.name, rank, totalTeams, tournamentResult,
-    objectiveLabel: objective ? objective.label : null, objectiveMet
+    objectiveLabel: objective ? objective.label : null, objectiveMet, topScorer, topAssister
   });
 }
 
@@ -1664,6 +1674,7 @@ function renderStatsTab() {
 function renderPalmaresPanel() {
   const history = STATE.trophyHistory;
   const summaryEl = document.getElementById("palmares-summary");
+  const recordsEl = document.getElementById("palmares-records");
   const listEl = document.getElementById("palmares-list");
   const emptyEl = document.getElementById("palmares-empty");
 
@@ -1680,15 +1691,28 @@ function renderPalmaresPanel() {
     ${renderStatTile(objectivesSet ? `${objectivesMet}/${objectivesSet}` : "-", "🎯 Objectifs atteints")}
   `;
 
+  // records de carrière : recalculés à l'affichage en comparant les meilleurs performeurs déjà
+  // capturés saison par saison (voir awardSeasonPrizeMoney) — pas besoin de les stocker séparément.
+  const bestScorer = history.reduce((best, h) =>
+    (h.topScorer && (!best || h.topScorer.goals > best.goals)) ? { ...h.topScorer, season: h.season } : best, null);
+  const bestAssister = history.reduce((best, h) =>
+    (h.topAssister && (!best || h.topAssister.assists > best.assists)) ? { ...h.topAssister, season: h.season } : best, null);
+  recordsEl.innerHTML = [
+    bestScorer ? `<div class="palmares-record">⚽ Record de buts en une saison : <b>${bestScorer.goals}</b> — ${bestScorer.name} (saison ${bestScorer.season})</div>` : "",
+    bestAssister ? `<div class="palmares-record">🅰️ Record de passes décisives en une saison : <b>${bestAssister.assists}</b> — ${bestAssister.name} (saison ${bestAssister.season})</div>` : ""
+  ].join("");
+
   emptyEl.style.display = history.length ? "none" : "block";
   listEl.innerHTML = history.slice().reverse().map(h => {
     const tournamentLabel = h.tournamentResult ? TOURNAMENT_RESULT_LABELS[h.tournamentResult] : "non qualifié";
     const objectiveTag = h.objectiveMet === true ? `<span class="palmares-objective palmares-objective-met">🎯 objectif atteint</span>`
       : h.objectiveMet === false ? `<span class="palmares-objective palmares-objective-missed">🎯 objectif manqué</span>` : "";
+    const scorerTag = h.topScorer ? `<span class="palmares-scorer">⚽ ${h.topScorer.name} (${h.topScorer.goals})</span>` : "";
     return `<div class="palmares-row${h.rank === 1 || h.tournamentResult === "champion" ? " palmares-row-title" : ""}">
       <span class="palmares-season">Saison ${h.season}</span>
       <span class="palmares-rank">${h.rank}${h.rank === 1 ? "er" : "e"} / ${h.totalTeams} — ${h.leagueName}</span>
       <span class="palmares-tournament">${tournamentLabel}</span>
+      ${scorerTag}
       ${objectiveTag}
     </div>`;
   }).join("");

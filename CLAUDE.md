@@ -88,10 +88,15 @@ le champion international. Deux composantes qui s'additionnent au budget de l'é
 classement final du championnat (20 000€ à 150 000€ selon le rang) + parcours dans le tournoi (0€
 si non qualifié, jusqu'à 150 000€ pour le titre — `getUserTournamentResult()`/
 `TOURNAMENT_PRIZE_BY_RESULT`). Pousse aussi une entrée dans `STATE.trophyHistory`
-(`{season, leagueName, rank, totalTeams, tournamentResult}`, jamais remis à zéro sauf
-`startCareer` — contrairement à `lastSeasonPrize` qui ne garde que la toute dernière saison) :
-le panneau "Palmarès" en haut de l'onglet Statistiques (`renderPalmaresPanel`) en tire un résumé de
-carrière (titres de champion, titres internationaux, finales perdues) et le détail saison par saison.
+(`{season, leagueName, rank, totalTeams, tournamentResult, topScorer, topAssister}` — les deux
+derniers capturés depuis les stats de SAISON du club juste avant que `startNewSeason()` ne les
+remette à zéro ; jamais remis à zéro sauf `startCareer` — contrairement à `lastSeasonPrize` qui ne
+garde que la toute dernière saison) : le panneau "Palmarès" en haut de l'onglet Statistiques
+(`renderPalmaresPanel`) en tire un résumé de carrière (titres de champion, titres internationaux,
+finales perdues), le détail saison par saison (avec le meilleur buteur du club affiché sur chaque
+ligne), et les **records de club** (meilleur total de buts/passes décisives en une seule saison,
+recalculés à l'affichage en comparant `topScorer`/`topAssister` de toutes les entrées entre elles —
+pas besoin de les stocker séparément).
 
 ## Enjeu de club : objectif de la direction (`STATE.seasonObjective`, `generateSeasonObjective`)
 
