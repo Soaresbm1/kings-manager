@@ -477,6 +477,12 @@ function simulateOtherLeagueRound(ol) {
     const r = ol.league.results.find(r => r.round === ol.currentRound && r.home === m.home && r.away === m.away);
     r.played = true; r.homeGoals = result.homeGoals; r.awayGoals = result.awayGoals; r.penaltyWinner = result.penaltyWinner;
   });
+  // mercato IA pour cette ligue en arrière-plan, sur SA propre fenêtre de journées (chaque ligue a
+  // son propre calendrier/nombre d'équipes, cf. advanceOtherLeagues) — humanTeamId=null puisque
+  // aucune équipe de cette ligue n'appartient au joueur, donc aucune à exclure des transferts.
+  if (isMercatoWindowRound(ol.currentRound, ol.schedule.length)) {
+    simulateAITransfers(ol.league, null);
+  }
   ol.currentRound++;
 }
 
@@ -1140,6 +1146,14 @@ function closeNotificationModal() {
 // ----------------- TOPBAR -----------------
 function getUserTeam() {
   return STATE.league.teams.find(t => t.id === STATE.userTeamId);
+}
+
+// Fenêtres de mercato (journées 1-2, journées 8-9, et les 2 dernières journées + fin de saison) —
+// factorisé pour être réutilisé par la ligue du joueur (updateTopbar) ET par chacune des 5 ligues
+// en arrière-plan, qui ont chacune leur propre calendrier/nombre d'équipes (voir
+// simulateOtherLeagueRound) donc leur propre position de journée à évaluer indépendamment.
+function isMercatoWindowRound(round, totalRounds) {
+  return round >= totalRounds || round <= 1 || round === 7 || round === 8 || round >= totalRounds - 2;
 }
 
 function updateTopbar() {

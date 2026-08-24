@@ -54,8 +54,11 @@ saison IA vs IA en parallèle de celle du joueur, construites par `buildOtherLea
 à `startCareer()` et à chaque `startNewSeason()`). `advanceOtherLeagues()` les fait avancer
 d'un cran à chaque jour qui passe dans `advanceOneDayStep` (même barème `matchDayForRound` que
 la ligue du joueur, indépendant du nombre d'équipes — chaque ligue termine donc sa saison à son
-propre rythme selon sa taille). Pas de mercato IA pour ces ligues (effectifs figés toute la
-saison) — hors scope pour l'instant. `finalizeOtherLeagues()` (idempotente) termine
+propre rythme selon sa taille). `simulateOtherLeagueRound(ol)` déclenche aussi le mercato IA
+(`simulateAITransfers(ol.league, null)` — `humanTeamId=null` car aucune équipe de ces ligues
+n'appartient au joueur) sur SA propre fenêtre de journées (`isMercatoWindowRound`, factorisée avec
+`updateTopbar` mais évaluée indépendamment par ligue puisque chacune a son propre calendrier/nombre
+d'équipes). `finalizeOtherLeagues()` (idempotente) termine
 instantanément toute ligue pas encore finie dès que la saison du joueur se termine
 (`renderCalendarTab`, filet de sécurité aussi dans `startNewSeason`), pour garantir un
 classement final partout au même moment — pensé pour le futur tournoi de fin de saison (top 2
