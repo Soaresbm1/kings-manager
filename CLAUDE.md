@@ -87,7 +87,11 @@ terminés — déclenchée depuis `renderCalendarTab` au moment où le panneau "
 le champion international. Deux composantes qui s'additionnent au budget de l'équipe du joueur :
 classement final du championnat (20 000€ à 150 000€ selon le rang) + parcours dans le tournoi (0€
 si non qualifié, jusqu'à 150 000€ pour le titre — `getUserTournamentResult()`/
-`TOURNAMENT_PRIZE_BY_RESULT`).
+`TOURNAMENT_PRIZE_BY_RESULT`). Pousse aussi une entrée dans `STATE.trophyHistory`
+(`{season, leagueName, rank, totalTeams, tournamentResult}`, jamais remis à zéro sauf
+`startCareer` — contrairement à `lastSeasonPrize` qui ne garde que la toute dernière saison) :
+le panneau "Palmarès" en haut de l'onglet Statistiques (`renderPalmaresPanel`) en tire un résumé de
+carrière (titres de champion, titres internationaux, finales perdues) et le détail saison par saison.
 
 ## Historique des transferts (`STATE.transferLog`, sous-onglet Mercato "Historique")
 
@@ -103,7 +107,12 @@ ligne est cliquable pour rouvrir la fiche technique à jour du joueur via `findP
 figée au moment du transfert). Seuls sont journalisés : tes propres achats/ventes
 (`submitOffer`/`sellPlayer`/`respondToTransferRequest`, n'importe quelle ligue) et les transferts IA
 au sein de TA ligue (`simulateRoundAI` — les transferts internes aux 5 autres ligues, en
-arrière-plan, ne le sont pas : trop nombreux, peu pertinents). `formatGameDate(day, season)` accepte
+arrière-plan, ne le sont pas : trop nombreux, peu pertinents). Même mécanisme (`events` renvoyés par
+`simulateAITransfers`) alimente `checkShortlistTransferAlerts` : si un joueur de `STATE.shortlist`
+(Mercato → Ma liste) est transféré par l'IA vers un autre club de ta ligue, une notification
+(`STATE.notifications`, type `"shortlistMoved"`, voir `renderCurrentNotification`) l'annonce plutôt
+que de le laisser changer de club silencieusement (la liste de suivi résout toujours le club ACTUEL
+du joueur, donc rien ne signalait avant ce changement). `formatGameDate(day, season)` accepte
 un paramètre `season` optionnel pour afficher une date figée dans une saison passée plutôt que la
 saison courante de `STATE`. Le type `"release"` (joueur vendu par l'IA sans acheteur identifié)
 n'arrive plus qu'en filet de sécurité théorique : `simulateAITransfers` cherche maintenant un
@@ -297,3 +306,23 @@ et continuent de se résoudre instantanément par tirage au sort via `engine.js:
   conversation pour un exemple de smoke test IA). Pour servir les fichiers statiques en
   local, utiliser un petit serveur Node fait main (`http.createServer` + lecture de
   fichiers) plutôt que `python -m http.server`.
+
+## Suite de tests (`tests.js`, `tests.html`, `tests-node.js`)
+
+Couvre la couche pure du jeu (`data.js` + `engine.js`, aucun DOM) : intégrité des données (les 6
+ligues, effectif minimum par poste, attributs/ids valides), calendrier (`generateSchedule`),
+classement (`computeStandings`), moteur de match (`simulateMatch`/`simulateAIMatch` — pas de match
+nul, notes attribuées), séparation stats saison/carrière (`applyMatchPlayerStats`), mercato IA
+(`simulateAITransfers`/`neediestTeamForPosition`/`weakestPosition` — conservation du nombre de
+joueurs ET de l'argent total de la ligue sur 30 fenêtres enchaînées), classements individuels, IA
+tactique (`chooseAiFormation`/`chooseAiPlans`). Beaucoup de fonctions testées utilisent
+`Math.random()` : les tests vérifient des invariants structurels (conservation, bornes, "jamais de
+match nul"...) plutôt que des valeurs exactes, sauf pour les fonctions déterministes
+(`generateSchedule`, `computeStandings`, `value()`). `tests.js` définit `test()`/`assert()`/
+`assertEqual()`/`runAllTests()` (pas de framework) ; **`tests.html`** l'exécute dans un navigateur
+sans aucune dépendance (ouverture directe du fichier, comme `index.html`) — c'est le point d'entrée
+à utiliser en priorité vu l'indisponibilité fréquente de `node` dans cet environnement ;
+**`tests-node.js`** (`node tests-node.js`) fait la même chose via `vm.runInContext` quand `node`
+est disponible, avec un code de sortie non-nul si un test échoue (utilisable par un futur hook
+CI/pre-commit). Ajouter un nouveau test = un nouvel appel à `test("...", () => { ... })` dans
+`tests.js`, rien à toucher ailleurs.

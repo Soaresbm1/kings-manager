@@ -17,7 +17,8 @@ let STATE = {
   currentSlotId: null,  // identifiant de la carrière active (parmi plusieurs)
   seasonPrizeAwarded: false, // évite de créditer deux fois la prime de fin de saison (voir awardSeasonPrizeMoney)
   lastSeasonPrize: null,     // détail de la dernière prime versée, pour l'affichage dans le panneau "Saison terminée"
-  transferLog: []            // historique des transferts (achats/ventes du joueur + IA de sa ligue) — voir logTransferEvent
+  transferLog: [],           // historique des transferts (achats/ventes du joueur + IA de sa ligue) — voir logTransferEvent
+  trophyHistory: []          // palmarès : un résumé par saison terminée (classement + résultat tournoi) — voir awardSeasonPrizeMoney
 };
 
 const POS_ORDER = { GK: 0, DEF: 1, MID: 2, ATT: 3 };
@@ -66,7 +67,8 @@ function buildSaveData() {
     tournament: STATE.tournament,
     seasonPrizeAwarded: STATE.seasonPrizeAwarded,
     lastSeasonPrize: STATE.lastSeasonPrize,
-    transferLog: STATE.transferLog
+    transferLog: STATE.transferLog,
+    trophyHistory: STATE.trophyHistory
   };
 }
 
@@ -107,6 +109,7 @@ function applySaveData(data) {
   STATE.seasonPrizeAwarded = data.seasonPrizeAwarded || false;
   STATE.lastSeasonPrize = data.lastSeasonPrize || null;
   STATE.transferLog = data.transferLog || [];
+  STATE.trophyHistory = data.trophyHistory || [];
   STATE.otherLeagues = data.otherLeagues || null;
   STATE.tournament = data.tournament || null;
   STATE.tournamentMatchRef = null;
@@ -440,6 +443,7 @@ function startCareer() {
   STATE.seasonPrizeAwarded = false;
   STATE.lastSeasonPrize = null;
   STATE.transferLog = [];
+  STATE.trophyHistory = [];
   STATE.otherLeagues = buildOtherLeagues(STATE.leagueKey);
 
   showScreen("screen-main");
@@ -690,6 +694,9 @@ function awardSeasonPrizeMoney() {
   team.budget += total;
   STATE.lastSeasonPrize = { rank, totalTeams, tournamentResult, championshipAmount, tournamentAmount, total };
   STATE.seasonPrizeAwarded = true;
+  // palmarès : un résumé permanent de cette saison (jamais remis à zéro sauf startCareer, contrairement
+  // à STATE.lastSeasonPrize qui ne garde que la toute dernière) — voir renderPalmaresPanel.
+  STATE.trophyHistory.push({ season: STATE.season, leagueName: STATE.league.name, rank, totalTeams, tournamentResult });
 }
 
 const TOURNAMENT_RESULT_LABELS = {
@@ -1037,6 +1044,18 @@ function renderCurrentNotification() {
   } else if (notif.type === "message") {
     const player = team.players.find(p => p.id === notif.playerId);
     if (player) extra.innerHTML = renderNotifPlayerRow(player, team);
+  } else if (notif.type === "shortlistMoved") {
+    const found = findPlayerAnywhere(notif.playerId);
+    if (found) {
+      extra.innerHTML = `
+        ${renderNotifPlayerRow(found.p, found.team)}
+        <div class="notif-transfer-route">
+          ${transferHistoryClubHTML(notif.fromTeamId, notif.leagueKey, notif.fromTeamName)}
+          <span class="transfer-history-arrow">→</span>
+          ${transferHistoryClubHTML(notif.toTeamId, notif.leagueKey, notif.toTeamName)}
+        </div>`;
+      bodyEl.style.display = "none";
+    }
   }
 
   const queueBadge = document.getElementById("notif-queue-badge");
@@ -1078,6 +1097,20 @@ function renderCurrentNotification() {
     actions.appendChild(infoBtn);
     actions.appendChild(noBtn);
     actions.appendChild(yesBtn);
+  } else if (notif.type === "shortlistMoved") {
+    const infoBtn = document.createElement("button");
+    infoBtn.className = "secondary";
+    infoBtn.textContent = "Voir la fiche";
+    infoBtn.onclick = () => {
+      const found = findPlayerAnywhere(notif.playerId);
+      if (found) openPlayerInfoModal(found.p, found.team);
+    };
+    const okBtn = document.createElement("button");
+    okBtn.className = "primary";
+    okBtn.textContent = "OK";
+    okBtn.onclick = () => dismissCurrentNotification();
+    actions.appendChild(infoBtn);
+    actions.appendChild(okBtn);
   } else if (notif.type === "interview" && INTERVIEW_TEMPLATES[notif.templateIdx]) {
     // Toutes les réponses sont des choix neutres (aucune n'est "la bonne") : même style pour
     // toutes, pas de bouton "primary" qui suggérerait une réponse recommandée.
@@ -1415,8 +1448,29 @@ function simulateRoundAI(excludeMatch) {
   });
   // IA transferts à la mi-saison et fin de saison
   if (STATE.mercatoOpen) {
-    logTransferEvents(simulateAITransfers(STATE.league, STATE.userTeamId), STATE.leagueKey, STATE.leagueKey);
+    const events = simulateAITransfers(STATE.league, STATE.userTeamId);
+    logTransferEvents(events, STATE.leagueKey, STATE.leagueKey);
+    checkShortlistTransferAlerts(events);
   }
+}
+
+// Prévient le joueur quand un des joueurs de sa liste de suivi est transféré par l'IA vers un
+// autre club (sans ça, il ne le découvre qu'en retombant par hasard sur sa fiche — la liste de
+// suivi se met à jour silencieusement puisqu'elle résout toujours le club ACTUEL du joueur).
+function checkShortlistTransferAlerts(events) {
+  events.forEach(ev => {
+    if (ev.type !== "transfer" || !ev.toTeamId) return;
+    if (!STATE.shortlist.includes(ev.playerId)) return;
+    STATE.notifications.push({
+      type: "shortlistMoved",
+      title: "🔔 Joueur suivi transféré",
+      body: `${ev.playerName} a quitté ${ev.fromTeamName} pour rejoindre ${ev.toTeamName}.`,
+      playerId: ev.playerId,
+      fromTeamId: ev.fromTeamId, fromTeamName: ev.fromTeamName,
+      toTeamId: ev.toTeamId, toTeamName: ev.toTeamName,
+      leagueKey: STATE.leagueKey
+    });
+  });
 }
 
 // ----------------- ONGLET CLASSEMENT -----------------
@@ -1441,9 +1495,40 @@ function renderStandingsTab() {
 
 // ----------------- ONGLET STATISTIQUES -----------------
 function renderStatsTab() {
+  renderPalmaresPanel();
   renderStatsTable("scorers-table", computeTopScorers(STATE.league, 10), p => p.goals);
   renderStatsTable("assists-table", computeTopAssists(STATE.league, 10), p => p.assists);
   renderStatsTable("ratings-table", computeTopRatings(STATE.league, 10), p => (p.ratingSum / p.matches).toFixed(1));
+}
+
+// Palmarès : un résumé permanent par saison terminée (classement du championnat + parcours au
+// tournoi international), alimenté par awardSeasonPrizeMoney à la toute fin de chaque saison —
+// donne un aperçu de la progression sur toute la carrière, pas juste la saison en cours.
+function renderPalmaresPanel() {
+  const history = STATE.trophyHistory;
+  const summaryEl = document.getElementById("palmares-summary");
+  const listEl = document.getElementById("palmares-list");
+  const emptyEl = document.getElementById("palmares-empty");
+
+  const leagueTitles = history.filter(h => h.rank === 1).length;
+  const intlTitles = history.filter(h => h.tournamentResult === "champion").length;
+  const finals = history.filter(h => h.tournamentResult === "finale").length;
+  summaryEl.innerHTML = `
+    ${renderStatTile(history.length, "Saisons")}
+    ${renderStatTile(leagueTitles, "Titres de champion")}
+    ${renderStatTile(intlTitles, "🏆 Titres internationaux")}
+    ${renderStatTile(finals, "Finales perdues")}
+  `;
+
+  emptyEl.style.display = history.length ? "none" : "block";
+  listEl.innerHTML = history.slice().reverse().map(h => {
+    const tournamentLabel = h.tournamentResult ? TOURNAMENT_RESULT_LABELS[h.tournamentResult] : "non qualifié";
+    return `<div class="palmares-row${h.rank === 1 || h.tournamentResult === "champion" ? " palmares-row-title" : ""}">
+      <span class="palmares-season">Saison ${h.season}</span>
+      <span class="palmares-rank">${h.rank}${h.rank === 1 ? "er" : "e"} / ${h.totalTeams} — ${h.leagueName}</span>
+      <span class="palmares-tournament">${tournamentLabel}</span>
+    </div>`;
+  }).join("");
 }
 
 function renderStatsTable(tableId, rows, formatStat) {
