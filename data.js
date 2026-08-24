@@ -456,7 +456,7 @@ const BRAZIL_TEAMS = [
       withStats(player('Marcello "Marcelinho" Junior', "ATT", 80, 76, 74, 72, 22), { matches: 2, ratingSum: 14.6, goals: 1 }),
       withStats(player("Chay Medeiros", "ATT", 88, 85, 80, 82, 23), { matches: 6, ratingSum: 42, goals: 4 }),
       withStats(player("Etinho Lima", "ATT", 79, 75, 73, 72, 22), { matches: 3, ratingSum: 19.5 }),
-      withStats(player("Gabriel Costa", "ATT", 86, 83, 79, 81, 24), { matches: 9, ratingSum: 75.6, goals: 5, assists: 3 })
+      withStats(player("Gabriel Costa", "ATT", 97, 97, 91, 86, 28), { matches: 9, ratingSum: 75.6, goals: 5, assists: 3 })
     ]
   }
 ];
@@ -1139,7 +1139,6 @@ const GERMANY_TEAMS = [
       withStats(player("Amar Cekic", "MID", 78, 79, 74, 82, 28), { matches: 3 }),
       withStats(player("Nick Salihamidžić", "MID", 93, 94, 81, 93, 22), { matches: 3 }),
       withStats(player("Anthony Manuba", "ATT", 76, 77, 72, 62, 21), { matches: 3 }),
-      withStats(player("Gabriel Costa", "ATT", 97, 97, 91, 86, 28), { matches: 3, goals: 5 }),
       withStats(player("Gilles Vidal", "ATT", 82, 84, 72, 70, 27), { matches: 3, goals: 3 }),
       withStats(player("Nam Nguyen", "ATT", 77, 80, 68, 72, 21), { matches: 2 }),
       withStats(player("Serhat Imsak", "ATT", 83, 84, 80, 82, 24), { matches: 3, goals: 2, assists: 1 })
