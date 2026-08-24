@@ -911,6 +911,10 @@ button.secondary.selected { border-color: var(--accent2); background: rgba(255,1
 .player-card-form { display: flex; align-items: center; gap: 10px; margin: 4px 0 14px; }
 
 .player-card-stats { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 4px; }
+.player-card-career {
+  margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--panel-border);
+}
+.player-card-career > .attr-tile-label { display: block; margin-bottom: 6px; }
 .stat-tile {
   flex: 1; min-width: 62px; text-align: center; background: rgba(255,255,255,0.04);
   border: 1px solid var(--panel-border); border-radius: 8px; padding: 8px 4px;

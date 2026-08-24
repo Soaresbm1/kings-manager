@@ -409,6 +409,7 @@ function startCareer() {
     // pas hériter des buts/passes/matchs déjà joués dans la vraie vie (cf. backfillSeasonStats
     // pour la migration des sauvegardes créées avant ce correctif).
     p.goals = 0; p.assists = 0; p.matches = 0; p.ratingSum = 0; p.rating = 0;
+    p.careerGoals = 0; p.careerAssists = 0; p.careerMatches = 0; p.careerRatingSum = 0;
     p.statsBaselineCleared = true;
   }));
 
@@ -445,8 +446,8 @@ function startCareer() {
 
 // ----------------- LIGUES EN ARRIÈRE-PLAN (toutes celles que le joueur ne joue pas) -----------------
 // Chacune joue sa propre saison IA vs IA, en parallèle de la ligue du joueur, sur le même calendrier
-// (matchDayForRound est indépendant du nombre d'équipes) — juste des résultats/classement, pas de
-// mercato IA (les effectifs de ces ligues restent fixes toute la saison, hors scope pour l'instant).
+// (matchDayForRound est indépendant du nombre d'équipes) — résultats/classement, et depuis peu son
+// propre mercato IA aussi (voir simulateOtherLeagueRound/isMercatoWindowRound).
 function buildOtherLeagues(userLeagueKey) {
   return Object.keys(LEAGUES).filter(key => key !== userLeagueKey).map(key => {
     const teams = JSON.parse(JSON.stringify(LEAGUES[key].teams));
@@ -456,6 +457,7 @@ function buildOtherLeagues(userLeagueKey) {
         p.photoClub = t.name;
         p.photoLeague = key;
         p.goals = 0; p.assists = 0; p.matches = 0; p.ratingSum = 0; p.rating = 0;
+        p.careerGoals = 0; p.careerAssists = 0; p.careerMatches = 0; p.careerRatingSum = 0;
         p.statsBaselineCleared = true;
       });
     });
@@ -2791,6 +2793,8 @@ function renderTeamCrest(team, sizeClass) {
 // étiquette de ligue, boutons d'action...).
 function buildPlayerCardHTML(player, team, extraHtml) {
   const avgRating = player.matches > 0 ? (player.ratingSum / player.matches).toFixed(1) : "-";
+  const careerMatches = player.careerMatches || 0;
+  const careerAvgRating = careerMatches > 0 ? (player.careerRatingSum / careerMatches).toFixed(1) : "-";
   return `
     <div class="player-card-layout">
       <div class="player-card-photo-col">
@@ -2819,9 +2823,18 @@ function buildPlayerCardHTML(player, team, extraHtml) {
         <div class="player-card-stats">
           ${renderStatTile(player.age, "Âge")}
           ${renderStatTile(formatMoney(player.value), "Valeur")}
-          ${renderStatTile(player.goals, "Buts")}
-          ${renderStatTile(player.assists, "Passes")}
-          ${renderStatTile(avgRating, "Note moy.")}
+          ${renderStatTile(player.goals, "Buts (saison)")}
+          ${renderStatTile(player.assists, "Passes (saison)")}
+          ${renderStatTile(avgRating, "Note (saison)")}
+        </div>
+        <div class="player-card-career">
+          <span class="attr-tile-label">Carrière</span>
+          <div class="player-card-stats">
+            ${renderStatTile(careerMatches, "Matchs")}
+            ${renderStatTile(player.careerGoals || 0, "Buts")}
+            ${renderStatTile(player.careerAssists || 0, "Passes")}
+            ${renderStatTile(careerAvgRating, "Note moy.")}
+          </div>
         </div>
         ${extraHtml || ""}
       </div>

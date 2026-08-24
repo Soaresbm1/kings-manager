@@ -67,6 +67,28 @@ expose ces classements. Sauvegardé/restauré comme le reste de `STATE` ; les sa
 antérieures à cette fonctionnalité se voient regénérer des ligues fraîches au chargement
 (`applySaveData`).
 
+## Stats joueur : saison vs carrière (`data.js:player()`, `engine.js`)
+
+Chaque joueur porte deux jeux de stats en parallèle, mis à jour ensemble à chaque match (user ou
+IA) par `engine.js:applyMatchPlayerStats`/`updateFormAfterMatch` : `goals`/`assists`/`matches`/
+`ratingSum` (**saison courante**, remis à zéro à chaque `startNewSeason()`, alimentent
+`computeTopScorers`/`computeTopAssists`/`computeTopRatings` de l'onglet Statistiques) et
+`careerGoals`/`careerAssists`/`careerMatches`/`careerRatingSum` (**cumulés sur toute la carrière**,
+jamais remis à zéro sauf `startCareer()`/`buildOtherLeagues()` — une nouvelle carrière ne doit pas
+hériter des vraies stats 2025/26 encodées via `withStats()` dans data.js, cf. `backfillSeasonStats`
+pour la migration équivalente côté stats de saison). Affichées côte à côte dans la fiche joueur
+(`app.js:buildPlayerCardHTML`, section "Carrière" sous les stats de saison).
+
+## Prime de fin de saison (`app.js:awardSeasonPrizeMoney`, `STATE.lastSeasonPrize`)
+
+Versée une seule fois par saison (`STATE.seasonPrizeAwarded`, remis à `false` par `startCareer`/
+`startNewSeason`), dès que le championnat ET le tournoi de fin de saison (section suivante) sont
+terminés — déclenchée depuis `renderCalendarTab` au moment où le panneau "Saison terminée" affiche
+le champion international. Deux composantes qui s'additionnent au budget de l'équipe du joueur :
+classement final du championnat (20 000€ à 150 000€ selon le rang) + parcours dans le tournoi (0€
+si non qualifié, jusqu'à 150 000€ pour le titre — `getUserTournamentResult()`/
+`TOURNAMENT_PRIZE_BY_RESULT`).
+
 ## Tournoi de fin de saison (`app.js`, `STATE.tournament`, écran `#screen-tournament`)
 
 Une fois la saison du joueur terminée (`renderCalendarTab`, juste après `finalizeOtherLeagues`),

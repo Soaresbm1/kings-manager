@@ -965,8 +965,13 @@ function applyMatchPlayerStats(team, setup, result) {
     const p = team.players.find(pl => pl.id === id);
     if (!p) return;
     const stat = result.playerStats[id];
+    const rating = result.ratings[id] || 6;
     if (stat) { p.goals += stat.goals || 0; p.assists += stat.assists || 0; }
-    p.ratingSum = (p.ratingSum || 0) + (result.ratings[id] || 6);
+    p.ratingSum = (p.ratingSum || 0) + rating;
+    // stats "carrière" : cumulées sur toute la carrière (jamais remises à zéro par
+    // startNewSeason, contrairement à goals/assists/ratingSum ci-dessus) — voir buildPlayerCardHTML.
+    if (stat) { p.careerGoals = (p.careerGoals || 0) + (stat.goals || 0); p.careerAssists = (p.careerAssists || 0) + (stat.assists || 0); }
+    p.careerRatingSum = (p.careerRatingSum || 0) + rating;
   });
 }
 
@@ -976,6 +981,7 @@ function updateFormAfterMatch(team, setup, goalsFor, goalsAgainst, ratings) {
     const inLineup = setup.lineup.includes(p.id);
     if (inLineup) {
       p.matches++;
+      p.careerMatches = (p.careerMatches || 0) + 1;
       let delta = 0;
       const r = ratings[p.id] || 6;
       if (r >= 7) delta += 3;

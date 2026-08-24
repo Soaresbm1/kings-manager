@@ -24,6 +24,10 @@ function player(name, pos, spe, tec, phy, men, age) {
     age,
     value: Math.round(overall * 1000 * valueMultiplier), // valeur en €
     goals: 0, assists: 0, rating: 0, matches: 0,
+    // stats "carrière" : cumulées sur toute la durée de la carrière, jamais remises à zéro par
+    // startNewSeason (contrairement à goals/assists/matches/rating ci-dessus) — voir engine.js
+    // applyMatchPlayerStats/updateFormAfterMatch et app.js buildPlayerCardHTML.
+    careerGoals: 0, careerAssists: 0, careerMatches: 0, careerRatingSum: 0,
     injured: false, suspended: false
   };
 }
