@@ -1,6 +1,6 @@
-// ===================== TESTS AUTOMATISÉS (data.js + engine.js) =====================
+// ===================== TESTS AUTOMATISÉS (data.js + engine.js + matchphysics.js) =====================
 // Suite de tests manuelle, sans framework ni node_modules : couvre la couche "pure" du jeu
-// (données + moteur de simulation, aucun DOM) pour repérer une régression silencieuse à chaque
+// (données + moteurs de simulation, aucun DOM) pour repérer une régression silencieuse à chaque
 // changement du moteur, sans devoir tout re-vérifier à l'œil.
 //
 // Comment lancer :
@@ -9,10 +9,14 @@
 //   - Avec Node, si disponible dans l'environnement (voir CLAUDE.md — pas garanti) :
 //     node tests-node.js
 //
-// Beaucoup de fonctions testées ici utilisent Math.random() (résultat d'un match, décisions IA,
-// mercato...) : on vérifie donc des INVARIANTS structurels (pas de match nul, l'argent total d'une
-// ligue est conservé après un transfert, personne ne disparaît de l'effectif...) plutôt que des
-// valeurs exactes, à quelques exceptions déterministes près (calendrier, classement, value()).
+// data.js/engine.js utilisent Math.random() (résultat d'un match, décisions IA, mercato...) : on y
+// vérifie donc des INVARIANTS structurels (pas de match nul, l'argent total d'une ligue est
+// conservé après un transfert, personne ne disparaît de l'effectif...) plutôt que des valeurs
+// exactes, à quelques exceptions déterministes près (calendrier, classement, value()).
+// matchphysics.js, à l'inverse, n'utilise AUCUN Math.random() nulle part (une trajectoire au
+// plateau physique du match humain est entièrement déterministe une fois vx/vy/dt fixés) : ses
+// tests vérifient donc des valeurs exactes (à une tolérance flottante près) partout où c'est
+// possible, plutôt que de se contenter d'invariants.
 
 const TEST_CASES = [];
 function test(name, fn) { TEST_CASES.push({ name, fn }); }
@@ -23,6 +27,15 @@ function assert(cond, msg) {
 function assertEqual(actual, expected, msg) {
   if (actual !== expected) {
     throw new Error(`${msg || "valeurs différentes"} — attendu ${JSON.stringify(expected)}, reçu ${JSON.stringify(actual)}`);
+  }
+}
+// Comparaison à tolérance flottante — nécessaire dès qu'un calcul passe par une racine carrée, une
+// puissance non entière, ou une somme de nombreuses petites étapes (ex. friction sur plusieurs
+// sous-pas) : l'égalité stricte échouerait sur du bruit d'arrondi IEEE-754 sans rapport avec une
+// vraie régression.
+function assertClose(actual, expected, tolerance, msg) {
+  if (Math.abs(actual - expected) > tolerance) {
+    throw new Error(`${msg || "valeurs trop différentes"} — attendu ≈${expected} (±${tolerance}), reçu ${actual}`);
   }
 }
 
@@ -267,4 +280,168 @@ test("chooseAiPlans : renvoie toujours un plan d'attaque/défense parmi les vale
   const plans = chooseAiPlans({ overall: 80 }, { overall: 60 });
   assert(["direct", "possession", "transition"].includes(plans.attackPlan), `attackPlan invalide : ${plans.attackPlan}`);
   assert(["low", "high", "zone"].includes(plans.defensePlan), `defensePlan invalide : ${plans.defensePlan}`);
+});
+
+// ===================== MOTEUR PHYSIQUE DU PLATEAU (matchphysics.js) =====================
+// Aucun Math.random() dans ce fichier : une trajectoire est entièrement déterministe une fois
+// vx/vy/dt fixés. Les scénarios ci-dessous sont choisis pour rester dans des distances/vitesses
+// où AUCUN mur ni AUCUNE collision n'interfère (vérifié par calcul, pas par exécution) — pour
+// pouvoir comparer à une valeur exacte plutôt qu'à un simple invariant.
+
+// ----------------- HELPERS GÉOMÉTRIQUES PURS -----------------
+
+test("clamp : borne bien aux deux extrémités et laisse passer une valeur déjà dans l'intervalle", () => {
+  assertEqual(clamp(5, 0, 10), 5, "valeur déjà dans l'intervalle");
+  assertEqual(clamp(-5, 0, 10), 0, "borne basse");
+  assertEqual(clamp(15, 0, 10), 10, "borne haute");
+});
+
+test("computeOutfieldAnchors(n) : renvoie exactement n ancrages, tous dans des bornes plausibles", () => {
+  for (let n = 1; n <= 6; n++) {
+    const anchors = computeOutfieldAnchors(n);
+    assertEqual(anchors.length, n, `n=${n}`);
+    anchors.forEach(a => {
+      assert(a.depth >= 0 && a.depth <= 1, `n=${n} : depth ${a.depth} hors [0,1]`);
+      assert(a.x >= 0 && a.x <= 100, `n=${n} : x ${a.x} hors [0,100]`);
+    });
+  }
+});
+
+test("anchorToY : reste strictement dans sa propre moitié de terrain, quel que soit le côté", () => {
+  [0, 0.5, 1].forEach(depth => {
+    const yHome = anchorToY(depth, "home");
+    const yAway = anchorToY(depth, "away");
+    assert(yHome >= 4 && yHome <= 44, `home depth=${depth} : y=${yHome} déborde de sa moitié`);
+    assert(yAway >= 56 && yAway <= 96, `away depth=${depth} : y=${yAway} déborde de sa moitié`);
+  });
+});
+
+test("gkAnchorY : gardien collé à sa propre ligne de but", () => {
+  assertEqual(gkAnchorY("home"), 5, "gardien home");
+  assertEqual(gkAnchorY("away"), 95, "gardien away");
+});
+
+test("clampSpeed : laisse passer une vitesse sous le plafond, réduit exactement à celui-ci sinon", () => {
+  const under = clampSpeed(5, 5, 120);
+  assertEqual(under.vx, 5, "vitesse sous le plafond : vx inchangé");
+  assertEqual(under.vy, 5, "vitesse sous le plafond : vy inchangé");
+
+  // 90-120-150 : triangle 3-4-5 mis à l'échelle, choisi exprès pour que la vitesse résultante
+  // (120, le plafond) tombe sur des valeurs exactes (72, 96) une fois le ratio 120/150=0.8 appliqué.
+  const over = clampSpeed(90, 120, 120);
+  assertClose(over.vx, 72, 1e-9, "composante vx après plafonnement");
+  assertClose(over.vy, 96, 1e-9, "composante vy après plafonnement");
+  assertClose(Math.sqrt(over.vx * over.vx + over.vy * over.vy), 120, 1e-9, "norme exactement au plafond");
+});
+
+// ----------------- COLLISIONS ET REBONDS (fonctions brutes, position/vitesse contrôlées) -----------------
+
+test("resolveCollision : deux cercles qui se chevauchent sont séparés et repartent en s'écartant", () => {
+  // même masse, alignés sur l'axe x, qui se rapprochent l'un de l'autre (a vers +x, b vers -x)
+  const a = { x: 0, y: 0, vx: 5, vy: 0, r: 2, mass: 1 };
+  const b = { x: 3, y: 0, vx: -5, vy: 0, r: 2, mass: 1 }; // distance 3 < r+r=4 : chevauchement
+  const touched = resolveCollision(a, b);
+  assert(touched === true, "un chevauchement doit être détecté comme une collision");
+  const dist = Math.abs(b.x - a.x);
+  assert(dist >= a.r + b.r - 1e-9, `toujours en chevauchement après résolution : dist=${dist}`);
+  assert(a.vx < 0, "a doit repartir vers -x après le choc (il allait vers b)");
+  assert(b.vx > 0, "b doit repartir vers +x après le choc (il allait vers a)");
+});
+
+test("resolveCollision : deux cercles qui ne se touchent pas ne sont pas modifiés", () => {
+  const a = { x: 0, y: 0, vx: 1, vy: 2, r: 2, mass: 1 };
+  const b = { x: 10, y: 0, vx: -1, vy: -2, r: 2, mass: 1 }; // distance 10 >> r+r=4
+  const touched = resolveCollision(a, b);
+  assertEqual(touched, false, "aucune collision ne devrait être détectée à cette distance");
+  assertEqual(a.x, 0, "position de a inchangée");
+  assertEqual(a.vx, 1, "vitesse de a inchangée");
+  assertEqual(b.x, 10, "position de b inchangée");
+});
+
+test("bounceWalls : un disque poussé hors du bord droit est ramené dedans et repart vers l'intérieur", () => {
+  const entity = { x: 105, y: 50, vx: 10, vy: 0, r: 3 }; // x+r=108 > PITCH_W(100)
+  bounceWalls(entity);
+  assertClose(entity.x, 100 - 3, 1e-9, "position ramenée juste à l'intérieur du bord droit");
+  assert(entity.vx < 0, "vx doit s'inverser (repartir vers l'intérieur du terrain)");
+});
+
+// ----------------- INTÉGRATION (createTurnMatch) -----------------
+
+test("createTurnMatch/setActiveLineups : crée exactement un disque par joueur actif (+ gardiens)", () => {
+  const match = createTurnMatch();
+  match.setActiveLineups(["h1", "h2", "h3"], "hgk", ["a1", "a2"], "agk");
+  assertEqual(match.getState().discs.length, 3 + 1 + 2 + 1, "3 home + 1 GK home + 2 away + 1 GK away");
+});
+
+test("shoot : plafonne la vitesse comme clampSpeed (vérifié via le déplacement), et bloque tant que le plateau bouge", () => {
+  const match = createTurnMatch();
+  match.setActiveLineups(["h1"], null, [], null); // h1 ancré à (50,26) via computeOutfieldAnchors(1)
+  assert(match.isSettled(), "plateau au repos juste après la mise en place");
+
+  const ok = match.shoot("h1", 90, 120); // norme 150 > MAX_SHOT_SPEED(120) : doit être plafonné à (72,96)
+  assert(ok === true, "un tir sur un plateau au repos doit être accepté");
+  assert(!match.isSettled(), "le plateau ne doit plus être au repos juste après un tir");
+
+  // un second tir doit être refusé tant que le plateau n'est pas retombé au repos
+  const blocked = match.shoot("h1", 1, 1);
+  assertEqual(blocked, false, "un tir pendant que le plateau bouge encore doit être refusé");
+
+  // la vitesse n'est pas exposée directement (getState() ne renvoie que x/y/r) : on vérifie le
+  // plafonnement via le déplacement observé sur un step(), comparé à l'intégration par sous-pas
+  // attendue pour une vitesse de départ DÉJÀ plafonnée à (72,96) — pas (90,120).
+  const dt = 0.05;
+  const SUBSTEPS = 4, DISC_FRICTION_PER_SEC = 0.42, h = dt / SUBSTEPS, fh = Math.pow(DISC_FRICTION_PER_SEC, h);
+  const integrate = v0 => { let v = v0, disp = 0; for (let s = 0; s < SUBSTEPS; s++) { v *= fh; disp += v * h; } return disp; };
+  match.step(dt);
+  const h1 = match.getState().discs.find(d => d.id === "h1");
+  assertClose(h1.x - 50, integrate(72), 1e-6, "déplacement en x incohérent avec une vitesse plafonnée à 72");
+  assertClose(h1.y - 26, integrate(96), 1e-6, "déplacement en y incohérent avec une vitesse plafonnée à 96");
+});
+
+test("step : le déplacement sur un pas correspond exactement à l'intégration par sous-pas de la friction", () => {
+  const match = createTurnMatch();
+  // h1 seul, ancré à (50,26) — tir purement latéral (vx seul) : ne s'approche ni du ballon (50,50,
+  // à 24 unités en y) ni d'aucun mur en un pas aussi court, donc RIEN d'autre que la friction ne
+  // doit affecter sa position pendant ce step().
+  match.setActiveLineups(["h1"], null, [], null);
+  match.shoot("h1", 50, 0);
+  const dt = 0.05;
+  // reproduit exactement l'algorithme de step() (4 sous-pas, friction appliquée avant chaque
+  // déplacement — voir matchphysics.js) : bien plus précis qu'une approximation, donc tolérance serrée.
+  const SUBSTEPS = 4, DISC_FRICTION_PER_SEC = 0.42, h = dt / SUBSTEPS, fh = Math.pow(DISC_FRICTION_PER_SEC, h);
+  let v = 50, expectedDisplacement = 0;
+  for (let s = 0; s < SUBSTEPS; s++) { v *= fh; expectedDisplacement += v * h; }
+
+  match.step(dt);
+  const h1 = match.getState().discs.find(d => d.id === "h1");
+  assertClose(h1.x - 50, expectedDisplacement, 1e-6, "déplacement après un step() incohérent avec l'intégration par sous-pas attendue");
+});
+
+test("après un tir, le plateau finit toujours par se re-stabiliser (la friction < 1 garantit une décroissance vers 0)", () => {
+  const match = createTurnMatch();
+  match.setActiveLineups(["h1"], null, [], null);
+  match.shoot("h1", 120, 0);
+  let settled = false;
+  for (let i = 0; i < 2000 && !settled; i++) {
+    match.step(0.05); // 2000×0.05s = 100s simulées, très largement suffisant pour 0.42^t → 0
+    settled = match.isSettled();
+  }
+  assert(settled, "le plateau devrait s'être re-stabilisé bien avant 100 secondes simulées");
+});
+
+test("consumeTurnOutcome : renvoie null quand rien de spécial ne s'est produit (pas de but, pas d'arrêt)", () => {
+  const match = createTurnMatch();
+  match.setActiveLineups(["h1"], null, [], null);
+  assertEqual(match.consumeTurnOutcome(), null, "aucun tir, aucun événement à consommer");
+});
+
+test("getState : forme cohérente (ids présents, rayon du ballon positif)", () => {
+  const match = createTurnMatch();
+  match.setActiveLineups(["h1", "h2"], "hgk", [], null);
+  const state = match.getState();
+  assertEqual(state.discs.length, 3, "2 joueurs de champ + 1 gardien");
+  assert(state.discs.every(d => typeof d.id === "string" && d.r > 0), "chaque disque doit avoir un id et un rayon positif");
+  assert(state.ball && state.ball.r > 0, "le ballon doit avoir un rayon positif");
+  assertEqual(state.ball.x, 50, "le ballon démarre au centre du terrain");
+  assertEqual(state.ball.y, 50, "le ballon démarre au centre du terrain");
 });

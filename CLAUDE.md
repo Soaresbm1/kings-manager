@@ -365,20 +365,27 @@ et continuent de se résoudre instantanément par tirage au sort via `engine.js:
 
 ## Suite de tests (`tests.js`, `tests.html`, `tests-node.js`)
 
-Couvre la couche pure du jeu (`data.js` + `engine.js`, aucun DOM) : intégrité des données (les 6
-ligues, effectif minimum par poste, attributs/ids valides), calendrier (`generateSchedule`),
-classement (`computeStandings`), moteur de match (`simulateMatch`/`simulateAIMatch` — pas de match
-nul, notes attribuées), séparation stats saison/carrière (`applyMatchPlayerStats`), mercato IA
+Couvre la couche pure du jeu (`data.js` + `engine.js` + `matchphysics.js`, aucun DOM) : intégrité
+des données (les 6 ligues, effectif minimum par poste, attributs/ids valides), calendrier
+(`generateSchedule`), classement (`computeStandings`), moteur de match
+(`simulateMatch`/`simulateAIMatch` — pas de match nul, notes attribuées), séparation stats
+saison/carrière (`applyMatchPlayerStats`), mercato IA
 (`simulateAITransfers`/`neediestTeamForPosition`/`weakestPosition` — conservation du nombre de
 joueurs ET de l'argent total de la ligue sur 30 fenêtres enchaînées), classements individuels, IA
-tactique (`chooseAiFormation`/`chooseAiPlans`). Beaucoup de fonctions testées utilisent
-`Math.random()` : les tests vérifient des invariants structurels (conservation, bornes, "jamais de
-match nul"...) plutôt que des valeurs exactes, sauf pour les fonctions déterministes
-(`generateSchedule`, `computeStandings`, `value()`). `tests.js` définit `test()`/`assert()`/
-`assertEqual()`/`runAllTests()` (pas de framework) ; **`tests.html`** l'exécute dans un navigateur
-sans aucune dépendance (ouverture directe du fichier, comme `index.html`) — c'est le point d'entrée
-à utiliser en priorité vu l'indisponibilité fréquente de `node` dans cet environnement ;
-**`tests-node.js`** (`node tests-node.js`) fait la même chose via `vm.runInContext` quand `node`
-est disponible, avec un code de sortie non-nul si un test échoue (utilisable par un futur hook
-CI/pre-commit). Ajouter un nouveau test = un nouvel appel à `test("...", () => { ... })` dans
-`tests.js`, rien à toucher ailleurs.
+tactique (`chooseAiFormation`/`chooseAiPlans`), et le plateau physique du match humain
+(`clamp`/`computeOutfieldAnchors`/`anchorToY`/`clampSpeed`/`resolveCollision`/`bounceWalls`/
+`createTurnMatch` — voir section dédiée plus haut). `data.js`/`engine.js` utilisent `Math.random()` :
+leurs tests vérifient des invariants structurels (conservation, bornes, "jamais de match nul"...)
+plutôt que des valeurs exactes, sauf pour les fonctions déterministes (`generateSchedule`,
+`computeStandings`, `value()`). `matchphysics.js` n'utilise AUCUN `Math.random()` (trajectoire
+entièrement déterministe) : ses tests comparent donc des valeurs exactes (`assertClose`, tolérance
+flottante) en reproduisant l'intégration par sous-pas de `step()` plutôt que de se contenter
+d'invariants — `getState()` n'exposant pas les vitesses, le plafonnement de `shoot()`/la friction
+sont vérifiés indirectement via le déplacement observé après un `step()`. `tests.js` définit
+`test()`/`assert()`/`assertEqual()`/`assertClose()`/`runAllTests()` (pas de framework) ;
+**`tests.html`** l'exécute dans un navigateur sans aucune dépendance (ouverture directe du fichier,
+comme `index.html`) — c'est le point d'entrée à utiliser en priorité vu l'indisponibilité fréquente
+de `node` dans cet environnement ; **`tests-node.js`** (`node tests-node.js`) fait la même chose via
+`vm.runInContext` quand `node` est disponible, avec un code de sortie non-nul si un test échoue
+(utilisable par un futur hook CI/pre-commit). Ajouter un nouveau test = un nouvel appel à
+`test("...", () => { ... })` dans `tests.js`, rien à toucher ailleurs.
