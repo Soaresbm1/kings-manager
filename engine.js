@@ -1,5 +1,14 @@
 // ===================== MOTEUR DE SIMULATION =====================
 
+// --- Blessures --- paliers de gravité tirés au sort quand l'événement rare "blessure" se déclenche
+// (voir le bookkeeping de phase plus bas) : chance cumulative (tirage < chance => ce palier),
+// durée d'indisponibilité en jours tirée entre minDays et maxDays inclus.
+const INJURY_SEVERITY_TIERS = [
+  { label: "légère", chance: 0.7, minDays: 1, maxDays: 3 },
+  { label: "modérée", chance: 0.95, minDays: 4, maxDays: 8 },
+  { label: "grave", chance: 1.01, minDays: 9, maxDays: 20 }
+];
+
 // --- Calendrier ---
 // Génère un calendrier aller-retour (round-robin double) pour une liste d'équipes
 function generateSchedule(teamIds) {
@@ -625,15 +634,25 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
     const homeGK = homeGKPlayer;
     const awayGK = awayGKPlayer;
 
-    // événement spécial: blessure légère (rare)
+    // événement spécial: blessure (rare) — indisponibilise réellement le joueur pour plusieurs
+    // jours (voir INJURY_SEVERITY_TIERS), décomptés au fil des jours côté app.js:advanceOneDayStep.
+    // Math.max avec une blessure déjà en cours : ne raccourcit jamais une indisponibilité plus
+    // longue déjà entamée (ex. rechute pendant la convalescence, cas rare mais possible puisque le
+    // joueur reste "actif" tant qu'il joue le match en cours).
     if (Math.random() < 0.004) {
       const side = Math.random() < 0.5 ? "home" : "away";
       const pool = side === "home" ? homeActiveLineup.map(id => homeTeam.players.find(p => p.id === id)) : awayActiveLineup.map(id => awayTeam.players.find(p => p.id === id));
       const victim = pool.filter(Boolean)[Math.floor(Math.random() * pool.filter(Boolean).length)];
       if (victim) {
+        const severityRoll = Math.random();
+        const tier = INJURY_SEVERITY_TIERS.find(t => severityRoll < t.chance);
+        const daysOut = tier.minDays + Math.floor(Math.random() * (tier.maxDays - tier.minDays + 1));
+        victim.injuryDaysLeft = Math.max(victim.injuryDaysLeft || 0, daysOut);
+        victim.injurySeverity = tier.label;
+        victim.injured = true;
         minuteEvents.push({
           minute, type: "injury", team: side === "home" ? homeTeam.name : awayTeam.name, side, playerId: victim.id,
-          text: `${minute}' — ${victim.name} se fait soigner suite à un choc, ça repart !`
+          text: `${minute}' — ${victim.name} se blesse (${tier.label}) : indisponible ${daysOut} jour${daysOut > 1 ? "s" : ""} !`
         });
       }
     }

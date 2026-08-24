@@ -107,6 +107,48 @@ scope, delibéré) — juste une conséquence financière : `awardSeasonPrizeMon
 place, puis grave le résultat (`objectiveMet`) dans l'entrée `STATE.trophyHistory` de la saison —
 affiché aussi bien dans le panneau "Saison terminée" que dans le palmarès (`renderPalmaresPanel`).
 
+## Blessures (`engine.js:INJURY_SEVERITY_TIERS`, `app.js:decayInjuries`)
+
+L'événement rare "blessure" (0,4% de chance par minute, dans le même bookkeeping de phase partagé
+par les matchs IA et le match humain en direct — voir la section sur le plateau physique) tirait
+avant juste un flavor de commentaire sans aucun effet ; il pose maintenant réellement
+`injuryDaysLeft`/`injurySeverity`/`injured` sur le joueur, avec une gravité tirée au sort
+(`INJURY_SEVERITY_TIERS` : légère 1-3j, modérée 4-8j, grave 9-20j — jamais raccourcie si le joueur
+était déjà blessé plus longtemps). Décompté d'un jour à chaque jour simulé
+(`app.js:decayInjuries`, appelée dans `advanceOneDayStep`, sur toutes les ligues pour rester
+cohérent si un joueur blessé change de club). Tout le monde repart apte à `startNewSeason()` (pas
+de blessure qui déborderait sur la saison suivante). Un joueur blessé (`p.injured`) reste visible
+dans le banc/effectif (badge 🩹 rouge avec le nombre de jours restants) mais ne peut pas être ajouté
+à une composition — `renderBench` désactive sa ligne (`.player-row-injured`) tant qu'il n'est pas
+déjà titulaire ; s'il l'était déjà (blessé en cours de saison), il reste normalement retirable.
+Volontairement scopé au seul effectif du joueur : l'IA (`chooseAiFormation`) n'en tient pas compte
+pour ses propres compositions, aucun effet visible pour elle donc pas utile de complexifier.
+
+## Rumeurs de mercato sur la liste de suivi (`app.js:computeShortlistInterest`)
+
+Complète `checkShortlistTransferAlerts` (réactif : prévient APRÈS qu'un joueur suivi a été acheté
+par l'IA) avec un signal PROACTIF affiché en continu dans "Ma liste" (badge 👀/🔥/🔥🔥 sur la ligne
+compacte et dans la fiche détaillée) : combien de clubs de TA ligue auraient un intérêt réel pour ce
+joueur. Reprend EXACTEMENT le critère utilisé par `simulateAITransfers` pour se renforcer (overall
+du joueur > meilleur joueur actuel du club à ce poste + 2, et budget suffisant) — ce n'est donc pas
+du flavor gratuit : le nombre affiché correspond à de vrais clubs qui l'achèteraient réellement s'ils
+en avaient l'occasion au prochain mercato. Scopé à `STATE.league` comme les alertes (les 5 autres
+ligues ne comptent pas, un joueur qui y est convoité ne te concerne pas directement).
+
+## Bug corrigé : joueurs dupliqués après un changement de saison (`resetLeagueForNewSeason`, `dedupePlayersById`)
+
+`startNewSeason()` appelait `buildOtherLeagues()` pour les 5 ligues en arrière-plan — cette
+fonction est réservée à `startCareer()` (recrée les clubs depuis data.js pour une toute nouvelle
+carrière) : appelée aussi à chaque saison, elle effaçait tout transfert déjà survenu dans ces ligues
+(y compris tes propres achats), donc un joueur que tu avais acheté réapparaissait dans son club
+d'origine — avec le MÊME id (cloné depuis le même objet source), donc rachetable une seconde fois
+et créant un vrai doublon avec collision d'id dans ton effectif (bug remonté par l'utilisateur :
+"j'ai 2 Kelvin Oliveira"). Remplacé par `resetLeagueForNewSeason(league)`, qui régénère juste
+calendrier/résultats et les stats de SAISON des joueurs déjà en place, sans recréer les clubs — donc
+transferts et budgets survivent au changement de saison. `dedupePlayersById()` (appelée dans
+`applySaveData`, idempotente) nettoie les sauvegardes déjà touchées par le bug : la ligue du joueur
+est scannée en premier, donc en cas de collision c'est toujours ta copie qui est conservée.
+
 ## Historique des transferts (`STATE.transferLog`, sous-onglet Mercato "Historique")
 
 `engine.js:fillPositionGaps`/`simulateAITransfers` restent des fonctions pures (pas de STATE) : elles

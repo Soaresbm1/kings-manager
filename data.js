@@ -28,7 +28,9 @@ function player(name, pos, spe, tec, phy, men, age) {
     // startNewSeason (contrairement à goals/assists/matches/rating ci-dessus) — voir engine.js
     // applyMatchPlayerStats/updateFormAfterMatch et app.js buildPlayerCardHTML.
     careerGoals: 0, careerAssists: 0, careerMatches: 0, careerRatingSum: 0,
-    injured: false, suspended: false
+    // blessure : injuryDaysLeft décompté d'un jour à la fois par app.js:decayInjuries, injured
+    // dérivé (injuryDaysLeft > 0) — voir engine.js pour le tirage au sort (INJURY_SEVERITY_TIERS).
+    injured: false, injuryDaysLeft: 0, injurySeverity: null, suspended: false
   };
 }
 

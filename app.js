@@ -119,6 +119,12 @@ function applySaveData(data) {
   // migration : sauvegardes créées avant les ligues en arrière-plan — démarre leur saison
   // maintenant plutôt que de laisser cette carrière sans classement pour le futur tournoi.
   if (!STATE.otherLeagues) STATE.otherLeagues = buildOtherLeagues(STATE.leagueKey);
+  // migration : corrige les sauvegardes touchées par un bug de startNewSeason() (avant ce
+  // correctif) qui recréait entièrement les 5 ligues en arrière-plan depuis data.js à chaque
+  // nouvelle saison — un joueur déjà acheté par l'utilisateur (ou transféré par l'IA au sein
+  // d'une de ces ligues) réapparaissait dans son club d'origine, achetable une seconde fois avec
+  // le même id (bug remonté par l'utilisateur : "j'ai 2 Kelvin Oliveira").
+  dedupePlayersById();
   backfillPhotoClub();
   backfillSeasonStats();
   // migration : sauvegardes créées avant les objectifs de saison — en génère un pour la saison en
@@ -127,6 +133,24 @@ function applySaveData(data) {
   // JSON a rompu les références d'objets équipe du bracket (cf. relinkTournamentTeamRefs) : on
   // les ré-associe aux vraies équipes maintenant que STATE.league/STATE.otherLeagues sont prêts.
   relinkTournamentTeamRefs();
+}
+
+// Migration : retire tout id de joueur en double, qu'il apparaisse deux fois dans la même équipe
+// ou dans deux équipes différentes (ligue du joueur ou l'une des 5 en arrière-plan) — la ligue du
+// joueur est scannée en premier, donc en cas de collision c'est toujours la copie qui t'appartient
+// réellement qui est conservée. Idempotente (ne fait rien si tout est déjà propre), sûre à
+// ré-exécuter à chaque chargement de sauvegarde.
+function dedupePlayersById() {
+  const seen = new Set();
+  const dedupeTeams = teams => teams.forEach(t => {
+    t.players = t.players.filter(p => {
+      if (seen.has(p.id)) return false;
+      seen.add(p.id);
+      return true;
+    });
+  });
+  dedupeTeams(STATE.league.teams);
+  (STATE.otherLeagues || []).forEach(ol => dedupeTeams(ol.league.teams));
 }
 
 // Migration pour les sauvegardes créées avant l'ajout de photoClub/photoLeague (voir
@@ -999,6 +1023,22 @@ function rollNotificationsForToday() {
   return added;
 }
 
+// Décompte d'un jour les blessures en cours (voir engine.js : l'événement rare "blessure" pose
+// injuryDaysLeft/injurySeverity/injured sur le joueur pendant un match) — sur TOUTES les ligues
+// (pas juste celle du joueur) pour rester cohérent si un joueur blessé change de club en cours de
+// convalescence via le mercato inter-ligues.
+function decayInjuries() {
+  const decay = teams => teams.forEach(t => t.players.forEach(p => {
+    if (p.injuryDaysLeft > 0) {
+      p.injuryDaysLeft--;
+      p.injured = p.injuryDaysLeft > 0;
+      if (!p.injured) p.injurySeverity = null;
+    }
+  }));
+  decay(STATE.league.teams);
+  (STATE.otherLeagues || []).forEach(ol => decay(ol.league.teams));
+}
+
 // Avance le temps jour par jour, de façon visible (un léger temps de pause entre chaque jour),
 // jusqu'au prochain match de l'utilisateur (les journées sans match pour lui sont résolues
 // automatiquement), en s'arrêtant dès qu'une notification arrive.
@@ -1015,6 +1055,7 @@ function advanceOneDayStep(i) {
   if (i >= 60) { finishAdvanceDays(); return; }
 
   STATE.currentDay++;
+  decayInjuries();
   advanceOtherLeagues();
   const notifAdded = rollNotificationsForToday();
   updateTopbar();
@@ -1471,35 +1512,51 @@ function renderRecentFormPanel() {
   }).join("")}</div>`;
 }
 
+// Remet une ligue à zéro pour une nouvelle saison SANS recréer les clubs depuis data.js
+// (contrairement à buildOtherLeagues, réservée au tout début d'une carrière — startCareer) :
+// régénère juste calendrier/résultats, vieillit et remet à zéro les stats de SAISON (pas
+// carrière, cf. careerGoals etc. jamais touchés ici) des joueurs déjà en place. Préserve donc les
+// transferts et budgets déjà accumulés — sinon un joueur acheté par l'utilisateur à une des 5
+// ligues en arrière-plan (ou transféré par leur propre IA) réapparaîtrait dans son ancien club
+// l'année suivante, en double avec sa version achetée (bug remonté par l'utilisateur). Renvoie le
+// nouveau calendrier ; à l'appelant de l'assigner (STATE.schedule ou ol.schedule) et de remettre
+// currentRound à 0.
+function resetLeagueForNewSeason(league) {
+  league.teams.forEach(t => t.players.forEach(p => {
+    p.form = Math.max(50, Math.min(95, p.form));
+    p.age += 1;
+    p.goals = 0; p.assists = 0; p.matches = 0; p.ratingSum = 0; p.rating = 0;
+    // tout le monde repart apte pour la nouvelle saison (une longue blessure entamée en toute
+    // fin de saison précédente ne doit pas déborder sur la suivante).
+    p.injured = false; p.injuryDaysLeft = 0; p.injurySeverity = null;
+  }));
+  const schedule = generateSchedule(league.teams.map(t => t.id));
+  league.results = [];
+  schedule.forEach((round, idx) => {
+    round.forEach(m => {
+      league.results.push({ round: idx, home: m.home, away: m.away, played: false, homeGoals: 0, awayGoals: 0 });
+    });
+  });
+  return schedule;
+}
+
 function startNewSeason() {
   // filet de sécurité : garantit que les ligues en arrière-plan ont bien un classement final
   // avant qu'on ne les régénère pour la nouvelle saison (normalement déjà fait par
   // renderCalendarTab dès l'arrivée en "Saison terminée", cf. plus haut).
   finalizeOtherLeagues();
 
-  // reset: reset results, regénère calendrier, reset forme légèrement, remet les stats de
-  // saison à zéro (buts/passes/matchs/notes) — sinon computeTopScorers/computeTopAssists/
-  // computeTopRatings (onglet Statistiques) cumuleraient plusieurs saisons au lieu de ne
-  // montrer que la saison en cours.
-  STATE.league.teams.forEach(t => t.players.forEach(p => {
-    p.form = Math.max(50, Math.min(95, p.form));
-    p.age += 1;
-    p.goals = 0; p.assists = 0; p.matches = 0; p.ratingSum = 0; p.rating = 0;
-  }));
-  const teamIds = STATE.league.teams.map(t => t.id);
-  STATE.schedule = generateSchedule(teamIds);
-  STATE.league.results = [];
-  STATE.schedule.forEach((round, idx) => {
-    round.forEach(m => {
-      STATE.league.results.push({ round: idx, home: m.home, away: m.away, played: false, homeGoals: 0, awayGoals: 0 });
-    });
-  });
+  STATE.schedule = resetLeagueForNewSeason(STATE.league);
   STATE.currentRound = 0;
   STATE.currentDay = 0;
   STATE.season++;
 
-  // nouvelle saison pour toutes les ligues en arrière-plan aussi (même vieillissement/forme)
-  STATE.otherLeagues = buildOtherLeagues(STATE.leagueKey);
+  // nouvelle saison pour toutes les ligues en arrière-plan aussi (même vieillissement/forme),
+  // sans recréer leurs clubs depuis data.js — voir resetLeagueForNewSeason.
+  (STATE.otherLeagues || []).forEach(ol => {
+    ol.schedule = resetLeagueForNewSeason(ol.league);
+    ol.currentRound = 0;
+  });
   // un nouveau bracket sera reconstruit à la fin de cette nouvelle saison (cf. renderCalendarTab)
   STATE.tournament = null;
   STATE.seasonPrizeAwarded = false;
@@ -1693,8 +1750,11 @@ function renderSquadTab() {
   });
   sorted.forEach(p => {
     const tr = document.createElement("tr");
-    tr.className = "clickable";
+    tr.className = "clickable" + (p.injured ? " squad-row-injured" : "");
     const avgRating = p.matches > 0 ? (p.ratingSum / p.matches).toFixed(1) : "-";
+    const injuryBadge = p.injured
+      ? `<span class="injury-badge" title="Blessure ${p.injurySeverity} — indisponible encore ${p.injuryDaysLeft} jour(s)">🩹 ${p.injuryDaysLeft}j</span>`
+      : "";
     tr.innerHTML = `<td class="name">
         <div class="player-cell">
           <div class="avatar-sm">
@@ -1704,6 +1764,7 @@ function renderSquadTab() {
               onerror="this.style.display='none';">
           </div>
           <span class="player-cell-name">${p.name}</span>
+          ${injuryBadge}
         </div>
       </td>
       <td><span class="pos-tag pos-${p.pos}">${p.pos}</span></td>
@@ -1998,6 +2059,32 @@ function updateShortlistCount() {
 // détaillée s'affiche dans le panneau de droite) — façon EA FC : liste compacte + fiche.
 let selectedShortlistId = null;
 
+// Rumeurs de mercato : combien de clubs de TA ligue (pas les 5 autres, comme les alertes de
+// transfert — cf. checkShortlistTransferAlerts) auraient un intérêt réel pour ce joueur au
+// prochain mercato. Reprend EXACTEMENT le critère utilisé par l'IA elle-même pour se renforcer
+// (simulateAITransfers : une nette amélioration au poste — overall > meilleur actuel + 2 — et le
+// budget pour se l'offrir), donc ce n'est pas du flavor gratuit : si le badge dit "3 clubs
+// intéressés", ce sont bien 3 clubs qui achèteraient réellement ce joueur s'ils en avaient l'occasion.
+function computeShortlistInterest(playerId) {
+  const found = findPlayerAnywhere(playerId);
+  if (!found || found.leagueKey !== STATE.leagueKey) return 0;
+  const { p, team } = found;
+  let interested = 0;
+  STATE.league.teams.forEach(rival => {
+    if (rival.id === team.id || rival.id === STATE.userTeamId) return;
+    const ownBest = Math.max(0, ...rival.players.filter(pl => pl.pos === p.pos).map(pl => pl.overall));
+    if (p.overall > ownBest + 2 && rival.budget >= p.value) interested++;
+  });
+  return interested;
+}
+
+function shortlistInterestBadgeHTML(count, compact) {
+  if (count <= 0) return "";
+  const icon = count >= 3 ? "🔥🔥" : count === 2 ? "🔥" : "👀";
+  const label = compact ? count : (count === 1 ? "1 club s'y intéresse" : `${count} clubs s'y intéressent`);
+  return `<span class="shortlist-interest-badge" title="D'autres clubs de ta ligue auraient les moyens et le besoin de recruter ce joueur au prochain mercato">${icon} ${label}</span>`;
+}
+
 function renderShortlistTable(team) {
   const wrap = document.getElementById("shortlist-rows");
   const emptyMsg = document.getElementById("shortlist-empty");
@@ -2022,9 +2109,11 @@ function renderShortlistTable(team) {
   rows.forEach(({ p, team: otherTeam }) => {
     const row = document.createElement("div");
     row.className = "shortlist-row" + (p.id === selectedShortlistId ? " selected" : "");
+    const interest = computeShortlistInterest(p.id);
     row.innerHTML = `${renderTeamCrest(otherTeam, "crest-sm")}
       <span class="pos-tag pos-${p.pos}">${p.pos}</span>
       <span class="shortlist-row-name">${p.name}</span>
+      ${shortlistInterestBadgeHTML(interest, true)}
       <span class="shortlist-row-age">${p.age} ans</span>
       <span class="shortlist-row-ovr">${p.overall}</span>`;
     row.onclick = () => { selectedShortlistId = p.id; renderShortlistTable(team); };
@@ -2047,13 +2136,15 @@ function renderShortlistDetail() {
   const { p, team: otherTeam, leagueKey, leagueName } = found;
   const leagueTag = leagueKey !== STATE.leagueKey
     ? `<div class="tourn-league-tag" style="margin-top:8px;">${LEAGUE_FLAGS[leagueKey] || "⚽"} ${leagueName}</div>` : "";
+  const interest = computeShortlistInterest(p.id);
+  const interestTag = interest > 0 ? `<div style="margin-top:8px;">${shortlistInterestBadgeHTML(interest, false)}</div>` : "";
   const actionsHtml = `
     <div class="shortlist-detail-actions">
       <button class="primary" id="shortlist-detail-offer"${STATE.mercatoOpen ? "" : " disabled"}>Offre</button>
       <button class="secondary compare-toggle-btn${compareIds.includes(p.id) ? " selected" : ""}" id="shortlist-detail-compare">⚖ ${compareIds.includes(p.id) ? "Retirer du comparateur" : "Comparer"}</button>
       <button class="secondary" id="shortlist-detail-remove">Retirer de ma liste</button>
     </div>`;
-  wrap.innerHTML = buildPlayerCardHTML(p, otherTeam, leagueTag + actionsHtml);
+  wrap.innerHTML = buildPlayerCardHTML(p, otherTeam, leagueTag + interestTag + actionsHtml);
   document.getElementById("shortlist-detail-offer").onclick = () => openOfferModal(leagueKey, otherTeam.id, p.id);
   document.getElementById("shortlist-detail-compare").onclick = () => { toggleCompare(p.id); renderShortlistDetail(); };
   document.getElementById("shortlist-detail-remove").onclick = () => toggleShortlist(p.id);
@@ -2534,26 +2625,39 @@ function renderBench(setup, ids) {
     const inTag = inIdx >= 0 ? slotShortTag(FORMATION_SLOTS[setup.formation][inIdx]) : "–";
     const outTag = outIdx >= 0 ? slotShortTag(FORMATION_SLOTS[setup.formationOOP][outIdx]) : "–";
 
+    // un joueur blessé ne peut pas être ajouté à la composition (mais reste retirable normalement
+    // s'il y était déjà — cas rare où il se blesse en cours de saison alors qu'il était titulaire
+    // d'un plan sauvegardé) ; reste visible dans la liste, juste non cliquable, pour que l'utilisateur
+    // comprenne pourquoi il ne peut pas le sélectionner plutôt que de le voir disparaître.
+    const blocked = p.injured && !isStarter;
+
     const row = document.createElement("div");
-    row.className = "player-row" + (isStarter ? " selected" : "");
-    row.innerHTML = `<div><span class="pos-tag pos-${p.pos}">${p.pos}</span>${renderOverallBadge(p.overall)} <b>${p.name}</b>
+    row.className = "player-row" + (isStarter ? " selected" : "") + (blocked ? " player-row-injured" : "");
+    const injuryBadge = p.injured
+      ? `<span class="injury-badge" title="Blessure ${p.injurySeverity} — indisponible encore ${p.injuryDaysLeft} jour(s)">🩹 ${p.injuryDaysLeft}j</span>`
+      : "";
+    row.innerHTML = `<div><span class="pos-tag pos-${p.pos}">${p.pos}</span>${renderOverallBadge(p.overall)} <b>${p.name}</b> ${injuryBadge}
       <div class="stats">Vit ${p.speed} | Tec ${p.technique} | Phy ${p.physical} | Men ${p.mental} | Forme ${p.form}</div></div>
       <div class="player-row-right">
         ${renderRatingChip(p)}
         <div class="player-phase-squares">
-          <button type="button" class="phase-square phase-in${inIdx >= 0 ? " filled" : ""}" title="Poste avec balle">${inTag}</button>
-          <button type="button" class="phase-square phase-out${outIdx >= 0 ? " filled" : ""}" title="Poste sans balle">${outTag}</button>
+          <button type="button" class="phase-square phase-in${inIdx >= 0 ? " filled" : ""}" title="Poste avec balle"${blocked ? " disabled" : ""}>${inTag}</button>
+          <button type="button" class="phase-square phase-out${outIdx >= 0 ? " filled" : ""}" title="Poste sans balle"${blocked ? " disabled" : ""}>${outTag}</button>
         </div>
       </div>`;
-    row.querySelector(".phase-in").onclick = (e) => {
-      e.stopPropagation();
-      showPositionPicker(setup, ids, p, row, "in");
-    };
-    row.querySelector(".phase-out").onclick = (e) => {
-      e.stopPropagation();
-      showPositionPicker(setup, ids, p, row, "out");
-    };
-    row.onclick = () => handlePlayerClick(setup, ids, p, row);
+    if (blocked) {
+      row.title = `Blessé (${p.injurySeverity}) — indisponible encore ${p.injuryDaysLeft} jour(s)`;
+    } else {
+      row.querySelector(".phase-in").onclick = (e) => {
+        e.stopPropagation();
+        showPositionPicker(setup, ids, p, row, "in");
+      };
+      row.querySelector(".phase-out").onclick = (e) => {
+        e.stopPropagation();
+        showPositionPicker(setup, ids, p, row, "out");
+      };
+      row.onclick = () => handlePlayerClick(setup, ids, p, row);
+    }
     container.appendChild(row);
   });
 }
@@ -3242,6 +3346,7 @@ function buildPlayerCardHTML(player, team, extraHtml) {
         </div>
         <div class="player-card-club">${renderTeamCrest(team, "crest-sm")}<span>${team.name}</span></div>
         <div class="player-card-stars">${renderStarRating(player.overall)}<span class="star-rating-num">${player.overall}/100</span></div>
+        ${player.injured ? `<div class="player-card-injury">🩹 Blessure ${player.injurySeverity} — indisponible encore ${player.injuryDaysLeft} jour${player.injuryDaysLeft > 1 ? "s" : ""}</div>` : ""}
 
         <div class="attr-grid">
           ${renderAttributeTile("Vitesse", player.speed)}

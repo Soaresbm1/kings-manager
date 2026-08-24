@@ -89,6 +89,16 @@ test("value() : un profil 5 étoiles coûte proportionnellement plus cher qu'un 
     `prime étoile insuffisante : €/overall elite=${ratioElite.toFixed(1)} vs faible=${ratioWeak.toFixed(1)}`);
 });
 
+test("INJURY_SEVERITY_TIERS : paliers cohérents (seuils croissants, bornes de jours valides)", () => {
+  let lastChance = 0;
+  INJURY_SEVERITY_TIERS.forEach(tier => {
+    assert(tier.chance > lastChance, `paliers non strictement croissants autour de "${tier.label}"`);
+    assert(tier.minDays <= tier.maxDays, `${tier.label} : minDays (${tier.minDays}) > maxDays (${tier.maxDays})`);
+    lastChance = tier.chance;
+  });
+  assert(lastChance >= 1, "le dernier palier doit couvrir tout tirage possible de Math.random() (toujours < 1)");
+});
+
 // ----------------- CALENDRIER (generateSchedule) -----------------
 
 test("generateSchedule : round-robin double, chaque paire se rencontre 1 fois dans chaque sens", () => {
