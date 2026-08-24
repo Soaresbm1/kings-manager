@@ -93,6 +93,20 @@ si non qualifié, jusqu'à 150 000€ pour le titre — `getUserTournamentResult
 le panneau "Palmarès" en haut de l'onglet Statistiques (`renderPalmaresPanel`) en tire un résumé de
 carrière (titres de champion, titres internationaux, finales perdues) et le détail saison par saison.
 
+## Enjeu de club : objectif de la direction (`STATE.seasonObjective`, `generateSeasonObjective`)
+
+Généré à chaque début de saison (`startCareer`/`startNewSeason`, plus une migration silencieuse
+dans `applySaveData` pour les sauvegardes créées avant cette fonctionnalité) et annoncé par une
+notification (type `"boardObjective"`). Le palier d'ambition (`SEASON_OBJECTIVE_TIERS`, du titre au
+simple maintien) est choisi par percentile de rang : basé sur le classement final de la saison
+précédente (`STATE.trophyHistory`) si elle existe, sinon (1ère saison de la carrière) sur la force
+moyenne de l'effectif par rapport aux autres clubs de la ligue (`estimateSquadStrength`). Affiché en
+continu dans un badge de la topbar (`#topbar-objective`). Ne va JAMAIS jusqu'au licenciement (hors
+scope, delibéré) — juste une conséquence financière : `awardSeasonPrizeMoney` compare le rang final
+à `targetRank` et applique un bonus (+25%) ou un malus (-15%) sur la prime de fin de saison déjà en
+place, puis grave le résultat (`objectiveMet`) dans l'entrée `STATE.trophyHistory` de la saison —
+affiché aussi bien dans le panneau "Saison terminée" que dans le palmarès (`renderPalmaresPanel`).
+
 ## Historique des transferts (`STATE.transferLog`, sous-onglet Mercato "Historique")
 
 `engine.js:fillPositionGaps`/`simulateAITransfers` restent des fonctions pures (pas de STATE) : elles

@@ -163,6 +163,9 @@ h3 { color: #cfe8ff; }
 }
 .team-name-badge { background: transparent !important; border: none !important; padding: 0 !important; font-size: 1.08em; font-weight: 700; color: #fff !important; }
 #topbar-budget { color: #ffd166; }
+#topbar-objective {
+  background: rgba(255,199,0,0.1); border-color: rgba(255,199,0,0.35); color: #ffe9b3; cursor: help;
+}
 
 .nav { display: flex; gap: 4px; flex-wrap: wrap; background: #000; border-radius: 0 0 8px 8px; }
 .topbar .nav { border-top: 1px solid rgba(255,199,0,0.18); }
@@ -780,6 +783,11 @@ button.secondary.selected { border-color: var(--accent2); background: rgba(255,1
 .palmares-rank { color: #cfe0f5; flex: 1; }
 .palmares-tournament { color: #8391a8; font-size: 0.92em; }
 .palmares-row-title .palmares-tournament { color: #ffe9b3; font-weight: 600; }
+.palmares-objective {
+  font-size: 0.78em; font-weight: 700; padding: 3px 9px; border-radius: 20px; white-space: nowrap;
+}
+.palmares-objective-met { background: rgba(0,255,136,0.12); color: #b6ffd9; border: 1px solid rgba(0,255,136,0.3); }
+.palmares-objective-missed { background: rgba(255,90,90,0.12); color: #ffd6d6; border: 1px solid rgba(255,90,90,0.3); }
 
 /* ----- Sous-onglet "Historique" du Mercato ----- */
 .transfer-history-list { max-height: 480px; overflow-y: auto; }
@@ -912,6 +920,12 @@ button.secondary.selected { border-color: var(--accent2); background: rgba(255,1
 .notif-transfer-route {
   display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: -6px 0 14px;
   font-size: 0.9em;
+}
+.notif-objective-card {
+  background: linear-gradient(135deg, rgba(255,199,0,0.16), rgba(255,199,0,0.05));
+  border: 1px solid rgba(255,199,0,0.4); color: #ffe9b3;
+  border-radius: 10px; padding: 16px 18px; margin: 6px 0 16px;
+  font-size: 1.08em; font-weight: 700; text-align: center; line-height: 1.4;
 }
 .stat-tile.stat-tile-good { background: rgba(0,255,136,0.12); border-color: rgba(0,255,136,0.4); }
 .stat-tile.stat-tile-good .stat-tile-value { color: #b6ffd9; }

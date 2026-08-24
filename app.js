@@ -18,7 +18,8 @@ let STATE = {
   seasonPrizeAwarded: false, // évite de créditer deux fois la prime de fin de saison (voir awardSeasonPrizeMoney)
   lastSeasonPrize: null,     // détail de la dernière prime versée, pour l'affichage dans le panneau "Saison terminée"
   transferLog: [],           // historique des transferts (achats/ventes du joueur + IA de sa ligue) — voir logTransferEvent
-  trophyHistory: []          // palmarès : un résumé par saison terminée (classement + résultat tournoi) — voir awardSeasonPrizeMoney
+  trophyHistory: [],         // palmarès : un résumé par saison terminée (classement + résultat tournoi) — voir awardSeasonPrizeMoney
+  seasonObjective: null      // objectif de la direction pour la saison en cours — voir generateSeasonObjective
 };
 
 const POS_ORDER = { GK: 0, DEF: 1, MID: 2, ATT: 3 };
@@ -68,7 +69,8 @@ function buildSaveData() {
     seasonPrizeAwarded: STATE.seasonPrizeAwarded,
     lastSeasonPrize: STATE.lastSeasonPrize,
     transferLog: STATE.transferLog,
-    trophyHistory: STATE.trophyHistory
+    trophyHistory: STATE.trophyHistory,
+    seasonObjective: STATE.seasonObjective
   };
 }
 
@@ -110,6 +112,7 @@ function applySaveData(data) {
   STATE.lastSeasonPrize = data.lastSeasonPrize || null;
   STATE.transferLog = data.transferLog || [];
   STATE.trophyHistory = data.trophyHistory || [];
+  STATE.seasonObjective = data.seasonObjective || null;
   STATE.otherLeagues = data.otherLeagues || null;
   STATE.tournament = data.tournament || null;
   STATE.tournamentMatchRef = null;
@@ -118,6 +121,9 @@ function applySaveData(data) {
   if (!STATE.otherLeagues) STATE.otherLeagues = buildOtherLeagues(STATE.leagueKey);
   backfillPhotoClub();
   backfillSeasonStats();
+  // migration : sauvegardes créées avant les objectifs de saison — en génère un pour la saison en
+  // cours plutôt que de laisser le badge de la topbar vide jusqu'à la saison suivante.
+  if (!STATE.seasonObjective) STATE.seasonObjective = generateSeasonObjective();
   // JSON a rompu les références d'objets équipe du bracket (cf. relinkTournamentTeamRefs) : on
   // les ré-associe aux vraies équipes maintenant que STATE.league/STATE.otherLeagues sont prêts.
   relinkTournamentTeamRefs();
@@ -445,6 +451,12 @@ function startCareer() {
   STATE.transferLog = [];
   STATE.trophyHistory = [];
   STATE.otherLeagues = buildOtherLeagues(STATE.leagueKey);
+  STATE.seasonObjective = generateSeasonObjective();
+  STATE.notifications.push({
+    type: "boardObjective", title: "🎯 Objectif de la direction",
+    body: "Voici l'objectif fixé par la direction pour cette première saison :",
+    objectiveLabel: STATE.seasonObjective.label
+  });
 
   showScreen("screen-main");
   showTab("calendar");
@@ -673,6 +685,51 @@ function getUserTournamentResult() {
   return lastRoundIdx === -1 ? null : roundKeys[lastRoundIdx];
 }
 
+// Force moyenne de l'effectif d'un club (moyenne d'overall) — sert uniquement à estimer un rang de
+// départ plausible pour l'objectif de saison de la toute première saison d'une carrière, avant
+// qu'il n'existe le moindre historique réel (STATE.trophyHistory) sur lequel se baser.
+function estimateSquadStrength(league, teamId) {
+  const team = league.teams.find(t => t.id === teamId);
+  if (!team || !team.players.length) return 0;
+  return team.players.reduce((s, p) => s + p.overall, 0) / team.players.length;
+}
+
+// Paliers d'ambition de la direction, du meilleur au pire, sélectionnés par percentile de rang
+// (0 = meilleure équipe de la ligue, 1 = pire) — plus l'équipe a bien terminé la saison précédente
+// (ou paraît forte pour une 1ère saison), plus l'objectif fixé est ambitieux.
+const SEASON_OBJECTIVE_TIERS = [
+  { maxPercentile: 0.2, label: "🏆 Remporter le championnat", shortLabel: "🏆 Titre visé", targetRank: () => 1 },
+  { maxPercentile: 0.45, label: "🥉 Terminer sur le podium (top 3)", shortLabel: "🥉 Top 3 visé", targetRank: () => 3 },
+  { maxPercentile: 0.7, label: null, shortLabel: null, targetRank: n => Math.max(3, Math.ceil(n / 2)) },
+  { maxPercentile: 1.01, label: "🛡️ Assurer le maintien (éviter la dernière place)", shortLabel: "🛡️ Maintien visé", targetRank: n => Math.max(1, n - 1) }
+];
+
+// Objectif de la direction pour la saison en cours : basé sur le classement final de la saison
+// précédente (STATE.trophyHistory), ou sur la force de l'effectif s'il n'existe pas encore
+// d'historique (1ère saison de la carrière). Ne va jamais jusqu'au licenciement (hors scope) — juste
+// une conséquence financière (voir awardSeasonPrizeMoney) et une trace dans le palmarès.
+function generateSeasonObjective() {
+  const totalTeams = STATE.league.teams.length;
+  let baseRank;
+  const lastEntry = STATE.trophyHistory[STATE.trophyHistory.length - 1];
+  if (lastEntry) {
+    baseRank = lastEntry.rank;
+  } else {
+    const scored = STATE.league.teams.map(t => ({ id: t.id, strength: estimateSquadStrength(STATE.league, t.id) }));
+    scored.sort((a, b) => b.strength - a.strength);
+    baseRank = scored.findIndex(s => s.id === STATE.userTeamId) + 1;
+  }
+  const percentile = totalTeams > 1 ? (baseRank - 1) / (totalTeams - 1) : 0;
+  const tier = SEASON_OBJECTIVE_TIERS.find(t => percentile <= t.maxPercentile);
+  const targetRank = tier.targetRank(totalTeams);
+  return {
+    targetRank, totalTeams,
+    label: tier.label || `Terminer dans la première moitié du classement (top ${targetRank})`,
+    shortLabel: tier.shortLabel || `Top ${targetRank} visé`,
+    met: null
+  };
+}
+
 // Prime de fin de saison, versée une seule fois (STATE.seasonPrizeAwarded) dès que le championnat
 // ET le tournoi international sont terminés : une part liée au classement final du championnat
 // (du dernier au premier), une part liée au parcours dans le tournoi (0 si pas qualifié, jusqu'au
@@ -690,13 +747,25 @@ function awardSeasonPrizeMoney() {
   const championshipAmount = Math.round(20000 + percentile * 130000);
   const tournamentResult = getUserTournamentResult();
   const tournamentAmount = tournamentResult ? TOURNAMENT_PRIZE_BY_RESULT[tournamentResult] : 0;
-  const total = championshipAmount + tournamentAmount;
+  // enjeu de club : bonus si l'objectif de la direction est atteint, malus sinon (voir
+  // generateSeasonObjective) — appliqué en % du total plutôt qu'un montant fixe, pour rester
+  // proportionné quel que soit le niveau de la saison (petite ou grosse prime).
+  const objective = STATE.seasonObjective;
+  const objectiveMet = objective ? rank <= objective.targetRank : null;
+  const objectiveAmount = objective ? Math.round((championshipAmount + tournamentAmount) * (objectiveMet ? 0.25 : -0.15)) : 0;
+  const total = championshipAmount + tournamentAmount + objectiveAmount;
   team.budget += total;
-  STATE.lastSeasonPrize = { rank, totalTeams, tournamentResult, championshipAmount, tournamentAmount, total };
+  STATE.lastSeasonPrize = {
+    rank, totalTeams, tournamentResult, championshipAmount, tournamentAmount,
+    objective, objectiveMet, objectiveAmount, total
+  };
   STATE.seasonPrizeAwarded = true;
   // palmarès : un résumé permanent de cette saison (jamais remis à zéro sauf startCareer, contrairement
   // à STATE.lastSeasonPrize qui ne garde que la toute dernière) — voir renderPalmaresPanel.
-  STATE.trophyHistory.push({ season: STATE.season, leagueName: STATE.league.name, rank, totalTeams, tournamentResult });
+  STATE.trophyHistory.push({
+    season: STATE.season, leagueName: STATE.league.name, rank, totalTeams, tournamentResult,
+    objectiveLabel: objective ? objective.label : null, objectiveMet
+  });
 }
 
 const TOURNAMENT_RESULT_LABELS = {
@@ -1056,6 +1125,10 @@ function renderCurrentNotification() {
         </div>`;
       bodyEl.style.display = "none";
     }
+  } else if (notif.type === "boardObjective") {
+    // objectiveLabel porte déjà son propre pictogramme pour la plupart des paliers (🏆/🥉/🛡️) —
+    // pas de 🎯 en plus ici, le titre de la notification le porte déjà.
+    extra.innerHTML = `<div class="notif-objective-card">${notif.objectiveLabel}</div>`;
   }
 
   const queueBadge = document.getElementById("notif-queue-badge");
@@ -1110,6 +1183,12 @@ function renderCurrentNotification() {
     okBtn.textContent = "OK";
     okBtn.onclick = () => dismissCurrentNotification();
     actions.appendChild(infoBtn);
+    actions.appendChild(okBtn);
+  } else if (notif.type === "boardObjective") {
+    const okBtn = document.createElement("button");
+    okBtn.className = "primary";
+    okBtn.textContent = "Compris";
+    okBtn.onclick = () => dismissCurrentNotification();
     actions.appendChild(okBtn);
   } else if (notif.type === "interview" && INTERVIEW_TEMPLATES[notif.templateIdx]) {
     // Toutes les réponses sont des choix neutres (aucune n'est "la bonne") : même style pour
@@ -1212,6 +1291,15 @@ function updateTopbar() {
   document.getElementById("topbar-date").textContent = "🗓️ " + formatGameDate(STATE.currentDay);
   document.getElementById("topbar-matchday").textContent = `Journée ${STATE.currentRound + 1} / ${STATE.schedule.length}`;
 
+  const objectiveBadge = document.getElementById("topbar-objective");
+  if (STATE.seasonObjective) {
+    objectiveBadge.style.display = "";
+    objectiveBadge.textContent = STATE.seasonObjective.shortLabel;
+    objectiveBadge.title = STATE.seasonObjective.label;
+  } else {
+    objectiveBadge.style.display = "none";
+  }
+
   // fenêtres de mercato : journées 1-2, journées 8-9, et les 2 dernières journées (+ fin de saison)
   const totalRounds = STATE.schedule.length;
   const cr = STATE.currentRound;
@@ -1269,11 +1357,17 @@ function renderCalendarTab() {
       if (!alreadyAwarded) { updateTopbar(); saveGame(); }
       const prize = STATE.lastSeasonPrize;
       const resultLabel = prize.tournamentResult ? TOURNAMENT_RESULT_LABELS[prize.tournamentResult] : "non qualifié pour le tournoi";
+      const objectiveLine = prize.objective ? `
+        <p style="margin:8px 0; color:${prize.objectiveMet ? "#b6ffd9" : "#ffd6d6"};">
+          🎯 Objectif de la direction (${prize.objective.label}) : <b>${prize.objectiveMet ? "atteint" : "manqué"}</b>
+          (${prize.objectiveAmount >= 0 ? "+" : ""}${formatMoney(prize.objectiveAmount)})
+        </p>` : "";
       nextPanel.innerHTML = `<h3>Saison terminée !</h3>
         <p>🏆 Champion international : <b>${STATE.tournament.champion.team.name}</b> (${STATE.tournament.champion.leagueName})</p>
         <p style="margin:8px 0;">${prize.rank}${prize.rank === 1 ? "er" : "e"} de ${STATE.league.name} · ${resultLabel}</p>
+        ${objectiveLine}
         <p style="margin:8px 0; color:var(--accent); font-weight:700;">
-          💰 Prime de fin de saison : +${formatMoney(prize.total)}
+          💰 Prime de fin de saison : ${prize.total >= 0 ? "+" : ""}${formatMoney(prize.total)}
           <span style="color:#8391a8; font-weight:500; font-size:0.85em;">(${formatMoney(prize.championshipAmount)} championnat + ${formatMoney(prize.tournamentAmount)} tournoi)</span>
         </p>
         <button class="primary" id="btn-new-season">Démarrer la saison suivante</button>`;
@@ -1410,6 +1504,12 @@ function startNewSeason() {
   STATE.tournament = null;
   STATE.seasonPrizeAwarded = false;
   STATE.lastSeasonPrize = null;
+  STATE.seasonObjective = generateSeasonObjective();
+  STATE.notifications.push({
+    type: "boardObjective", title: "🎯 Objectif de la direction",
+    body: "Voici l'objectif fixé par la direction pour cette nouvelle saison :",
+    objectiveLabel: STATE.seasonObjective.label
+  });
 
   updateTopbar();
   renderCalendarTab();
@@ -1513,20 +1613,26 @@ function renderPalmaresPanel() {
   const leagueTitles = history.filter(h => h.rank === 1).length;
   const intlTitles = history.filter(h => h.tournamentResult === "champion").length;
   const finals = history.filter(h => h.tournamentResult === "finale").length;
+  const objectivesMet = history.filter(h => h.objectiveMet === true).length;
+  const objectivesSet = history.filter(h => h.objectiveMet !== null && h.objectiveMet !== undefined).length;
   summaryEl.innerHTML = `
     ${renderStatTile(history.length, "Saisons")}
     ${renderStatTile(leagueTitles, "Titres de champion")}
     ${renderStatTile(intlTitles, "🏆 Titres internationaux")}
     ${renderStatTile(finals, "Finales perdues")}
+    ${renderStatTile(objectivesSet ? `${objectivesMet}/${objectivesSet}` : "-", "🎯 Objectifs atteints")}
   `;
 
   emptyEl.style.display = history.length ? "none" : "block";
   listEl.innerHTML = history.slice().reverse().map(h => {
     const tournamentLabel = h.tournamentResult ? TOURNAMENT_RESULT_LABELS[h.tournamentResult] : "non qualifié";
+    const objectiveTag = h.objectiveMet === true ? `<span class="palmares-objective palmares-objective-met">🎯 objectif atteint</span>`
+      : h.objectiveMet === false ? `<span class="palmares-objective palmares-objective-missed">🎯 objectif manqué</span>` : "";
     return `<div class="palmares-row${h.rank === 1 || h.tournamentResult === "champion" ? " palmares-row-title" : ""}">
       <span class="palmares-season">Saison ${h.season}</span>
       <span class="palmares-rank">${h.rank}${h.rank === 1 ? "er" : "e"} / ${h.totalTeams} — ${h.leagueName}</span>
       <span class="palmares-tournament">${tournamentLabel}</span>
+      ${objectiveTag}
     </div>`;
   }).join("");
 }
