@@ -14,7 +14,9 @@ let STATE = {
   mercatoOpen: false,
   shortlist: [],        // ids de joueurs (n'importe quelle ligue) ajoutés à la liste de suivi
   savedTactic: null,    // { formation, assignments, attackPlan, defensePlan }
-  currentSlotId: null   // identifiant de la carrière active (parmi plusieurs)
+  currentSlotId: null,  // identifiant de la carrière active (parmi plusieurs)
+  seasonPrizeAwarded: false, // évite de créditer deux fois la prime de fin de saison (voir awardSeasonPrizeMoney)
+  lastSeasonPrize: null      // détail de la dernière prime versée, pour l'affichage dans le panneau "Saison terminée"
 };
 
 const POS_ORDER = { GK: 0, DEF: 1, MID: 2, ATT: 3 };
@@ -60,7 +62,9 @@ function buildSaveData() {
     shortlist: STATE.shortlist,
     savedTactic: STATE.savedTactic,
     otherLeagues: STATE.otherLeagues,
-    tournament: STATE.tournament
+    tournament: STATE.tournament,
+    seasonPrizeAwarded: STATE.seasonPrizeAwarded,
+    lastSeasonPrize: STATE.lastSeasonPrize
   };
 }
 
@@ -98,6 +102,8 @@ function applySaveData(data) {
   STATE.savedTactic = data.savedTactic || null;
   STATE.pendingLineup = null;
   STATE.pendingResult = null;
+  STATE.seasonPrizeAwarded = data.seasonPrizeAwarded || false;
+  STATE.lastSeasonPrize = data.lastSeasonPrize || null;
   STATE.otherLeagues = data.otherLeagues || null;
   STATE.tournament = data.tournament || null;
   STATE.tournamentMatchRef = null;
@@ -427,6 +433,8 @@ function startCareer() {
   STATE.notifications = [];
   STATE.shortlist = [];
   STATE.mercatoOpen = false;
+  STATE.seasonPrizeAwarded = false;
+  STATE.lastSeasonPrize = null;
   STATE.otherLeagues = buildOtherLeagues(STATE.leagueKey);
 
   showScreen("screen-main");
@@ -631,6 +639,51 @@ function findPendingUserTournamentMatch() {
   const round = t.rounds[t.roundIndex];
   return round.matches.find(m => !m.played && (m.home.isUser || m.away.isUser)) || null;
 }
+
+// Jusqu'où l'équipe du joueur est allée dans le tournoi de fin de saison, une fois celui-ci
+// terminé : null si elle n'était pas qualifiée (pas top 2 de sa ligue), sinon le nom du dernier
+// tour joué ("barrage"/"quarts"/"demies"/"finale") ou "champion" si elle a remporté la finale.
+function getUserTournamentResult() {
+  const t = STATE.tournament;
+  if (!t || !t.finished) return null;
+  if (t.champion && t.champion.isUser) return "champion";
+  let lastRoundIdx = -1;
+  const roundKeys = ["barrage", "quarts", "demies", "finale"];
+  t.rounds.forEach((round, idx) => {
+    round.matches.forEach(m => {
+      if (m.played && (m.home.isUser || m.away.isUser)) lastRoundIdx = idx;
+    });
+  });
+  return lastRoundIdx === -1 ? null : roundKeys[lastRoundIdx];
+}
+
+// Prime de fin de saison, versée une seule fois (STATE.seasonPrizeAwarded) dès que le championnat
+// ET le tournoi international sont terminés : une part liée au classement final du championnat
+// (du dernier au premier), une part liée au parcours dans le tournoi (0 si pas qualifié, jusqu'au
+// titre international) — cf. demande utilisateur "gagner plus ou moins d'argent selon nos résultats".
+const TOURNAMENT_PRIZE_BY_RESULT = {
+  barrage: 15000, quarts: 30000, demies: 55000, finale: 90000, champion: 150000
+};
+function awardSeasonPrizeMoney() {
+  if (STATE.seasonPrizeAwarded) return;
+  const team = getUserTeam();
+  const standings = computeStandings(STATE.league);
+  const rank = standings.findIndex(row => row.id === STATE.userTeamId) + 1;
+  const totalTeams = standings.length;
+  const percentile = totalTeams > 1 ? (totalTeams - rank) / (totalTeams - 1) : 1;
+  const championshipAmount = Math.round(20000 + percentile * 130000);
+  const tournamentResult = getUserTournamentResult();
+  const tournamentAmount = tournamentResult ? TOURNAMENT_PRIZE_BY_RESULT[tournamentResult] : 0;
+  const total = championshipAmount + tournamentAmount;
+  team.budget += total;
+  STATE.lastSeasonPrize = { rank, totalTeams, tournamentResult, championshipAmount, tournamentAmount, total };
+  STATE.seasonPrizeAwarded = true;
+}
+
+const TOURNAMENT_RESULT_LABELS = {
+  barrage: "éliminé en barrage", quarts: "éliminé en quarts de finale",
+  demies: "éliminé en demi-finale", finale: "finaliste", champion: "🏆 champion international"
+};
 
 // Retrouve l'équipe réelle (pas une copie) à partir de sa ligue + son id — une équipe hors de
 // STATE.league.teams vit dans STATE.otherLeagues, indexé par leagueKey (voir buildOtherLeagues).
@@ -1150,8 +1203,18 @@ function renderCalendarTab() {
         <button class="primary" id="btn-view-tournament">🏆 Voir le tournoi de fin de saison</button>`;
       document.getElementById("btn-view-tournament").onclick = openTournamentScreen;
     } else {
+      const alreadyAwarded = STATE.seasonPrizeAwarded;
+      awardSeasonPrizeMoney();
+      if (!alreadyAwarded) { updateTopbar(); saveGame(); }
+      const prize = STATE.lastSeasonPrize;
+      const resultLabel = prize.tournamentResult ? TOURNAMENT_RESULT_LABELS[prize.tournamentResult] : "non qualifié pour le tournoi";
       nextPanel.innerHTML = `<h3>Saison terminée !</h3>
         <p>🏆 Champion international : <b>${STATE.tournament.champion.team.name}</b> (${STATE.tournament.champion.leagueName})</p>
+        <p style="margin:8px 0;">${prize.rank}${prize.rank === 1 ? "er" : "e"} de ${STATE.league.name} · ${resultLabel}</p>
+        <p style="margin:8px 0; color:var(--accent); font-weight:700;">
+          💰 Prime de fin de saison : +${formatMoney(prize.total)}
+          <span style="color:#8391a8; font-weight:500; font-size:0.85em;">(${formatMoney(prize.championshipAmount)} championnat + ${formatMoney(prize.tournamentAmount)} tournoi)</span>
+        </p>
         <button class="primary" id="btn-new-season">Démarrer la saison suivante</button>`;
       document.getElementById("btn-new-season").onclick = startNewSeason;
     }
@@ -1284,6 +1347,8 @@ function startNewSeason() {
   STATE.otherLeagues = buildOtherLeagues(STATE.leagueKey);
   // un nouveau bracket sera reconstruit à la fin de cette nouvelle saison (cf. renderCalendarTab)
   STATE.tournament = null;
+  STATE.seasonPrizeAwarded = false;
+  STATE.lastSeasonPrize = null;
 
   updateTopbar();
   renderCalendarTab();

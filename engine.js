@@ -1013,7 +1013,11 @@ function developPlayer(p, rating) {
   }
 
   p.overall = Math.round((p.speed + p.technique + p.physical + p.mental) / 4);
-  p.value = Math.round((p.speed + p.technique + p.physical + p.mental) / 4 * 1000);
+  // même courbe de valeur (étoiles) qu'à la création du joueur — voir data.js:player() — sinon la
+  // progression/régression écraserait la prime/décote star au prochain recalcul de la valeur.
+  const stars = Math.max(0, Math.min(5, (p.overall - VALUE_STAR_MIN) / (VALUE_STAR_MAX - VALUE_STAR_MIN) * 5));
+  const valueMultiplier = 0.55 + 0.85 * Math.pow(stars / 5, 1.8);
+  p.value = Math.round(p.overall * 1000 * valueMultiplier);
 }
 
 function bumpAttribute(p, delta) {

@@ -3,8 +3,18 @@
 
 const POSITIONS = ["GK", "DEF", "MID", "ATT"];
 
+// Bornes utilisées pour convertir un overall en note "étoiles" (mêmes seuils que
+// app.js:STAR_RATING_MIN/MAX — dupliqués ici car data.js charge avant app.js, voir CLAUDE.md).
+const VALUE_STAR_MIN = 60;
+const VALUE_STAR_MAX = 95;
+
 function player(name, pos, spe, tec, phy, men, age) {
   const overall = Math.round((spe + tec + phy + men) / 4);
+  // Grille de valeur alignée sur la note en étoiles plutôt que strictement proportionnelle à
+  // l'overall : un profil 5 étoiles coûte relativement plus cher, un profil 3 étoiles et moins
+  // coûte relativement moins cher (courbe convexe, x^1.8, au lieu d'un simple ×1000 linéaire).
+  const stars = Math.max(0, Math.min(5, (overall - VALUE_STAR_MIN) / (VALUE_STAR_MAX - VALUE_STAR_MIN) * 5));
+  const valueMultiplier = 0.55 + 0.85 * Math.pow(stars / 5, 1.8);
   return {
     id: Math.random().toString(36).slice(2, 10),
     name, pos,
@@ -12,7 +22,7 @@ function player(name, pos, spe, tec, phy, men, age) {
     overall, // note générale (0-99), basée sur les attributs et les stats réelles du joueur
     form: 70 + Math.floor(Math.random() * 20), // 70-90 forme initiale
     age,
-    value: Math.round((spe + tec + phy + men) / 4 * 1000), // valeur en €
+    value: Math.round(overall * 1000 * valueMultiplier), // valeur en €
     goals: 0, assists: 0, rating: 0, matches: 0,
     injured: false, suspended: false
   };
@@ -26,7 +36,7 @@ function withStats(p, stats) {
 // ---------------------- LIGUE FRANCE (Kings League Crédit Agricole France) ----------------------
 const FRANCE_TEAMS = [
   {
-    id: "tsn", name: "360 Nation", color: "#c0392b", budget: 500000,
+    id: "tsn", name: "360 Nation", color: "#c0392b", budget: 300000,
     coach: "Mohamed Coulibaly",
     presidents: ["Tchouaméni", "Koundé", "Maignan", "Kone", "Mbeumo"],
     players: [
@@ -53,7 +63,7 @@ const FRANCE_TEAMS = [
     ]
   },
   {
-    id: "adb", name: "Athletic Dragon Blanc", color: "#c4c4c4", budget: 500000,
+    id: "adb", name: "Athletic Dragon Blanc", color: "#c4c4c4", budget: 300000,
     coach: "Habib Boumezoued",
     presidents: ["SDM", "Guy2Bezbar"],
     players: [
@@ -77,7 +87,7 @@ const FRANCE_TEAMS = [
     ]
   },
   {
-    id: "fcs", name: "FC Silmi", color: "#b8973e", budget: 500000,
+    id: "fcs", name: "FC Silmi", color: "#b8973e", budget: 300000,
     coach: "Sabry Bezahaf",
     presidents: ["Domingo"],
     players: [
@@ -100,7 +110,7 @@ const FRANCE_TEAMS = [
     ]
   },
   {
-    id: "gs7", name: "Generation Seven", color: "#4a8c2a", budget: 500000,
+    id: "gs7", name: "Generation Seven", color: "#4a8c2a", budget: 300000,
     coach: "Jefferson Roch",
     presidents: ["Michou", "Camavinga"],
     players: [
@@ -125,7 +135,7 @@ const FRANCE_TEAMS = [
     ]
   },
   {
-    id: "kar", name: "Karasu", color: "#c8501e", budget: 500000,
+    id: "kar", name: "Karasu", color: "#c8501e", budget: 300000,
     coach: "Benjamin Garault",
     presidents: ["Kameto", "Hamza"],
     players: [
@@ -151,7 +161,7 @@ const FRANCE_TEAMS = [
     ]
   },
   {
-    id: "pas", name: "Panam All Starz", color: "#8c1c2b", budget: 500000,
+    id: "pas", name: "Panam All Starz", color: "#8c1c2b", budget: 300000,
     coach: "Yassine Mohammed",
     presidents: ["Pfut"],
     players: [
@@ -179,7 +189,7 @@ const FRANCE_TEAMS = [
     ]
   },
   {
-    id: "u3d", name: "Unit3d", color: "#2a6fb0", budget: 500000,
+    id: "u3d", name: "Unit3d", color: "#2a6fb0", budget: 300000,
     coach: "Grégory Campi",
     presidents: ["Squeezie", "Djilsi", "Maxime Biaggi"],
     players: [
@@ -204,7 +214,7 @@ const FRANCE_TEAMS = [
     ]
   },
   {
-    id: "wpf", name: "Wolf Pack FC", color: "#5a4d6b", budget: 500000,
+    id: "wpf", name: "Wolf Pack FC", color: "#5a4d6b", budget: 300000,
     coach: "Richard Pascal",
     presidents: ["Adil Rami", "Naza"],
     players: [
@@ -233,7 +243,7 @@ const FRANCE_TEAMS = [
 // ---------------------- LIGUE BRÉSIL (Kings League Brasil) ----------------------
 const BRAZIL_TEAMS = [
   {
-    id: "fur", name: "Furia FC", color: "#4a4a4a", budget: 500000,
+    id: "fur", name: "Furia FC", color: "#4a4a4a", budget: 300000,
     coach: "Dudu Oliveira",
     presidents: ["Neymar", "Cris Guedes"],
     players: [
@@ -258,7 +268,7 @@ const BRAZIL_TEAMS = [
     ]
   },
   {
-    id: "flx", name: "Fluxo FC", color: "#1e7fd1", budget: 500000,
+    id: "flx", name: "Fluxo FC", color: "#1e7fd1", budget: 300000,
     coach: "Paulo Netto",
     presidents: ["Cerol", "Nobru", "Toguro"],
     players: [
@@ -279,7 +289,7 @@ const BRAZIL_TEAMS = [
     ]
   },
   {
-    id: "g3x", name: "G3X FC", color: "#2f4f7a", budget: 500000,
+    id: "g3x", name: "G3X FC", color: "#2f4f7a", budget: 300000,
     coach: "Velho Vamp",
     presidents: ["Gaules", "Kelvin"],
     players: [
@@ -299,7 +309,7 @@ const BRAZIL_TEAMS = [
     ]
   },
   {
-    id: "nyv", name: "Nyvelados FC", color: "#7a1fb5", budget: 500000,
+    id: "nyv", name: "Nyvelados FC", color: "#7a1fb5", budget: 300000,
     coach: "Dabá",
     presidents: ["Nyvi Estephan", "Falcão"],
     players: [
@@ -321,7 +331,7 @@ const BRAZIL_TEAMS = [
     ]
   },
   {
-    id: "dpn", name: "DesimpaiN", color: "#b34a1f", budget: 500000,
+    id: "dpn", name: "DesimpaiN", color: "#b34a1f", budget: 300000,
     coach: "Felipe Góes",
     presidents: ["Renato Vicente"],
     players: [
@@ -343,7 +353,7 @@ const BRAZIL_TEAMS = [
     ]
   },
   {
-    id: "cap", name: "Capim FC", color: "#5cb82e", budget: 500000,
+    id: "cap", name: "Capim FC", color: "#5cb82e", budget: 300000,
     coach: "Charles Cruz",
     presidents: ["Jon Vlogs", "Luva de Pedreiro"],
     players: [
@@ -366,7 +376,7 @@ const BRAZIL_TEAMS = [
     ]
   },
   {
-    id: "lou", name: "LOUD SC", color: "#2e8b3d", budget: 500000,
+    id: "lou", name: "LOUD SC", color: "#2e8b3d", budget: 300000,
     coach: "Carlos Pimenta",
     presidents: ["Coringa", "Brabox"],
     players: [
@@ -388,7 +398,7 @@ const BRAZIL_TEAMS = [
     ]
   },
   {
-    id: "pod", name: "Podpah Funkbol Clube", color: "#8c1c2b", budget: 500000,
+    id: "pod", name: "Podpah Funkbol Clube", color: "#8c1c2b", budget: 300000,
     coach: "Gustavo da Silva",
     presidents: ["Igão", "Michel Elias", "MC Hariel"],
     players: [
@@ -413,7 +423,7 @@ const BRAZIL_TEAMS = [
     ]
   },
   {
-    id: "den", name: "Dendele FC", color: "#d4a017", budget: 500000,
+    id: "den", name: "Dendele FC", color: "#d4a017", budget: 300000,
     coach: "Preto",
     presidents: ["Paulinho o Loko", "LuqEt4"],
     players: [
@@ -433,7 +443,7 @@ const BRAZIL_TEAMS = [
     ]
   },
   {
-    id: "dib", name: "Dibrados FC", color: "#6a1b9a", budget: 500000,
+    id: "dib", name: "Dibrados FC", color: "#6a1b9a", budget: 300000,
     coach: "Silton Filho",
     presidents: ["Allan Stag", "Lucas Tylty"],
     players: [
@@ -464,7 +474,7 @@ const BRAZIL_TEAMS = [
 // ---------------------- LIGUE ESPAGNE (Kings League Espagne) ----------------------
 const SPAIN_TEAMS = [
   {
-    id: "1kf", name: "1K FC", color: "#6a3fa0", budget: 500000,
+    id: "1kf", name: "1K FC", color: "#6a3fa0", budget: 300000,
     coach: "Manuel Fernández",
     presidents: ["Iker Casillas", "Baptistao"],
     players: [
@@ -488,7 +498,7 @@ const SPAIN_TEAMS = [
     ]
   },
   {
-    id: "ebr", name: "El Barrio", color: "#c0392b", budget: 500000,
+    id: "ebr", name: "El Barrio", color: "#c0392b", budget: 300000,
     coach: "Xavi Corominas",
     presidents: ["Adri Contreras"],
     players: [
@@ -514,7 +524,7 @@ const SPAIN_TEAMS = [
     ]
   },
   {
-    id: "jig", name: "Jijantes FC", color: "#6d1b3a", budget: 500000,
+    id: "jig", name: "Jijantes FC", color: "#6d1b3a", budget: 300000,
     coach: "David Biosca",
     presidents: ["Gerard Romero"],
     players: [
@@ -538,7 +548,7 @@ const SPAIN_TEAMS = [
     ]
   },
   {
-    id: "lcc", name: "La Capital CF", color: "#d6417e", budget: 500000,
+    id: "lcc", name: "La Capital CF", color: "#d6417e", budget: 300000,
     coach: "Arnau Jariod",
     presidents: ["Lamine Yamal", "La Cobra"],
     players: [
@@ -558,7 +568,7 @@ const SPAIN_TEAMS = [
     ]
   },
   {
-    id: "ltf", name: "Los Troncos FC", color: "#2f8f3f", budget: 500000,
+    id: "ltf", name: "Los Troncos FC", color: "#2f8f3f", budget: 300000,
     coach: "Eric Bartra",
     presidents: ["Jaume Cremades"],
     players: [
@@ -578,7 +588,7 @@ const SPAIN_TEAMS = [
     ]
   },
   {
-    id: "pio", name: "PIO FC", color: "#d4711f", budget: 500000,
+    id: "pio", name: "PIO FC", color: "#d4711f", budget: 300000,
     coach: "Pol Font",
     presidents: ["Samantha Rivera"],
     players: [
@@ -604,7 +614,7 @@ const SPAIN_TEAMS = [
     ]
   },
   {
-    id: "por", name: "Porcinos FC", color: "#c23b8a", budget: 500000,
+    id: "por", name: "Porcinos FC", color: "#c23b8a", budget: 300000,
     coach: "Narcís Barrera",
     presidents: ["Ibai Llanos", "Guanyar"],
     players: [
@@ -625,7 +635,7 @@ const SPAIN_TEAMS = [
     ]
   },
   {
-    id: "rdb", name: "Rayo de Barcelona", color: "#f0c419", budget: 500000,
+    id: "rdb", name: "Rayo de Barcelona", color: "#f0c419", budget: 300000,
     coach: "Robert Cornfield",
     presidents: ["Martí Miràs", "Jova"],
     players: [
@@ -651,7 +661,7 @@ const SPAIN_TEAMS = [
     ]
   },
   {
-    id: "say", name: "Saiyans FC", color: "#e08b2f", budget: 500000,
+    id: "say", name: "Saiyans FC", color: "#e08b2f", budget: 300000,
     coach: "Sebastián Marteles",
     presidents: ["David Cánovas"],
     players: [
@@ -672,7 +682,7 @@ const SPAIN_TEAMS = [
     ]
   },
   {
-    id: "skl", name: "Skull FC", color: "#b0202a", budget: 500000,
+    id: "skl", name: "Skull FC", color: "#b0202a", budget: 300000,
     coach: "Marcelo",
     presidents: ["Marcelo", "Daniel Alonso"],
     players: [
@@ -700,7 +710,7 @@ const SPAIN_TEAMS = [
     ]
   },
   {
-    id: "umo", name: "Ultimate Móstoles", color: "#2c5aa0", budget: 500000,
+    id: "umo", name: "Ultimate Móstoles", color: "#2c5aa0", budget: 300000,
     coach: "Alex Martínez",
     presidents: ["Mario Alonso"],
     players: [
@@ -722,7 +732,7 @@ const SPAIN_TEAMS = [
     ]
   },
   {
-    id: "xby", name: "xBuyer Team", color: "#2f5fa8", budget: 500000,
+    id: "xby", name: "xBuyer Team", color: "#2f5fa8", budget: 300000,
     coach: "Isaac Juárez",
     presidents: ["Javier xBuyer", "Eric Ruiz MiniBuyer"],
     players: [
@@ -754,7 +764,7 @@ const SPAIN_TEAMS = [
 // ---------------------- LIGUE ITALIE (Kings League Italie) ----------------------
 const ITALY_TEAMS = [
   {
-    id: "alp", name: "Alpak FC", color: "#d63384", budget: 500000,
+    id: "alp", name: "Alpak FC", color: "#d63384", budget: 300000,
     coach: "Mauro Micheli",
     presidents: ["Frenezy"],
     players: [
@@ -774,7 +784,7 @@ const ITALY_TEAMS = [
     ]
   },
   {
-    id: "bbr", name: "BIGBRO", color: "#4a5568", budget: 500000,
+    id: "bbr", name: "BIGBRO", color: "#4a5568", budget: 300000,
     coach: "Emanuele Di Vittorio",
     presidents: ["Moonryde"],
     players: [
@@ -797,7 +807,7 @@ const ITALY_TEAMS = [
     ]
   },
   {
-    id: "boo", name: "Boomers", color: "#c9a227", budget: 500000,
+    id: "boo", name: "Boomers", color: "#c9a227", budget: 300000,
     coach: "Mattia Mangone",
     presidents: ["Fedez"],
     players: [
@@ -823,7 +833,7 @@ const ITALY_TEAMS = [
     ]
   },
   {
-    id: "cir", name: "Circus FC", color: "#7b3fa0", budget: 500000,
+    id: "cir", name: "Circus FC", color: "#7b3fa0", budget: 300000,
     coach: "Alan Rigo",
     presidents: ["GrenBaud"],
     players: [
@@ -849,7 +859,7 @@ const ITALY_TEAMS = [
     ]
   },
   {
-    id: "dpw", name: "D-POWER", color: "#b23a2e", budget: 500000,
+    id: "dpw", name: "D-POWER", color: "#b23a2e", budget: 300000,
     coach: "Umberto Chiaramonte",
     presidents: ["Diletta Leotta", "Christian Vieri"],
     players: [
@@ -871,7 +881,7 @@ const ITALY_TEAMS = [
     ]
   },
   {
-    id: "cae", name: "FC Caesar", color: "#8c2f5c", budget: 500000,
+    id: "cae", name: "FC Caesar", color: "#8c2f5c", budget: 300000,
     coach: "Emiliano Viviano",
     presidents: ["Er Faina", "En3rix"],
     players: [
@@ -897,7 +907,7 @@ const ITALY_TEAMS = [
     ]
   },
   {
-    id: "g7f", name: "Gear 7 FC", color: "#5a6472", budget: 500000,
+    id: "g7f", name: "Gear 7 FC", color: "#5a6472", budget: 300000,
     coach: "Ivan Brocchieri",
     presidents: ["Manuuxo"],
     players: [
@@ -918,7 +928,7 @@ const ITALY_TEAMS = [
     ]
   },
   {
-    id: "stl", name: "Stallions", color: "#1f5fa8", budget: 500000,
+    id: "stl", name: "Stallions", color: "#1f5fa8", budget: 300000,
     coach: "Diego Franzè",
     presidents: ["Blur"],
     players: [
@@ -938,7 +948,7 @@ const ITALY_TEAMS = [
     ]
   },
   {
-    id: "trm", name: "TRM FC", color: "#c0392b", budget: 500000,
+    id: "trm", name: "TRM FC", color: "#c0392b", budget: 300000,
     coach: "Marco Bertoni",
     presidents: ["TheRealMarzaa"],
     players: [
@@ -960,7 +970,7 @@ const ITALY_TEAMS = [
     ]
   },
   {
-    id: "und", name: "Underdogs FC", color: "#2f8f4f", budget: 500000,
+    id: "und", name: "Underdogs FC", color: "#2f8f4f", budget: 300000,
     coach: "Dario Sibio",
     presidents: ["Mirko Cisco", "Il Rosso"],
     players: [
@@ -979,7 +989,7 @@ const ITALY_TEAMS = [
     ]
   },
   {
-    id: "zeb", name: "Zebras FC", color: "#454545", budget: 500000,
+    id: "zeb", name: "Zebras FC", color: "#454545", budget: 300000,
     coach: "Mareglen Mhillaj",
     presidents: ["Luca Campolunghi"],
     players: [
@@ -1007,7 +1017,7 @@ const ITALY_TEAMS = [
     ]
   },
   {
-    id: "zco", name: "Zeta Como", color: "#1e3a5f", budget: 500000,
+    id: "zco", name: "Zeta Como", color: "#1e3a5f", budget: 300000,
     coach: "Cristian Brocchi",
     presidents: ["ZW Jackson", "Luca Toni"],
     players: [
@@ -1035,7 +1045,7 @@ const ITALY_TEAMS = [
 // ---------------------- LIGUE ALLEMAGNE (Kings League Allemagne) ----------------------
 const GERMANY_TEAMS = [
   {
-    id: "erc", name: "ERA Colonia", color: "#7a3fa0", budget: 500000,
+    id: "erc", name: "ERA Colonia", color: "#7a3fa0", budget: 300000,
     coach: "Ilija Simunovic",
     presidents: ["Zarbex", "Filow"],
     players: [
@@ -1058,7 +1068,7 @@ const GERMANY_TEAMS = [
     ]
   },
   {
-    id: "g2f", name: "G2 FC", color: "#d9691e", budget: 500000,
+    id: "g2f", name: "G2 FC", color: "#d9691e", budget: 300000,
     coach: "Malik Hadziavdic",
     presidents: ["MoAuba", "Konygebony"],
     players: [
@@ -1078,7 +1088,7 @@ const GERMANY_TEAMS = [
     ]
   },
   {
-    id: "ist", name: "Istanbul United", color: "#b8202a", budget: 500000,
+    id: "ist", name: "Istanbul United", color: "#b8202a", budget: 300000,
     coach: "",
     presidents: ["Hasan Ali Kaldirim", "Mert"],
     players: [
@@ -1101,7 +1111,7 @@ const GERMANY_TEAMS = [
     ]
   },
   {
-    id: "kak", name: "Kaktus Kickers", color: "#3a9d5c", budget: 500000,
+    id: "kak", name: "Kaktus Kickers", color: "#3a9d5c", budget: 300000,
     coach: "Dominic Reinold",
     presidents: ["Trymacs", "Nici"],
     players: [
@@ -1126,7 +1136,7 @@ const GERMANY_TEAMS = [
     ]
   },
   {
-    id: "nrf", name: "No Rules FC", color: "#a52020", budget: 500000,
+    id: "nrf", name: "No Rules FC", color: "#a52020", budget: 300000,
     coach: "Francisco Copado",
     presidents: ["Brazzos", "Bilal Kamarieh", "Jordan", "Semih"],
     players: [
@@ -1145,7 +1155,7 @@ const GERMANY_TEAMS = [
     ]
   },
   {
-    id: "ttf", name: "Tiki Tacker FF", color: "#34495e", budget: 500000,
+    id: "ttf", name: "Tiki Tacker FF", color: "#34495e", budget: 300000,
     coach: "Selçuk Turan",
     presidents: ["Papaplatte", "BastiGHG", "Jann-Fiete Arp"],
     players: [
@@ -1168,7 +1178,7 @@ const GERMANY_TEAMS = [
     ]
   },
   {
-    id: "vvf", name: "Vice Versa FC", color: "#a68a3c", budget: 500000,
+    id: "vvf", name: "Vice Versa FC", color: "#a68a3c", budget: 300000,
     coach: "Sebastian Sander",
     presidents: ["Mario Götze", "Ebru Önal", "Farooo", "Owomoyela"],
     players: [
@@ -1197,7 +1207,7 @@ const GERMANY_TEAMS = [
     ]
   },
   {
-    id: "you", name: "Youniors F.C.", color: "#c2185b", budget: 500000,
+    id: "you", name: "Youniors F.C.", color: "#c2185b", budget: 300000,
     coach: "Mimoun Azaouagh",
     presidents: ["Younes Zarou", "LetsHugo"],
     players: [
@@ -1225,7 +1235,7 @@ const GERMANY_TEAMS = [
 // ---------------------- LIGUE MEXIQUE (Kings League Mexique) ----------------------
 const MEXICO_TEAMS = [
   {
-    id: "anq", name: "Aniquiladores FC", color: "#c0392b", budget: 500000,
+    id: "anq", name: "Aniquiladores FC", color: "#c0392b", budget: 300000,
     coach: "Sergio Pibe Verdirame",
     presidents: ["Juan Guarnizo"],
     players: [
@@ -1245,7 +1255,7 @@ const MEXICO_TEAMS = [
     ]
   },
   {
-    id: "atp", name: "Atlético Parceros FC", color: "#b8302a", budget: 500000,
+    id: "atp", name: "Atlético Parceros FC", color: "#b8302a", budget: 300000,
     coach: "Luis Alfonso Álvarez",
     presidents: ["James Rodríguez", "Angerson Pelicanger García"],
     players: [
@@ -1265,7 +1275,7 @@ const MEXICO_TEAMS = [
     ]
   },
   {
-    id: "cdc", name: "Club de Cuervos", color: "#7a1f1f", budget: 500000,
+    id: "cdc", name: "Club de Cuervos", color: "#7a1f1f", budget: 300000,
     coach: "Jorge Cacho González",
     presidents: ["Natalia García", "Iván Navarrete"],
     players: [
@@ -1292,7 +1302,7 @@ const MEXICO_TEAMS = [
     ]
   },
   {
-    id: "gdc", name: "Galácticos del Caribe", color: "#1e3f7a", budget: 500000,
+    id: "gdc", name: "Galácticos del Caribe", color: "#1e3f7a", budget: 300000,
     coach: "Lucas Ayala",
     presidents: ["Santiago Matías Alofoke", "Vincent Pérez", "Angelo Valdés"],
     players: [
@@ -1314,7 +1324,7 @@ const MEXICO_TEAMS = [
     ]
   },
   {
-    id: "guf", name: "Guerrilla FC", color: "#4a5c2f", budget: 500000,
+    id: "guf", name: "Guerrilla FC", color: "#4a5c2f", budget: 300000,
     coach: "Rodrigo Ávila",
     presidents: ["Mr. Stiven"],
     players: [
@@ -1341,7 +1351,7 @@ const MEXICO_TEAMS = [
     ]
   },
   {
-    id: "kru", name: "KRÜ FC", color: "#d63384", budget: 500000,
+    id: "kru", name: "KRÜ FC", color: "#d63384", budget: 300000,
     coach: "Juan Manuel Miranda",
     presidents: ["Sergio Kun Agüero"],
     players: [
@@ -1362,7 +1372,7 @@ const MEXICO_TEAMS = [
     ]
   },
   {
-    id: "lal", name: "Los Aliens FC", color: "#6b3fa0", budget: 500000,
+    id: "lal", name: "Los Aliens FC", color: "#6b3fa0", budget: 300000,
     coach: "David Cabrera",
     presidents: ["Edwin Castro"],
     players: [
@@ -1383,7 +1393,7 @@ const MEXICO_TEAMS = [
     ]
   },
   {
-    id: "lch", name: "Los Chamos FC", color: "#6d2333", budget: 500000,
+    id: "lch", name: "Los Chamos FC", color: "#6d2333", budget: 300000,
     coach: "Jos Gartland",
     presidents: ["Donato Muñoz", "Flavio Broianigo", "RDjavi"],
     players: [
@@ -1408,7 +1418,7 @@ const MEXICO_TEAMS = [
     ]
   },
   {
-    id: "pca", name: "Peluche Caligari", color: "#e08828", budget: 500000,
+    id: "pca", name: "Peluche Caligari", color: "#e08828", budget: 300000,
     coach: "Fernando Espinosa",
     presidents: ["Álex Montiel", "Gabriel Montiel"],
     players: [
@@ -1432,7 +1442,7 @@ const MEXICO_TEAMS = [
     ]
   },
   {
-    id: "per", name: "Persas FC", color: "#4a4a4a", budget: 500000,
+    id: "per", name: "Persas FC", color: "#4a4a4a", budget: 300000,
     coach: "Gabriela Batocletti",
     presidents: ["Andy Zeein Merino", "Nicola Porcella"],
     players: [
@@ -1458,7 +1468,7 @@ const MEXICO_TEAMS = [
     ]
   },
   {
-    id: "rnz", name: "Raniza FC", color: "#3a8f4f", budget: 500000,
+    id: "rnz", name: "Raniza FC", color: "#3a8f4f", budget: 300000,
     coach: "Manu Lanzarote",
     presidents: ["Alana Flores"],
     players: [
@@ -1480,7 +1490,7 @@ const MEXICO_TEAMS = [
     ]
   },
   {
-    id: "sim", name: "Simios FC", color: "#6b4226", budget: 500000,
+    id: "sim", name: "Simios FC", color: "#6b4226", budget: 300000,
     coach: "Omar Flores",
     presidents: ["Abraham Flores"],
     players: [
