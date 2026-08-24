@@ -190,6 +190,8 @@
           </div>
 
           <div class="panel tactics-bench-panel">
+            <h3>Aperçu par poste</h3>
+            <div class="pos-overview" id="tactics-position-overview"></div>
             <h3>Effectif</h3>
             <div class="tactics-bench-list" id="tactics-bench-list"></div>
           </div>
@@ -201,6 +203,14 @@
         <div class="mercato-subnav">
           <button class="mercato-subtab-btn active" data-subtab="search">Rechercher</button>
           <button class="mercato-subtab-btn" data-subtab="shortlist">Ma liste <span class="subtab-count" id="shortlist-count"></span></button>
+        </div>
+
+        <!-- Bandeau de comparaison : reste visible sur les deux sous-onglets (Rechercher/Ma liste)
+             puisqu'on peut vouloir comparer un joueur de chacun — voir toggleCompare/renderCompareTray. -->
+        <div class="compare-tray" id="compare-tray" style="display:none;">
+          <div class="compare-tray-slots" id="compare-tray-slots"></div>
+          <button class="primary" id="btn-open-compare" disabled>⚖ Comparer</button>
+          <button class="secondary" id="btn-clear-compare">Vider</button>
         </div>
 
         <div class="mercato-subpanel active" id="mercato-subtab-search">
@@ -646,6 +656,16 @@
         <div id="player-info-body"></div>
         <div style="text-align:right; margin-top:14px;">
           <button class="secondary" id="btn-player-info-close">Fermer</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL COMPARATEUR DE JOUEURS -->
+    <div id="compare-modal" class="match-overlay">
+      <div class="modal-box modal-compare">
+        <div id="compare-body"></div>
+        <div style="text-align:right; margin-top:14px;">
+          <button class="secondary" id="btn-compare-close">Fermer</button>
         </div>
       </div>
     </div>

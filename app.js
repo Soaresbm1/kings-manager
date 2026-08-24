@@ -1579,6 +1579,7 @@ function renderTransfersTab() {
   renderMarketTable(team);
   renderShortlistTable(team);
   updateShortlistCount();
+  renderCompareTray();
 }
 
 // Bascule entre les deux sous-onglets du Mercato (Rechercher / Ma liste) — les deux restent
@@ -1667,16 +1668,25 @@ function renderMarketTable(team) {
       <td>${renderFormBar(p.form)}</td>
       <td>${p.age}</td>
       <td>${formatMoney(p.value)}</td>
-      <td><button class="secondary${STATE.shortlist.includes(p.id) ? " selected" : ""}" data-action="shortlist" data-player="${p.id}">${STATE.shortlist.includes(p.id) ? "✓ Dans ma liste" : "+ Ajouter"}</button></td>`;
+      <td class="shortlist-actions">
+        <button class="secondary compare-toggle-btn${compareIds.includes(p.id) ? " selected" : ""}" data-action="compare" data-player="${p.id}" title="Comparer">⚖</button>
+        <button class="secondary${STATE.shortlist.includes(p.id) ? " selected" : ""}" data-action="shortlist" data-player="${p.id}">${STATE.shortlist.includes(p.id) ? "✓ Dans ma liste" : "+ Ajouter"}</button>
+      </td>`;
     tr.onclick = () => openPlayerInfoModal(p, otherTeam);
     tbody.appendChild(tr);
   });
 
-  // clic sur le bouton d'ajout : ne doit pas aussi ouvrir la fiche technique de la ligne
+  // clic sur un bouton d'action : ne doit pas aussi ouvrir la fiche technique de la ligne
   tbody.querySelectorAll("[data-action='shortlist']").forEach(btn => {
     btn.onclick = (e) => {
       e.stopPropagation();
       toggleShortlist(btn.dataset.player);
+    };
+  });
+  tbody.querySelectorAll("[data-action='compare']").forEach(btn => {
+    btn.onclick = (e) => {
+      e.stopPropagation();
+      toggleCompare(btn.dataset.player);
     };
   });
 
@@ -1771,11 +1781,132 @@ function renderShortlistDetail() {
   const actionsHtml = `
     <div class="shortlist-detail-actions">
       <button class="primary" id="shortlist-detail-offer"${STATE.mercatoOpen ? "" : " disabled"}>Offre</button>
+      <button class="secondary compare-toggle-btn${compareIds.includes(p.id) ? " selected" : ""}" id="shortlist-detail-compare">⚖ ${compareIds.includes(p.id) ? "Retirer du comparateur" : "Comparer"}</button>
       <button class="secondary" id="shortlist-detail-remove">Retirer de ma liste</button>
     </div>`;
   wrap.innerHTML = buildPlayerCardHTML(p, otherTeam, leagueTag + actionsHtml);
   document.getElementById("shortlist-detail-offer").onclick = () => openOfferModal(leagueKey, otherTeam.id, p.id);
+  document.getElementById("shortlist-detail-compare").onclick = () => { toggleCompare(p.id); renderShortlistDetail(); };
   document.getElementById("shortlist-detail-remove").onclick = () => toggleShortlist(p.id);
+}
+
+// ----------------- COMPARATEUR DE JOUEURS -----------------
+// Jusqu'à 2 joueurs sélectionnés (id seulement, comme la shortlist — résolus à chaque rendu via
+// findPlayerAnywhere pour rester valides même après un transfert IA). Purement une aide à la
+// décision côté UI : pas persisté dans STATE/la sauvegarde, se réinitialise au rechargement.
+let compareIds = [];
+
+function toggleCompare(playerId) {
+  const idx = compareIds.indexOf(playerId);
+  if (idx !== -1) {
+    compareIds.splice(idx, 1);
+  } else {
+    compareIds.push(playerId);
+    if (compareIds.length > 2) compareIds.shift(); // remplace le plus ancien (FIFO) au-delà de 2
+  }
+  const team = getUserTeam();
+  renderCompareTray();
+  renderMarketTable(team);
+  renderShortlistTable(team);
+}
+
+function renderCompareTray() {
+  const tray = document.getElementById("compare-tray");
+  const slots = document.getElementById("compare-tray-slots");
+  const openBtn = document.getElementById("btn-open-compare");
+  // nettoie les entrées obsolètes (joueur introuvable — ne devrait pas arriver, filet de sécurité
+  // identique à celui de la shortlist)
+  compareIds = compareIds.filter(id => findPlayerAnywhere(id));
+  tray.style.display = compareIds.length ? "flex" : "none";
+  slots.innerHTML = compareIds.map(id => {
+    const found = findPlayerAnywhere(id);
+    return `<span class="compare-chip">
+      <span class="pos-tag pos-${found.p.pos}">${found.p.pos}</span> ${found.p.name}
+      <button class="compare-chip-remove" data-player="${id}" title="Retirer">×</button>
+    </span>`;
+  }).join("");
+  slots.querySelectorAll(".compare-chip-remove").forEach(btn => {
+    btn.onclick = () => toggleCompare(btn.dataset.player);
+  });
+  openBtn.disabled = compareIds.length !== 2;
+}
+
+// Ligne du tableau de comparaison : met en évidence la meilleure valeur (vert) / la moins bonne
+// (rouge) entre les deux joueurs — higherBetter=null pour une stat purement informative (Âge,
+// Valeur) qui n'a pas de "meilleur" objectif. displayA/B permettent un affichage formaté
+// (formatMoney, "-" si aucun match...) distinct de la valeur numérique brute utilisée pour comparer.
+function compareRowHTML(label, rawA, rawB, higherBetter, displayA, displayB) {
+  displayA = displayA !== undefined ? displayA : rawA;
+  displayB = displayB !== undefined ? displayB : rawB;
+  let clsA = "", clsB = "";
+  if (higherBetter !== null && rawA !== rawB) {
+    const aWins = higherBetter ? rawA > rawB : rawA < rawB;
+    clsA = aWins ? "compare-better" : "compare-worse";
+    clsB = aWins ? "compare-worse" : "compare-better";
+  }
+  return `<div class="compare-row">
+    <span class="compare-value ${clsA}">${displayA}</span>
+    <span class="compare-label">${label}</span>
+    <span class="compare-value ${clsB}">${displayB}</span>
+  </div>`;
+}
+
+function buildCompareModalHTML(pA, teamA, pB, teamB) {
+  const avgA = pA.matches > 0 ? pA.ratingSum / pA.matches : -1;
+  const avgB = pB.matches > 0 ? pB.ratingSum / pB.matches : -1;
+  const cmA = pA.careerMatches || 0, cmB = pB.careerMatches || 0;
+  const cAvgA = cmA > 0 ? pA.careerRatingSum / cmA : -1;
+  const cAvgB = cmB > 0 ? pB.careerRatingSum / cmB : -1;
+
+  const headerCol = (p, t) => `
+    <div class="compare-player-col">
+      <div class="compare-photo">
+        <div class="player-photo-fallback-lg">${playerInitials(p.name)}</div>
+        <img src="${playerPhotoUrl(p, t)}" alt="" class="player-photo-lg"
+          onload="this.style.display='block'; this.previousElementSibling.style.display='none';"
+          onerror="this.style.display='none';">
+      </div>
+      <span class="pos-tag pos-${p.pos}">${p.pos}</span>
+      <div class="compare-player-name">${p.name}</div>
+      <div class="player-card-club" style="justify-content:center;">${renderTeamCrest(t, "crest-sm")}<span>${t.name}</span></div>
+      ${renderStarRating(p.overall)}
+    </div>`;
+
+  return `
+    <div class="compare-header">
+      ${headerCol(pA, teamA)}
+      <div class="compare-vs">VS</div>
+      ${headerCol(pB, teamB)}
+    </div>
+    <div class="compare-rows">
+      ${compareRowHTML("Note globale", pA.overall, pB.overall, true)}
+      ${compareRowHTML("Vitesse", pA.speed, pB.speed, true)}
+      ${compareRowHTML("Technique", pA.technique, pB.technique, true)}
+      ${compareRowHTML("Physique", pA.physical, pB.physical, true)}
+      ${compareRowHTML("Mental", pA.mental, pB.mental, true)}
+      ${compareRowHTML("Forme", pA.form, pB.form, true)}
+      ${compareRowHTML("Âge", pA.age, pB.age, null)}
+      ${compareRowHTML("Valeur", pA.value, pB.value, null, formatMoney(pA.value), formatMoney(pB.value))}
+      ${compareRowHTML("Buts (saison)", pA.goals, pB.goals, true)}
+      ${compareRowHTML("Passes (saison)", pA.assists, pB.assists, true)}
+      ${compareRowHTML("Note (saison)", avgA, avgB, true, avgA < 0 ? "-" : avgA.toFixed(1), avgB < 0 ? "-" : avgB.toFixed(1))}
+      ${compareRowHTML("Matchs (carrière)", cmA, cmB, true)}
+      ${compareRowHTML("Buts (carrière)", pA.careerGoals || 0, pB.careerGoals || 0, true)}
+      ${compareRowHTML("Passes (carrière)", pA.careerAssists || 0, pB.careerAssists || 0, true)}
+      ${compareRowHTML("Note (carrière)", cAvgA, cAvgB, true, cAvgA < 0 ? "-" : cAvgA.toFixed(1), cAvgB < 0 ? "-" : cAvgB.toFixed(1))}
+    </div>`;
+}
+
+function openCompareModal() {
+  if (compareIds.length !== 2) return;
+  const [foundA, foundB] = compareIds.map(findPlayerAnywhere);
+  if (!foundA || !foundB) return;
+  document.getElementById("compare-body").innerHTML = buildCompareModalHTML(foundA.p, foundA.team, foundB.p, foundB.team);
+  document.getElementById("compare-modal").classList.add("active");
+}
+
+function closeCompareModal() {
+  document.getElementById("compare-modal").classList.remove("active");
 }
 
 // Vendre un joueur se fait maintenant directement depuis l'onglet Effectif (voir renderSquadTab)
@@ -2520,6 +2651,27 @@ function renderTacticsTab() {
   renderBench(tacticsSetup, TACTICS_IDS);
   renderOOPSection(tacticsSetup, TACTICS_IDS);
   renderPlanChoices(tacticsSetup, TACTICS_IDS);
+  renderPositionOverview();
+}
+
+// Aperçu rapide de la force de l'effectif par poste (moyenne d'overall + effectif dispo), pour
+// repérer d'un coup d'œil où renforcer avant un match ou une séance de mercato — réutilise
+// MIN_PLAYERS_PER_POS (engine.js) pour signaler un poste en sous-effectif.
+function renderPositionOverview() {
+  const team = getUserTeam();
+  const wrap = document.getElementById("tactics-position-overview");
+  wrap.innerHTML = POSITIONS.map(pos => {
+    const players = team.players.filter(p => p.pos === pos);
+    const avg = players.length ? Math.round(players.reduce((s, p) => s + p.overall, 0) / players.length) : 0;
+    const min = MIN_PLAYERS_PER_POS[pos] || 0;
+    const understaffed = players.length < min;
+    return `<div class="pos-overview-tile">
+      <span class="pos-tag pos-${pos}">${pos}</span>
+      <div class="pos-overview-bar"><div class="pos-overview-fill ${overallClass(avg)}" style="width:${Math.min(100, avg)}%"></div></div>
+      <span class="pos-overview-avg">${players.length ? avg : "-"}</span>
+      <span class="pos-overview-count${understaffed ? " pos-overview-warn" : ""}" title="${understaffed ? `Minimum recommandé : ${min}` : ""}">${players.length} joueur${players.length > 1 ? "s" : ""}${understaffed ? " ⚠️" : ""}</span>
+    </div>`;
+  }).join("");
 }
 
 // ===================== SIMULATION DU MATCH =====================
@@ -4160,6 +4312,15 @@ document.addEventListener("DOMContentLoaded", () => {
   setupMatchPitchPointerEvents();
 
   document.getElementById("btn-player-info-close").onclick = closePlayerInfoModal;
+
+  document.getElementById("btn-compare-close").onclick = closeCompareModal;
+  document.getElementById("btn-open-compare").onclick = openCompareModal;
+  document.getElementById("btn-clear-compare").onclick = () => {
+    compareIds = [];
+    renderCompareTray();
+    renderMarketTable(getUserTeam());
+    renderShortlistTable(getUserTeam());
+  };
 
   document.getElementById("offer-cancel").onclick = closeOfferModal;
   document.getElementById("offer-submit").onclick = submitOffer;
