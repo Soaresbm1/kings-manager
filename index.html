@@ -203,6 +203,7 @@
         <div class="mercato-subnav">
           <button class="mercato-subtab-btn active" data-subtab="search">Rechercher</button>
           <button class="mercato-subtab-btn" data-subtab="shortlist">Ma liste <span class="subtab-count" id="shortlist-count"></span></button>
+          <button class="mercato-subtab-btn" data-subtab="history">Historique</button>
         </div>
 
         <!-- Bandeau de comparaison : reste visible sur les deux sous-onglets (Rechercher/Ma liste)
@@ -298,6 +299,17 @@
                 <p class="shortlist-detail-placeholder">Sélectionne un joueur dans la liste pour voir sa fiche.</p>
               </div>
             </div>
+          </div>
+        </div>
+
+        <div class="mercato-subpanel" id="mercato-subtab-history">
+          <div class="panel">
+            <h3>Historique des transferts</h3>
+            <p style="color:#8391a8; font-size:0.85em; margin-bottom:12px;">
+              Tes achats/ventes, et ceux des équipes IA de ta ligue.
+            </p>
+            <div class="transfer-history-list" id="transfer-history-list"></div>
+            <p class="mercato-empty" id="transfer-history-empty" style="display:none;">Aucun transfert pour l'instant.</p>
           </div>
         </div>
       </div>

@@ -89,6 +89,28 @@ classement final du championnat (20 000€ à 150 000€ selon le rang) + parcou
 si non qualifié, jusqu'à 150 000€ pour le titre — `getUserTournamentResult()`/
 `TOURNAMENT_PRIZE_BY_RESULT`).
 
+## Historique des transferts (`STATE.transferLog`, sous-onglet Mercato "Historique")
+
+`engine.js:fillPositionGaps`/`simulateAITransfers` restent des fonctions pures (pas de STATE) : elles
+RENVOIENT la liste des transferts qu'elles ont effectués (`{type:"transfer"|"release", playerId,
+playerName, pos, fromTeamId, fromTeamName, toTeamId, toTeamName, amount}`) plutôt que de les
+journaliser elles-mêmes. `app.js:logTransferEvents(events, fromLeagueKey, toLeagueKey)` les ajoute
+à `STATE.transferLog` avec le jour/la saison courante, capé à `TRANSFER_LOG_MAX` (150) entrées les
+plus récentes. `fromLeagueKey`/`toLeagueKey` sont distincts (pas un seul `leagueKey` partagé) car un
+achat peut traverser deux ligues différentes (recrue d'une autre ligue) ; nécessaire pour résoudre
+le bon blason de chaque club à l'affichage via `findLeagueTeam` (`renderTransferHistoryTab` — la
+ligne est cliquable pour rouvrir la fiche technique à jour du joueur via `findPlayerAnywhere`, pas
+figée au moment du transfert). Seuls sont journalisés : tes propres achats/ventes
+(`submitOffer`/`sellPlayer`/`respondToTransferRequest`, n'importe quelle ligue) et les transferts IA
+au sein de TA ligue (`simulateRoundAI` — les transferts internes aux 5 autres ligues, en
+arrière-plan, ne le sont pas : trop nombreux, peu pertinents). `formatGameDate(day, season)` accepte
+un paramètre `season` optionnel pour afficher une date figée dans une saison passée plutôt que la
+saison courante de `STATE`. Le type `"release"` (joueur vendu par l'IA sans acheteur identifié)
+n'arrive plus qu'en filet de sécurité théorique : `simulateAITransfers` cherche maintenant un
+`neediestTeamForPosition` avant de libérer un joueur faible, pour qu'il rejoigne toujours un vrai
+club plutôt que de disparaître du jeu (sinon `findPlayerAnywhere` échoue et sa ligne d'historique
+devient impossible à cliquer pour ouvrir sa fiche technique — bug remonté par l'utilisateur).
+
 ## Tournoi de fin de saison (`app.js`, `STATE.tournament`, écran `#screen-tournament`)
 
 Une fois la saison du joueur terminée (`renderCalendarTab`, juste après `finalizeOtherLeagues`),

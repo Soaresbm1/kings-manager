@@ -1252,7 +1252,10 @@ const MIN_PLAYERS_PER_POS = { GK: 1, DEF: 3, MID: 3, ATT: 2 };
 
 // Comble les trous de poste d'une équipe IA en lui faisant acheter un joueur
 // excédentaire à ce poste chez une autre équipe IA (jamais chez l'humain).
+// Renvoie la liste des transferts effectués (pour l'historique des transferts côté app.js —
+// engine.js reste pur/sans STATE, donc ne journalise rien lui-même, juste rapporte ce qui s'est passé).
 function fillPositionGaps(league, humanTeamId) {
+  const events = [];
   league.teams.forEach(buyerTeam => {
     if (buyerTeam.id === humanTeamId) return;
     Object.entries(MIN_PLAYERS_PER_POS).forEach(([pos, min]) => {
@@ -1277,9 +1280,15 @@ function fillPositionGaps(league, humanTeamId) {
         bestSeller.budget += bestPlayer.value;
         bestSeller.players = bestSeller.players.filter(p => p.id !== bestPlayer.id);
         buyerTeam.players.push(bestPlayer);
+        events.push({
+          type: "transfer", playerId: bestPlayer.id, playerName: bestPlayer.name, pos: bestPlayer.pos,
+          fromTeamId: bestSeller.id, fromTeamName: bestSeller.name, toTeamId: buyerTeam.id, toTeamName: buyerTeam.name,
+          amount: bestPlayer.value
+        });
       }
     });
   });
+  return events;
 }
 
 // Renvoie le poste où l'effectif d'une équipe est le plus faible en moyenne
@@ -1312,7 +1321,7 @@ function neediestTeamForPosition(league, pos, excludeTeamId) {
 
 // --- IA Mercato: les autres équipes achètent/vendent pour renforcer leur effectif ---
 function simulateAITransfers(league, humanTeamId) {
-  fillPositionGaps(league, humanTeamId);
+  const events = fillPositionGaps(league, humanTeamId);
 
   league.teams.forEach(team => {
     if (team.id === humanTeamId) return;
@@ -1327,6 +1336,18 @@ function simulateAITransfers(league, humanTeamId) {
         const sold = sorted[0];
         team.players = team.players.filter(p => p.id !== sold.id);
         team.budget += sold.value;
+        // rejoint l'équipe la plus faible à ce poste dans la ligue plutôt que de disparaître du
+        // jeu (même logique que sellPlayer côté joueur humain — un joueur ne doit jamais devenir
+        // introuvable via findPlayerAnywhere, sinon sa fiche technique ne peut plus s'ouvrir
+        // depuis l'historique des transferts).
+        const buyer = neediestTeamForPosition(league, sold.pos, team.id);
+        if (buyer) { buyer.budget -= sold.value; buyer.players.push(sold); }
+        events.push({
+          type: buyer ? "transfer" : "release", playerId: sold.id, playerName: sold.name, pos: sold.pos,
+          fromTeamId: team.id, fromTeamName: team.name,
+          toTeamId: buyer ? buyer.id : null, toTeamName: buyer ? buyer.name : null,
+          amount: sold.value
+        });
       }
     }
 
@@ -1355,7 +1376,13 @@ function simulateAITransfers(league, humanTeamId) {
         bestSeller.budget += bestPlayer.value;
         bestSeller.players = bestSeller.players.filter(p => p.id !== bestPlayer.id);
         team.players.push(bestPlayer);
+        events.push({
+          type: "transfer", playerId: bestPlayer.id, playerName: bestPlayer.name, pos: bestPlayer.pos,
+          fromTeamId: bestSeller.id, fromTeamName: bestSeller.name, toTeamId: team.id, toTeamName: team.name,
+          amount: bestPlayer.value
+        });
       }
     }
   });
+  return events;
 }

@@ -16,7 +16,8 @@ let STATE = {
   savedTactic: null,    // { formation, assignments, attackPlan, defensePlan }
   currentSlotId: null,  // identifiant de la carrière active (parmi plusieurs)
   seasonPrizeAwarded: false, // évite de créditer deux fois la prime de fin de saison (voir awardSeasonPrizeMoney)
-  lastSeasonPrize: null      // détail de la dernière prime versée, pour l'affichage dans le panneau "Saison terminée"
+  lastSeasonPrize: null,     // détail de la dernière prime versée, pour l'affichage dans le panneau "Saison terminée"
+  transferLog: []            // historique des transferts (achats/ventes du joueur + IA de sa ligue) — voir logTransferEvent
 };
 
 const POS_ORDER = { GK: 0, DEF: 1, MID: 2, ATT: 3 };
@@ -64,7 +65,8 @@ function buildSaveData() {
     otherLeagues: STATE.otherLeagues,
     tournament: STATE.tournament,
     seasonPrizeAwarded: STATE.seasonPrizeAwarded,
-    lastSeasonPrize: STATE.lastSeasonPrize
+    lastSeasonPrize: STATE.lastSeasonPrize,
+    transferLog: STATE.transferLog
   };
 }
 
@@ -104,6 +106,7 @@ function applySaveData(data) {
   STATE.pendingResult = null;
   STATE.seasonPrizeAwarded = data.seasonPrizeAwarded || false;
   STATE.lastSeasonPrize = data.lastSeasonPrize || null;
+  STATE.transferLog = data.transferLog || [];
   STATE.otherLeagues = data.otherLeagues || null;
   STATE.tournament = data.tournament || null;
   STATE.tournamentMatchRef = null;
@@ -436,6 +439,7 @@ function startCareer() {
   STATE.mercatoOpen = false;
   STATE.seasonPrizeAwarded = false;
   STATE.lastSeasonPrize = null;
+  STATE.transferLog = [];
   STATE.otherLeagues = buildOtherLeagues(STATE.leagueKey);
 
   showScreen("screen-main");
@@ -774,10 +778,13 @@ function matchDayForRound(round) {
   return round * DAYS_PER_ROUND;
 }
 
-function formatGameDate(dayCount) {
+// `season` optionnel : par défaut la saison en cours, mais l'historique des transferts a besoin
+// d'afficher une date figée dans une saison PASSÉE (celle où le transfert a eu lieu), pas la saison
+// courante de STATE.
+function formatGameDate(dayCount, season) {
   const day = (dayCount % 30) + 1;
   const monthIdx = Math.floor(dayCount / 30) % 12;
-  return `${day} ${MONTH_NAMES[monthIdx]} An ${STATE.season}`;
+  return `${day} ${MONTH_NAMES[monthIdx]} An ${season !== undefined ? season : STATE.season}`;
 }
 
 // Chaque interview propose plusieurs réponses possibles, qui ont un petit effet sur la
@@ -1111,6 +1118,11 @@ function respondToTransferRequest(accept) {
       team.budget += notif.amount;
       otherTeam.budget -= notif.amount;
       otherTeam.players.push(player);
+      logTransferEvents([{
+        type: "transfer", playerId: player.id, playerName: player.name, pos: player.pos,
+        fromTeamId: team.id, fromTeamName: team.name, toTeamId: otherTeam.id, toTeamName: otherTeam.name,
+        amount: notif.amount
+      }], STATE.leagueKey, STATE.leagueKey);
       updateTopbar();
     }
   }
@@ -1372,6 +1384,25 @@ function startNewSeason() {
 }
 
 // simule tous les matchs de la journée actuelle qui ne concernent pas l'utilisateur (IA)
+// Nombre max d'entrées gardées dans l'historique des transferts (les plus anciennes sont perdues
+// en premier) — évite d'alourdir indéfiniment la sauvegarde sur une longue carrière.
+const TRANSFER_LOG_MAX = 150;
+
+// Ajoute des événements de transfert (voir engine.js:fillPositionGaps/simulateAITransfers, qui
+// restent purs et se contentent de RENVOYER ce qui s'est passé) à STATE.transferLog, avec le
+// contexte temporel courant. `events` peut être un tableau vide (rien ne s'est passé ce tour-ci).
+// fromLeagueKey/toLeagueKey sont distincts (pas juste un seul `leagueKey`) car un achat du joueur
+// peut traverser deux ligues différentes (recrue d'une autre ligue vers la sienne) — nécessaire
+// pour résoudre le bon blason de chaque club via findLeagueTeam à l'affichage (renderTransferHistoryTab).
+function logTransferEvents(events, fromLeagueKey, toLeagueKey) {
+  events.forEach(ev => {
+    STATE.transferLog.push(Object.assign({}, ev, { fromLeagueKey, toLeagueKey, day: STATE.currentDay, season: STATE.season }));
+  });
+  if (STATE.transferLog.length > TRANSFER_LOG_MAX) {
+    STATE.transferLog.splice(0, STATE.transferLog.length - TRANSFER_LOG_MAX);
+  }
+}
+
 function simulateRoundAI(excludeMatch) {
   const round = STATE.schedule[STATE.currentRound];
   round.forEach(m => {
@@ -1384,7 +1415,7 @@ function simulateRoundAI(excludeMatch) {
   });
   // IA transferts à la mi-saison et fin de saison
   if (STATE.mercatoOpen) {
-    simulateAITransfers(STATE.league, STATE.userTeamId);
+    logTransferEvents(simulateAITransfers(STATE.league, STATE.userTeamId), STATE.leagueKey, STATE.leagueKey);
   }
 }
 
@@ -1580,6 +1611,53 @@ function renderTransfersTab() {
   renderShortlistTable(team);
   updateShortlistCount();
   renderCompareTray();
+  renderTransferHistoryTab();
+}
+
+// Un club dans une ligne d'historique : blason (résolu en direct via findLeagueTeam — le nom
+// texte stocké sur l'événement ne sert que de repli si jamais le club n'était plus résolvable) +
+// nom + petit drapeau si ce club n'est pas dans TA ligue (transfert inter-ligues).
+function transferHistoryClubHTML(teamId, leagueKey, fallbackName) {
+  const team = teamId ? findLeagueTeam(leagueKey, teamId) : null;
+  const crest = team ? renderTeamCrest(team, "crest-sm") : "";
+  const leagueTag = leagueKey && leagueKey !== STATE.leagueKey
+    ? `<span class="tourn-league-tag">${LEAGUE_FLAGS[leagueKey] || "⚽"}</span>` : "";
+  return `<span class="transfer-history-club">${crest}<span>${team ? team.name : fallbackName}</span>${leagueTag}</span>`;
+}
+
+// Sous-onglet "Historique" du Mercato : le plus récent en premier, cliquable pour ouvrir la fiche
+// technique à jour du joueur (findPlayerAnywhere — sa situation actuelle, pas figée au moment du
+// transfert). STATE.transferLog ne contient que tes propres transferts (n'importe quelle ligue) et
+// ceux de l'IA au sein de TA ligue — voir logTransferEvents/simulateRoundAI ; les transferts
+// internes aux 5 autres ligues ne sont pas journalisés (bruit trop important, peu pertinent pour toi).
+function renderTransferHistoryTab() {
+  const list = document.getElementById("transfer-history-list");
+  const emptyMsg = document.getElementById("transfer-history-empty");
+  const entries = STATE.transferLog.slice().reverse();
+  emptyMsg.style.display = entries.length ? "none" : "block";
+  list.innerHTML = entries.map((ev, idx) => {
+    const involvesUser = ev.fromTeamId === STATE.userTeamId || ev.toTeamId === STATE.userTeamId;
+    const route = ev.type === "release"
+      ? `<span class="transfer-history-release">🔓 libéré par</span>${transferHistoryClubHTML(ev.fromTeamId, ev.fromLeagueKey, ev.fromTeamName)}`
+      : `${transferHistoryClubHTML(ev.fromTeamId, ev.fromLeagueKey, ev.fromTeamName)}
+         <span class="transfer-history-arrow">→</span>
+         ${transferHistoryClubHTML(ev.toTeamId, ev.toLeagueKey, ev.toTeamName)}`;
+    return `<div class="transfer-history-row${involvesUser ? " transfer-history-user" : ""}" data-idx="${idx}" title="Voir la fiche technique">
+      <span class="transfer-history-date">${formatGameDate(ev.day, ev.season)}</span>
+      <span class="pos-tag pos-${ev.pos}">${ev.pos}</span>
+      <span class="transfer-history-name">${ev.playerName}</span>
+      <span class="transfer-history-route">${route}</span>
+      <span class="transfer-history-amount">${formatMoney(ev.amount)}</span>
+    </div>`;
+  }).join("");
+
+  list.querySelectorAll(".transfer-history-row").forEach(row => {
+    row.onclick = () => {
+      const ev = entries[Number(row.dataset.idx)];
+      const found = findPlayerAnywhere(ev.playerId);
+      if (found) openPlayerInfoModal(found.p, found.team);
+    };
+  });
 }
 
 // Bascule entre les deux sous-onglets du Mercato (Rechercher / Ma liste) — les deux restent
@@ -1927,6 +2005,12 @@ function sellPlayer(playerId) {
       buyer.budget -= player.value;
       buyer.players.push(player);
     }
+    logTransferEvents([{
+      type: "transfer", playerId: player.id, playerName: player.name, pos: player.pos,
+      fromTeamId: team.id, fromTeamName: team.name,
+      toTeamId: buyer ? buyer.id : null, toTeamName: buyer ? buyer.name : null,
+      amount: player.value
+    }], STATE.leagueKey, STATE.leagueKey);
     updateTopbar();
     renderSquadTab();
     saveGame();
@@ -1989,6 +2073,11 @@ function submitOffer() {
     team.players.push(player);
     const shortlistIdx = STATE.shortlist.indexOf(player.id);
     if (shortlistIdx !== -1) STATE.shortlist.splice(shortlistIdx, 1);
+    logTransferEvents([{
+      type: "transfer", playerId: player.id, playerName: player.name, pos: player.pos,
+      fromTeamId: otherTeam.id, fromTeamName: otherTeam.name, toTeamId: team.id, toTeamName: team.name,
+      amount
+    }], leagueKey, STATE.leagueKey);
     resultEl.style.color = "#ffc700";
     resultEl.textContent = `Transfert accepté ! ${player.name} rejoint ${team.name}.`;
     updateTopbar();
