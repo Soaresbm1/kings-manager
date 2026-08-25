@@ -1,4 +1,4 @@
-// ===================== TESTS AUTOMATISÉS (data.js + engine.js + matchphysics.js) =====================
+// ===================== TESTS AUTOMATISÉS (data.js + engine.js + matchchoreo.js) =====================
 // Suite de tests manuelle, sans framework ni node_modules : couvre la couche "pure" du jeu
 // (données + moteurs de simulation, aucun DOM) pour repérer une régression silencieuse à chaque
 // changement du moteur, sans devoir tout re-vérifier à l'œil.
@@ -9,14 +9,15 @@
 //   - Avec Node, si disponible dans l'environnement (voir CLAUDE.md — pas garanti) :
 //     node tests-node.js
 //
-// data.js/engine.js utilisent Math.random() (résultat d'un match, décisions IA, mercato...) : on y
-// vérifie donc des INVARIANTS structurels (pas de match nul, l'argent total d'une ligue est
-// conservé après un transfert, personne ne disparaît de l'effectif...) plutôt que des valeurs
-// exactes, à quelques exceptions déterministes près (calendrier, classement, value()).
-// matchphysics.js, à l'inverse, n'utilise AUCUN Math.random() nulle part (une trajectoire au
-// plateau physique du match humain est entièrement déterministe une fois vx/vy/dt fixés) : ses
-// tests vérifient donc des valeurs exactes (à une tolérance flottante près) partout où c'est
-// possible, plutôt que de se contenter d'invariants.
+// data.js/engine.js utilisent Math.random() (résultat d'un match, décisions IA, mercato, ET la
+// génération des "beats" de simulateMinute({withSequence:true}) — voir engine.js) : on y vérifie
+// donc des INVARIANTS structurels (pas de match nul, l'argent total d'une ligue est conservé après
+// un transfert, chaque beat a des positions/ids valides...) plutôt que des valeurs exactes, à
+// quelques exceptions déterministes près (calendrier, classement, value()).
+// matchchoreo.js, à l'inverse, n'utilise AUCUN Math.random() (l'interpolation d'une séquence de
+// beats déjà fixée est entièrement déterministe) : ses tests vérifient donc des valeurs exactes
+// (à une tolérance flottante près) partout où c'est possible, plutôt que de se contenter
+// d'invariants.
 
 const TEST_CASES = [];
 function test(name, fn) { TEST_CASES.push({ name, fn }); }
@@ -282,13 +283,9 @@ test("chooseAiPlans : renvoie toujours un plan d'attaque/défense parmi les vale
   assert(["low", "high", "zone"].includes(plans.defensePlan), `defensePlan invalide : ${plans.defensePlan}`);
 });
 
-// ===================== MOTEUR PHYSIQUE DU PLATEAU (matchphysics.js) =====================
-// Aucun Math.random() dans ce fichier : une trajectoire est entièrement déterministe une fois
-// vx/vy/dt fixés. Les scénarios ci-dessous sont choisis pour rester dans des distances/vitesses
-// où AUCUN mur ni AUCUNE collision n'interfère (vérifié par calcul, pas par exécution) — pour
-// pouvoir comparer à une valeur exacte plutôt qu'à un simple invariant.
-
-// ----------------- HELPERS GÉOMÉTRIQUES PURS -----------------
+// ===================== GÉOMÉTRIE DU TERRAIN (engine.js) =====================
+// Helpers purs (migrés depuis l'ancien matchphysics.js, engine.js en a maintenant besoin lui-même
+// pour placer les joueurs sur les beats — voir simulateMinute({withSequence:true}) plus bas).
 
 test("clamp : borne bien aux deux extrémités et laisse passer une valeur déjà dans l'intervalle", () => {
   assertEqual(clamp(5, 0, 10), 5, "valeur déjà dans l'intervalle");
@@ -321,127 +318,153 @@ test("gkAnchorY : gardien collé à sa propre ligne de but", () => {
   assertEqual(gkAnchorY("away"), 95, "gardien away");
 });
 
-test("clampSpeed : laisse passer une vitesse sous le plafond, réduit exactement à celui-ci sinon", () => {
-  const under = clampSpeed(5, 5, 120);
-  assertEqual(under.vx, 5, "vitesse sous le plafond : vx inchangé");
-  assertEqual(under.vy, 5, "vitesse sous le plafond : vy inchangé");
+// ===================== SÉQUENCE ANIMÉE DU MATCH HUMAIN (engine.js) =====================
+// simulateMinute(minute, {withSequence:true}) utilise Math.random() (mêmes décisions que le
+// chemin IA) : on vérifie donc des invariants structurels sur les beats produits, pas des valeurs
+// exactes — répété sur plusieurs minutes/graines pour couvrir les branches "chance ratée"/"but"/
+// "arrêt" au moins une fois.
+const CHOREO_BEAT_TYPES = ["pass", "dribble", "tackle", "shot", "goal", "save", "miss", "owngoal", "phase"];
 
-  // 90-120-150 : triangle 3-4-5 mis à l'échelle, choisi exprès pour que la vitesse résultante
-  // (120, le plafond) tombe sur des valeurs exactes (72, 96) une fois le ratio 120/150=0.8 appliqué.
-  const over = clampSpeed(90, 120, 120);
-  assertClose(over.vx, 72, 1e-9, "composante vx après plafonnement");
-  assertClose(over.vy, 96, 1e-9, "composante vy après plafonnement");
-  assertClose(Math.sqrt(over.vx * over.vx + over.vy * over.vy), 120, 1e-9, "norme exactement au plafond");
-});
+function assertValidSequence(sequence, homeTeam, awayTeam, label) {
+  assert(Array.isArray(sequence), `${label} : sequence doit être un tableau`);
+  const allIds = new Set([...homeTeam.players.map(p => p.id), ...awayTeam.players.map(p => p.id)]);
+  sequence.forEach((beat, i) => {
+    assert(CHOREO_BEAT_TYPES.includes(beat.type), `${label} beat[${i}] : type invalide "${beat.type}"`);
+    ["from", "to"].forEach(k => {
+      assert(beat[k] && beat[k].x >= 0 && beat[k].x <= 100 && beat[k].y >= 0 && beat[k].y <= 100,
+        `${label} beat[${i}].${k} hors du terrain [0,100]x[0,100]`);
+    });
+    assert(typeof beat.duration === "number" && beat.duration >= 0, `${label} beat[${i}] : duration invalide`);
+    [beat.playerId, beat.toPlayerId, beat.gkId].forEach(id => {
+      assert(id === null || id === undefined || allIds.has(id), `${label} beat[${i}] : id de joueur inconnu "${id}"`);
+    });
+  });
+}
 
-// ----------------- COLLISIONS ET REBONDS (fonctions brutes, position/vitesse contrôlées) -----------------
-
-test("resolveCollision : deux cercles qui se chevauchent sont séparés et repartent en s'écartant", () => {
-  // même masse, alignés sur l'axe x, qui se rapprochent l'un de l'autre (a vers +x, b vers -x)
-  const a = { x: 0, y: 0, vx: 5, vy: 0, r: 2, mass: 1 };
-  const b = { x: 3, y: 0, vx: -5, vy: 0, r: 2, mass: 1 }; // distance 3 < r+r=4 : chevauchement
-  const touched = resolveCollision(a, b);
-  assert(touched === true, "un chevauchement doit être détecté comme une collision");
-  const dist = Math.abs(b.x - a.x);
-  assert(dist >= a.r + b.r - 1e-9, `toujours en chevauchement après résolution : dist=${dist}`);
-  assert(a.vx < 0, "a doit repartir vers -x après le choc (il allait vers b)");
-  assert(b.vx > 0, "b doit repartir vers +x après le choc (il allait vers a)");
-});
-
-test("resolveCollision : deux cercles qui ne se touchent pas ne sont pas modifiés", () => {
-  const a = { x: 0, y: 0, vx: 1, vy: 2, r: 2, mass: 1 };
-  const b = { x: 10, y: 0, vx: -1, vy: -2, r: 2, mass: 1 }; // distance 10 >> r+r=4
-  const touched = resolveCollision(a, b);
-  assertEqual(touched, false, "aucune collision ne devrait être détectée à cette distance");
-  assertEqual(a.x, 0, "position de a inchangée");
-  assertEqual(a.vx, 1, "vitesse de a inchangée");
-  assertEqual(b.x, 10, "position de b inchangée");
-});
-
-test("bounceWalls : un disque poussé hors du bord droit est ramené dedans et repart vers l'intérieur", () => {
-  const entity = { x: 105, y: 50, vx: 10, vy: 0, r: 3 }; // x+r=108 > PITCH_W(100)
-  bounceWalls(entity);
-  assertClose(entity.x, 100 - 3, 1e-9, "position ramenée juste à l'intérieur du bord droit");
-  assert(entity.vx < 0, "vx doit s'inverser (repartir vers l'intérieur du terrain)");
-});
-
-// ----------------- INTÉGRATION (createTurnMatch) -----------------
-
-test("createTurnMatch/setActiveLineups : crée exactement un disque par joueur actif (+ gardiens)", () => {
-  const match = createTurnMatch();
-  match.setActiveLineups(["h1", "h2", "h3"], "hgk", ["a1", "a2"], "agk");
-  assertEqual(match.getState().discs.length, 3 + 1 + 2 + 1, "3 home + 1 GK home + 2 away + 1 GK away");
-});
-
-test("shoot : plafonne la vitesse comme clampSpeed (vérifié via le déplacement), et bloque tant que le plateau bouge", () => {
-  const match = createTurnMatch();
-  match.setActiveLineups(["h1"], null, [], null); // h1 ancré à (50,26) via computeOutfieldAnchors(1)
-  assert(match.isSettled(), "plateau au repos juste après la mise en place");
-
-  const ok = match.shoot("h1", 90, 120); // norme 150 > MAX_SHOT_SPEED(120) : doit être plafonné à (72,96)
-  assert(ok === true, "un tir sur un plateau au repos doit être accepté");
-  assert(!match.isSettled(), "le plateau ne doit plus être au repos juste après un tir");
-
-  // un second tir doit être refusé tant que le plateau n'est pas retombé au repos
-  const blocked = match.shoot("h1", 1, 1);
-  assertEqual(blocked, false, "un tir pendant que le plateau bouge encore doit être refusé");
-
-  // la vitesse n'est pas exposée directement (getState() ne renvoie que x/y/r) : on vérifie le
-  // plafonnement via le déplacement observé sur un step(), comparé à l'intégration par sous-pas
-  // attendue pour une vitesse de départ DÉJÀ plafonnée à (72,96) — pas (90,120).
-  const dt = 0.05;
-  const SUBSTEPS = 4, DISC_FRICTION_PER_SEC = 0.42, h = dt / SUBSTEPS, fh = Math.pow(DISC_FRICTION_PER_SEC, h);
-  const integrate = v0 => { let v = v0, disp = 0; for (let s = 0; s < SUBSTEPS; s++) { v *= fh; disp += v * h; } return disp; };
-  match.step(dt);
-  const h1 = match.getState().discs.find(d => d.id === "h1");
-  assertClose(h1.x - 50, integrate(72), 1e-6, "déplacement en x incohérent avec une vitesse plafonnée à 72");
-  assertClose(h1.y - 26, integrate(96), 1e-6, "déplacement en y incohérent avec une vitesse plafonnée à 96");
-});
-
-test("step : le déplacement sur un pas correspond exactement à l'intégration par sous-pas de la friction", () => {
-  const match = createTurnMatch();
-  // h1 seul, ancré à (50,26) — tir purement latéral (vx seul) : ne s'approche ni du ballon (50,50,
-  // à 24 unités en y) ni d'aucun mur en un pas aussi court, donc RIEN d'autre que la friction ne
-  // doit affecter sa position pendant ce step().
-  match.setActiveLineups(["h1"], null, [], null);
-  match.shoot("h1", 50, 0);
-  const dt = 0.05;
-  // reproduit exactement l'algorithme de step() (4 sous-pas, friction appliquée avant chaque
-  // déplacement — voir matchphysics.js) : bien plus précis qu'une approximation, donc tolérance serrée.
-  const SUBSTEPS = 4, DISC_FRICTION_PER_SEC = 0.42, h = dt / SUBSTEPS, fh = Math.pow(DISC_FRICTION_PER_SEC, h);
-  let v = 50, expectedDisplacement = 0;
-  for (let s = 0; s < SUBSTEPS; s++) { v *= fh; expectedDisplacement += v * h; }
-
-  match.step(dt);
-  const h1 = match.getState().discs.find(d => d.id === "h1");
-  assertClose(h1.x - 50, expectedDisplacement, 1e-6, "déplacement après un step() incohérent avec l'intégration par sous-pas attendue");
-});
-
-test("après un tir, le plateau finit toujours par se re-stabiliser (la friction < 1 garantit une décroissance vers 0)", () => {
-  const match = createTurnMatch();
-  match.setActiveLineups(["h1"], null, [], null);
-  match.shoot("h1", 120, 0);
-  let settled = false;
-  for (let i = 0; i < 2000 && !settled; i++) {
-    match.step(0.05); // 2000×0.05s = 100s simulées, très largement suffisant pour 0.42^t → 0
-    settled = match.isSettled();
+test("simulateMinute({withSequence:true}) : produit une séquence de beats structurellement valide, minute après minute", () => {
+  const home = JSON.parse(JSON.stringify(LEAGUES.france.teams[0]));
+  const away = JSON.parse(JSON.stringify(LEAGUES.france.teams[1]));
+  const homeChoice = chooseAiFormation(home), awayChoice = chooseAiFormation(away);
+  const homeSetup = { lineup: homeChoice.assignments.filter(Boolean), assignments: homeChoice.assignments, formation: homeChoice.formation, attackPlan: "possession", defensePlan: "zone" };
+  const awaySetup = { lineup: awayChoice.assignments.filter(Boolean), assignments: awayChoice.assignments, formation: awayChoice.formation, attackPlan: "direct", defensePlan: "low" };
+  const engine = createMatchEngine(home, homeSetup, away, awaySetup);
+  for (let minute = 1; minute <= 40; minute++) {
+    const evts = engine.simulateMinute(minute, { withSequence: true });
+    assert(Array.isArray(evts.sequence), `minute ${minute} : sequence manquante sur les événements renvoyés`);
+    assertValidSequence(evts.sequence, home, away, `minute ${minute}`);
+    if (engine.isMatchDecided()) break;
   }
-  assert(settled, "le plateau devrait s'être re-stabilisé bien avant 100 secondes simulées");
 });
 
-test("consumeTurnOutcome : renvoie null quand rien de spécial ne s'est produit (pas de but, pas d'arrêt)", () => {
-  const match = createTurnMatch();
-  match.setActiveLineups(["h1"], null, [], null);
-  assertEqual(match.consumeTurnOutcome(), null, "aucun tir, aucun événement à consommer");
+test("simulateMinute sans options : ne construit aucune séquence (chemin IA inchangé, coût nul)", () => {
+  const home = JSON.parse(JSON.stringify(LEAGUES.brazil.teams[0]));
+  const away = JSON.parse(JSON.stringify(LEAGUES.brazil.teams[1]));
+  const homeChoice = chooseAiFormation(home), awayChoice = chooseAiFormation(away);
+  const homeSetup = { lineup: homeChoice.assignments.filter(Boolean), assignments: homeChoice.assignments, formation: homeChoice.formation, attackPlan: "direct", defensePlan: "zone" };
+  const awaySetup = { lineup: awayChoice.assignments.filter(Boolean), assignments: awayChoice.assignments, formation: awayChoice.formation, attackPlan: "direct", defensePlan: "zone" };
+  const engine = createMatchEngine(home, homeSetup, away, awaySetup);
+  for (let minute = 1; minute <= 10; minute++) {
+    const evts = engine.simulateMinute(minute);
+    assertEqual(evts.sequence, undefined, `minute ${minute} : sequence ne devrait pas exister sans withSequence`);
+  }
 });
 
-test("getState : forme cohérente (ids présents, rayon du ballon positif)", () => {
-  const match = createTurnMatch();
-  match.setActiveLineups(["h1", "h2"], "hgk", [], null);
-  const state = match.getState();
-  assertEqual(state.discs.length, 3, "2 joueurs de champ + 1 gardien");
-  assert(state.discs.every(d => typeof d.id === "string" && d.r > 0), "chaque disque doit avoir un id et un rayon positif");
-  assert(state.ball && state.ball.r > 0, "le ballon doit avoir un rayon positif");
-  assertEqual(state.ball.x, 50, "le ballon démarre au centre du terrain");
-  assertEqual(state.ball.y, 50, "le ballon démarre au centre du terrain");
+test("getFormationAnchors : une ancre par joueur actif (GK inclus), toutes sur le terrain", () => {
+  const home = LEAGUES.italy.teams[0];
+  const away = LEAGUES.italy.teams[1];
+  const homeChoice = chooseAiFormation(home), awayChoice = chooseAiFormation(away);
+  const homeSetup = { lineup: homeChoice.assignments.filter(Boolean), assignments: homeChoice.assignments, formation: homeChoice.formation, attackPlan: "direct", defensePlan: "zone" };
+  const awaySetup = { lineup: awayChoice.assignments.filter(Boolean), assignments: awayChoice.assignments, formation: awayChoice.formation, attackPlan: "direct", defensePlan: "zone" };
+  const engine = createMatchEngine(home, homeSetup, away, awaySetup);
+  const anchors = engine.getFormationAnchors("home", 20); // 7v7 (hors escalier/dé géant/matchball)
+  assertEqual(Object.keys(anchors).length, 7, "7 ancres attendues (1 GK + 6 joueurs de champ) en 7v7");
+  Object.values(anchors).forEach(a => {
+    assert(a.x >= 0 && a.x <= 100 && a.y >= 0 && a.y <= 100, "ancre hors du terrain");
+  });
+});
+
+// ===================== CHORÉGRAPHIE (matchchoreo.js) =====================
+// Aucun Math.random() dans ce fichier : une fois les beats fixés, l'interpolation est entièrement
+// déterministe — on peut donc comparer des valeurs exactes plutôt que de se contenter d'invariants.
+
+test("createChoreographer/setAnchors : place chaque nouvel entrant directement sur son ancre", () => {
+  const choreo = createChoreographer();
+  choreo.setAnchors({ h1: { x: 30, y: 20 } }, { a1: { x: 70, y: 80 } });
+  const state = choreo.getState();
+  assertEqual(state.players.length, 2, "2 joueurs actifs (1 par camp)");
+  const h1 = state.players.find(p => p.id === "h1");
+  assertEqual(h1.x, 30, "h1.x placé directement sur son ancre");
+  assertEqual(h1.y, 20, "h1.y placé directement sur son ancre");
+});
+
+test("setAnchors : un joueur qui sort de l'ancrage (sub/carton) disparaît, sans toucher à l'autre camp", () => {
+  const choreo = createChoreographer();
+  choreo.setAnchors({ h1: { x: 10, y: 10 }, h2: { x: 20, y: 20 } }, { a1: { x: 80, y: 80 } });
+  choreo.setAnchors({ h1: { x: 10, y: 10 } }, { a1: { x: 80, y: 80 } }); // h2 sort
+  const ids = choreo.getState().players.map(p => p.id).sort();
+  assertEqual(ids.join(","), "a1,h1", "h2 doit avoir disparu, h1 et a1 doivent rester");
+});
+
+test("step : une passe fait avancer le ballon de from vers to, exactement selon l'easing attendu", () => {
+  const choreo = createChoreographer();
+  choreo.setAnchors({ h1: { x: 20, y: 20 }, h2: { x: 40, y: 40 } }, {});
+  choreo.loadSequence([{ type: "pass", side: "home", playerId: "h1", toPlayerId: "h2", from: { x: 20, y: 20 }, to: { x: 60, y: 60 }, duration: 1, event: null }]);
+  choreo.step(0.5); // mi-parcours du beat
+  const midT = 0.5, eased = midT < 0.5 ? 2 * midT * midT : 1 - Math.pow(-2 * midT + 2, 2) / 2; // easeInOutQuad(0.5) = 0.5
+  const state = choreo.getState();
+  assertClose(state.ball.x, 20 + (60 - 20) * eased, 1e-9, "ballon à mi-parcours de la passe (x)");
+  assertClose(state.ball.y, 20 + (60 - 20) * eased, 1e-9, "ballon à mi-parcours de la passe (y)");
+  assert(!choreo.isSequenceDone(), "le beat n'est pas terminé à mi-parcours");
+});
+
+test("step : un beat qui se termine restitue son event exactement une fois, dans consumeFinishedEvents", () => {
+  const choreo = createChoreographer();
+  choreo.setAnchors({ h1: { x: 50, y: 20 } }, {});
+  const ev = { minute: 10, type: "goal", text: "but !" };
+  choreo.loadSequence([{ type: "shot", side: "home", playerId: "h1", from: { x: 50, y: 20 }, to: { x: 50, y: 5 }, duration: 0.5, event: ev }]);
+  choreo.step(0.5);
+  assert(choreo.isSequenceDone(), "le beat unique doit être terminé après exactement sa durée");
+  const finished = choreo.consumeFinishedEvents();
+  assertEqual(finished.length, 1, "un seul event terminé");
+  assertEqual(finished[0], ev, "l'event restitué doit être exactement celui du beat");
+  assertEqual(choreo.consumeFinishedEvents().length, 0, "un event ne doit être restitué qu'une seule fois");
+});
+
+test("step : un joueur non impliqué dans le beat courant est rappelé vers son ancre, jamais figé", () => {
+  const choreo = createChoreographer();
+  choreo.setAnchors({ h1: { x: 50, y: 20 }, h2: { x: 10, y: 10 } }, {});
+  choreo.loadSequence([{ type: "shot", side: "home", playerId: "h1", from: { x: 50, y: 20 }, to: { x: 50, y: 5 }, duration: 1, event: null }]);
+  // h2 est déplacé loin de son ancre avant le step, pour vérifier qu'il s'en rapproche ensuite.
+  choreo.setAnchors({ h1: { x: 50, y: 20 }, h2: { x: 10, y: 10 } }, {});
+  choreo.step(0.2);
+  const h2 = choreo.getState().players.find(p => p.id === "h2");
+  assertEqual(h2.x, 10, "h2 déjà sur son ancre : aucun déplacement attendu");
+});
+
+test("isSequenceDone : vrai immédiatement quand la séquence chargée est vide", () => {
+  const choreo = createChoreographer();
+  choreo.loadSequence([]);
+  assert(choreo.isSequenceDone(), "une séquence vide doit être considérée comme terminée");
+});
+
+test("insertNext : intercale des beats après celui en cours sans perdre la progression déjà faite", () => {
+  const choreo = createChoreographer();
+  choreo.setAnchors({ h1: { x: 50, y: 20 } }, {});
+  const ev1 = { minute: 5, type: "phase", text: "beat 1" };
+  const ev2 = { minute: 5, type: "phase", text: "beat inséré" };
+  const ev3 = { minute: 5, type: "phase", text: "beat 3" };
+  choreo.loadSequence([
+    { type: "dribble", side: "home", playerId: "h1", from: { x: 50, y: 20 }, to: { x: 50, y: 30 }, duration: 1, event: ev1 },
+    { type: "dribble", side: "home", playerId: "h1", from: { x: 50, y: 30 }, to: { x: 50, y: 40 }, duration: 1, event: ev3 }
+  ]);
+  choreo.step(0.4); // en plein milieu du 1er beat
+  choreo.insertNext([{ type: "phase", side: "home", playerId: null, from: { x: 50, y: 50 }, to: { x: 50, y: 50 }, duration: 0.5, event: ev2 }]);
+  choreo.step(0.6); // termine le 1er beat (0.4+0.6=1.0)
+  assertEqual(choreo.consumeFinishedEvents()[0], ev1, "le 1er beat doit se terminer normalement malgré l'insertion");
+  choreo.step(0.5); // joue entièrement le beat inséré
+  assertEqual(choreo.consumeFinishedEvents()[0], ev2, "le beat inséré doit se jouer juste après le 1er, avant le 3e");
+  assert(!choreo.isSequenceDone(), "le 3e beat original doit encore être à jouer après l'insertion");
+  choreo.step(1);
+  assertEqual(choreo.consumeFinishedEvents()[0], ev3, "le 3e beat original doit bien jouer après l'insertion, sans avoir été perdu");
+  assert(choreo.isSequenceDone(), "la séquence complète (originale + insérée) doit être terminée");
 });

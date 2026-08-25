@@ -3084,7 +3084,6 @@ function renderPositionOverview() {
 
 // ===================== SIMULATION DU MATCH =====================
 const SHOOTOUT_TICK_MS = 1300;
-const AI_THINK_MS = 750; // délai avant que l'IA joue son tour, pour que ce soit lisible
 // Au-delà du temps réglementaire, le Matchball joue en prolongation jusqu'au but décisif :
 // ce plafond n'est qu'un garde-fou pour éviter une boucle infinie en cas de scénario extrême.
 const MAX_MATCH_MINUTE = 200;
@@ -3093,12 +3092,10 @@ const MATCH_TACTICS_IDS = { formation: "match-formation-choice", pitch: "match-t
 let matchEngine = null;
 let matchState = null;
 
-// --- Plateau physique persistant (match humain en tours, voir matchphysics.js) ---
-let turnMatch = null;       // instance courante (createTurnMatch)
-let pitchRaf = null;        // id requestAnimationFrame de la boucle physique/rendu continue
+// --- Simulation animée du match humain (voir matchchoreo.js) ---
+let choreo = null;          // instance courante (createChoreographer)
+let pitchRaf = null;        // id requestAnimationFrame de la boucle d'animation continue
 let lastPitchTs = null;
-let aiTurnTimer = null;     // délai avant l'exécution du tir de l'IA
-let pitchDrag = null;       // { discId, side, startX, startY, curX, curY } pendant un glisser
 
 function startMatch() {
   const team = getUserTeam();
@@ -3140,8 +3137,7 @@ function startMatch() {
   matchState = {
     minute: 0, homeTeam, awayTeam, homeSetup, awaySetup, team, opponent,
     paused: false, userPaused: false, atHalfTime: false, finished: false, subTimers: [],
-    userSide, turnSide: "home", roundStartSide: "home", resetOccurredThisRound: false,
-    forcedRoundStartSide: null, awaitingSettle: false, pendingRoundMinute: null,
+    userSide, playbackSpeed: 1, sequenceActive: false, onSequenceDone: null, pendingMinute: null,
     lastOutfieldCap: matchEngine.getOutfieldCap(0)
   };
 
@@ -3165,9 +3161,11 @@ function startMatch() {
   pauseBtn.textContent = "⏸ Pause";
   pauseBtn.disabled = false;
   document.getElementById("btn-tactics-match").disabled = false;
+  document.getElementById("btn-match-speed").disabled = false;
   const skipBtn = document.getElementById("btn-skip-match");
   skipBtn.textContent = "Avancer rapidement";
   skipBtn.onclick = skipMatch;
+  document.getElementById("btn-match-speed").textContent = "▶ x1";
 
   showScreen("screen-match");
   const kickoffText = userSide === "home" ? "🟢 Coup d'envoi — à toi de jouer !" : `🟢 Coup d'envoi — ${homeTeam.name} commence.`;
@@ -3179,11 +3177,12 @@ function startMatch() {
   });
   updateSecretCardButton();
   updatePresidentPenaltyButton();
+  updateMatchStatusBanner();
 
-  turnMatch = createTurnMatch();
-  syncTurnMatchLineups(0);
+  choreo = createChoreographer();
+  syncChoreoAnchors(0);
   startMatchPitchLoop();
-  beginTurn();
+  runMinute();
 }
 
 // L'IA adverse réévalue son plan tactique toutes les 5 minutes à partir de la 25e :
@@ -3254,9 +3253,7 @@ function maybeActivateAiCard(minute) {
     }
   }
 
-  const evts = matchEngine.activateCard(aiSide, aiKey, options, minute);
-  evts.forEach(ev => appendCommentaryEvent(ev.type === "phase" ? { ...ev, type: "phase cardevent" } : ev));
-  updateSecretCardButton();
+  return matchEngine.activateCard(aiSide, aiKey, options, minute);
 }
 
 // L'IA actionne son propre "buzzer" du Président quand elle est en retard au score
@@ -3279,10 +3276,7 @@ function maybeActivatePresidentPenaltyAi(minute) {
     if (Math.random() > 0.12) return;
   }
 
-  const evts = matchEngine.triggerPresidentPenalty(aiSide, minute, {});
-  evts.forEach(ev => appendCommentaryEvent(ev.type === "phase" ? { ...ev, type: "phase cardevent" } : ev));
-  const newScore = matchEngine.getScore();
-  document.getElementById("match-score").textContent = `${newScore.homeGoals} - ${newScore.awayGoals}`;
+  return matchEngine.triggerPresidentPenalty(aiSide, minute, {});
 }
 
 // Dossier d'images des joueurs : images/players/<france|bresil>/<club-slug>/<joueur-slug>.png
@@ -3417,32 +3411,25 @@ function closePlayerInfoModal() {
   document.getElementById("player-info-modal").classList.remove("active");
 }
 
-// ----- Plateau physique persistant du match (matchphysics.js) -----
-// Le match humain entier (coup d'envoi à la fin) se joue sur CE plateau, à tour de rôle entre le
-// joueur et l'IA (voir beginTurn/executeAiTurn/handleTurnSettled plus bas). Rendu sur un <canvas>
-// superposé au tracé SVG statique du terrain (conservé pour les lignes/surfaces/cercle central).
+// ----- Simulation animée du match (matchchoreo.js) -----
+// Le match humain entier (coup d'envoi à la fin) se joue minute par minute, automatiquement :
+// runMinute()/advanceToMinute() demandent au moteur (engine.js:simulateMinute avec
+// {withSequence:true}) la chorégraphie de la minute à venir, la chargent dans `choreo`, et la
+// boucle continue ci-dessous l'anime jusqu'à son terme avant d'enchaîner sur la suivante. Rendu
+// sur un <canvas> superposé au tracé SVG statique du terrain (lignes/surfaces/cercle central).
 
-// Synchronise les disques actifs sur le plateau avec la composition de la minute donnée
-// (escalier, Dé Géant, Matchball, cartons/remplacements déjà gérés par le moteur) — ne
-// téléporte jamais un disque déjà en jeu, ne positionne que les nouveaux entrants.
-function syncTurnMatchLineups(minute) {
-  if (!turnMatch || !matchEngine) return;
-  const homeActive = matchEngine.getActiveLineupIds("home", minute);
-  const awayActive = matchEngine.getActiveLineupIds("away", minute);
-  const homeGK = matchEngine.getGK("home");
-  const awayGK = matchEngine.getGK("away");
-  turnMatch.setActiveLineups(
-    homeActive.filter(id => !homeGK || id !== homeGK.id), homeGK ? homeGK.id : null,
-    awayActive.filter(id => !awayGK || id !== awayGK.id), awayGK ? awayGK.id : null
-  );
+// Ancre chaque joueur actif de la minute donnée à sa position de formation courante (voir
+// engine.js:getFormationAnchors) — les joueurs déjà affichés ne sont jamais téléportés (ils sont
+// rappelés en douceur par matchchoreo.js), seuls les nouveaux entrants apparaissent directement
+// dessus (escalier, Dé Géant, Matchball, remplacement après carton rouge).
+function syncChoreoAnchors(minute) {
+  if (!choreo || !matchEngine) return;
+  choreo.setAnchors(matchEngine.getFormationAnchors("home", minute), matchEngine.getFormationAnchors("away", minute));
 }
 
 function stopMatchPitch() {
   if (pitchRaf) cancelAnimationFrame(pitchRaf);
   pitchRaf = null;
-  if (aiTurnTimer) clearTimeout(aiTurnTimer);
-  aiTurnTimer = null;
-  pitchDrag = null;
 }
 
 function startMatchPitchLoop() {
@@ -3451,20 +3438,52 @@ function startMatchPitchLoop() {
   pitchRaf = requestAnimationFrame(pitchFrameLoop);
 }
 
-// Boucle continue (indépendante du rythme des tours) : fait avancer la physique tant que le
-// match n'est pas en pause, redessine à chaque frame, et détecte la fin d'un tir pour enchaîner
-// sur le traitement du tour (handleTurnSettled).
+// Boucle continue : fait avancer l'animation (à la vitesse de lecture choisie) tant que le match
+// n'est pas en pause, redessine à chaque frame, pousse au commentaire les événements des beats qui
+// viennent de se terminer, et déclenche onSequenceDone (chargé par playSequence) une seule fois
+// quand la séquence en cours (celle de la minute, éventuellement complétée par un beat inséré —
+// voir choreo.insertNext) est entièrement jouée.
 function pitchFrameLoop(ts) {
-  if (!turnMatch) return;
+  if (!choreo) return;
   if (lastPitchTs !== null && matchState && !matchState.paused) {
-    turnMatch.step(Math.min(0.05, (ts - lastPitchTs) / 1000));
+    const dt = Math.min(0.1, (ts - lastPitchTs) / 1000) * (matchState.playbackSpeed || 1);
+    choreo.step(dt);
+    const finished = choreo.consumeFinishedEvents();
+    if (finished.length) {
+      finished.forEach(appendCommentaryEvent);
+      refreshScoreDisplay();
+      updateSecretCardButton();
+      updatePresidentPenaltyButton();
+    }
+    if (matchState.sequenceActive && choreo.isSequenceDone()) {
+      matchState.sequenceActive = false;
+      const done = matchState.onSequenceDone;
+      matchState.onSequenceDone = null;
+      if (done) done();
+    }
   }
   lastPitchTs = ts;
   renderMatchPitchFrame();
-  if (matchState && matchState.awaitingSettle && !matchState.paused && turnMatch.isSettled()) {
-    handleTurnSettled();
-  }
   pitchRaf = requestAnimationFrame(pitchFrameLoop);
+}
+
+// Charge une chorégraphie et rappelle `onDone` une fois qu'elle est entièrement jouée (utilisé
+// pour la séquence de chaque minute). Une action ponctuelle en cours de match (Arme Secrète,
+// Penalty du Président) n'appelle jamais cette fonction : elle utilise choreo.insertNext() pour
+// s'intercaler dans la séquence déjà en cours de lecture, sans perturber onSequenceDone.
+function playSequence(beats, onDone) {
+  matchState.sequenceActive = true;
+  matchState.onSequenceDone = onDone;
+  choreo.loadSequence(beats || []);
+}
+
+// Les annonces générées par une Arme Secrète/le Penalty du Président (activateCard/
+// triggerPresidentPenalty, toujours "phase") sont visuellement distinguées du reste du
+// commentaire — même transformation que l'ancien evts.forEach(ev => ev.type==="phase" ? ... ).
+function tagCardBeats(seqBeats) {
+  return (seqBeats || []).map(b => (b.event && b.event.type === "phase")
+    ? Object.assign({}, b, { event: Object.assign({}, b.event, { type: "phase cardevent" }) })
+    : b);
 }
 
 function findPitchPlayer(id) {
@@ -3488,63 +3507,45 @@ function getPitchPhotoImage(player, team) {
   return null;
 }
 
-// Les navigateurs suspendent quasiment totalement requestAnimationFrame et ralentissent très
-// fortement setTimeout dans un onglet en arrière-plan (économie de batterie) — si le joueur
-// change d'onglet pendant le délai de réflexion de l'IA ou pendant qu'un tir se stabilise, le
-// match peut sembler figé indéfiniment alors qu'il attend juste que l'onglet redevienne actif.
-// Dès qu'il le redevient, on relance directement le traitement plutôt que d'attendre que ces
-// timers ralentis finissent par se déclencher naturellement.
+// Les navigateurs suspendent quasiment totalement requestAnimationFrame dans un onglet en
+// arrière-plan (économie de batterie) — si le joueur change d'onglet, l'animation semble figée
+// pendant son absence puis reprend normalement dès qu'il revient (dt resynchronisé pour éviter un
+// gros saut d'un coup après une longue pause).
 document.addEventListener("visibilitychange", () => {
-  if (document.visibilityState !== "visible" || !matchState || matchState.finished || !turnMatch) return;
-  lastPitchTs = null; // évite un gros saut de dt d'un coup après une longue pause en arrière-plan
-  if (matchState.awaitingSettle) {
-    if (matchState.paused) return;
-    // requestAnimationFrame étant suspendu dans un onglet en arrière-plan, la physique d'un tir
-    // en cours n'a pas pu avancer du tout pendant ce temps — on la rattrape ici en bloc (jusqu'à
-    // 10s simulées, largement au-delà du garde-fou MAX_TURN_ELAPSED) au lieu d'attendre que les
-    // prochaines frames réelles la rejouent au ralenti sur plusieurs secondes.
-    let guard = 0;
-    while (!turnMatch.isSettled() && guard < 200) { turnMatch.step(0.05); guard++; }
-    if (turnMatch.isSettled()) handleTurnSettled();
-    return;
-  }
-  beginTurn();
+  if (document.visibilityState === "visible") lastPitchTs = null;
 });
 
-// Dessine le plateau (disques + ballon + ligne de visée pendant un glisser) sur le canvas
-// superposé au SVG du terrain. Coordonnées logiques 0-100 × 0-100 → pixels réels, à l'échelle
-// (le conteneur a un aspect-ratio fixe carré côté CSS, indispensable pour des cercles non déformés).
+// Dessine les joueurs/le ballon sur le canvas superposé au SVG du terrain, à partir de
+// choreo.getState(). Coordonnées logiques 0-100 × 0-100 → pixels réels, à l'échelle (le
+// conteneur a un aspect-ratio fixe carré côté CSS, indispensable pour des cercles non déformés).
+const PITCH_PLAYER_R = 3.2, PITCH_GK_R = 3.6, PITCH_BALL_R = 1.8;
+
 function renderMatchPitchFrame() {
   const canvas = document.getElementById("match-pitch-canvas");
-  if (!canvas || !turnMatch) return;
-  const state = turnMatch.getState();
+  if (!canvas || !choreo) return;
+  const state = choreo.getState();
   const ctx = canvas.getContext("2d");
   const rect = canvas.getBoundingClientRect();
   const dpr = window.devicePixelRatio || 1;
   const wantW = Math.max(1, Math.round(rect.width * dpr));
   const wantH = Math.max(1, Math.round(rect.height * dpr));
   if (canvas.width !== wantW || canvas.height !== wantH) { canvas.width = wantW; canvas.height = wantH; }
-  const sx = canvas.width / turnMatch.pitchW;
-  const sy = canvas.height / turnMatch.pitchH;
+  const sx = canvas.width / 100;
+  const sy = canvas.height / 100;
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  if (pitchDrag && pitchDrag.canShoot) {
-    ctx.strokeStyle = "rgba(255,255,255,0.55)";
-    ctx.lineWidth = Math.max(1, 0.4 * sx);
-    ctx.setLineDash([4, 4]);
-    ctx.beginPath();
-    ctx.moveTo(pitchDrag.startX * sx, pitchDrag.startY * sy);
-    ctx.lineTo(pitchDrag.curX * sx, pitchDrag.curY * sy);
-    ctx.stroke();
-    ctx.setLineDash([]);
+  const gkIds = new Set();
+  if (matchEngine) {
+    ["home", "away"].forEach(side => { const gk = matchEngine.getGK(side); if (gk) gkIds.add(gk.id); });
   }
 
-  state.discs.forEach(d => {
+  state.players.forEach(d => {
     const player = findPitchPlayer(d.id);
     const team = matchState ? (d.side === "home" ? matchState.homeTeam : matchState.awayTeam) : null;
     const teamColor = d.side === "home" ? "#3aa0ff" : "#ff5d5d";
-    const cx = d.x * sx, cy = d.y * sy, r = d.r * sx;
+    const r = (gkIds.has(d.id) ? PITCH_GK_R : PITCH_PLAYER_R) * sx;
+    const cx = d.x * sx, cy = d.y * sy;
     const photo = (player && team) ? getPitchPhotoImage(player, team) : null;
 
     // fond plein couleur d'équipe, toujours dessiné en premier (même avec une photo : on garde
@@ -3568,11 +3569,11 @@ function renderMatchPitchFrame() {
     }
 
     // contour toujours affiché (par-dessus la photo) : la couleur identifie l'équipe (comme
-    // l'ancien remplissage), l'épaisseur distingue les disques que tu contrôles.
-    const isUserDisc = matchState && d.side === matchState.userSide;
+    // l'ancien remplissage), l'épaisseur distingue les joueurs de TON équipe.
+    const isUserSide = matchState && d.side === matchState.userSide;
     ctx.beginPath();
     ctx.arc(cx, cy, r, 0, Math.PI * 2);
-    ctx.lineWidth = Math.max(1, (isUserDisc ? 0.55 : 0.3) * sx);
+    ctx.lineWidth = Math.max(1, (isUserSide ? 0.55 : 0.3) * sx);
     ctx.strokeStyle = teamColor;
     ctx.stroke();
 
@@ -3586,7 +3587,7 @@ function renderMatchPitchFrame() {
   });
 
   ctx.beginPath();
-  ctx.arc(state.ball.x * sx, state.ball.y * sy, state.ball.r * sx, 0, Math.PI * 2);
+  ctx.arc(state.ball.x * sx, state.ball.y * sy, PITCH_BALL_R * sx, 0, Math.PI * 2);
   ctx.fillStyle = "#ffffff";
   ctx.fill();
   ctx.lineWidth = Math.max(1, 0.25 * sx);
@@ -3594,77 +3595,24 @@ function renderMatchPitchFrame() {
   ctx.stroke();
 }
 
-// Glisser-relâcher type fronde sur SES PROPRES disques (uniquement à son tour) ; un clic sans
-// glissement sur n'importe quel disque ouvre sa fiche joueur. Câblé une seule fois (le canvas est
-// un élément statique de la page, réutilisé d'un match à l'autre).
+// Le joueur ne pilote plus aucune action : un clic sur un joueur (sien ou adverse) ouvre juste sa
+// fiche. Câblé une seule fois (le canvas est un élément statique de la page, réutilisé d'un match
+// à l'autre).
 function setupMatchPitchPointerEvents() {
   const canvas = document.getElementById("match-pitch-canvas");
   if (!canvas) return;
 
-  function toLogical(evt) {
+  canvas.onclick = evt => {
+    if (!choreo || !matchState) return;
     const rect = canvas.getBoundingClientRect();
-    return {
-      x: (evt.clientX - rect.left) / rect.width * turnMatch.pitchW,
-      y: (evt.clientY - rect.top) / rect.height * turnMatch.pitchH
-    };
-  }
-  function findDiscAt(pt) {
-    return turnMatch.getState().discs.find(d => Math.hypot(d.x - pt.x, d.y - pt.y) <= d.r + 1.5);
-  }
-
-  canvas.onpointerdown = evt => {
-    if (!turnMatch || !matchState || matchState.finished) return;
-    const pt = toLogical(evt);
-    const disc = findDiscAt(pt);
-    if (!disc) return;
-    // La jauge de tir (glisser-relâcher) n'est activable que sur SES PROPRES disques, et
-    // seulement à son tour — sur n'importe quel autre disque, le geste reste utilisable pour
-    // consulter la fiche joueur (voir onpointerup), mais aucune ligne de visée ne s'affiche et
-    // aucun tir ne peut partir.
-    const canShoot = !matchState.paused && !matchState.finished && !matchState.awaitingSettle &&
-      matchState.turnSide === matchState.userSide && disc.side === matchState.userSide;
-    pitchDrag = { discId: disc.id, side: disc.side, startX: disc.x, startY: disc.y, curX: pt.x, curY: pt.y, canShoot };
-    canvas.setPointerCapture(evt.pointerId);
+    const pt = { x: (evt.clientX - rect.left) / rect.width * 100, y: (evt.clientY - rect.top) / rect.height * 100 };
+    const found = choreo.getState().players.find(p => Math.hypot(p.x - pt.x, p.y - pt.y) <= PITCH_GK_R + 1.5);
+    if (!found) return;
+    const player = findPitchPlayer(found.id);
+    if (!player) return;
+    const team = found.side === "home" ? matchState.homeTeam : matchState.awayTeam;
+    openPlayerInfoModal(player, team, matchEngine ? matchEngine.getPlayerStats()[found.id] : null);
   };
-  canvas.onpointermove = evt => {
-    if (!pitchDrag || !pitchDrag.canShoot) return;
-    const pt = toLogical(evt);
-    pitchDrag.curX = pt.x; pitchDrag.curY = pt.y;
-  };
-  canvas.onpointerup = () => {
-    if (!pitchDrag) return;
-    const drag = pitchDrag;
-    pitchDrag = null;
-    const dx = drag.startX - drag.curX, dy = drag.startY - drag.curY;
-    const dist = Math.hypot(dx, dy);
-    if (!drag.canShoot || dist < 2) {
-      const player = findPitchPlayer(drag.discId);
-      if (player) {
-        const team = drag.side === "home" ? matchState.homeTeam : matchState.awayTeam;
-        openPlayerInfoModal(player, team, matchEngine ? matchEngine.getPlayerStats()[drag.discId] : null);
-      }
-      return;
-    }
-    const power = Math.min(dist, 45) * 2.2;
-    const k = power / dist;
-    attemptUserShoot(drag.discId, dx * k, dy * k, 20);
-  };
-  canvas.onpointercancel = () => { pitchDrag = null; };
-}
-
-// Tente le tir ; si le plateau n'est pas ENCORE tout à fait déclaré à l'arrêt à ce micro-instant
-// précis (cas limite), réessaie brièvement au lieu d'abandonner le geste en silence — sans ça, un
-// relâcher pourtant valide (jauge affichée, à son tour) pouvait ne rien faire du tout. À la
-// dernière tentative, force l'arrêt complet du plateau pour garantir que le tir parte quoi qu'il
-// arrive plutôt que d'abandonner silencieusement.
-function attemptUserShoot(discId, vx, vy, retriesLeft) {
-  if (!turnMatch || !matchState) return;
-  if (retriesLeft <= 1) turnMatch.forceSettle();
-  if (turnMatch.shoot(discId, vx, vy)) {
-    matchState.awaitingSettle = true;
-    return;
-  }
-  if (retriesLeft > 0) setTimeout(() => attemptUserShoot(discId, vx, vy, retriesLeft - 1), 100);
 }
 
 function appendCommentaryEvent(ev) {
@@ -3676,166 +3624,15 @@ function appendCommentaryEvent(ev) {
   commentary.scrollTop = commentary.scrollHeight;
 }
 
-// Vise "à travers" le ballon : calcule la direction depuis `actor` vers le point situé juste
-// derrière le ballon sur la droite ballon→cible, pour qu'un impact envoie le ballon vers la
-// cible (approximation simple, pas une physique de rebond exacte, mais suffisante pour une IA
-// heuristique). Jamais un flick direct sur le ballon (règle du jeu : on flique un disque joueur).
-function aimThroughBall(actor, ball, targetX, targetY) {
-  const dx = targetX - ball.x, dy = targetY - ball.y;
-  const dist = Math.hypot(dx, dy) || 1;
-  const behindX = ball.x - (dx / dist) * (actor.r + ball.r + 0.5);
-  const behindY = ball.y - (dy / dist) * (actor.r + ball.r + 0.5);
-  let ux = behindX - actor.x, uy = behindY - actor.y;
-  const udist = Math.hypot(ux, uy) || 1;
-  return { ux: ux / udist, uy: uy / udist };
-}
-
-const AI_SHOT_POWER = 100, AI_PASS_POWER = 65, AI_CLEAR_POWER = 80, AI_DRIBBLE_POWER = 45;
-
-// IA de tour : heuristique simple pilotée par les stats du joueur qui exécute (comme
-// chooseAiFormation/chooseAiPlans dans engine.js, pas de recherche arborescente). Choisit le
-// disque IA le plus proche du ballon comme acteur, puis tire/passe/dégage/dribble selon la
-// situation. Renvoie { discId, vx, vy } ou null si l'IA n'a aucun disque (ne devrait pas arriver).
-function chooseAiTurn(state, aiSide, aiTeam) {
-  const myDiscs = state.discs.filter(d => d.side === aiSide);
-  if (myDiscs.length === 0) return null;
-  const ball = state.ball;
-  const targetGoalY = aiSide === "home" ? 100 : 0;
-
-  let actor = myDiscs[0], bestDist = Infinity;
-  myDiscs.forEach(d => {
-    const dist = Math.hypot(d.x - ball.x, d.y - ball.y);
-    if (dist < bestDist) { bestDist = dist; actor = d; }
-  });
-
-  const actorPlayer = aiTeam.players.find(p => p.id === actor.id);
-  const technique = actorPlayer ? actorPlayer.technique : 50;
-  const noise = Math.max(0.04, (100 - technique) / 260);
-
-  function shootWithNoise(ux, uy, power) {
-    const angle = Math.atan2(uy, ux) + (Math.random() - 0.5) * noise;
-    return { discId: actor.id, vx: Math.cos(angle) * power, vy: Math.sin(angle) * power };
-  }
-
-  const distBallToGoal = Math.hypot(50 - ball.x, targetGoalY - ball.y);
-  const distActorToBall = Math.hypot(actor.x - ball.x, actor.y - ball.y);
-
-  // Tir si le ballon est déjà en position raisonnable pour viser le but adverse.
-  if (distBallToGoal < 60 && distActorToBall < 45) {
-    const aimX = clamp(50 + (Math.random() - 0.5) * 12, GOAL_X_MIN + 2, GOAL_X_MAX - 2);
-    const { ux, uy } = aimThroughBall(actor, ball, aimX, targetGoalY);
-    return shootWithNoise(ux, uy, AI_SHOT_POWER);
-  }
-
-  // Passe vers un coéquipier nettement plus avancé, à distance raisonnable du ballon.
-  if (distActorToBall < 45) {
-    const teammates = myDiscs.filter(d => d.id !== actor.id);
-    let bestPass = null, bestAdvance = 12;
-    teammates.forEach(t => {
-      const advance = aiSide === "home" ? (t.y - ball.y) : (ball.y - t.y);
-      const passDist = Math.hypot(t.x - ball.x, t.y - ball.y);
-      if (advance > bestAdvance && passDist < 55) { bestAdvance = advance; bestPass = t; }
-    });
-    if (bestPass) {
-      const { ux, uy } = aimThroughBall(actor, ball, bestPass.x, bestPass.y);
-      return shootWithNoise(ux, uy, AI_PASS_POWER);
-    }
-  }
-
-  // Dégagement si le ballon traîne près de son propre but.
-  const dangerZone = aiSide === "home" ? ball.y < 22 : ball.y > 78;
-  if (dangerZone && distActorToBall < 45) {
-    const { ux, uy } = aimThroughBall(actor, ball, 50 + (Math.random() - 0.5) * 30, aiSide === "home" ? 55 : 45);
-    return shootWithNoise(ux, uy, AI_CLEAR_POWER);
-  }
-
-  // Par défaut : rapproche l'acteur du ballon, ou le pousse vers l'avant s'il est déjà dessus.
-  if (distActorToBall >= 45) {
-    const dx = ball.x - actor.x, dy = ball.y - actor.y;
-    const dist = Math.hypot(dx, dy) || 1;
-    return shootWithNoise(dx / dist, dy / dist, Math.min(AI_DRIBBLE_POWER, dist * 1.5));
-  }
-  const { ux, uy } = aimThroughBall(actor, ball, 50, targetGoalY);
-  return shootWithNoise(ux, uy, AI_DRIBBLE_POWER);
-}
-
-// Lance le tour du camp actif : si c'est celui du joueur, ne fait rien (on attend son glisser sur
-// le canvas, déjà câblé en continu) ; si c'est celui de l'IA, programme son tir après un court
-// délai ("l'IA réfléchit"). Sûr à rappeler à tout moment (pause, fin de modal...).
-let aiShootRetries = 0;
-
-// Bannière "à toi de jouer" / "tour de l'adversaire" au-dessus du terrain, tenue à jour à chaque
-// passage par beginTurn() (donc à chaque changement de tour et à chaque reprise après pause/modal).
-function updateTurnBanner() {
+// Bannière au-dessus du terrain : seul le statut pause/lecture a encore un sens (le joueur ne
+// prend plus jamais la main directement sur les actions).
+function updateMatchStatusBanner() {
   const banner = document.getElementById("turn-banner");
   if (!banner || !matchState) return;
-  if (matchState.finished) { banner.style.display = "none"; return; }
-  if (matchState.paused) {
-    banner.textContent = "⏸ Match en pause";
-    banner.className = "turn-banner paused";
-    banner.style.display = "block";
-    return;
-  }
-  if (matchState.atHalfTime || phaseLineupState) { banner.style.display = "none"; return; }
+  if (matchState.finished || !matchState.paused) { banner.style.display = "none"; return; }
+  banner.textContent = "⏸ Match en pause";
+  banner.className = "turn-banner paused";
   banner.style.display = "block";
-  if (matchState.turnSide === matchState.userSide) {
-    banner.textContent = "🟢 À toi de jouer !";
-    banner.className = "turn-banner user-turn";
-  } else {
-    const aiTeam = matchState.turnSide === "home" ? matchState.homeTeam : matchState.awayTeam;
-    banner.textContent = `⏳ Tour de ${aiTeam.name}...`;
-    banner.className = "turn-banner ai-turn";
-  }
-}
-
-function beginTurn() {
-  updateTurnBanner();
-  if (!matchState || matchState.paused || matchState.finished || matchState.atHalfTime || phaseLineupState) return;
-  if (aiTurnTimer) { clearTimeout(aiTurnTimer); aiTurnTimer = null; }
-  if (matchState.turnSide === matchState.userSide) return;
-  aiShootRetries = 0;
-  aiTurnTimer = setTimeout(executeAiTurn, AI_THINK_MS);
-}
-
-function executeAiTurn() {
-  aiTurnTimer = null;
-  if (!matchState || matchState.paused || matchState.finished || !turnMatch) return;
-  const aiSide = matchState.turnSide;
-  const aiTeam = aiSide === "home" ? matchState.homeTeam : matchState.awayTeam;
-  const move = chooseAiTurn(turnMatch.getState(), aiSide, aiTeam);
-  if (!move) {
-    // Sécurité : aucun disque IA disponible (ne devrait pas arriver tant qu'il reste des
-    // joueurs) — passe la main pour ne jamais bloquer la partie.
-    matchState.turnSide = aiSide === "home" ? "away" : "home";
-    beginTurn();
-    return;
-  }
-  if (turnMatch.shoot(move.discId, move.vx, move.vy)) {
-    matchState.awaitingSettle = true;
-    return;
-  }
-  // Le plateau n'est pas ENCORE tout à fait à l'arrêt (rare, ex. juste après une passe
-  // contrôlée) : retente sous peu au lieu de céder la main à tort, sinon le tour pourrait se
-  // retrouver bloqué (ni le camp qui devrait continuer, ni l'autre, ne jouent). Après plusieurs
-  // tentatives infructueuses, force l'arrêt complet du plateau plutôt que de réessayer à l'infini
-  // en silence.
-  aiShootRetries++;
-  if (aiShootRetries > 15 && turnMatch) turnMatch.forceSettle();
-  aiTurnTimer = setTimeout(executeAiTurn, 200);
-}
-
-// Point de reprise unique après une pause/un modal : termine d'abord un changement de round resté
-// en attente (phase-lineup demandée alors que le match était en pause utilisateur), sinon relance
-// simplement le tour courant.
-function resumeTurnFlow() {
-  if (!matchState) return;
-  if (matchState.pendingRoundMinute != null) {
-    const m = matchState.pendingRoundMinute;
-    matchState.pendingRoundMinute = null;
-    finishRoundAdvance(m);
-  } else {
-    beginTurn();
-  }
 }
 
 function refreshScoreDisplay() {
@@ -3854,114 +3651,72 @@ function checkMatchDecidedAndMaybeFinish() {
   return true;
 }
 
-// Appelé quand le plateau redevient immobile après un tir : traite l'issue (but/csc/arrêt),
-// vérifie si le Matchball tranche immédiatement, puis alterne strictement les tours (domicile →
-// extérieur → domicile...). L'horloge n'avance d'une minute qu'une fois les DEUX camps passés
-// (un round complet), pour que chacun ait eu sa chance d'agir dans la minute — comme l'ancien
-// système où les deux équipes tiraient au sort une occasion chaque minute.
-function handleTurnSettled() {
-  matchState.awaitingSettle = false;
-  const outcome = turnMatch.consumeTurnOutcome();
-  let concedingSide = null; // non-null sur but/csc : l'équipe qui encaisse doit relancer, comme un vrai coup d'envoi
-  if (outcome) {
-    if (outcome.type === "goal") {
-      const gk = matchEngine.getGK(outcome.concedingSide);
-      const ev = matchEngine.recordGoalFromPlay(outcome.scoringSide, matchState.minute, outcome.scorerId, outcome.assisterId, gk ? gk.id : null);
-      if (ev) appendCommentaryEvent(ev);
-      matchState.resetOccurredThisRound = true; // le but a remis le plateau en formation de coup d'envoi
-      concedingSide = outcome.concedingSide;
-    } else if (outcome.type === "owngoal") {
-      const ev = matchEngine.recordOwnGoalFromPlay(outcome.concedingSide, matchState.minute, outcome.scorerId);
-      if (ev) appendCommentaryEvent(ev);
-      matchState.resetOccurredThisRound = true;
-      concedingSide = outcome.concedingSide;
-    } else if (outcome.type === "save") {
-      const ev = matchEngine.recordSaveFromPlay(outcome.side, matchState.minute, outcome.takerId, outcome.gkId);
-      if (ev) appendCommentaryEvent(ev);
-    }
-    refreshScoreDisplay();
+// Point d'entrée unique pour "il faut que le match progresse" : reprend un changement de minute
+// resté en attente (composition de phase demandée pendant une pause utilisateur), sinon ne fait
+// rien de plus — la boucle d'animation (pitchFrameLoop) se charge seule de finir la séquence en
+// cours et d'enchaîner sur runMinute() via onSequenceDone.
+function continueMatchFlow() {
+  if (!matchState || matchState.finished || matchState.atHalfTime) return;
+  if (matchState.pendingMinute != null) {
+    const m = matchState.pendingMinute;
+    matchState.pendingMinute = null;
+    advanceToMinute(m);
   }
-  if (checkMatchDecidedAndMaybeFinish()) return;
-
-  if (concedingSide) {
-    // Un but termine le round IMMÉDIATEMENT, quelle que soit sa position dans le round en cours
-    // (que le buteur ait ouvert ou clos ce round) : l'équipe qui encaisse relance systématiquement,
-    // jamais celle qui vient de marquer.
-    matchState.forcedRoundStartSide = concedingSide;
-    const nextMinute = matchState.minute + 1;
-    if (maybeAskPhaseLineup(nextMinute)) { matchState.pendingRoundMinute = nextMinute; return; }
-    finishRoundAdvance(nextMinute);
-    return;
-  }
-
-  // Le round se termine quand le camp qui n'a PAS ouvert ce round vient de jouer (l'équipe qui
-  // débute alterne d'un round à l'autre, voir finishRoundAdvance — donc ce n'est pas toujours
-  // "domicile" en premier).
-  const justActed = matchState.turnSide;
-  if (justActed === matchState.roundStartSide) {
-    matchState.turnSide = justActed === "home" ? "away" : "home";
-    beginTurn();
-    return;
-  }
-
-  // Le round est complet, l'horloge avance d'une minute. Avant de jouer la minute à venir,
-  // vérifie si le format change (escalier de départ, Dé Géant, escalier inversé du Matchball) —
-  // si l'utilisateur a un vrai choix à faire, on met le match en pause et on lui demande sa
-  // composition AVANT que la phase ne commence (pas après).
-  const nextMinute = matchState.minute + 1;
-  if (maybeAskPhaseLineup(nextMinute)) { matchState.pendingRoundMinute = nextMinute; return; }
-  finishRoundAdvance(nextMinute);
 }
 
-// Fait avancer l'horloge d'une minute (bookkeeping de phase, IA cartes/tactiques, synchro du
-// plateau, conditions de fin/mi-temps) puis relance le tour suivant côté domicile.
-function finishRoundAdvance(nextMinute) {
+// Lève la pause (sauf pause manuelle de l'utilisateur) et fait progresser le match.
+function resumeMatchFlow() {
+  if (matchState.userPaused) { updateMatchStatusBanner(); return; }
+  matchState.paused = false;
+  document.getElementById("btn-pause-match").textContent = "⏸ Pause";
+  updateMatchStatusBanner();
+  continueMatchFlow();
+}
+
+// Demande au moteur la minute suivante, dès que la précédente (ou le coup d'envoi) est terminée.
+// Vérifie d'abord si un vrai choix de composition doit être posé au joueur (escalier, Dé Géant,
+// escalier inversé du Matchball) — auquel cas le match se met en pause et la minute reste en
+// attente (matchState.pendingMinute) jusqu'à ce que le modal soit validé.
+function runMinute() {
+  if (!matchState || matchState.finished || matchState.atHalfTime) return;
+  const nextMinute = matchState.minute + 1;
+  if (maybeAskPhaseLineup(nextMinute)) {
+    matchState.pendingMinute = nextMinute;
+    return;
+  }
+  advanceToMinute(nextMinute);
+}
+
+// Simule la minute donnée (bookkeeping de phase + occasions, voir engine.js) et anime sa
+// chorégraphie. Les actions IA (carte secrète/Penalty du Président/ajustement tactique) sont
+// évaluées AVANT les occasions de la minute, comme dans l'ancien système à base de tours — leurs
+// éventuels beats sont donc joués en premier dans la séquence de la minute.
+function advanceToMinute(nextMinute) {
   matchState.minute = nextMinute;
   document.getElementById("match-minute").textContent = matchState.minute + "'";
-  const phaseEvents = matchEngine.advancePhase(matchState.minute);
-  phaseEvents.forEach(appendCommentaryEvent);
-  refreshScoreDisplay();
-  if (checkMatchDecidedAndMaybeFinish()) return;
 
-  maybeActivateAiCard(matchState.minute);
-  maybeActivatePresidentPenaltyAi(matchState.minute);
+  const combined = [];
+  const cardEvts = maybeActivateAiCard(matchState.minute);
+  if (cardEvts && cardEvts.sequence) combined.push(...tagCardBeats(cardEvts.sequence));
+  const presEvts = maybeActivatePresidentPenaltyAi(matchState.minute);
+  if (presEvts && presEvts.sequence) combined.push(...tagCardBeats(presEvts.sequence));
   maybeAdjustAiTactics(matchState.minute);
   updateSecretCardButton();
   updatePresidentPenaltyButton();
 
-  syncTurnMatchLineups(matchState.minute);
-  // Redémarre le plateau en formation de coup d'envoi sur les vrais changements de phase
-  // ponctuels (Ballon Spécial, Dé Géant, Matchball...), pas sur les événements aléatoires
-  // (blessure/carton/penalty) ni sur l'escalier de départ ou l'escalier inversé du Matchball :
-  // ces deux-là ajoutent/retirent UN joueur à chaque round (donc "changent qui tire" à chaque
-  // round si on y appliquait aussi l'alternance ci-dessous) sans jamais réinitialiser le plateau.
-  const isEscalierRamp = matchState.minute <= matchEngine.ESCALIER_END_MINUTE;
-  const isMatchballReverseRamp = matchState.minute > matchEngine.MATCHBALL_START_MINUTE;
-  if (turnMatch && !isEscalierRamp && !isMatchballReverseRamp && phaseEvents.some(ev => ev.type === "phase")) {
-    turnMatch.resetFormation();
-    matchState.resetOccurredThisRound = true;
-  }
+  const evts = matchEngine.simulateMinute(matchState.minute, { withSequence: true });
+  if (evts.sequence) combined.push(...evts.sequence);
 
-  if (matchState.minute === matchEngine.halfTime) { showHalfTime(); return; }
-  // Le Matchball (à partir de la 36e minute, donc toujours avant la fin du temps réglementaire
-  // à 40') garantit une équipe gagnante : le match continue en prolongation tant que personne
-  // n'a atteint l'objectif de buts. MAX_MATCH_MINUTE n'est qu'un garde-fou de sécurité.
-  if (matchState.minute >= MAX_MATCH_MINUTE) { finishMatchDisplay(); return; }
-
-  // Après un but, l'équipe qui encaisse relance TOUJOURS (coup d'envoi), quel que soit l'état de
-  // l'alternance générique — prioritaire sur celle-ci. Sinon, l'équipe qui ouvre le round
-  // n'alterne QUE si le plateau a réellement été réinitialisé ce round (but, csc, ou changement
-  // de phase ponctuel) — jamais pendant l'escalier de départ/inversé, sinon l'ordre de tir
-  // changerait à chaque nouvelle entrée/sortie de joueur alors que rien n'a été remis en jeu.
-  if (matchState.forcedRoundStartSide) {
-    matchState.roundStartSide = matchState.forcedRoundStartSide;
-    matchState.forcedRoundStartSide = null;
-  } else if (matchState.resetOccurredThisRound) {
-    matchState.roundStartSide = matchState.roundStartSide === "home" ? "away" : "home";
-  }
-  matchState.resetOccurredThisRound = false;
-  matchState.turnSide = matchState.roundStartSide;
-  beginTurn();
+  syncChoreoAnchors(matchState.minute);
+  playSequence(combined, () => {
+    if (checkMatchDecidedAndMaybeFinish()) return;
+    if (matchState.minute === matchEngine.halfTime) { showHalfTime(); return; }
+    // Le Matchball (dès la 36e minute, donc toujours avant la fin du temps réglementaire à 40')
+    // garantit une équipe gagnante : le match continue en prolongation tant que personne n'a
+    // atteint l'objectif de buts. MAX_MATCH_MINUTE n'est qu'un garde-fou de sécurité.
+    if (matchState.minute >= MAX_MATCH_MINUTE) { finishMatchDisplay(); return; }
+    runMinute();
+  });
 }
 
 // Détecte, AVANT de jouer la minute donnée, un changement de format. Pour un escalier progressif
@@ -4062,9 +3817,9 @@ function openPhaseOrderModal(side, poolIds, kind) {
 }
 
 function pauseMatchForPhaseModal() {
-  if (aiTurnTimer) { clearTimeout(aiTurnTimer); aiTurnTimer = null; }
   matchState.paused = true;
   document.getElementById("btn-pause-match").textContent = "▶ Reprendre";
+  updateMatchStatusBanner();
 }
 
 function renderPhaseLineupList() {
@@ -4112,12 +3867,8 @@ function renderPhaseLineupList() {
 function closePhaseModalAndResume() {
   document.getElementById("phase-lineup-modal").classList.remove("active");
   phaseLineupState = null;
-  syncTurnMatchLineups(matchState.minute);
-  if (!matchState.userPaused) {
-    matchState.paused = false;
-    document.getElementById("btn-pause-match").textContent = "⏸ Pause";
-    resumeTurnFlow();
-  }
+  syncChoreoAnchors(matchState.minute);
+  resumeMatchFlow();
 }
 
 function applyPhaseLineupSelection(ids) {
@@ -4180,14 +3931,23 @@ function continueAfterHalfTime() {
   document.getElementById("halftime-overlay").classList.remove("active");
   matchState.atHalfTime = false;
   appendCommentaryEvent({ type: "phase", text: "🟢 Reprise — 2ème mi-temps" });
-  if (turnMatch) turnMatch.resetFormation();
-  // La reprise remet aussi le plateau en formation : applique la même alternance de qui engage.
-  matchState.roundStartSide = matchState.roundStartSide === "home" ? "away" : "home";
-  matchState.turnSide = matchState.roundStartSide;
-  if (!matchState.userPaused) {
-    matchState.paused = false;
-    resumeTurnFlow();
-  }
+  syncChoreoAnchors(matchState.minute);
+  if (matchState.userPaused) { updateMatchStatusBanner(); return; }
+  matchState.paused = false;
+  document.getElementById("btn-pause-match").textContent = "⏸ Pause";
+  updateMatchStatusBanner();
+  runMinute();
+}
+
+const MATCH_SPEED_STEPS = [1, 2, 4];
+
+// Vitesse de lecture de l'animation (indépendante d'"Avancer rapidement", qui saute directement à
+// la fin) : multiplie le dt passé à choreo.step() à chaque frame.
+function cycleMatchSpeed() {
+  if (!matchState) return;
+  const idx = MATCH_SPEED_STEPS.indexOf(matchState.playbackSpeed);
+  matchState.playbackSpeed = MATCH_SPEED_STEPS[(idx + 1) % MATCH_SPEED_STEPS.length];
+  document.getElementById("btn-match-speed").textContent = `▶ x${matchState.playbackSpeed}`;
 }
 
 function togglePauseMatch() {
@@ -4196,22 +3956,21 @@ function togglePauseMatch() {
   matchState.userPaused = matchState.paused;
   const btn = document.getElementById("btn-pause-match");
   if (matchState.paused) {
-    if (aiTurnTimer) { clearTimeout(aiTurnTimer); aiTurnTimer = null; }
     btn.textContent = "▶ Reprendre";
-    updateTurnBanner();
+    updateMatchStatusBanner();
   } else {
     btn.textContent = "⏸ Pause";
-    resumeTurnFlow();
+    resumeMatchFlow();
   }
 }
 
 // Ouvre le panneau tactique en cours de match (mise en pause automatique)
 function openMatchTactics() {
   if (!matchState || matchState.finished || phaseLineupState) return;
-  if (aiTurnTimer) { clearTimeout(aiTurnTimer); aiTurnTimer = null; }
   matchState.paused = true;
   document.getElementById("btn-pause-match").textContent = "▶ Reprendre";
   document.getElementById("halftime-overlay").classList.remove("active");
+  updateMatchStatusBanner();
 
   renderFormationChoice(lineupSetup, MATCH_TACTICS_IDS);
   renderPitch(lineupSetup, MATCH_TACTICS_IDS);
@@ -4225,16 +3984,13 @@ function openMatchTactics() {
 function closeMatchTactics() {
   document.getElementById("match-tactics-modal").classList.remove("active");
   lineupSetup.lineup = lineupSetup.assignments.filter(Boolean);
+  syncChoreoAnchors(matchState.minute);
 
   if (matchState.atHalfTime) {
     document.getElementById("halftime-overlay").classList.add("active");
     return;
   }
-  if (!matchState.userPaused && !matchState.finished) {
-    matchState.paused = false;
-    document.getElementById("btn-pause-match").textContent = "⏸ Pause";
-    resumeTurnFlow();
-  }
+  if (!matchState.finished) resumeMatchFlow();
 }
 
 // L'Arme Secrète et le Penalty du Président ne s'activent que dans les fenêtres réglementaires
@@ -4257,13 +4013,12 @@ function updatePresidentPenaltyButton() {
   btn.title = windowOpen ? "" : "Activable entre la 5e et la 17e minute, puis entre la 23e et la 35e minute.";
 }
 
-// Le coach humain actionne le buzzer du Président : penalty immédiat, une fois par match.
-// Lance réellement le Penalty du Président avec le président choisi (ou tiré au sort).
+// Le coach humain actionne le buzzer du Président : penalty immédiat, une fois par match. Ne met
+// jamais le match en pause : les beats s'intercalent dans l'animation en cours via insertNext,
+// exactement comme sur le plateau ils s'exécutaient sans perturber le tour en cours.
 function executeUserPresidentPenalty(presidentName) {
   const evts = matchEngine.triggerPresidentPenalty(matchState.userSide, matchState.minute, { presidentName });
-  evts.forEach(ev => appendCommentaryEvent(ev.type === "phase" ? { ...ev, type: "phase cardevent" } : ev));
-  const score = matchEngine.getScore();
-  document.getElementById("match-score").textContent = `${score.homeGoals} - ${score.awayGoals}`;
+  if (choreo && evts.sequence) choreo.insertNext(tagCardBeats(evts.sequence));
   updatePresidentPenaltyButton();
 }
 
@@ -4361,10 +4116,10 @@ function openSecretCardModal() {
   if (!matchEngine.isSpecialActionWindowOpen(matchState.minute, "card")) return;
   const userSide = matchState.userSide;
   if (matchEngine.isCardUsed(userSide)) return;
-  if (aiTurnTimer) { clearTimeout(aiTurnTimer); aiTurnTimer = null; }
   matchState.paused = true;
   document.getElementById("btn-pause-match").textContent = "▶ Reprendre";
   document.getElementById("halftime-overlay").classList.remove("active");
+  updateMatchStatusBanner();
 
   const oppSide = userSide === "home" ? "away" : "home";
   const key = matchEngine.getCards()[userSide];
@@ -4421,16 +4176,16 @@ function openSecretCardModal() {
   document.getElementById("secret-card-modal").classList.add("active");
 }
 
-function resumeMatchAfterModal() {
+// Referme un modal qui avait mis le match en pause (Arme Secrète) et reprend la lecture — si des
+// beats sont fournis (carte effectivement activée), ils s'intercalent dans la séquence en cours
+// via insertNext AVANT que la lecture ne reprenne, pour que l'effet s'anime dès la reprise.
+function resumeMatchAfterModal(beats) {
+  if (choreo && beats && beats.length) choreo.insertNext(beats);
   if (matchState.atHalfTime) {
     document.getElementById("halftime-overlay").classList.add("active");
     return;
   }
-  if (!matchState.userPaused && !matchState.finished) {
-    matchState.paused = false;
-    document.getElementById("btn-pause-match").textContent = "⏸ Pause";
-    resumeTurnFlow();
-  }
+  if (!matchState.finished) resumeMatchFlow();
 }
 
 function cancelSecretCard() {
@@ -4457,18 +4212,16 @@ function confirmSecretCard() {
   }
 
   const evts = matchEngine.activateCard(userSide, key, options, matchState.minute);
-  evts.forEach(ev => appendCommentaryEvent(ev.type === "phase" ? { ...ev, type: "phase cardevent" } : ev));
 
   document.getElementById("secret-card-modal").classList.remove("active");
   updateSecretCardButton();
-  resumeMatchAfterModal();
+  resumeMatchAfterModal(tagCardBeats(evts.sequence));
 }
 
 // Appelé en fin de temps réglementaire. Si le score est à égalité, lance la
 // séance de tirs au but (animée tir par tir) avant de finaliser le match.
 function finishMatchDisplay() {
   matchState.paused = true;
-  if (aiTurnTimer) { clearTimeout(aiTurnTimer); aiTurnTimer = null; }
   (matchState.subTimers || []).forEach(clearTimeout);
   matchState.subTimers = [];
 
@@ -4523,15 +4276,19 @@ function completeMatch(shootout) {
   document.getElementById("btn-tactics-match").disabled = true;
   document.getElementById("btn-secret-card").disabled = true;
   document.getElementById("btn-president-penalty").disabled = true;
+  document.getElementById("btn-match-speed").disabled = true;
   const skipBtn = document.getElementById("btn-skip-match");
   skipBtn.textContent = "Voir le résumé";
   skipBtn.onclick = showMatchSummary;
 }
 
-// Termine instantanément les minutes restantes du match (et la séance de tirs au but si besoin)
-// Abandonne le plateau physique pour le reste du match : termine instantanément les minutes
-// restantes par tirage au sort (comme un match IA vs IA), à partir du score/de l'état courants
-// de matchEngine (déjà à jour via recordGoalFromPlay/recordOwnGoalFromPlay/recordSaveFromPlay).
+// Termine instantanément les minutes restantes du match (et la séance de tirs au but si besoin).
+// Abandonne l'animation pour le reste du match : appelle simulateMinute SANS {withSequence:true}
+// (donc aussi rapide et sans le moindre coût de séquence, exactement comme un match IA vs IA).
+function appendCardEvents(evts) {
+  (evts || []).forEach(ev => appendCommentaryEvent(ev.type === "phase" ? { ...ev, type: "phase cardevent" } : ev));
+}
+
 function skipMatch() {
   if (!matchState || matchState.finished) return;
   stopMatchPitch();
@@ -4551,8 +4308,8 @@ function skipMatch() {
     matchState.minute++;
     const minuteEvents = matchEngine.simulateMinute(matchState.minute);
     minuteEvents.forEach(appendCommentaryEvent);
-    maybeActivateAiCard(matchState.minute);
-    maybeActivatePresidentPenaltyAi(matchState.minute);
+    appendCardEvents(maybeActivateAiCard(matchState.minute));
+    appendCardEvents(maybeActivatePresidentPenaltyAi(matchState.minute));
     maybeAdjustAiTactics(matchState.minute);
     if (matchEngine.isMatchDecided()) break;
   }
@@ -4703,6 +4460,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.getElementById("btn-pause-match").onclick = togglePauseMatch;
   document.getElementById("btn-tactics-match").onclick = openMatchTactics;
+  document.getElementById("btn-match-speed").onclick = cycleMatchSpeed;
   document.getElementById("btn-halftime-continue").onclick = continueAfterHalfTime;
   document.getElementById("btn-halftime-tactics").onclick = openMatchTactics;
   document.getElementById("btn-close-tactics-modal").onclick = closeMatchTactics;
