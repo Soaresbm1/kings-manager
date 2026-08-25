@@ -180,9 +180,14 @@ function createChoreographer() {
   }
 
   function getState() {
+    const beat = currentBeat();
+    const ballCarrierId = beat && (beat.type === "dribble" || beat.type === "tackle")
+      ? beat.playerId
+      : null;
     return {
       players: Array.from(players.values()).map(p => ({ id: p.id, side: p.side, x: p.x, y: p.y })),
-      ball: { x: ball.x, y: ball.y }
+      ball: { x: ball.x, y: ball.y },
+      ballCarrierId
     };
   }
 
