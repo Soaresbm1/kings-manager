@@ -435,9 +435,10 @@
       <div class="match-layout">
         <div class="panel match-pitch-panel">
           <div class="turn-banner" id="turn-banner"></div>
+          <!-- Marquages du terrain (surfaces, buts, ligne médiane, arcs, rond central) dessinés
+               directement dans #match-pitch-canvas (voir app.js:drawPitchMarkings) — plus de SVG
+               séparé : il aurait dû, lui aussi, être réorienté pour le paysage. -->
           <div class="pitch-field match-pitch" id="match-pitch">
-            <!-- Les marquages et les acteurs sont dessinés ensemble sur le canvas afin de
-                 conserver leurs proportions quand le terrain logique est affiché en paysage. -->
             <canvas id="match-pitch-canvas"></canvas>
           </div>
         </div>

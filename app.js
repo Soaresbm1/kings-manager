@@ -3515,46 +3515,70 @@ document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "visible") lastPitchTs = null;
 });
 
-// Dessine les marquages dans le repère écran paysage. Le moteur reste volontairement dans son
-// repère historique : x va d'une touche à l'autre et y d'un but à l'autre. À l'écran, y devient
-// donc l'abscisse et x l'ordonnée.
+// Dessine le terrain (marquages + joueurs + ballon) sur le canvas, à partir de choreo.getState().
+// Terrain affiché en PAYSAGE (façon Football Manager) alors que le repère logique interne
+// (engine.js/matchchoreo.js) reste 0-100×0-100 avec l'axe but-à-but sur Y (y=0 but domicile) —
+// on transpose donc les axes UNIQUEMENT ici, au moment du rendu : `screenX ← logiqueY` (axe large
+// de l'écran), `screenY ← logiqueX` (axe court). Rien dans le moteur/la chorégraphie n'a besoin
+// de connaître l'orientation d'affichage.
 const PITCH_PLAYER_R = 3.2, PITCH_GK_R = 3.6, PITCH_BALL_R = 1.8;
 
-function drawPitchMarkings(ctx, width, height) {
-  const x = logicalY => logicalY / 100 * width;
-  const y = logicalX => logicalX / 100 * height;
-  const line = "rgba(255,255,255,0.42)";
+// Marquages du terrain (surfaces, buts, ligne médiane, arcs) dessinés directement dans le canvas
+// avec la même transposition que les joueurs/le ballon — remplace l'ancien SVG séparé
+// (`<svg class="pitch-markings">`, retiré d'index.html), qui aurait dû, lui aussi, être réorienté
+// pour le paysage : plus simple de tout dessiner au même endroit, avec la même échelle.
+function drawPitchMarkings(ctx, sx, sy) {
+  const scale = Math.min(sx, sy);
+  const W = 100 * sx, H = 100 * sy;
+  // rect logique (x,y,w,h) — x/touche-à-touche, y/but-à-but — tracé transposé en écran.
+  function rectL(x, y, w, h) { ctx.rect(y * sx, x * sy, h * sx, w * sy); }
+  function dotL(x, y, r) { ctx.beginPath(); ctx.arc(y * sx, x * sy, r * scale, 0, Math.PI * 2); ctx.fill(); }
+  function goalNet(x, y, w, h) {
+    const steps = 4;
+    for (let i = 0; i <= steps; i++) {
+      const t = x + (w * i) / steps;
+      ctx.beginPath(); ctx.moveTo(y * sx, t * sy); ctx.lineTo((y + h) * sx, t * sy); ctx.stroke();
+    }
+  }
+
   ctx.save();
-  ctx.strokeStyle = line;
-  ctx.fillStyle = "rgba(255,255,255,0.7)";
-  ctx.lineWidth = Math.max(1, height * 0.0055);
+  ctx.lineWidth = Math.max(1, 0.55 * scale);
+  ctx.strokeStyle = "rgba(255,255,255,0.38)";
+  ctx.fillStyle = "rgba(0,0,0,0.05)";
+  ctx.beginPath(); rectL(19, 0, 62, 18); ctx.fill(); ctx.stroke();   // grande surface (gauche)
+  ctx.beginPath(); rectL(19, 82, 62, 18); ctx.fill(); ctx.stroke();  // grande surface (droite)
+  ctx.beginPath(); rectL(32, 0, 36, 7); ctx.stroke();                // petite surface (gauche)
+  ctx.beginPath(); rectL(32, 93, 36, 7); ctx.stroke();               // petite surface (droite)
 
-  ctx.beginPath(); ctx.moveTo(x(50), 0); ctx.lineTo(x(50), height); ctx.stroke();
-  ctx.beginPath(); ctx.arc(x(50), y(50), height * 0.12, 0, Math.PI * 2); ctx.stroke();
-  [12, 88, 50].forEach(py => { ctx.beginPath(); ctx.arc(x(py), y(50), Math.max(2, height * 0.009), 0, Math.PI * 2); ctx.fill(); });
+  ctx.strokeStyle = "rgba(255,255,255,0.7)";
+  ctx.lineWidth = Math.max(1, 0.7 * scale);
+  ctx.beginPath(); rectL(41, 0, 18, 3.5); ctx.stroke();              // but (gauche)
+  ctx.beginPath(); rectL(41, 96.5, 18, 3.5); ctx.stroke();           // but (droite)
+  ctx.strokeStyle = "rgba(255,255,255,0.22)";
+  ctx.lineWidth = Math.max(0.5, 0.3 * scale);
+  goalNet(41, 0, 18, 3.5);
+  goalNet(41, 96.5, 18, 3.5);
 
-  [0, 82].forEach(py => {
-    ctx.fillStyle = "rgba(0,0,0,0.05)";
-    ctx.fillRect(x(py), y(19), x(18), y(62));
-    ctx.strokeRect(x(py), y(19), x(18), y(62));
-  });
-  [0, 93].forEach(py => ctx.strokeRect(x(py), y(32), x(7), y(36)));
+  ctx.fillStyle = "rgba(255,255,255,0.65)";
+  dotL(50, 12, 0.9); dotL(50, 88, 0.9); dotL(50, 50, 0.9);           // points de penalty + centre
 
-  // Buts placés hors de la ligne, avec un filet simple mais lisible.
-  ctx.strokeStyle = "rgba(255,255,255,0.72)";
-  [[0, -1], [96.5, 1]].forEach(([py]) => {
-    const gx = x(py), gw = x(3.5);
-    ctx.strokeRect(gx, y(41), gw, y(18));
-    ctx.beginPath();
-    for (let i = 44; i < 59; i += 4) { ctx.moveTo(gx, y(i)); ctx.lineTo(gx + gw, y(i + 3)); }
-    ctx.stroke();
-  });
+  ctx.strokeStyle = "rgba(255,255,255,0.38)";
+  ctx.lineWidth = Math.max(1, 0.55 * scale);
+  ctx.beginPath(); ctx.moveTo(50 * sx, 0); ctx.lineTo(50 * sx, H); ctx.stroke(); // ligne médiane
+  ctx.beginPath(); ctx.arc(50 * sx, 50 * sy, 14 * scale, 0, Math.PI * 2); ctx.stroke(); // rond central
 
-  // Arcs de corner en pixels pour qu'ils restent circulaires malgré la transposition.
-  const cr = height * 0.035;
-  [[0, 0, 0], [width, 0, Math.PI / 2], [0, height, -Math.PI / 2], [width, height, Math.PI]].forEach(([cx, cy, start]) => {
-    ctx.beginPath(); ctx.arc(cx, cy, cr, start, start + Math.PI / 2); ctx.stroke();
-  });
+  // Arcs de penalty : portion de cercle (rayon 12, centré sur le point de penalty) tournée vers
+  // le centre du terrain — approximation visuelle, pas une reprise exacte de la géométrie FIFA.
+  ctx.beginPath(); ctx.arc(12 * sx, 50 * sy, 12 * scale, -0.85, 0.85); ctx.stroke();
+  ctx.beginPath(); ctx.arc(88 * sx, 50 * sy, 12 * scale, Math.PI - 0.85, Math.PI + 0.85); ctx.stroke();
+
+  ctx.strokeStyle = "rgba(255,255,255,0.32)";
+  ctx.lineWidth = Math.max(1, 0.5 * scale);
+  const cr = 3.5 * scale;
+  ctx.beginPath(); ctx.arc(0, 0, cr, 0, Math.PI / 2); ctx.stroke();
+  ctx.beginPath(); ctx.arc(W, 0, cr, Math.PI / 2, Math.PI); ctx.stroke();
+  ctx.beginPath(); ctx.arc(0, H, cr, -Math.PI / 2, 0); ctx.stroke();
+  ctx.beginPath(); ctx.arc(W, H, cr, Math.PI, Math.PI * 1.5); ctx.stroke();
   ctx.restore();
 }
 
@@ -3570,10 +3594,10 @@ function renderMatchPitchFrame() {
   if (canvas.width !== wantW || canvas.height !== wantH) { canvas.width = wantW; canvas.height = wantH; }
   const sx = canvas.width / 100;
   const sy = canvas.height / 100;
-  const radiusScale = sy;
+  const scale = Math.min(sx, sy); // rayons/épaisseurs : une seule échelle pour rester ronds malgré sx≠sy
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  drawPitchMarkings(ctx, canvas.width, canvas.height);
+  drawPitchMarkings(ctx, sx, sy);
 
   const gkIds = new Set();
   if (matchEngine) {
@@ -3584,9 +3608,13 @@ function renderMatchPitchFrame() {
     const player = findPitchPlayer(d.id);
     const team = matchState ? (d.side === "home" ? matchState.homeTeam : matchState.awayTeam) : null;
     const teamColor = d.side === "home" ? "#3aa0ff" : "#ff5d5d";
-    const r = (gkIds.has(d.id) ? PITCH_GK_R : PITCH_PLAYER_R) * radiusScale;
-    const cx = d.y * sx, cy = d.x * sy;
-    const photo = (player && team) ? getPitchPhotoImage(player, team) : null;
+    const r = (gkIds.has(d.id) ? PITCH_GK_R : PITCH_PLAYER_R) * scale;
+    const cx = d.y * sx, cy = d.x * sy; // transposé : logique (x,y) -> écran (y,x)
+    // Le porteur du ballon affiche ses initiales à la place de sa photo le temps qu'il l'ait
+    // (façon Football Manager, dont le nom du porteur apparaît près de lui) — reprend le même
+    // repli "initiales" déjà utilisé quand la photo est absente.
+    const isBallCarrier = state.ballCarrierId === d.id;
+    const photo = (!isBallCarrier && player && team) ? getPitchPhotoImage(player, team) : null;
 
     // fond plein couleur d'équipe, toujours dessiné en premier (même avec une photo : on garde
     // un anneau de fond visible autour du visage plutôt que la photo pleine largeur du disque).
@@ -3602,8 +3630,8 @@ function renderMatchPitchFrame() {
       ctx.arc(cx, cy, innerR, 0, Math.PI * 2);
       ctx.clip();
       // recadrage "cover" : la photo remplit le disque intérieur sans être déformée
-      const scale = Math.max((innerR * 2) / photo.naturalWidth, (innerR * 2) / photo.naturalHeight);
-      const dw = photo.naturalWidth * scale, dh = photo.naturalHeight * scale;
+      const pscale = Math.max((innerR * 2) / photo.naturalWidth, (innerR * 2) / photo.naturalHeight);
+      const dw = photo.naturalWidth * pscale, dh = photo.naturalHeight * pscale;
       ctx.drawImage(photo, cx - dw / 2, cy - dh / 2, dw, dh);
       ctx.restore();
     }
@@ -3613,13 +3641,13 @@ function renderMatchPitchFrame() {
     const isUserSide = matchState && d.side === matchState.userSide;
     ctx.beginPath();
     ctx.arc(cx, cy, r, 0, Math.PI * 2);
-    ctx.lineWidth = Math.max(1, (isUserSide ? 0.55 : 0.3) * radiusScale);
+    ctx.lineWidth = Math.max(1, (isUserSide ? 0.55 : 0.3) * scale);
     ctx.strokeStyle = teamColor;
     ctx.stroke();
 
     if (!photo) {
       ctx.fillStyle = "#ffffff";
-      ctx.font = `${Math.max(8, 2.1 * radiusScale)}px "Rajdhani", sans-serif`;
+      ctx.font = `${Math.max(8, 2.1 * scale)}px "Rajdhani", sans-serif`;
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       ctx.fillText(player ? playerInitials(player.name) : "", cx, cy + 0.5);
@@ -3627,17 +3655,18 @@ function renderMatchPitchFrame() {
   });
 
   ctx.beginPath();
-  ctx.arc(state.ball.y * sx, state.ball.x * sy, PITCH_BALL_R * radiusScale, 0, Math.PI * 2);
+  ctx.arc(state.ball.y * sx, state.ball.x * sy, PITCH_BALL_R * scale, 0, Math.PI * 2);
   ctx.fillStyle = "#ffffff";
   ctx.fill();
-  ctx.lineWidth = Math.max(1, 0.25 * radiusScale);
+  ctx.lineWidth = Math.max(1, 0.25 * scale);
   ctx.strokeStyle = "#333333";
   ctx.stroke();
 }
 
 // Le joueur ne pilote plus aucune action : un clic sur un joueur (sien ou adverse) ouvre juste sa
 // fiche. Câblé une seule fois (le canvas est un élément statique de la page, réutilisé d'un match
-// à l'autre).
+// à l'autre). Transposition inverse de celle du rendu (écran -> logique) pour retrouver le bon
+// joueur sous le doigt/curseur.
 function setupMatchPitchPointerEvents() {
   const canvas = document.getElementById("match-pitch-canvas");
   if (!canvas) return;

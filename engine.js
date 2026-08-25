@@ -680,26 +680,57 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
     const passers = attackers.filter(p => p.id !== actor.id);
     let current = passers.length ? passers[Math.floor(Math.random() * passers.length)] : actor;
     let pos = atkAnchors[current.id] || { x: 50, y: side === "home" ? 25 : 75 };
-    const buildLength = passers.length ? 1 + Math.floor(Math.random() * 2) : 0;
+    // Plafonné à passers.length : avec un seul coéquipier disponible, un enchaînement de 2 passes
+    // forcerait à un moment donné "next" à retomber sur le même joueur que "current" (passe à
+    // soi-même, ballon immobile) faute d'un troisième participant distinct.
+    const buildLength = passers.length ? Math.min(1 + Math.floor(Math.random() * 2), passers.length) : 0;
     for (let i = 0; i < buildLength; i++) {
       const isLast = i === buildLength - 1;
-      const next = isLast ? actor : (passers[Math.floor(Math.random() * passers.length)] || actor);
+      const otherPassers = passers.filter(p => p.id !== current.id);
+      const next = isLast ? actor : (otherPassers[Math.floor(Math.random() * otherPassers.length)] || actor);
       const nextPos = atkAnchors[next.id] || pos;
       beats.push({ type: "pass", side, playerId: current.id, toPlayerId: next.id, from: pos, to: nextPos, duration: 0.5 + Math.random() * 0.3, event: null });
       current = next; pos = nextPos;
     }
-    const shooterPos = atkAnchors[actor.id] || pos;
+
+    // Le porteur de balle (actor) porte ensuite lui-même le ballon vers le but adverse en 2-3
+    // touches "slalom" (beats "dribble" en zig-zag) — jamais un simple saut de disque à disque,
+    // même en 1v1 (aucune passe possible, buildLength=0 ci-dessus) : ce porté contesté a
+    // toujours lieu. UN défenseur précis (`marker`) le prend en chasse pendant ce temps via
+    // `beat.mark` (mouvement secondaire interpolé par matchchoreo.js en plus du porteur/ballon),
+    // se rapprochant progressivement sans jamais coller instantanément (garde le suspense).
+    const marker = defenders.length ? defenders[Math.floor(Math.random() * defenders.length)] : null;
+    let markerPos = marker ? (defAnchors[marker.id] || { x: pos.x, y: side === "home" ? pos.y + 10 : pos.y - 10 }) : null;
+    const boxY = side === "home" ? PITCH_H - 22 : 22;
+    const carryTarget = { x: clamp(pos.x + (Math.random() - 0.5) * 20, 12, 88), y: boxY };
+    const carrySteps = 2 + Math.floor(Math.random() * 2); // 2-3 touches de slalom
+    let carryPos = pos;
+    for (let i = 0; i < carrySteps; i++) {
+      const t = (i + 1) / carrySteps;
+      const straightX = pos.x + (carryTarget.x - pos.x) * t;
+      const straightY = pos.y + (carryTarget.y - pos.y) * t;
+      const wiggle = (i % 2 === 0 ? 1 : -1) * (5 + Math.random() * 7);
+      const nextCarryPos = { x: clamp(straightX + wiggle, 3, 97), y: straightY };
+      const beat = { type: "dribble", side, playerId: actor.id, from: carryPos, to: nextCarryPos, duration: 0.35 + Math.random() * 0.2, event: null };
+      if (marker) {
+        const chaseTo = { x: markerPos.x + (nextCarryPos.x - markerPos.x) * 0.6, y: markerPos.y + (nextCarryPos.y - markerPos.y) * 0.6 };
+        beat.mark = { id: marker.id, from: markerPos, to: chaseTo };
+        markerPos = chaseTo;
+      }
+      beats.push(beat);
+      carryPos = nextCarryPos;
+    }
+
     if (!outcome) {
-      const defender = defenders.length ? defenders[Math.floor(Math.random() * defenders.length)] : null;
-      const defPos = defender ? (defAnchors[defender.id] || shooterPos) : { x: shooterPos.x, y: side === "home" ? shooterPos.y + 8 : shooterPos.y - 8 };
-      beats.push({ type: "dribble", side, playerId: actor.id, from: pos, to: shooterPos, duration: 0.4, event: null });
-      beats.push({ type: "tackle", side: side === "home" ? "away" : "home", playerId: defender ? defender.id : null, from: shooterPos, to: defPos, duration: 0.5, event: null });
+      // Le défenseur qui chassait depuis le début conclut logiquement le tacle.
+      const defPos = marker ? markerPos : { x: carryPos.x, y: side === "home" ? carryPos.y + 8 : carryPos.y - 8 };
+      beats.push({ type: "tackle", side: side === "home" ? "away" : "home", playerId: marker ? marker.id : null, from: carryPos, to: defPos, duration: 0.5, event: null });
       return beats;
     }
     const goalY = side === "home" ? PITCH_H : 0;
     const goalX = clamp(GOAL_X_MIN + Math.random() * (GOAL_X_MAX - GOAL_X_MIN), GOAL_X_MIN, GOAL_X_MAX);
     const nearGoalY = side === "home" ? goalY - 6 : goalY + 6;
-    beats.push({ type: "shot", side, playerId: actor.id, gkId: gk ? gk.id : null, from: shooterPos, to: { x: goalX, y: nearGoalY }, duration: 0.7, event: null });
+    beats.push({ type: "shot", side, playerId: actor.id, gkId: gk ? gk.id : null, from: carryPos, to: { x: goalX, y: nearGoalY }, duration: 0.7, event: null });
     const finalY = outcome === "goal" ? goalY : nearGoalY;
     beats.push({ type: outcome, side, playerId: actor.id, gkId: gk ? gk.id : null, from: { x: goalX, y: nearGoalY }, to: { x: goalX, y: finalY }, duration: 0.4, event: null });
     return beats;
@@ -1201,6 +1232,9 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
     // le camp qui domine s'affiche en formation offensive, l'autre se replie sur sa formation
     // défensive (setup.formationOOP/assignmentsOOP) — visuellement, l'équipe sans le ballon
     // défend enfin, plutôt que de rester poussée vers l'avant en permanence comme avant.
+    // `role` (poste réel du joueur, GK/DEF/MID/ATT — directement depuis l'objet joueur, pas la
+    // formation) permet à matchchoreo.js de faire suivre le ballon à chacun avec une intensité
+    // différente (voir ROLE_FOLLOW_FACTORS) : un défenseur se décale peu, un attaquant beaucoup.
     getFormationAnchors: (side, minute) => {
       const team = side === "home" ? homeTeam : awayTeam;
       const setup = side === "home" ? homeSetup : awaySetup;
@@ -1208,7 +1242,12 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
       const outfieldIds = getActiveOutfieldIds(team, setup, minute, side);
       const possessing = side === "home" ? lastHomePossession >= 50 : lastHomePossession < 50;
       const anchors = computeSideAnchors(setup, outfieldIds, side, possessing);
-      if (gkPlayer) anchors[gkPlayer.id] = { x: 50, y: gkAnchorY(side) };
+      outfieldIds.forEach(id => {
+        if (!anchors[id]) return;
+        const player = team.players.find(p => p.id === id);
+        anchors[id].role = player ? player.pos : "MID";
+      });
+      if (gkPlayer) anchors[gkPlayer.id] = { x: 50, y: gkAnchorY(side), role: "GK" };
       return anchors;
     }
   };
