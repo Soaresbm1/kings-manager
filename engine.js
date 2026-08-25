@@ -57,6 +57,13 @@ function gkAnchorY(side) { return side === "home" ? 5 : 95; }
 // — cohérent avec formationDefenseFactor). En dehors du 7v7 (escalier, Dé Géant, escalier inversé
 // du Matchball), FORMATION_SLOTS ne s'applique pas (toujours 6 joueurs de champ) : repli sur
 // computeOutfieldAnchors, comme le faisait l'ancien matchphysics.js.
+// Repli défensif automatique (voir ci-dessous) : fraction du trajet vers sa propre ligne de but
+// qu'un joueur parcourt en plus quand son équipe n'a pas le ballon. Appliqué systématiquement,
+// que l'équipe ait ou non personnalisé une formation "sans balle" distincte dans l'onglet
+// Tactique — sans ce filet, une IA (qui ne personnalise jamais sa formation OOP) resterait
+// visuellement toujours poussée vers l'avant, y compris quand elle défend.
+const DEFENSIVE_COMPACTION = 0.4;
+
 function computeSideAnchors(setup, activeOutfieldIds, side, possessing) {
   const anchors = {};
   const formationKey = possessing ? setup.formation : (setup.formationOOP || setup.formation);
@@ -79,6 +86,14 @@ function computeSideAnchors(setup, activeOutfieldIds, side, possessing) {
     activeOutfieldIds.forEach((id, i) => {
       const a = rowAnchors[i] || { x: 50, depth: 0.5 };
       anchors[id] = { x: a.x, y: anchorToY(a.depth, side) };
+    });
+  }
+  if (!possessing) {
+    const ownGoalY = side === "home" ? 4 : PITCH_H - 4;
+    activeOutfieldIds.forEach(id => {
+      const a = anchors[id];
+      if (!a) return;
+      anchors[id] = { x: a.x, y: a.y + (ownGoalY - a.y) * DEFENSIVE_COMPACTION };
     });
   }
   return anchors;
@@ -187,6 +202,7 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
   let homeGoals = 0, awayGoals = 0;
   let homeShots = 0, awayShots = 0;
   let possessionSum = 0, possessionCount = 0;
+  let lastHomePossession = 50; // dernière possession connue (%), pour le repli défensif visuel (getFormationAnchors)
   const playerStats = {}; // id -> {goals, assists}
 
   // --- Règlement Kings League : formats réduits (début progressif / dé géant / Matchball) ---
@@ -1020,6 +1036,7 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
     possessionSum += homePossession;
     possessionCount++;
     minuteEvents.possession = homePossession;
+    lastHomePossession = homePossession;
 
     // but contre son camp (très rare)
     if (Math.random() < 0.0006) {
@@ -1058,11 +1075,25 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
       awayCtx = { sequence, atkAnchors: awayAtkAnchors, defenders: homeAttackers, defAnchors: homeDefAnchors };
     }
 
+    // Chaque minute (match humain animé) montre AU MOINS une possession par camp, que le tirage
+    // au sort ci-dessus lui accorde ou non une vraie occasion — sans quoi la plupart des minutes
+    // (le tirage échoue le plus souvent) n'affichaient RIEN, un match entier semblant alors se
+    // résumer à une poignée d'actions isolées plutôt qu'un jeu continu. Ceci est PUREMENT visuel :
+    // aucun tir, aucune statistique, aucun Math.random() supplémentaire ne peut faire basculer le
+    // score — seul le camp SANS occasion ce tour-ci reçoit une possession "ambiante" qui se
+    // termine par une perte de balle (buildPossessionBeats avec outcome=null, même mécanique que
+    // l'occasion ratée silencieuse ci-dessous).
     if (homeChanceRoll < 0.10 * (homePossession / 50) * chanceFreqBoost) {
       attemptAttack(minute, minuteEvents, homeTeam.name, homeAttackers, awayGK, homeAttackPower, homeDefenseFactor, true, homeCtx);
+    } else if (homeCtx) {
+      const actor = weightedPick(homeAttackers);
+      if (actor) sequence.push(...buildPossessionBeats("home", homeAttackers, actor, homeCtx.atkAnchors, homeCtx.defenders, homeCtx.defAnchors, awayGK, null));
     }
     if (awayChanceRoll < 0.10 * ((100 - homePossession) / 50) * chanceFreqBoost) {
       attemptAttack(minute, minuteEvents, awayTeam.name, awayAttackers, homeGK, awayAttackPower, awayDefenseFactor, false, awayCtx);
+    } else if (awayCtx) {
+      const actor = weightedPick(awayAttackers);
+      if (actor) sequence.push(...buildPossessionBeats("away", awayAttackers, actor, awayCtx.atkAnchors, awayCtx.defenders, awayCtx.defAnchors, homeGK, null));
     }
 
     events.push(...minuteEvents);
@@ -1166,12 +1197,17 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
     // Ancre x/y de chaque joueur actif (GK inclus) pour le côté/minute donnés, dans la formation
     // "avec balle" — utilisé par matchchoreo.js/app.js pour replacer les joueurs non impliqués
     // dans le beat courant (repositionnement tactique crédible entre deux actions).
+    // `possessing` : reprend la possession de la DERNIÈRE minute simulée (lastHomePossession) —
+    // le camp qui domine s'affiche en formation offensive, l'autre se replie sur sa formation
+    // défensive (setup.formationOOP/assignmentsOOP) — visuellement, l'équipe sans le ballon
+    // défend enfin, plutôt que de rester poussée vers l'avant en permanence comme avant.
     getFormationAnchors: (side, minute) => {
       const team = side === "home" ? homeTeam : awayTeam;
       const setup = side === "home" ? homeSetup : awaySetup;
       const gkPlayer = getGK(team, setup);
       const outfieldIds = getActiveOutfieldIds(team, setup, minute, side);
-      const anchors = computeSideAnchors(setup, outfieldIds, side, true);
+      const possessing = side === "home" ? lastHomePossession >= 50 : lastHomePossession < 50;
+      const anchors = computeSideAnchors(setup, outfieldIds, side, possessing);
       if (gkPlayer) anchors[gkPlayer.id] = { x: 50, y: gkAnchorY(side) };
       return anchors;
     }

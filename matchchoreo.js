@@ -116,7 +116,11 @@ function createChoreographer() {
   }
 
   // Positionne le ballon et les joueurs impliqués dans le beat courant à l'instant t (0-1).
+  // Un beat "phase" (annonce d'escalier/carton/blessure...) ne représente aucune action de jeu :
+  // le ballon reste exactement où il était plutôt que de sauter vers son from/to (souvent {50,50}
+  // par convention pour ces beats), sans quoi chaque annonce le téléportait au centre du terrain.
   function applyBeatFrame(beat, t) {
+    if (beat.type === "phase") return;
     const eased = choreoEasingForBeat(beat.type)(t);
     ball.x = choreoLerp(beat.from.x, beat.to.x, eased);
     ball.y = choreoLerp(beat.from.y, beat.to.y, eased);
