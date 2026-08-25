@@ -3415,8 +3415,8 @@ function closePlayerInfoModal() {
 // Le match humain entier (coup d'envoi à la fin) se joue minute par minute, automatiquement :
 // runMinute()/advanceToMinute() demandent au moteur (engine.js:simulateMinute avec
 // {withSequence:true}) la chorégraphie de la minute à venir, la chargent dans `choreo`, et la
-// boucle continue ci-dessous l'anime jusqu'à son terme avant d'enchaîner sur la suivante. Rendu
-// sur un <canvas> superposé au tracé SVG statique du terrain (lignes/surfaces/cercle central).
+// boucle continue ci-dessous l'anime jusqu'à son terme avant d'enchaîner sur la suivante. Le
+// canvas dessine à la fois le terrain et les acteurs, transposés dans un affichage paysage.
 
 // Ancre chaque joueur actif de la minute donnée à sa position de formation courante (voir
 // engine.js:getFormationAnchors) — les joueurs déjà affichés ne sont jamais téléportés (ils sont
@@ -3515,10 +3515,48 @@ document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "visible") lastPitchTs = null;
 });
 
-// Dessine les joueurs/le ballon sur le canvas superposé au SVG du terrain, à partir de
-// choreo.getState(). Coordonnées logiques 0-100 × 0-100 → pixels réels, à l'échelle (le
-// conteneur a un aspect-ratio fixe carré côté CSS, indispensable pour des cercles non déformés).
+// Dessine les marquages dans le repère écran paysage. Le moteur reste volontairement dans son
+// repère historique : x va d'une touche à l'autre et y d'un but à l'autre. À l'écran, y devient
+// donc l'abscisse et x l'ordonnée.
 const PITCH_PLAYER_R = 3.2, PITCH_GK_R = 3.6, PITCH_BALL_R = 1.8;
+
+function drawPitchMarkings(ctx, width, height) {
+  const x = logicalY => logicalY / 100 * width;
+  const y = logicalX => logicalX / 100 * height;
+  const line = "rgba(255,255,255,0.42)";
+  ctx.save();
+  ctx.strokeStyle = line;
+  ctx.fillStyle = "rgba(255,255,255,0.7)";
+  ctx.lineWidth = Math.max(1, height * 0.0055);
+
+  ctx.beginPath(); ctx.moveTo(x(50), 0); ctx.lineTo(x(50), height); ctx.stroke();
+  ctx.beginPath(); ctx.arc(x(50), y(50), height * 0.12, 0, Math.PI * 2); ctx.stroke();
+  [12, 88, 50].forEach(py => { ctx.beginPath(); ctx.arc(x(py), y(50), Math.max(2, height * 0.009), 0, Math.PI * 2); ctx.fill(); });
+
+  [0, 82].forEach(py => {
+    ctx.fillStyle = "rgba(0,0,0,0.05)";
+    ctx.fillRect(x(py), y(19), x(18), y(62));
+    ctx.strokeRect(x(py), y(19), x(18), y(62));
+  });
+  [0, 93].forEach(py => ctx.strokeRect(x(py), y(32), x(7), y(36)));
+
+  // Buts placés hors de la ligne, avec un filet simple mais lisible.
+  ctx.strokeStyle = "rgba(255,255,255,0.72)";
+  [[0, -1], [96.5, 1]].forEach(([py]) => {
+    const gx = x(py), gw = x(3.5);
+    ctx.strokeRect(gx, y(41), gw, y(18));
+    ctx.beginPath();
+    for (let i = 44; i < 59; i += 4) { ctx.moveTo(gx, y(i)); ctx.lineTo(gx + gw, y(i + 3)); }
+    ctx.stroke();
+  });
+
+  // Arcs de corner en pixels pour qu'ils restent circulaires malgré la transposition.
+  const cr = height * 0.035;
+  [[0, 0, 0], [width, 0, Math.PI / 2], [0, height, -Math.PI / 2], [width, height, Math.PI]].forEach(([cx, cy, start]) => {
+    ctx.beginPath(); ctx.arc(cx, cy, cr, start, start + Math.PI / 2); ctx.stroke();
+  });
+  ctx.restore();
+}
 
 function renderMatchPitchFrame() {
   const canvas = document.getElementById("match-pitch-canvas");
@@ -3532,8 +3570,10 @@ function renderMatchPitchFrame() {
   if (canvas.width !== wantW || canvas.height !== wantH) { canvas.width = wantW; canvas.height = wantH; }
   const sx = canvas.width / 100;
   const sy = canvas.height / 100;
+  const radiusScale = sy;
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawPitchMarkings(ctx, canvas.width, canvas.height);
 
   const gkIds = new Set();
   if (matchEngine) {
@@ -3544,8 +3584,8 @@ function renderMatchPitchFrame() {
     const player = findPitchPlayer(d.id);
     const team = matchState ? (d.side === "home" ? matchState.homeTeam : matchState.awayTeam) : null;
     const teamColor = d.side === "home" ? "#3aa0ff" : "#ff5d5d";
-    const r = (gkIds.has(d.id) ? PITCH_GK_R : PITCH_PLAYER_R) * sx;
-    const cx = d.x * sx, cy = d.y * sy;
+    const r = (gkIds.has(d.id) ? PITCH_GK_R : PITCH_PLAYER_R) * radiusScale;
+    const cx = d.y * sx, cy = d.x * sy;
     const photo = (player && team) ? getPitchPhotoImage(player, team) : null;
 
     // fond plein couleur d'équipe, toujours dessiné en premier (même avec une photo : on garde
@@ -3573,13 +3613,13 @@ function renderMatchPitchFrame() {
     const isUserSide = matchState && d.side === matchState.userSide;
     ctx.beginPath();
     ctx.arc(cx, cy, r, 0, Math.PI * 2);
-    ctx.lineWidth = Math.max(1, (isUserSide ? 0.55 : 0.3) * sx);
+    ctx.lineWidth = Math.max(1, (isUserSide ? 0.55 : 0.3) * radiusScale);
     ctx.strokeStyle = teamColor;
     ctx.stroke();
 
     if (!photo) {
       ctx.fillStyle = "#ffffff";
-      ctx.font = `${Math.max(8, 2.1 * sx)}px "Rajdhani", sans-serif`;
+      ctx.font = `${Math.max(8, 2.1 * radiusScale)}px "Rajdhani", sans-serif`;
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       ctx.fillText(player ? playerInitials(player.name) : "", cx, cy + 0.5);
@@ -3587,10 +3627,10 @@ function renderMatchPitchFrame() {
   });
 
   ctx.beginPath();
-  ctx.arc(state.ball.x * sx, state.ball.y * sy, PITCH_BALL_R * sx, 0, Math.PI * 2);
+  ctx.arc(state.ball.y * sx, state.ball.x * sy, PITCH_BALL_R * radiusScale, 0, Math.PI * 2);
   ctx.fillStyle = "#ffffff";
   ctx.fill();
-  ctx.lineWidth = Math.max(1, 0.25 * sx);
+  ctx.lineWidth = Math.max(1, 0.25 * radiusScale);
   ctx.strokeStyle = "#333333";
   ctx.stroke();
 }
@@ -3605,7 +3645,10 @@ function setupMatchPitchPointerEvents() {
   canvas.onclick = evt => {
     if (!choreo || !matchState) return;
     const rect = canvas.getBoundingClientRect();
-    const pt = { x: (evt.clientX - rect.left) / rect.width * 100, y: (evt.clientY - rect.top) / rect.height * 100 };
+    const pt = {
+      x: (evt.clientY - rect.top) / rect.height * 100,
+      y: (evt.clientX - rect.left) / rect.width * 100
+    };
     const found = choreo.getState().players.find(p => Math.hypot(p.x - pt.x, p.y - pt.y) <= PITCH_GK_R + 1.5);
     if (!found) return;
     const player = findPitchPlayer(found.id);
