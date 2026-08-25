@@ -24,9 +24,12 @@ statique.
 2. **`engine.js`** — moteur de simulation pur (pas de DOM) : calendrier
    (`generateSchedule`), simulation minute par minute (`createMatchEngine`,
    `simulateMatch`), classement (`computeStandings`), progression des joueurs
-   (`developPlayer`), et toute l'**IA** (voir section dédiée).
-3. **`matchphysics.js`** — moteur physique pur (pas de DOM) du plateau persistant sur lequel se
-   joue le match humain en direct (`createTurnMatch`), façon Soccer Stars. Voir section dédiée.
+   (`developPlayer`), et toute l'**IA** (voir section dédiée). Produit aussi, pour le match
+   humain, la chorégraphie animée de chaque minute (`simulateMinute(minute,
+   {withSequence:true})`) — voir section dédiée.
+3. **`matchchoreo.js`** — module d'interpolation pur (pas de DOM) qui anime la chorégraphie
+   produite par `engine.js` (positions des joueurs/du ballon frame par frame), façon Football
+   Manager Mobile. Voir section dédiée.
 4. **`app.js`** — état du jeu (`STATE`), rendu des écrans, gestion des événements DOM,
    sauvegardes (`localStorage` + export/import JSON).
 5. **`index.html` / `style.css`** — structure des écrans et mise en forme.
@@ -250,92 +253,83 @@ d'abord puis vice-champions, triés par points) se départagent en barrage (5v12
   voir section dédiée) : heuristique tir/passe/dégagement/dribble pilotée par les stats du
   joueur qui exécute, indépendante de l'IA "macro" ci-dessus.
 
-## Match humain en tours sur plateau physique (`matchphysics.js`)
+## Simulation animée du match humain (`engine.js` + `matchchoreo.js`)
 
-Le match du joueur ne se "simule" plus minute par minute : c'est une seule partie de disques
-persistante, du coup d'envoi à la fin, avec **alternance stricte de tours** entre le joueur et
-l'IA (chacun flique UN de ses disques à son tour — jamais le ballon directement). Les matchs
-IA vs IA en arrière-plan (`simulateMatch`/`simulateAIMatch`/`simulateRoundAI`) sont **inchangés**
+Le match du joueur n'est plus jouable directement (l'ancien plateau physique à tour de rôle,
+façon Soccer Stars, a été retiré) : il se déroule **automatiquement**, minute par minute, comme
+une simulation Football Manager Mobile — le joueur règle sa tactique avant/pendant le match et
+regarde les actions s'enchaîner seules (passes, dribbles, tirs). Les matchs IA vs IA en
+arrière-plan (`simulateMatch`/`simulateAIMatch`/`simulateRoundAI`) sont **strictement inchangés**
 et continuent de se résoudre instantanément par tirage au sort via `engine.js:simulateMinute`.
 
-- **`engine.js`** garde la responsabilité de tout le bookkeeping de règles (escalier, Ballon
-  Spécial, Dé Géant, Matchball, cartons, blessures, fenêtres Cartes Secrètes/Penalty du
-  Président), mais `simulateMinute` est scindée : la partie bookkeeping est extraite dans
-  `advancePhaseState(minute)` (sans le tirage au sort des occasions ni le but contre son camp
-  aléatoire, remplacés par le plateau physique), exposée pour le match humain via
-  `advancePhase(minute)` sur le handle. `simulateMinute` (occasions par dés) reste utilisée
-  telle quelle par les matchs IA. `recordGoalFromPlay(side, minute, scorerId, assisterId, gkId)` /
-  `recordOwnGoalFromPlay(concedingSide, minute, scorerId)` / `recordSaveFromPlay(side, minute,
-  takerId, gkId)` enregistrent un but/csc/arrêt réellement produit par le plateau (mêmes bonus
-  Carte But Double/Joueur Étoile/Ballon Spécial via `registerGoal`, même construction
-  d'événement via `resolveAttackOutcome` — partagée avec `attemptAttack`).
-- **1 round (un tour joueur + un tour IA) = 1 minute** : `app.js` incrémente `matchState.minute`
-  une fois les DEUX camps passés dans le round, puis appelle `advancePhase(minute)` — préserve
-  exactement les seuils existants (`ESCALIER_END_MINUTE=5`, `DOUBLE_GOAL_START_MINUTE=17`,
-  `MATCHBALL_START_MINUTE=36`...) sans recalibrage. Un match régulier tient donc en ~40 rounds
-  (80 tirs individuels) avant que le Matchball (round 36+) ne tranche.
-- **`matchphysics.js:createTurnMatch()`** — moteur physique pur (pas de DOM), terrain complet
-  0–100 × 0–100 (même convention que l'ancien terrain : `y=0` but domicile, `y=100` but
-  extérieur), un disque par joueur actif de chaque équipe (`setActiveLineups`, même contrat que
-  l'ancien `matchVisualizer.setActiveLineups` — ne téléporte jamais un disque déjà en jeu, ne
-  positionne que les nouveaux entrants). `step(dt)` : friction, collisions cercle-cercle
-  élastiques (disque-disque et disque-ballon), rebond amorti sur les 4 bords sauf dans l'axe des
-  buts (`GOAL_X_MIN`/`GOAL_X_MAX`) où une sortie devient un but. `shoot(discId, vx, vy)` flique
-  un disque (le contrôle de qui a le droit de jouer vit côté `app.js`, pas ici).
-  `consumeTurnOutcome()` renvoie `null` (tour terminé normalement) / `{type:"goal"|"owngoal",
-  scoringSide, concedingSide, scorerId, assisterId}` (remise en jeu automatique) /
-  `{type:"save", side, takerId, gkId}` (flavor pur) — scorer/assist dérivés du réel historique de
-  touches par côté, y compris les buts contre son camp (dernier disque à toucher le ballon
-  appartenant au camp qui encaisse). Contient aussi les petits helpers génériques hérités de
-  l'ancien `matchvisual.js` (`computeOutfieldAnchors`, `anchorToY`, `gkAnchorY`, `clamp`),
-  toujours utiles pour la formation de coup d'envoi/remise en jeu. **Pas de mécanique de passe** :
-  chaque flick, quoi qu'il touche (coéquipier, adversaire, gardien, rien), vaut un tour complet et
-  cède la main normalement — un système "la balle s'arrête sur un coéquipier et l'équipe rejoue" a
-  été tenté puis abandonné (gels récurrents du plateau, non résolus malgré plusieurs correctifs) ;
-  `chooseAiTurn` peut toujours *viser* un coéquipier plus avancé (`AI_PASS_POWER`, dans `app.js`),
-  c'est une simple heuristique de visée, ça ne déclenche aucun arrêt/contrôle particulier.
-- **Boucle de tours côté `app.js`** : `pitchFrameLoop` (`requestAnimationFrame` continu) fait
-  avancer `turnMatch.step(dt)` et redessine le canvas `#match-pitch-canvas` (superposé au SVG
-  statique des tracés du terrain) à chaque frame ; dès que le plateau redevient immobile après
-  un tir, `handleTurnSettled()` traite l'issue (`matchEngine.recordGoalFromPlay`/
-  `recordOwnGoalFromPlay`/`recordSaveFromPlay`), vérifie `isMatchDecided()` (le Matchball peut
-  trancher au milieu d'un round). **Un but termine le round IMMÉDIATEMENT** (peu importe si le
-  buteur a ouvert ou clos ce round) via `matchState.forcedRoundStartSide` = le camp qui encaisse :
-  celui-ci relance systématiquement au round suivant, jamais celui qui vient de marquer — comme
-  un vrai coup d'envoi après un but. Sinon (pas de but), alterne `matchState.turnSide` normalement
-  (le round se termine quand le camp qui n'a PAS ouvert ce round vient de jouer —
-  `matchState.roundStartSide`) ; une fois les deux camps passés (ou immédiatement après un but),
-  `finishRoundAdvance(minute)` fait le bookkeeping de round (voir ci-dessus), resynchronise
-  `syncTurnMatchLineups`, puis — si `advancePhase` a produit un événement `type:"phase"` en
-  dehors de l'escalier de départ et de l'escalier inversé du Matchball (Ballon Spécial, Dé Géant,
-  début du Matchball ; ni les événements aléatoires blessure/carton/penalty, ni l'escalier qui
-  ajoute/retire un seul joueur par round — un reset systématique y serait trop fréquent) — appelle
-  `turnMatch.resetFormation()` pour relancer le plateau en formation de coup d'envoi, comme un
-  vrai changement de phase Kings League (même chose à la reprise de la mi-temps via
-  `continueAfterHalfTime`). Vérifie ensuite mi-temps/fin de match, puis détermine qui ouvre le
-  round suivant : `matchState.forcedRoundStartSide` (le camp qui vient d'encaisser un but) est
-  toujours PRIORITAIRE sur l'alternance générique ; à défaut, et **uniquement si le plateau a été
-  réellement réinitialisé ce round** (`matchState.resetOccurredThisRound`, changement de phase
-  ponctuel), fait alterner `matchState.roundStartSide` (une réinitialisation sur deux démarre côté
-  domicile, l'autre côté extérieur), pour que ce ne soit jamais systématiquement le même camp qui
-  joue en premier sur une formation fraîchement réinitialisée. Ne s'applique délibérément PAS à
-  l'escalier de départ/inversé (`resetFormation()` déjà exclu pour ces phases, voir plus haut) :
-  sans cette garde, l'ordre de tir changerait à chaque nouvelle entrée/sortie de joueur alors que
-  rien n'a été remis en jeu. `beginTurn()` ne fait rien si c'est le tour du joueur (on attend son
-  glisser-relâcher sur ses propres disques, câblé une fois pour toutes par
-  `setupMatchPitchPointerEvents()`) ; sinon programme `executeAiTurn()` après un court délai
-  (`chooseAiTurn`, heuristique simple pilotée par les stats du joueur qui exécute — vise "à
-  travers" le ballon via `aimThroughBall`, jamais un flick direct dessus).
-- **Reprise après pause/modal** : `resumeTurnFlow()` est le point de reprise unique (pause,
-  mi-temps, tactique, Arme Secrète, modal de composition de phase) — termine d'abord un
-  changement de round resté en attente (`matchState.pendingRoundMinute`, cas où la
-  demande de composition s'est ouverte pendant une pause utilisateur), sinon relance simplement
-  `beginTurn()`.
-- **"Avancer rapidement"** (`skipMatch`) abandonne le plateau physique pour le reste du match :
-  termine les minutes restantes par tirage au sort via `matchEngine.simulateMinute`, exactement
-  comme un match IA vs IA, à partir du score/état déjà à jour de `matchEngine`.
-- Cartes Secrètes / Penalty du Président / pénalties restent résolus par dés comme avant (hors
-  périmètre du plateau physique) — seul le jeu au pied (dribble/passe/tir) est physique.
+- **`engine.js:simulateMinute(minute, { withSequence })`** — même moteur de décision qu'avant
+  (force d'équipe, forme, plan tactique, `weightedPick`, `registerGoal`...), enrichi pour
+  "raconter" chaque possession plutôt que de juste trancher un résultat. `withSequence` par
+  défaut `false` (chemin des matchs IA, **zéro** coût de séquence) ; `true` (match humain) fait
+  en plus construire `buildPossessionBeats(...)` — une chaîne de 2-6 "beats" par possession
+  (1-3 passes de construction puis un tir dont l'issue reste celle déjà décidée par le tirage au
+  sort, ou un tacle défensif qui casse l'action si aucune occasion n'a été retenue — remplace le
+  retour silencieux d'`attemptAttack`). Un **beat** : `{ type, side, playerId, toPlayerId, gkId,
+  from:{x,y}, to:{x,y}, duration, event }` — `from`/`to` = trajectoire du ballon pendant ce beat
+  (repère 0-100×0-100 hérité de l'ancien plateau, `y=0` but domicile) ; `event` = l'événement de
+  commentaire existant (but/arrêt/tir raté/carton/blessure/annonce de phase), porté par le beat
+  qui le "produit" visuellement, `null` pour un beat de pur enchaînement. Résultat renvoyé par
+  `simulateMinute` : `minuteEvents.sequence = [...]` (même précédent que
+  `minuteEvents.possession`, déjà attaché à l'array événements). Les annonces de phase
+  (escalier, Ballon Spécial, Dé Géant, Matchball, sub après carton rouge) et les événements
+  aléatoires (blessure/carton) deviennent aussi des beats `type:"phase"` portant leur `event`.
+  `activateCard`/`triggerPresidentPenalty` (jamais appelées depuis le tirage au sort des matchs
+  IA) construisent systématiquement leur propre `evts.sequence`, sans avoir besoin du flag.
+- **Positionnement des joueurs** (`computeSideAnchors`, dans `engine.js`) : en formation complète
+  (7v7), reprend directement `FORMATION_SLOTS[setup.formation]` (`data.js`) + `setup.assignments`
+  — la formation choisie par le joueur/l'IA façonne donc littéralement les positions affichées à
+  l'écran (le camp SANS le ballon utilise `setup.formationOOP`/`assignmentsOOP`, repli défensif).
+  En dehors du 7v7 (escalier, Dé Géant, escalier inversé du Matchball), repli sur
+  `computeOutfieldAnchors`/`anchorToY`/`gkAnchorY` (helpers génériques migrés depuis l'ancien
+  `matchphysics.js`, `engine.js` en a besoin lui-même pour ces phases à effectif variable).
+  `engine.js:getFormationAnchors(side, minute)` expose cette carte (GK inclus) à `app.js`.
+- **`matchchoreo.js:createChoreographer()`** — module d'interpolation pur (pas de DOM, aucun
+  `Math.random()` : une séquence de beats déjà fixée s'anime de façon entièrement déterministe).
+  `setAnchors(homeAnchors, awayAnchors)` synchronise le roster affiché (ne téléporte jamais un
+  joueur déjà en jeu, ne positionne que les nouveaux entrants — même contrat que l'ancien
+  `applySideLineup`). `loadSequence(beats)` charge la chorégraphie de la minute à venir.
+  `step(dt)` interpole (lerp + easing, PAS de physique/collision) la position du ballon et des
+  joueurs impliqués dans le beat courant ; easing `easeOut` sur un beat `"shot"` (le tireur
+  ralentit avant de frapper) et `easeIn` sur le beat d'issue qui suit
+  (`"goal"`/`"save"`/`"miss"`/`"owngoal"`, le ballon accélère vers le but). Les joueurs **non
+  impliqués** dans le beat courant sont rappelés en douceur (lissage exponentiel) vers leur ancre
+  de formation courante — jamais figés. `consumeFinishedEvents()` renvoie les `event` des beats
+  qui viennent de se terminer (pour qu'`app.js` pousse le commentaire/mette à jour le score au
+  moment exact où l'action s'affiche, pas tout d'un coup en début de minute).
+  `insertNext(newBeats)` intercale des beats juste après celui en cours de lecture (Arme
+  Secrète/Penalty du Président activés en cours de match) sans jamais réinitialiser
+  `beatIndex`/`beatElapsed` — le beat en cours finit normalement, les nouveaux beats jouent,
+  puis la lecture reprend le reste de la séquence déjà chargée.
+- **Boucle côté `app.js`** : `runMinute()`/`advanceToMinute(minute)` demandent au moteur la
+  minute à venir (après avoir vérifié `maybeAskPhaseLineup` — la composition de l'escalier/Dé
+  Géant/Matchball reste demandée AVANT que la phase ne commence, comme avant), évaluent
+  `maybeActivateAiCard`/`maybeActivatePresidentPenaltyAi`/`maybeAdjustAiTactics` (leurs éventuels
+  beats sont préfixés à la séquence de la minute), puis chargent le tout via `playSequence(beats,
+  onDone)`. La boucle continue `pitchFrameLoop` (`requestAnimationFrame`) fait avancer
+  `choreo.step(dt * matchState.playbackSpeed)` tant que `!matchState.paused`, redessine le canvas
+  `#match-pitch-canvas` (superposé au SVG statique du terrain) à partir de `choreo.getState()`,
+  pousse au commentaire les `event` fraîchement terminés, et appelle `onDone` (→ `runMinute()`
+  pour la minute suivante) une seule fois `choreo.isSequenceDone()` — plus de notion de "tour" ni
+  d'alternance stricte, seule la vitesse de lecture (`btn-match-speed`, x1/x2/x4) affecte le
+  rythme. **Pause/reprise** (`togglePauseMatch`, Tactique, Arme Secrète, modal de composition de
+  phase) : `matchState.paused=true` gèle simplement la boucle à l'instant courant, sans perdre la
+  progression ; `resumeMatchFlow()` relève la pause (sauf pause manuelle de l'utilisateur) puis
+  `continueMatchFlow()` ne fait quelque chose que si une minute restait en attente
+  (`matchState.pendingMinute`, cas de la composition de phase demandée en pleine pause) — sinon
+  la lecture reprend simplement là où elle en était.
+- **Arme Secrète / Penalty du Président en cours de match** : ne mettent plus le match "en
+  pause de tour" — `executeUserPresidentPenalty`/`confirmSecretCard` appellent
+  `choreo.insertNext(...)` pour intercaler l'animation de l'effet dans la séquence déjà en
+  lecture (ou déjà chargée si le match était par ailleurs en pause pour le formulaire de la
+  carte), sans perturber le `onDone` de la minute en cours.
+- **"Avancer rapidement"** (`skipMatch`) — **inchangé dans son principe** : boucle
+  `matchEngine.simulateMinute(minute)` **sans** `withSequence` (aussi rapide qu'avant, zéro coût
+  de séquence) jusqu'à la fin, puis arrête la boucle d'animation et affiche le résultat final.
 
 ## Conventions
 
@@ -377,16 +371,17 @@ des données (les 6 ligues, effectif minimum par poste, attributs/ids valides), 
 saison/carrière (`applyMatchPlayerStats`), mercato IA
 (`simulateAITransfers`/`neediestTeamForPosition`/`weakestPosition` — conservation du nombre de
 joueurs ET de l'argent total de la ligue sur 30 fenêtres enchaînées), classements individuels, IA
-tactique (`chooseAiFormation`/`chooseAiPlans`), et le plateau physique du match humain
-(`clamp`/`computeOutfieldAnchors`/`anchorToY`/`clampSpeed`/`resolveCollision`/`bounceWalls`/
-`createTurnMatch` — voir section dédiée plus haut). `data.js`/`engine.js` utilisent `Math.random()` :
-leurs tests vérifient des invariants structurels (conservation, bornes, "jamais de match nul"...)
-plutôt que des valeurs exactes, sauf pour les fonctions déterministes (`generateSchedule`,
-`computeStandings`, `value()`). `matchphysics.js` n'utilise AUCUN `Math.random()` (trajectoire
-entièrement déterministe) : ses tests comparent donc des valeurs exactes (`assertClose`, tolérance
-flottante) en reproduisant l'intégration par sous-pas de `step()` plutôt que de se contenter
-d'invariants — `getState()` n'exposant pas les vitesses, le plafonnement de `shoot()`/la friction
-sont vérifiés indirectement via le déplacement observé après un `step()`. `tests.js` définit
+tactique (`chooseAiFormation`/`chooseAiPlans`), la géométrie de terrain migrée dans `engine.js`
+(`clamp`/`computeOutfieldAnchors`/`anchorToY`/`gkAnchorY`), la chorégraphie du match humain
+(`simulateMinute(minute, {withSequence:true})` — structure des beats, bornes des positions,
+cohérence des ids joueurs) et son interpolation (`matchchoreo.js:createChoreographer` — voir
+section dédiée plus haut). `data.js`/`engine.js` utilisent `Math.random()` : leurs tests
+vérifient des invariants structurels (conservation, bornes, "jamais de match nul"...) plutôt que
+des valeurs exactes, sauf pour les fonctions déterministes (`generateSchedule`,
+`computeStandings`, `value()`). `matchchoreo.js` n'utilise AUCUN `Math.random()` (une séquence de
+beats déjà fixée s'anime de façon entièrement déterministe) : ses tests comparent donc des
+valeurs exactes (`assertClose`, tolérance flottante) plutôt que de se contenter d'invariants.
+`tests.js` définit
 `test()`/`assert()`/`assertEqual()`/`assertClose()`/`runAllTests()` (pas de framework) ;
 **`tests.html`** l'exécute dans un navigateur sans aucune dépendance (ouverture directe du fichier,
 comme `index.html`) — c'est le point d'entrée à utiliser en priorité vu l'indisponibilité fréquente
