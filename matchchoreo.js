@@ -10,9 +10,12 @@
 // domicile, y=100 but extérieur.
 //
 // Un "beat" (voir engine.js:buildPossessionBeats et consorts) :
-//   { type, side, playerId, toPlayerId, gkId, from:{x,y}, to:{x,y}, duration, event }
+//   { type, side, playerId, toPlayerId, gkId, mark, from:{x,y}, to:{x,y}, duration, event }
 // - type: "pass"|"dribble"|"tackle"|"shot"|"goal"|"save"|"miss"|"owngoal"|"phase"
 // - from/to : trajectoire du ballon pendant ce beat (position déjà exprimée dans le repère match).
+// - mark (optionnel, beats "dribble") : { id, from:{x,y}, to:{x,y} } — mouvement secondaire d'UN
+//   défenseur qui prend en chasse le porteur de balle pendant son slalom, interpolé avec le même
+//   easing que le beat principal mais indépendamment du ballon/porteur.
 // - event : l'événement de commentaire existant (même forme que minuteEvents) à restituer à
 //   app.js dès que ce beat termine son animation, ou null pour un beat de pur enchaînement.
 //
@@ -138,6 +141,16 @@ function createChoreographer() {
       const gk = players.get(beat.gkId);
       if (gk) setPlayerPos(beat.gkId, diveX, gk.y);
     }
+
+    // Mouvement secondaire optionnel (voir engine.js:buildPossessionBeats) : un défenseur précis
+    // qui prend en chasse le porteur de balle pendant un beat "dribble", indépendamment du
+    // joueur/ballon principal du beat — sans ça, le défenseur resterait figé pendant tout le
+    // slalom au lieu de visiblement essayer de revenir sur le porteur.
+    if (beat.mark && beat.mark.id) {
+      const mx = choreoLerp(beat.mark.from.x, beat.mark.to.x, eased);
+      const my = choreoLerp(beat.mark.from.y, beat.mark.to.y, eased);
+      setPlayerPos(beat.mark.id, mx, my);
+    }
   }
 
   function clampToGoalMouth(x) {
@@ -160,6 +173,7 @@ function createChoreographer() {
       if (activeBeat.playerId) involved.add(activeBeat.playerId);
       if (activeBeat.toPlayerId) involved.add(activeBeat.toPlayerId);
       if (activeBeat.gkId) involved.add(activeBeat.gkId);
+      if (activeBeat.mark && activeBeat.mark.id) involved.add(activeBeat.mark.id);
     }
     const factor = 1 - Math.exp(-CHOREO_IDLE_EASE_RATE * dt);
     players.forEach(p => {

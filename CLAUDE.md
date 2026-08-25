@@ -266,14 +266,20 @@ et continuent de se résoudre instantanément par tirage au sort via `engine.js:
   (force d'équipe, forme, plan tactique, `weightedPick`, `registerGoal`...), enrichi pour
   "raconter" chaque possession plutôt que de juste trancher un résultat. `withSequence` par
   défaut `false` (chemin des matchs IA, **zéro** coût de séquence) ; `true` (match humain) fait
-  en plus construire `buildPossessionBeats(...)` — une chaîne de 2-6 "beats" par possession
-  (1-3 passes de construction puis un tir dont l'issue reste celle déjà décidée par le tirage au
-  sort, ou un tacle défensif qui casse l'action si aucune occasion n'a été retenue — remplace le
-  retour silencieux d'`attemptAttack`). Un **beat** : `{ type, side, playerId, toPlayerId, gkId,
-  from:{x,y}, to:{x,y}, duration, event }` — `from`/`to` = trajectoire du ballon pendant ce beat
-  (repère 0-100×0-100 hérité de l'ancien plateau, `y=0` but domicile) ; `event` = l'événement de
-  commentaire existant (but/arrêt/tir raté/carton/blessure/annonce de phase), porté par le beat
-  qui le "produit" visuellement, `null` pour un beat de pur enchaînement. Résultat renvoyé par
+  en plus construire `buildPossessionBeats(...)` — une chaîne de beats par possession : 0-2
+  passes de construction (jamais un joueur qui se passe le ballon à lui-même — `buildLength` est
+  plafonné au nombre de coéquipiers réellement distincts disponibles), PUIS un porté de balle en
+  2-3 touches "slalom" (beats `"dribble"` en zig-zag, TOUJOURS présent, même en 1v1 sans aucune
+  passe possible) pendant qu'UN défenseur précis le prend en chasse via `beat.mark` (mouvement
+  secondaire du défenseur, indépendant du porteur/ballon — voir `matchchoreo.js`), puis enfin un
+  tir dont l'issue reste celle déjà décidée par le tirage au sort, ou un tacle du défenseur qui
+  chassait (logiquement le même) si aucune occasion n'a été retenue — remplace le retour
+  silencieux d'`attemptAttack`. Un **beat** : `{ type, side, playerId, toPlayerId, gkId, mark,
+  from:{x,y}, to:{x,y}, duration, event }` — `from`/`to` = trajectoire du ballon (ou du porteur en
+  dribble) pendant ce beat (repère 0-100×0-100 hérité de l'ancien plateau, `y=0` but domicile) ;
+  `event` = l'événement de commentaire existant (but/arrêt/tir raté/carton/blessure/annonce de
+  phase), porté par le beat qui le "produit" visuellement, `null` pour un beat de pur enchaînement.
+  Résultat renvoyé par
   `simulateMinute` : `minuteEvents.sequence = [...]` (même précédent que
   `minuteEvents.possession`, déjà attaché à l'array événements). Les annonces de phase
   (escalier, Ballon Spécial, Dé Géant, Matchball, sub après carton rouge) et les événements

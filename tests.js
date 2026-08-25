@@ -338,6 +338,16 @@ function assertValidSequence(sequence, homeTeam, awayTeam, label) {
     [beat.playerId, beat.toPlayerId, beat.gkId].forEach(id => {
       assert(id === null || id === undefined || allIds.has(id), `${label} beat[${i}] : id de joueur inconnu "${id}"`);
     });
+    if (beat.type === "pass") {
+      assert(beat.playerId !== beat.toPlayerId, `${label} beat[${i}] : passe d'un joueur à lui-même (${beat.playerId})`);
+    }
+    if (beat.mark) {
+      assert(allIds.has(beat.mark.id), `${label} beat[${i}].mark : id de joueur inconnu "${beat.mark.id}"`);
+      ["from", "to"].forEach(k => {
+        assert(beat.mark[k] && beat.mark[k].x >= 0 && beat.mark[k].x <= 100 && beat.mark[k].y >= 0 && beat.mark[k].y <= 100,
+          `${label} beat[${i}].mark.${k} hors du terrain [0,100]x[0,100]`);
+      });
+    }
   });
 }
 
@@ -354,6 +364,28 @@ test("simulateMinute({withSequence:true}) : produit une séquence de beats struc
     assertValidSequence(evts.sequence, home, away, `minute ${minute}`);
     if (engine.isMatchDecided()) break;
   }
+});
+
+test("simulateMinute({withSequence:true}) : même en 1v1 (escalier, minute 1), le porteur de balle fait un vrai porté (beats \"dribble\"), pas un saut direct passe→tir", () => {
+  const home = JSON.parse(JSON.stringify(LEAGUES.spain.teams[0]));
+  const away = JSON.parse(JSON.stringify(LEAGUES.spain.teams[1]));
+  const homeChoice = chooseAiFormation(home), awayChoice = chooseAiFormation(away);
+  const homeSetup = { lineup: homeChoice.assignments.filter(Boolean), assignments: homeChoice.assignments, formation: homeChoice.formation, attackPlan: "direct", defensePlan: "zone" };
+  const awaySetup = { lineup: awayChoice.assignments.filter(Boolean), assignments: awayChoice.assignments, formation: awayChoice.formation, attackPlan: "direct", defensePlan: "zone" };
+  const engine = createMatchEngine(home, homeSetup, away, awaySetup);
+  // Enchaîne plusieurs minutes en 1v1/2v2 (l'escalier ne dépasse pas la 5e minute) pour avoir de
+  // bonnes chances qu'au moins une possession (réelle ou ambiante, désormais garanties par camp)
+  // ait eu lieu — sur un tirage aussi favorable, ce n'est jamais un hasard malheureux à tester.
+  let sawDribble = false, sawMark = false;
+  for (let minute = 1; minute <= 4; minute++) {
+    const evts = engine.simulateMinute(minute, { withSequence: true });
+    evts.sequence.forEach(beat => {
+      if (beat.type === "dribble") sawDribble = true;
+      if (beat.mark) sawMark = true;
+    });
+  }
+  assert(sawDribble, "aucun beat \"dribble\" (porté de balle) sur les 4 premières minutes en effectif réduit");
+  assert(sawMark, "aucun beat n'a de défenseur en chasse (mark) sur les 4 premières minutes en effectif réduit");
 });
 
 test("simulateMinute sans options : ne construit aucune séquence (chemin IA inchangé, coût nul)", () => {
@@ -439,6 +471,19 @@ test("step : un joueur non impliqué dans le beat courant est rappelé vers son 
   choreo.step(0.2);
   const h2 = choreo.getState().players.find(p => p.id === "h2");
   assertEqual(h2.x, 10, "h2 déjà sur son ancre : aucun déplacement attendu");
+});
+
+test("step : beat.mark déplace le défenseur en chasse indépendamment du porteur de balle, sans être rappelé vers son ancre", () => {
+  const choreo = createChoreographer();
+  choreo.setAnchors({ h1: { x: 20, y: 20 } }, { a1: { x: 80, y: 80 } }); // ancre de a1 très loin de son mark
+  choreo.loadSequence([{
+    type: "dribble", side: "home", playerId: "h1", from: { x: 20, y: 20 }, to: { x: 30, y: 30 }, duration: 1, event: null,
+    mark: { id: "a1", from: { x: 25, y: 35 }, to: { x: 28, y: 32 } }
+  }]);
+  choreo.step(1); // beat entièrement joué (easeInOutQuad(1) = 1, donc from→to exact)
+  const a1 = choreo.getState().players.find(p => p.id === "a1");
+  assertClose(a1.x, 28, 1e-9, "le défenseur en chasse doit atteindre exactement mark.to.x");
+  assertClose(a1.y, 32, 1e-9, "le défenseur en chasse doit atteindre exactement mark.to.y");
 });
 
 test("isSequenceDone : vrai immédiatement quand la séquence chargée est vide", () => {
