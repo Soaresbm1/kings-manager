@@ -612,15 +612,22 @@ button.secondary.selected { border-color: var(--accent2); background: rgba(255,1
   font-size: 0.8em; font-weight: 800; padding: 1px 8px; margin-left: 4px;
 }
 
-/* ----- Terrain de match : plateau physique persistant (disques + ballon sur canvas) ----- */
+/* ----- Terrain de match : simulation animée (joueurs + ballon sur canvas) ----- */
 .match-pitch-panel {
   flex: 2 1 600px; min-width: 0; display: flex; flex-direction: column; min-height: 0; margin-bottom: 0;
 }
-/* Le moteur conserve son repère logique 0-100 × 0-100 avec l'axe but-à-but sur Y ; la
-   transposition vers ce terrain large est faite uniquement au rendu dans app.js. Laisser la
-   hauteur libre évite que flex étire le terrain et court-circuite son ratio. */
+/* Terrain en PAYSAGE (façon Football Manager, buts à gauche/droite) : ratio proche d'un vrai
+   terrain (105×68m ≈ 1.5:1). Le repère logique interne (engine.js/matchchoreo.js) reste
+   0-100×0-100 avec l'axe but-à-but sur Y — la transposition vers cet affichage large se fait
+   uniquement au rendu (app.js:renderMatchPitchFrame), jamais dans le moteur/la chorégraphie.
+   flex:1 étirerait la hauteur pour remplir toute la colonne (le panel est stretché par
+   .match-layout) et court-circuiterait aspect-ratio, qui ne s'applique que si au moins une
+   dimension reste libre : width:100% (plafonné par max-width) + margin:auto la centre dans
+   l'espace vertical restant sans jamais l'étirer. */
 .match-pitch { width: 100%; aspect-ratio: 3 / 2; min-height: 200px; max-width: 640px; margin: auto; overflow: hidden; }
-/* Le rond central générique de .pitch-field est remplacé par celui du canvas. */
+/* Les marquages (surfaces, buts, rond central...) sont dessinés dans #match-pitch-canvas
+   (app.js:drawPitchMarkings) : le rond central CSS ::after générique (.pitch-field) ne sert donc
+   plus ici, il ferait doublon. */
 #match-pitch.pitch-field::after { display: none; }
 #match-pitch-canvas {
   position: absolute; inset: 0; width: 100%; height: 100%;
@@ -630,6 +637,17 @@ button.secondary.selected { border-color: var(--accent2); background: rgba(255,1
 @media (max-width: 1100px) {
   .match-layout { flex-direction: column; }
   .match-pitch { min-height: 200px; }
+}
+/* Téléphone tourné à l'horizontale : le terrain profite de toute la largeur, le commentaire et
+   les contrôles passent en bande condensée en dessous plutôt qu'à côté (pas assez de hauteur en
+   paysage sur un téléphone pour les deux colonnes actuelles). Premier jet à affiner une fois vu
+   sur un vrai appareil. */
+@media (orientation: landscape) and (max-height: 500px) {
+  .match-layout { flex-direction: column; gap: 8px; }
+  .match-pitch-panel { flex: 1 1 auto; min-height: 0; }
+  .match-pitch { max-width: none; min-height: 0; height: 100%; }
+  .match-center { flex: 0 0 auto; max-height: 40vh; }
+  .match-center #commentary { min-height: 60px; }
 }
 .match-header {
   display: flex; justify-content: space-around; align-items: center; margin-bottom: 15px;

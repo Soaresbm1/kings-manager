@@ -306,27 +306,63 @@ et continuent de se résoudre instantanément par tirage au sort via `engine.js:
   béat par beat). En dehors du 7v7 (escalier, Dé Géant, escalier inversé du Matchball), repli sur
   `computeOutfieldAnchors`/`anchorToY`/`gkAnchorY` (helpers génériques migrés depuis l'ancien
   `matchphysics.js`, `engine.js` en a besoin lui-même pour ces phases à effectif variable).
-  `engine.js:getFormationAnchors(side, minute)` expose cette carte (GK inclus) à `app.js`.
+  `engine.js:getFormationAnchors(side, minute)` expose cette carte (GK inclus) à `app.js`, en y
+  ajoutant le **rôle** de chaque joueur (`role: player.pos`, GK/DEF/MID/ATT lu directement sur
+  l'objet joueur) — consommé par le placement dynamique de `matchchoreo.js` ci-dessous, seul
+  ajout côté `engine.js` pour cette mécanique : la génération des beats elle-même n'a pas changé.
 - **`matchchoreo.js:createChoreographer()`** — module d'interpolation pur (pas de DOM, aucun
   `Math.random()` : une séquence de beats déjà fixée s'anime de façon entièrement déterministe).
   `setAnchors(homeAnchors, awayAnchors)` synchronise le roster affiché (ne téléporte jamais un
   joueur déjà en jeu, ne positionne que les nouveaux entrants — même contrat que l'ancien
-  `applySideLineup`). `loadSequence(beats)` charge la chorégraphie de la minute à venir.
-  `step(dt)` interpole (lerp + easing, PAS de physique/collision) la position du ballon et des
-  joueurs impliqués dans le beat courant ; easing `easeOut` sur un beat `"shot"` (le tireur
-  ralentit avant de frapper) et `easeIn` sur le beat d'issue qui suit
-  (`"goal"`/`"save"`/`"miss"`/`"owngoal"`, le ballon accélère vers le but). Un beat `"phase"`
-  (annonce d'escalier/carton/blessure) ne déplace JAMAIS le ballon (il reste où il était) — ces
-  beats portent souvent `from`/`to` égaux à `{50,50}` par convention, et sans cette exception le
-  ballon aurait été téléporté au centre à chaque annonce. Les joueurs **non impliqués** dans le
-  beat courant sont rappelés en douceur (lissage exponentiel) vers leur ancre de formation
-  courante — jamais figés. `consumeFinishedEvents()` renvoie les `event` des beats
+  `applySideLineup`) et mémorise `{x, y, role, side}` par joueur. `loadSequence(beats)` charge la
+  chorégraphie de la minute à venir. `step(dt)` interpole (lerp + easing, PAS de
+  physique/collision) la position du ballon et des joueurs impliqués dans le beat courant ;
+  easing `easeOut` sur un beat `"shot"` (le tireur ralentit avant de frapper) et `easeIn` sur le
+  beat d'issue qui suit (`"goal"`/`"save"`/`"miss"`/`"owngoal"`, le ballon accélère vers le but).
+  Un beat `"phase"` (annonce d'escalier/carton/blessure) ne déplace JAMAIS le ballon (il reste où
+  il était) — ces beats portent souvent `from`/`to` égaux à `{50,50}` par convention, et sans
+  cette exception le ballon aurait été téléporté au centre à chaque annonce ; il met par contre à
+  jour `activeSide` (le camp du dernier beat non-`"phase"` joué) pour tout beat qui porte un
+  `side`, en continu plutôt qu'une fois par minute. **Placement dynamique continu** : les joueurs
+  **non impliqués** dans le beat courant ne sont plus rappelés vers une ancre statique mais vers
+  `computeDynamicTarget(id)` — mélange l'ancre de formation avec la position ACTUELLE du ballon,
+  pondéré par un facteur de suivi propre au rôle (`CHOREO_ROLE_FOLLOW` : GK quasi figé, DEF suit
+  peu, MID/ATT suivent davantage), recalculé à CHAQUE frame (pas une fois par minute) — c'est ce
+  qui donne l'effet "toute l'équipe se décale en bloc vers le ballon" façon Football Manager. Le
+  camp qui n'a pas le ballon (`base.side !== activeSide`) se replie en plus en continu vers sa
+  propre ligne de but (`CHOREO_DEFENSIVE_COMPACTION`). `getState()` expose aussi `ballCarrierId`
+  (le `playerId` du beat en cours pour dribble/tacle/tir/issue, `null` pendant un `"pass"` —
+  ballon en vol — ou une annonce) : consommé par `app.js` pour afficher les initiales du porteur
+  plutôt que sa photo (voir plus bas). `consumeFinishedEvents()` renvoie les `event` des beats
   qui viennent de se terminer (pour qu'`app.js` pousse le commentaire/mette à jour le score au
   moment exact où l'action s'affiche, pas tout d'un coup en début de minute).
   `insertNext(newBeats)` intercale des beats juste après celui en cours de lecture (Arme
   Secrète/Penalty du Président activés en cours de match) sans jamais réinitialiser
   `beatIndex`/`beatElapsed` — le beat en cours finit normalement, les nouveaux beats jouent,
   puis la lecture reprend le reste de la séquence déjà chargée.
+- **Rendu du terrain en paysage** (`app.js:renderMatchPitchFrame`/`drawPitchMarkings`) — façon
+  Football Manager (2D), buts à gauche/droite : le repère logique interne 0-100×0-100 (`y=0` but
+  domicile) ne change PAS (beats, ancres, `computeDynamicTarget`...), seul le RENDU transpose les
+  axes à l'affichage (`screenX = logicalY`, `screenY = logicalX`, via `sx`/`sy` distincts et un
+  `scale = min(sx, sy)` commun pour que cercles/traits restent proportionnés malgré le repère non
+  carré). Les marquages du terrain (surfaces, buts, ligne médiane, rond central, arcs, corners) —
+  auparavant un SVG séparé — sont désormais dessinés directement dans `#match-pitch-canvas` par
+  `drawPitchMarkings`, transposés de la même façon : un second SVG à réorienter en plus du canvas
+  aurait été redondant. `setupMatchPitchPointerEvents` applique la transposition inverse pour
+  retrouver la position logique d'un clic (fiche joueur au clic, inchangé sinon). `.match-pitch`
+  (`style.css`) est en `aspect-ratio: 3/2` — **piège** : à l'intérieur d'un parent flex en
+  colonne stretché (`.match-pitch-panel`), un `flex:1` sur `.match-pitch` étirerait sa hauteur
+  pour remplir tout l'espace vertical disponible et court-circuiterait `aspect-ratio` (qui ne
+  s'applique que si au moins une dimension reste libre) ; la règle utilise donc `width:100%`
+  (plafonné par `max-width`) + `margin:auto` pour centrer le terrain dans l'espace vertical
+  restant sans jamais l'étirer. Média-requête `@media (orientation: landscape) and
+  (max-height: 500px)` dédiée au téléphone tourné à l'horizontale (terrain plein écran, commande
+  condensée en dessous) — non validée sur un vrai appareil depuis cet environnement, premier jet.
+- **Porteur du ballon affiché par ses initiales** (`app.js:renderMatchPitchFrame`) — le joueur
+  dont l'id correspond à `choreo.getState().ballCarrierId` affiche ses initiales
+  (`playerInitials`, déjà le repli existant quand la photo est absente) à la place de sa photo le
+  temps qu'il ait le ballon ; tous les autres joueurs gardent leur rendu actuel (photo ou
+  initiales de repli) inchangé.
 - **Boucle côté `app.js`** : `runMinute()`/`advanceToMinute(minute)` demandent au moteur la
   minute à venir (après avoir vérifié `maybeAskPhaseLineup` — la composition de l'escalier/Dé
   Géant/Matchball reste demandée AVANT que la phase ne commence, comme avant), évaluent
@@ -334,16 +370,17 @@ et continuent de se résoudre instantanément par tirage au sort via `engine.js:
   beats sont préfixés à la séquence de la minute), puis chargent le tout via `playSequence(beats,
   onDone)`. La boucle continue `pitchFrameLoop` (`requestAnimationFrame`) fait avancer
   `choreo.step(dt * matchState.playbackSpeed)` tant que `!matchState.paused`, redessine le canvas
-  `#match-pitch-canvas` (superposé au SVG statique du terrain) à partir de `choreo.getState()`,
-  pousse au commentaire les `event` fraîchement terminés, et appelle `onDone` (→ `runMinute()`
-  pour la minute suivante) une seule fois `choreo.isSequenceDone()` — plus de notion de "tour" ni
-  d'alternance stricte, seule la vitesse de lecture (`btn-match-speed`, x1/x2/x4) affecte le
-  rythme. **Pause/reprise** (`togglePauseMatch`, Tactique, Arme Secrète, modal de composition de
-  phase) : `matchState.paused=true` gèle simplement la boucle à l'instant courant, sans perdre la
-  progression ; `resumeMatchFlow()` relève la pause (sauf pause manuelle de l'utilisateur) puis
-  `continueMatchFlow()` ne fait quelque chose que si une minute restait en attente
-  (`matchState.pendingMinute`, cas de la composition de phase demandée en pleine pause) — sinon
-  la lecture reprend simplement là où elle en était.
+  `#match-pitch-canvas` (seul enfant de `#match-pitch`, plus de SVG séparé) à partir de
+  `choreo.getState()`, pousse au commentaire les `event` fraîchement terminés, et appelle
+  `onDone` (→ `runMinute()` pour la minute suivante) une seule fois `choreo.isSequenceDone()` —
+  plus de notion de "tour" ni d'alternance stricte, seule la vitesse de lecture
+  (`btn-match-speed`, x1/x2/x4) affecte le rythme. **Pause/reprise** (`togglePauseMatch`,
+  Tactique, Arme Secrète, modal de composition de phase) : `matchState.paused=true` gèle
+  simplement la boucle à l'instant courant, sans perdre la progression ; `resumeMatchFlow()`
+  relève la pause (sauf pause manuelle de l'utilisateur) puis `continueMatchFlow()` ne fait
+  quelque chose que si une minute restait en attente (`matchState.pendingMinute`, cas de la
+  composition de phase demandée en pleine pause) — sinon la lecture reprend simplement là où elle
+  en était.
 - **Arme Secrète / Penalty du Président en cours de match** : ne mettent plus le match "en
   pause de tour" — `executeUserPresidentPenalty`/`confirmSecretCard` appellent
   `choreo.insertNext(...)` pour intercaler l'animation de l'effet dans la séquence déjà en

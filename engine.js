@@ -1232,6 +1232,9 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
     // le camp qui domine s'affiche en formation offensive, l'autre se replie sur sa formation
     // défensive (setup.formationOOP/assignmentsOOP) — visuellement, l'équipe sans le ballon
     // défend enfin, plutôt que de rester poussée vers l'avant en permanence comme avant.
+    // `role` (poste réel du joueur, GK/DEF/MID/ATT — directement depuis l'objet joueur, pas la
+    // formation) permet à matchchoreo.js de faire suivre le ballon à chacun avec une intensité
+    // différente (voir ROLE_FOLLOW_FACTORS) : un défenseur se décale peu, un attaquant beaucoup.
     getFormationAnchors: (side, minute) => {
       const team = side === "home" ? homeTeam : awayTeam;
       const setup = side === "home" ? homeSetup : awaySetup;
@@ -1239,7 +1242,12 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
       const outfieldIds = getActiveOutfieldIds(team, setup, minute, side);
       const possessing = side === "home" ? lastHomePossession >= 50 : lastHomePossession < 50;
       const anchors = computeSideAnchors(setup, outfieldIds, side, possessing);
-      if (gkPlayer) anchors[gkPlayer.id] = { x: 50, y: gkAnchorY(side) };
+      outfieldIds.forEach(id => {
+        if (!anchors[id]) return;
+        const player = team.players.find(p => p.id === id);
+        anchors[id].role = player ? player.pos : "MID";
+      });
+      if (gkPlayer) anchors[gkPlayer.id] = { x: 50, y: gkAnchorY(side), role: "GK" };
       return anchors;
     }
   };
