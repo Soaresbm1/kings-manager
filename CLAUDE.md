@@ -280,11 +280,24 @@ et continuent de se résoudre instantanément par tirage au sort via `engine.js:
   aléatoires (blessure/carton) deviennent aussi des beats `type:"phase"` portant leur `event`.
   `activateCard`/`triggerPresidentPenalty` (jamais appelées depuis le tirage au sort des matchs
   IA) construisent systématiquement leur propre `evts.sequence`, sans avoir besoin du flag.
+  **Jeu continu** : le tirage au sort qui décide si un camp obtient une VRAIE occasion ce tour-ci
+  reste inchangé (même probabilité, même effet sur le score/les stats) — mais quand il échoue,
+  le camp concerné reçoit quand même une possession "ambiante" (`buildPossessionBeats(...,
+  outcome:null)`, purement visuelle, aucun `Math.random()` supplémentaire ne pouvant influer sur
+  le score) plutôt que rien du tout. Sans ça, la plupart des minutes (le tirage échoue plus
+  souvent qu'il ne réussit) n'affichaient aucune action, donnant l'impression d'un match haché/
+  trop rapide plutôt que d'un vrai jeu continu.
 - **Positionnement des joueurs** (`computeSideAnchors`, dans `engine.js`) : en formation complète
   (7v7), reprend directement `FORMATION_SLOTS[setup.formation]` (`data.js`) + `setup.assignments`
   — la formation choisie par le joueur/l'IA façonne donc littéralement les positions affichées à
-  l'écran (le camp SANS le ballon utilise `setup.formationOOP`/`assignmentsOOP`, repli défensif).
-  En dehors du 7v7 (escalier, Dé Géant, escalier inversé du Matchball), repli sur
+  l'écran. Le camp SANS le ballon (`possessing=false`) utilise `setup.formationOOP`/
+  `assignmentsOOP` s'ils ont été personnalisés (onglet Tactique), PUIS applique en plus un repli
+  automatique vers sa propre ligne de but (`DEFENSIVE_COMPACTION`, ~40% du trajet restant) —
+  nécessaire car l'IA ne personnalise jamais de formation "sans balle" distincte : sans ce repli
+  générique, une équipe qui défend resterait visuellement identique à quand elle attaque.
+  `lastHomePossession` (mis à jour à chaque minute simulée) détermine quel camp est considéré
+  "avec balle" pour tout le reste de LA MÊME minute (granularité volontairement grossière, pas
+  béat par beat). En dehors du 7v7 (escalier, Dé Géant, escalier inversé du Matchball), repli sur
   `computeOutfieldAnchors`/`anchorToY`/`gkAnchorY` (helpers génériques migrés depuis l'ancien
   `matchphysics.js`, `engine.js` en a besoin lui-même pour ces phases à effectif variable).
   `engine.js:getFormationAnchors(side, minute)` expose cette carte (GK inclus) à `app.js`.
@@ -296,9 +309,12 @@ et continuent de se résoudre instantanément par tirage au sort via `engine.js:
   `step(dt)` interpole (lerp + easing, PAS de physique/collision) la position du ballon et des
   joueurs impliqués dans le beat courant ; easing `easeOut` sur un beat `"shot"` (le tireur
   ralentit avant de frapper) et `easeIn` sur le beat d'issue qui suit
-  (`"goal"`/`"save"`/`"miss"`/`"owngoal"`, le ballon accélère vers le but). Les joueurs **non
-  impliqués** dans le beat courant sont rappelés en douceur (lissage exponentiel) vers leur ancre
-  de formation courante — jamais figés. `consumeFinishedEvents()` renvoie les `event` des beats
+  (`"goal"`/`"save"`/`"miss"`/`"owngoal"`, le ballon accélère vers le but). Un beat `"phase"`
+  (annonce d'escalier/carton/blessure) ne déplace JAMAIS le ballon (il reste où il était) — ces
+  beats portent souvent `from`/`to` égaux à `{50,50}` par convention, et sans cette exception le
+  ballon aurait été téléporté au centre à chaque annonce. Les joueurs **non impliqués** dans le
+  beat courant sont rappelés en douceur (lissage exponentiel) vers leur ancre de formation
+  courante — jamais figés. `consumeFinishedEvents()` renvoie les `event` des beats
   qui viennent de se terminer (pour qu'`app.js` pousse le commentaire/mette à jour le score au
   moment exact où l'action s'affiche, pas tout d'un coup en début de minute).
   `insertNext(newBeats)` intercale des beats juste après celui en cours de lecture (Arme
