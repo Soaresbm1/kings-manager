@@ -1,0 +1,23 @@
+{
+  "name": "kings-manager",
+  "version": "1.0.0",
+  "description": "Jeu de simulation de football manager inspiré du format 7v7 de la Kings League (France & Brésil).",
+  "main": "app.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Soaresbm1/kings-manager.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Soaresbm1/kings-manager/issues"
+  },
+  "homepage": "https://github.com/Soaresbm1/kings-manager#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.62.1",
+    "@types/node": "^26.4.1"
+  }
+}
