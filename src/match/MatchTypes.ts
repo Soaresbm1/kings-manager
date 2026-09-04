@@ -65,9 +65,11 @@ export interface MatchAction {
  * des champs optionnels) : les différents types d'événement n'utilisent pas tous les mêmes champs
  * (ex. un événement "phase" de shootout n'a ni `minute` ni `side`), et une union discriminante
  * stricte sera dérivée pendant le port réel (Phase 5) une fois chaque site de construction
- * comparé au type. Ne pas resserrer ce type au jugé avant ce moment-là. */
+ * comparé au type. Ne pas resserrer ce type au jugé avant ce moment-là.
+ * "shootout"/"shootout miss" ajoutés pendant le port de Phase 5 (engine.js:simulatePenaltyShootout,
+ * pas repérés lors du premier inventaire en Phase 2) — élargissement de l'union, non cassant. */
 export interface MatchEvent {
-  type: "goal" | "save" | "miss" | "yellow" | "red" | "injury" | "owngoal" | "phase";
+  type: "goal" | "save" | "miss" | "yellow" | "red" | "injury" | "owngoal" | "phase" | "shootout" | "shootout miss";
   text: string;
   minute?: number;
   team?: string;

@@ -41,6 +41,12 @@ declare global {
   var SECRET_CARDS: Record<SecretCardKey, SecretCard>;
   var SECRET_CARD_ORDER: SecretCardKey[];
   var POSITIONS: PlayerPosition[];
+  // Bornes de conversion overall -> note "étoiles" (voir data.js:player, VALUE_STAR_MIN/MAX) —
+  // ajoutées en Phase 5, nécessaires à developPlayer (engine.js) pour recalculer la valeur d'un
+  // joueur après une progression/régression d'attribut, avec exactement la même courbe qu'à la
+  // création du joueur.
+  var VALUE_STAR_MIN: number;
+  var VALUE_STAR_MAX: number;
 }
 
 export function getLeagues(): Record<LeagueKey, League> {
@@ -97,6 +103,11 @@ export function getSecretCardOrder(): SecretCardKey[] {
 
 export function getPositions(): PlayerPosition[] {
   return POSITIONS;
+}
+
+/** Bornes overall -> étoiles (voir data.js:player). Ajouté en Phase 5 pour developPlayer. */
+export function getValueStarBounds(): { min: number; max: number } {
+  return { min: VALUE_STAR_MIN, max: VALUE_STAR_MAX };
 }
 
 /** Cherche une équipe par id dans une ligue donnée — évite à chaque appelant (Phase 5+) de
