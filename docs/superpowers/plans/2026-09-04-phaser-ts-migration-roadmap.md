@@ -3,9 +3,9 @@
 > This is an index/roadmap, not an executable plan. Each phase below gets its own
 > bite-sized plan (`superpowers:writing-plans` format) written just before that phase
 > starts, once the previous phase has landed and we know what we actually learned from
-> it. Only **Phase 1** currently has a detailed plan:
-> `2026-09-04-phaser-ts-migration-phase1-tooling.md` — executed inline in the same
-> session that wrote it (see that plan's status).
+> it. **Phase 1** (`2026-09-04-phaser-ts-migration-phase1-tooling.md`) and **Phase 2**
+> (`2026-09-04-phaser-ts-migration-phase2-domain-types.md`) are done, each executed
+> inline in the same session that wrote its plan.
 
 **Spec:** the user's migration brief (2026-09-04 conversation) — full requirements
 reproduced in that conversation, not duplicated here. Read it before writing any
@@ -71,6 +71,42 @@ snag hit and how it was fixed) is in
   test, save/reload round-trip). If browser automation becomes available in a later
   session, prefer it for quick manual spot-checks, but Playwright remains the source of
   truth for anything that should stay regression-tested.
+
+## Phase 2 — done (2026-09-04)
+
+`src/data/types.ts` and `src/match/MatchTypes.ts` landed (3 commits), exporting every type
+name the spec requires plus the supporting legacy-data types Phase 3 needs. Pure type-only
+work, zero runtime/legacy-file changes, all verified green (`npm run build`/`npm test`/
+`npm run test:legacy` 59/60/`npm run lint`). Full reasoning for every non-obvious choice is
+recorded in `2026-09-04-phaser-ts-migration-phase2-domain-types.md`'s "Design notes" section
+— read it before touching these types again. Load-bearing decisions Phase 3+ must not
+re-litigate without a reason:
+
+- **`PlayerRole = MovementIntent["type"]`** — one taxonomy, two names for two call sites
+  (the full intent object vs. just the label for debug/rendering).
+- **`MatchPhase`** (`"escalier"|"normal"|"specialBall"|"giantDice"|"matchball"`, used on
+  `MatchSnapshot.phase`) is the Kings League RULE-CLOCK phase, match-wide. **`TeamPhase`**
+  (`settledPossession|attackingTransition|settledDefense|defensiveTransition|setPiece`) is
+  the PER-TEAM tactical transition state from the collective-movement spec section — kept
+  separate, not wired into `MatchSnapshot` yet (Phase 6 decides where per-side phase state
+  actually lives once the movement system is being built for real).
+- **`PossessionState`** = `"inPossession"|"outOfPossession"|"contested"` — generalizes
+  `matchchoreo.js:assignRoles`'s `possessing = ballSide === p.side` boolean, adds
+  `"contested"` for loose-ball moments the current system doesn't distinguish.
+- **`MatchAction`** is the direct typed successor of the existing "beat" object
+  (`matchengine-actions.js:makeBeat`) — same fields, same nullability. Phase 4's
+  `ActionEngine.ts` should produce `MatchAction[]` directly, not a different shape that then
+  needs translating.
+- **`MatchState`** (broad, mutable, owned by `MatchEngine.ts` in Phase 5) vs
+  **`MatchSnapshot`** (lean, read-only, per-frame, consumed only by `MatchScene.ts`) are
+  deliberately different types per the spec's own architecture diagram
+  (`ActionEngine → MatchState → CollectiveMovement → MatchSnapshot → MatchScene`).
+  `MatchState` as defined in Phase 2 does NOT yet include implementation-specific closure
+  state from `engine.js:createMatchEngine` (card sanctions, per-player stamina, dice/
+  president state) — Phase 5 extends it once that port is actually written; guessing that
+  shape now was judged higher-risk than adding it later with real information.
+- `tsconfig.json`'s `types: ["vite/client", "node"]` (set during Phase 1) was reused as-is;
+  no tsconfig changes were needed for pure type files.
 
 ## Current-state summary (established 2026-09-04)
 
