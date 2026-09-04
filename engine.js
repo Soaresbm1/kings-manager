@@ -1,4 +1,9 @@
 // ===================== MOTEUR DE SIMULATION =====================
+// Le détail "action par action" d'une possession (décision, résolution, xG...) vit désormais dans
+// matchengine-actions.js (chargé juste avant ce fichier, voir CLAUDE.md) : ce fichier reste
+// responsable de l'orchestration du match (minutes, règles Kings League, cartons, score) et
+// délègue "que se passe-t-il pendant cette possession ?" à simulatePossessionChain(). Les helpers
+// de géométrie du terrain (PITCH_W, clamp, computeSideAnchors...) vivent aussi dans ce fichier.
 
 // --- Blessures --- paliers de gravité tirés au sort quand l'événement rare "blessure" se déclenche
 // (voir le bookkeeping de phase plus bas) : chance cumulative (tirage < chance => ce palier),
@@ -8,96 +13,6 @@ const INJURY_SEVERITY_TIERS = [
   { label: "modérée", chance: 0.95, minDays: 4, maxDays: 8 },
   { label: "grave", chance: 1.01, minDays: 9, maxDays: 20 }
 ];
-
-// --- Géométrie du terrain (repère 0-100 x 0-100, y=0 but domicile / y=100 but extérieur) ---
-// Utilisée pour placer les joueurs sur les "beats" de la séquence animée du match humain (voir
-// simulateMinute({withSequence:true}) plus bas et matchchoreo.js, qui consomme ces positions).
-// Ces helpers vivaient auparavant dans matchphysics.js (plateau physique, supprimé) : ils migrent
-// ici car engine.js, chargé AVANT le module de chorégraphie, en a maintenant besoin lui-même.
-const PITCH_W = 100;
-const PITCH_H = 100;
-const GOAL_X_MIN = 41;
-const GOAL_X_MAX = 59;
-
-function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
-
-// Répartit n joueurs de champ (1 à 6) en lignes def→att : utilisé pour les phases à effectif
-// réduit (escalier de départ, Dé Géant, escalier inversé du Matchball) où FORMATION_SLOTS (figé à
-// 6 joueurs de champ) ne s'applique pas.
-function computeOutfieldAnchors(n) {
-  if (n <= 0) return [];
-  const rowCount = n <= 2 ? n : (n <= 4 ? 2 : 3);
-  const base = Math.floor(n / rowCount);
-  let extra = n - base * rowCount;
-  const rowCounts = [];
-  for (let r = 0; r < rowCount; r++) { rowCounts.push(base + (extra > 0 ? 1 : 0)); if (extra > 0) extra--; }
-  const anchors = [];
-  rowCounts.forEach((count, rowIdx) => {
-    const depth = rowCount === 1 ? 0.5 : rowIdx / (rowCount - 1);
-    for (let i = 0; i < count; i++) {
-      anchors.push({ x: count === 1 ? 50 : 15 + (70 * i) / (count - 1), depth });
-    }
-  });
-  return anchors;
-}
-
-// Convertit un ancrage (x, depth 0-1) + le côté en position y réelle. Reste strictement dans sa
-// propre moitié de terrain (jamais au-delà de la ligne médiane), avec une marge autour du centre.
-function anchorToY(depth, side) {
-  if (side === "home") return clamp(8 + depth * 36, 4, 44);
-  return clamp(92 - depth * 36, 56, 96);
-}
-function gkAnchorY(side) { return side === "home" ? 5 : 95; }
-
-// Ancre x/y de chaque joueur de champ actif d'un côté donné, pour une minute du match humain
-// (voir simulateMinute({withSequence:true})) : en formation complète (7v7), reprend directement
-// FORMATION_SLOTS (data.js) + setup.assignments — la tactique choisie par le joueur/l'IA façonne
-// donc littéralement les positions affichées. `possessing` sélectionne la disposition "avec balle"
-// (setup.formation/assignments) ou "sans balle" (setup.formationOOP/assignmentsOOP, repli si absent
-// — cohérent avec formationDefenseFactor). En dehors du 7v7 (escalier, Dé Géant, escalier inversé
-// du Matchball), FORMATION_SLOTS ne s'applique pas (toujours 6 joueurs de champ) : repli sur
-// computeOutfieldAnchors, comme le faisait l'ancien matchphysics.js.
-// Repli défensif automatique (voir ci-dessous) : fraction du trajet vers sa propre ligne de but
-// qu'un joueur parcourt en plus quand son équipe n'a pas le ballon. Appliqué systématiquement,
-// que l'équipe ait ou non personnalisé une formation "sans balle" distincte dans l'onglet
-// Tactique — sans ce filet, une IA (qui ne personnalise jamais sa formation OOP) resterait
-// visuellement toujours poussée vers l'avant, y compris quand elle défend.
-const DEFENSIVE_COMPACTION = 0.4;
-
-function computeSideAnchors(setup, activeOutfieldIds, side, possessing) {
-  const anchors = {};
-  const formationKey = possessing ? setup.formation : (setup.formationOOP || setup.formation);
-  const assignments = possessing ? setup.assignments : (setup.assignmentsOOP || setup.assignments);
-  const slots = FORMATION_SLOTS[formationKey];
-  let useSlots = !!(slots && Array.isArray(assignments) && activeOutfieldIds.length === 6);
-  if (useSlots) {
-    for (const id of activeOutfieldIds) {
-      const idx = assignments.indexOf(id);
-      if (idx < 0 || !slots[idx] || slots[idx].pos === "GK") { useSlots = false; break; }
-    }
-  }
-  if (useSlots) {
-    activeOutfieldIds.forEach(id => {
-      const slot = slots[assignments.indexOf(id)];
-      anchors[id] = { x: slot.x, y: side === "home" ? (PITCH_H - slot.y) : slot.y };
-    });
-  } else {
-    const rowAnchors = computeOutfieldAnchors(activeOutfieldIds.length);
-    activeOutfieldIds.forEach((id, i) => {
-      const a = rowAnchors[i] || { x: 50, depth: 0.5 };
-      anchors[id] = { x: a.x, y: anchorToY(a.depth, side) };
-    });
-  }
-  if (!possessing) {
-    const ownGoalY = side === "home" ? 4 : PITCH_H - 4;
-    activeOutfieldIds.forEach(id => {
-      const a = anchors[id];
-      if (!a) return;
-      anchors[id] = { x: a.x, y: a.y + (ownGoalY - a.y) * DEFENSIVE_COMPACTION };
-    });
-  }
-  return anchors;
-}
 
 // --- Calendrier ---
 // Génère un calendrier aller-retour (round-robin double) pour une liste d'équipes
@@ -182,9 +97,10 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
   const HALF_TIME = 20;
   const homeBonus = 1.08;
 
-  // Début de match (effectifs réduits, 1 contre 1 jusqu'au 7v7) : plus d'occasions et de buts.
+  // Début de match (effectifs réduits, 1 contre 1 jusqu'au 7v7) : plus d'occasions et de buts —
+  // voir planChainCount (matchengine-actions.js, plus de possessions) et earlyPhaseBoost ci-dessous
+  // (xG plus généreux, transmis à attemptRealAttack).
   const EARLY_PHASE_END_MINUTE = 7;
-  const EARLY_PHASE_CHANCE_BOOST = 1.6;
   const EARLY_PHASE_GOAL_BOOST = 1.5;
 
   // --- Règlement Kings League : repères temporels officiels ---
@@ -201,9 +117,41 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
   const events = [];
   let homeGoals = 0, awayGoals = 0;
   let homeShots = 0, awayShots = 0;
+  // Stats détaillées dérivées des actions réellement simulées (voir matchengine-actions.js) —
+  // homeShots/awayShots ci-dessus restent le total historique (tirs, cadrés ou non).
+  let homeShotsOnTarget = 0, awayShotsOnTarget = 0;
+  let homeXG = 0, awayXG = 0;
+  let homePassesAttempted = 0, homePassesCompleted = 0, awayPassesAttempted = 0, awayPassesCompleted = 0;
+  let homeInterceptions = 0, awayInterceptions = 0, homeTackles = 0, awayTackles = 0;
+  let homeSaves = 0, awaySaves = 0, homeClearances = 0, awayClearances = 0;
+  let homeFouls = 0, awayFouls = 0; // fautes commises lors d'un duel (dribble) — voir attemptRealAttack
   let possessionSum = 0, possessionCount = 0;
-  let lastHomePossession = 50; // dernière possession connue (%), pour le repli défensif visuel (getFormationAnchors)
   const playerStats = {}; // id -> {goals, assists}
+
+  // --- Fatigue en cours de match (état transitoire, jamais persisté dans la sauvegarde) ---
+  // Un joueur qui touche beaucoup le ballon (ou défend sous pressing) perd un peu d'efficacité au
+  // fil du match ; régénère légèrement chaque minute. Voir MATCH_BALANCE.stamina.
+  const staminaState = { home: {}, away: {} };
+  function staminaValue(side, id) {
+    const v = staminaState[side][id];
+    return v == null ? 100 : v;
+  }
+  function staminaFactor(side, id) {
+    const B = MATCH_BALANCE.stamina;
+    return (1 - B.effectSpread) + B.effectSpread * (staminaValue(side, id) / 100);
+  }
+  function drainStamina(side, ids, extra) {
+    const B = MATCH_BALANCE.stamina;
+    ids.forEach(id => {
+      staminaState[side][id] = clamp(staminaValue(side, id) - B.drainPerTouch - (extra || 0), B.min, B.max);
+    });
+  }
+  function regenStamina(side, activeIds) {
+    const B = MATCH_BALANCE.stamina;
+    activeIds.forEach(id => {
+      staminaState[side][id] = clamp(staminaValue(side, id) + B.regenPerMinute, B.min, B.max);
+    });
+  }
 
   // --- Règlement Kings League : formats réduits (début progressif / dé géant / Matchball) ---
   const diceState = { active: false, rolled: false, announced: false, count: 6 };
@@ -639,110 +587,139 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
     return evts;
   }
 
-  // Applique le résultat d'une tentative de but (BUT / arrêt / tir raté) à l'état interne du
-  // moteur (stats, score, bonus "but double") et construit l'événement de commentaire
-  // correspondant. Utilisée par attemptAttack, aussi bien pour le tirage au sort silencieux des
-  // matchs IA que pour le match humain animé (même décision, juste racontée en plus via un beat).
-  function resolveAttackOutcome(minute, attackingTeamName, side, outcome, scorer, gk, assister) {
-    if (outcome === "goal") {
-      recordStat(scorer.id, "goals");
-      let assistText = "";
-      if (assister) {
-        recordStat(assister.id, "assists");
-        assistText = ` (passe décisive de ${assister.name})`;
+  // Inflige un carton jaune à `victim` (équipe `side`) : exclusion temporaire de 2 minutes hors
+  // Matchball, ou remplacement immédiat + shootout accordé à l'adversaire pendant le Matchball
+  // (règle Kings League identique, quelle que soit l'origine du carton). Partagée entre l'ancien
+  // tirage au sort aléatoire (bookkeeping de phase, ci-dessous) et la faute désormais possible lors
+  // d'un duel de dribble perdu par le défenseur (voir attemptRealAttack / matchengine-actions.js).
+  // `seq` : tableau de beats à alimenter si le match humain animé est en cours, sinon null/undefined.
+  function issueYellowCard(side, victim, minute, minuteEvents, seq, victimPos) {
+    const teamRef = side === "home" ? homeTeam : awayTeam;
+    const setupRef = side === "home" ? homeSetup : awaySetup;
+    if (minute >= MATCHBALL_START_MINUTE) {
+      removeFromLineup(setupRef, victim.id);
+      const sub = addBenchSubstitute(teamRef, setupRef, victim.pos);
+      const yellowEv = {
+        minute, type: "yellow", team: teamRef.name, side, playerId: victim.id, inId: sub ? sub.id : null, outId: victim.id,
+        text: `${minute}' — 🟨 Carton jaune pour ${victim.name} (${teamRef.name}) ! En Matchball, pas de réduction d'effectif${sub ? `, ${sub.name} le remplace` : ""} — shootout accordé à l'adversaire !`
+      };
+      minuteEvents.push(yellowEv);
+      if (seq) seq.push({ type: "phase", side, playerId: null, from: { x: 50, y: 50 }, to: { x: 50, y: 50 }, duration: 1, event: yellowEv });
+      const oppSide = side === "home" ? "away" : "home";
+      const oppTeamRef = oppSide === "home" ? homeTeam : awayTeam;
+      const oppSetupRef = oppSide === "home" ? homeSetup : awaySetup;
+      const shooter = weightedPick(getAttackers(oppTeamRef, oppSetupRef));
+      if (shooter) {
+        const shootoutEvts = performShootoutAttempt(oppSide, minute, { taker: shooter, withSequence: !!seq }, "Shootout (carton jaune)");
+        minuteEvents.push(...shootoutEvts);
+        if (seq) seq.push(...(shootoutEvts.sequence || []));
       }
-      const goalTag = registerGoal(side, minute, scorer.id);
-      return {
-        minute, type: "goal", team: attackingTeamName, side, scorerId: scorer.id, assisterId: assister ? assister.id : null, gkId: gk ? gk.id : null,
-        text: `${minute}' — BUT ! ${scorer.name} (${attackingTeamName}) marque${assistText} !${goalTag}`
+    } else {
+      cardSanctions[side].yellow.push({ playerId: victim.id, until: minute + 2 });
+      const ev = {
+        minute, type: "yellow", team: teamRef.name, side, playerId: victim.id,
+        text: `${minute}' — 🟨 Carton jaune pour ${victim.name} (${teamRef.name}) : exclu 2 minutes, ${teamRef.name} joue en infériorité numérique !`
       };
+      minuteEvents.push(ev);
+      if (seq) {
+        const p = victimPos || { x: 50, y: side === "home" ? 30 : 70 };
+        seq.push({ type: "phase", side, playerId: victim.id, from: p, to: p, duration: 1.4, event: ev });
+      }
     }
-    if (outcome === "save") {
-      return {
-        minute, type: "save", team: attackingTeamName, side, takerId: scorer.id, gkId: gk ? gk.id : null,
-        text: `${minute}' — Tir de ${scorer.name}, arrêt magnifique du gardien ${gk ? gk.name : "adverse"} !`
-      };
-    }
-    return {
-      minute, type: "miss", team: attackingTeamName, side, takerId: scorer.id,
-      text: `${minute}' — ${scorer.name} tente sa chance mais le tir passe à côté.`
-    };
   }
 
-  // Construit la chorégraphie visuelle d'une possession pour le match humain (voir
-  // simulateMinute({withSequence:true})) : 1-2 passes de construction depuis un coéquipier
-  // vers `actor`, puis soit un tir dont l'issue est déjà décidée (outcome), soit — si `outcome`
-  // est null — un dribble suivi d'un tacle défensif qui coupe l'action (remplace le retour
-  // silencieux qu'attemptAttack faisait auparavant quand aucune occasion n'était retenue).
-  // Ne décide jamais rien statistiquement : se contente de "raconter" une décision déjà prise.
-  function buildPossessionBeats(side, attackers, actor, atkAnchors, defenders, defAnchors, gk, outcome) {
-    const beats = [];
-    const passers = attackers.filter(p => p.id !== actor.id);
-    let current = passers.length ? passers[Math.floor(Math.random() * passers.length)] : actor;
-    let pos = atkAnchors[current.id] || { x: 50, y: side === "home" ? 25 : 75 };
-    const buildLength = passers.length ? 1 + Math.floor(Math.random() * 2) : 0;
-    for (let i = 0; i < buildLength; i++) {
-      const isLast = i === buildLength - 1;
-      const next = isLast ? actor : (passers[Math.floor(Math.random() * passers.length)] || actor);
-      const nextPos = atkAnchors[next.id] || pos;
-      beats.push({ type: "pass", side, playerId: current.id, toPlayerId: next.id, from: pos, to: nextPos, duration: 0.5 + Math.random() * 0.3, event: null });
-      current = next; pos = nextPos;
+  // Simule UNE possession réelle, action par action (voir matchengine-actions.js:
+  // simulatePossessionChain — décision du porteur, résolution passe/dribble/centre/tir, xG...),
+  // puis applique son résultat à l'état du match (score, bonus "but double", stats détaillées,
+  // fatigue) exactement comme le faisait l'ancien tirage au sort direct. `ctx` (fourni seulement
+  // pour le match humain animé) reçoit les beats produits, dans l'ordre, pour l'animation.
+  function attemptRealAttack(minute, minuteEvents, side, teamName, attackers, defenders, gk, atkAnchors, defAnchors, attackPlanKey, defensePlanKey, attackMod, defenseMod, earlyPhaseBoost, ctx) {
+    const oppSide = side === "home" ? "away" : "home";
+    const defensePressingExtra = defensePlanKey === "high" ? MATCH_BALANCE.stamina.pressingExtraDrain : 0;
+
+    const chain = simulatePossessionChain({
+      side, attackers, defenders, gk, atkAnchors, defAnchors,
+      attackPlanKey, attackMod, defenseMod, earlyPhaseBoost,
+      withSequence: !!ctx,
+      staminaFactorFor: id => staminaFactor(side, id)
+    });
+    if (chain.outcome === "none") return;
+
+    // stats détaillées, dans les deux sens (attaque pour `side`, défense pour `oppSide`)
+    if (side === "home") {
+      homeShots += chain.attackStats.shots; homeShotsOnTarget += chain.attackStats.shotsOnTarget;
+      homeXG += chain.xG; homePassesAttempted += chain.attackStats.passesAttempted; homePassesCompleted += chain.attackStats.passesCompleted;
+      homeClearances += chain.attackStats.clearances;
+      awayInterceptions += chain.defenseStats.interceptions; awayTackles += chain.defenseStats.tacklesWon; awayFouls += chain.defenseStats.fouls;
+    } else {
+      awayShots += chain.attackStats.shots; awayShotsOnTarget += chain.attackStats.shotsOnTarget;
+      awayXG += chain.xG; awayPassesAttempted += chain.attackStats.passesAttempted; awayPassesCompleted += chain.attackStats.passesCompleted;
+      awayClearances += chain.attackStats.clearances;
+      homeInterceptions += chain.defenseStats.interceptions; homeTackles += chain.defenseStats.tacklesWon; homeFouls += chain.defenseStats.fouls;
     }
-    const shooterPos = atkAnchors[actor.id] || pos;
-    if (!outcome) {
-      const defender = defenders.length ? defenders[Math.floor(Math.random() * defenders.length)] : null;
-      const defPos = defender ? (defAnchors[defender.id] || shooterPos) : { x: shooterPos.x, y: side === "home" ? shooterPos.y + 8 : shooterPos.y - 8 };
-      beats.push({ type: "dribble", side, playerId: actor.id, from: pos, to: shooterPos, duration: 0.4, event: null });
-      beats.push({ type: "tackle", side: side === "home" ? "away" : "home", playerId: defender ? defender.id : null, from: shooterPos, to: defPos, duration: 0.5, event: null });
-      return beats;
-    }
-    const goalY = side === "home" ? PITCH_H : 0;
-    const goalX = clamp(GOAL_X_MIN + Math.random() * (GOAL_X_MAX - GOAL_X_MIN), GOAL_X_MIN, GOAL_X_MAX);
-    const nearGoalY = side === "home" ? goalY - 6 : goalY + 6;
-    beats.push({ type: "shot", side, playerId: actor.id, gkId: gk ? gk.id : null, from: shooterPos, to: { x: goalX, y: nearGoalY }, duration: 0.7, event: null });
-    const finalY = outcome === "goal" ? goalY : nearGoalY;
-    beats.push({ type: outcome, side, playerId: actor.id, gkId: gk ? gk.id : null, from: { x: goalX, y: nearGoalY }, to: { x: goalX, y: finalY }, duration: 0.4, event: null });
-    return beats;
-  }
+    if (chain.outcome === "save") { if (side === "home") awaySaves++; else homeSaves++; }
 
-  function attemptAttack(minute, minuteEvents, attackingTeamName, attackers, gk, attackPower, defenseFactor, isHome, ctx) {
-    const scorer = weightedPick(attackers);
-    if (!scorer) return;
-
-    if (isHome) homeShots++; else awayShots++;
-
-    // chance de but: dépend de l'écart de force, technique du tireur, gardien adverse
-    const goalBoost = minute <= EARLY_PHASE_END_MINUTE ? EARLY_PHASE_GOAL_BOOST : 1;
-    const baseChance = 0.28 + (attackPower - 50) / 200 - (gk ? gk.physical / 500 : 0.1);
-    let chance = baseChance * defenseFactor * (0.7 + scorer.technique / 150) * (scorer.form / 85) * goalBoost;
-    chance = Math.max(0.04, Math.min(0.85, chance));
-
-    const side = isHome ? "home" : "away";
-    const roll = Math.random();
-    let outcome = null;
-    if (roll < chance) outcome = "goal";
-    else if (roll < chance + 0.25) outcome = "save";
-    else if (roll < chance + 0.45) outcome = "miss";
-
-    if (!outcome) {
-      // occasion ratée : silencieuse côté commentaire (comme avant), mais on raconte quand même
-      // la possession qui se casse pour le match humain animé.
-      if (ctx) ctx.sequence.push(...buildPossessionBeats(side, attackers, scorer, ctx.atkAnchors, ctx.defenders, ctx.defAnchors, gk, null));
-      return;
+    drainStamina(side, chain.touchedIds, 0);
+    if (chain.defenseStats.interceptions || chain.defenseStats.tacklesWon || chain.defenseStats.fouls || chain.attackStats.shots) {
+      drainStamina(oppSide, chain.touchedIds.filter(id => attackers.every(p => p.id !== id)), defensePressingExtra);
     }
 
-    let assister = null;
-    if (outcome === "goal") {
-      const assistCandidates = attackers.filter(p => p.id !== scorer.id);
-      if (assistCandidates.length > 0 && Math.random() < 0.6) assister = weightedPick(assistCandidates);
+    // La récupération/l'amorce ne sont affichées que pour une possession qui débouche sur un vrai
+    // tir (goal/save/miss) — inutile de raconter chaque possession qui se casse sans rien produire,
+    // cf. consigne "pas besoin d'afficher chaque passe, affiche surtout les actions significatives".
+    const isShotChain = chain.outcome === "goal" || chain.outcome === "save" || chain.outcome === "miss";
+    if (ctx && isShotChain && chain.recoveryLine) {
+      const recoveryEv = { minute, type: "phase", team: teamName, side, text: `${minute}' — ${chain.recoveryLine}` };
+      minuteEvents.push(recoveryEv);
+      if (chain.beats.length) chain.beats[0].event = recoveryEv;
     }
-    const ev = resolveAttackOutcome(minute, attackingTeamName, side, outcome, scorer, gk, assister);
-    minuteEvents.push(ev);
-    if (ctx) {
-      const beats = buildPossessionBeats(side, attackers, scorer, ctx.atkAnchors, ctx.defenders, ctx.defAnchors, gk, outcome);
-      beats[beats.length - 1].event = ev;
-      ctx.sequence.push(...beats);
+    if (ctx && isShotChain && chain.leadIn) {
+      const leadEv = { minute, type: "phase", team: teamName, side, text: `${minute}' — ${chain.leadIn}` };
+      minuteEvents.push(leadEv);
+      if (chain.beats.length >= 2) chain.beats[chain.beats.length - 2].event = leadEv;
     }
+
+    let ev = null;
+    if (chain.outcome === "goal") {
+      recordStat(chain.scorer.id, "goals");
+      let assistText = "";
+      if (chain.assister) { recordStat(chain.assister.id, "assists"); assistText = ` (passe décisive de ${chain.assister.name})`; }
+      const goalTag = registerGoal(side, minute, chain.scorer.id);
+      ev = {
+        minute, type: "goal", team: teamName, side, scorerId: chain.scorer.id, assisterId: chain.assister ? chain.assister.id : null, gkId: chain.gk ? chain.gk.id : null, xG: Math.round(chain.xG * 100) / 100,
+        text: `${minute}' — BUT ! ${chain.scorer.name} (${teamName}) marque${assistText} !${goalTag}`
+      };
+    } else if (chain.outcome === "save") {
+      ev = {
+        minute, type: "save", team: teamName, side, takerId: chain.scorer.id, gkId: chain.gk ? chain.gk.id : null, xG: Math.round(chain.xG * 100) / 100,
+        text: `${minute}' — Tir de ${chain.scorer.name}, arrêt du gardien ${chain.gk ? chain.gk.name : "adverse"} !`
+      };
+    } else if (chain.outcome === "miss") {
+      ev = {
+        minute, type: "miss", team: teamName, side, takerId: chain.scorer.id, xG: Math.round(chain.xG * 100) / 100,
+        text: `${minute}' — ${chain.scorer.name} tente sa chance mais le tir passe à côté.`
+      };
+    }
+    if (ev) {
+      minuteEvents.push(ev);
+      if (ctx && chain.beats.length) chain.beats[chain.beats.length - 1].event = ev;
+    }
+    if (ctx) ctx.sequence.push(...chain.beats);
+
+    // Faute lors du duel qui vient de se jouer (voir matchengine-actions.js:computeFoulChance) :
+    // penalty dans la surface (même mécanisme que le penalty aléatoire existant), sinon carton
+    // jaune classique (même mécanisme que le carton aléatoire existant) — le fautif appartient à
+    // `oppSide` (l'équipe qui défendait pendant cette possession), jamais `side`.
+    if (chain.foul) {
+      if (chain.foul.severity === "penalty") {
+        const penaltyEvts = performPenaltyAttempt(side, minute, { taker: chain.foul.against, withSequence: !!ctx }, "Penalty (faute dans la surface)");
+        minuteEvents.push(...penaltyEvts);
+        if (ctx && penaltyEvts.sequence) ctx.sequence.push(...penaltyEvts.sequence);
+      } else {
+        issueYellowCard(oppSide, chain.foul.by, minute, minuteEvents, ctx ? ctx.sequence : null, defAnchors[chain.foul.by.id]);
+      }
+    }
+    return chain.attackStats.possessionActions;
   }
 
   // Fait avancer le bookkeeping de phase pour une minute donnée (indépendant de la façon dont
@@ -857,11 +834,13 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
     const homeGK = homeGKPlayer;
     const awayGK = awayGKPlayer;
 
-    // Ancres de position (voir computeSideAnchors) pour placer les beats des événements aléatoires
-    // ci-dessous (blessure/carton) sur le terrain — seulement calculées quand le match humain
-    // demande une séquence visuelle, jamais sur le chemin chaud des matchs IA.
-    const homeAtkAnchors = withSequence ? computeSideAnchors(homeSetup, homeActiveOutfield, "home", true) : null;
-    const awayAtkAnchors = withSequence ? computeSideAnchors(awaySetup, awayActiveOutfield, "away", true) : null;
+    // Ancres de position (voir computeSideAnchors, matchengine-actions.js) : désormais calculées
+    // pour TOUTES les minutes, pas seulement en séquence visuelle — le moteur d'actions en a besoin
+    // pour situer chaque décision/résolution (zone, pression, xG), même pour un match IA instantané.
+    const homeAtkAnchors = computeSideAnchors(homeSetup, homeActiveOutfield, "home", true);
+    const awayAtkAnchors = computeSideAnchors(awaySetup, awayActiveOutfield, "away", true);
+    const homeDefAnchors = computeSideAnchors(homeSetup, homeActiveOutfield, "home", false);
+    const awayDefAnchors = computeSideAnchors(awaySetup, awayActiveOutfield, "away", false);
     function anchorFor(side, playerId) {
       const anchors = side === "home" ? homeAtkAnchors : awayAtkAnchors;
       return (anchors && anchors[playerId]) || { x: 50, y: side === "home" ? 30 : 70 };
@@ -895,47 +874,13 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
       }
     }
 
-    // événement spécial: carton jaune (rare)
+    // événement spécial: carton jaune (rare, indépendant des actions — voir aussi la faute possible
+    // lors d'un duel de dribble perdu, gérée dans attemptRealAttack via ce même issueYellowCard)
     if (Math.random() < 0.012) {
       const side = Math.random() < 0.5 ? "home" : "away";
       const pool = side === "home" ? homeAttackers : awayAttackers;
       const victim = pool[Math.floor(Math.random() * pool.length)];
-      if (victim) {
-        const teamRef = side === "home" ? homeTeam : awayTeam;
-        const setupRef = side === "home" ? homeSetup : awaySetup;
-        if (minute >= MATCHBALL_START_MINUTE) {
-          // En Matchball, le carton jaune ne réduit pas l'effectif : remplacement immédiat
-          // et shootout accordé à l'adversaire.
-          removeFromLineup(setupRef, victim.id);
-          const sub = addBenchSubstitute(teamRef, setupRef, victim.pos);
-          const yellowEv = {
-            minute, type: "yellow", team: teamRef.name, side, playerId: victim.id, inId: sub ? sub.id : null, outId: victim.id,
-            text: `${minute}' — 🟨 Carton jaune pour ${victim.name} (${teamRef.name}) ! En Matchball, pas de réduction d'effectif${sub ? `, ${sub.name} le remplace` : ""} — shootout accordé à l'adversaire !`
-          };
-          minuteEvents.push(yellowEv);
-          if (withSequence) announce(yellowEv);
-          const oppSide = side === "home" ? "away" : "home";
-          const oppTeamRef = oppSide === "home" ? homeTeam : awayTeam;
-          const oppSetupRef = oppSide === "home" ? homeSetup : awaySetup;
-          const shooter = weightedPick(getAttackers(oppTeamRef, oppSetupRef));
-          if (shooter) {
-            const shootoutEvts = performShootoutAttempt(oppSide, minute, { taker: shooter, withSequence }, "Shootout (carton jaune)");
-            minuteEvents.push(...shootoutEvts);
-            if (withSequence) sequence.push(...(shootoutEvts.sequence || []));
-          }
-        } else {
-          cardSanctions[side].yellow.push({ playerId: victim.id, until: minute + 2 });
-          const ev = {
-            minute, type: "yellow", team: teamRef.name, side, playerId: victim.id,
-            text: `${minute}' — 🟨 Carton jaune pour ${victim.name} (${teamRef.name}) : exclu 2 minutes, ${teamRef.name} joue en infériorité numérique !`
-          };
-          minuteEvents.push(ev);
-          if (withSequence) {
-            const pos = anchorFor(side, victim.id);
-            sequence.push({ type: "phase", side, playerId: victim.id, from: pos, to: pos, duration: 1.4, event: ev });
-          }
-        }
-      }
+      if (victim) issueYellowCard(side, victim, minute, minuteEvents, withSequence ? sequence : null, anchorFor(side, victim.id));
     }
 
     // événement spécial: carton rouge (très rare)
@@ -989,7 +934,7 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
       minuteEvents, stopAfterPenalty, sequence,
       homeActiveOutfield, awayActiveOutfield, homeActiveLineup, awayActiveLineup,
       homeAttackers, awayAttackers, homeGK, awayGK,
-      homeAtkAnchors, awayAtkAnchors
+      homeAtkAnchors, awayAtkAnchors, homeDefAnchors, awayDefAnchors
     };
   }
 
@@ -1024,19 +969,30 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
     const awayRedPenalty = 1 - (cardSanctions.away.redActive.length + (awaySanctioned ? 1 : 0)) * 0.12;
 
     // La disposition "avec balle" (formation) renforce l'attaque ; la disposition "sans balle"
-    // (formationOOP, ou la même si liée) renforce la solidité défensive de l'adversaire.
+    // (formationOOP, ou la même si liée) renforce la solidité défensive de l'adversaire. Mêmes
+    // formules qu'avant le passage au moteur d'actions (préserve l'équilibrage existant — avantage
+    // du terrain, pénalité d'infériorité numérique, tactiques) : seulement rescalées ci-dessous en
+    // multiplicateurs `attackMod`/`defenseMod` consommés par simulatePossessionChain (matchengine-actions.js).
     const homeAttackPower = homeStrength.overall * homeAtk.goalMod * homeBonus * homeRedPenalty * formationAttackFactor(homeSetup.formation);
     const awayAttackPower = awayStrength.overall * awayAtk.goalMod * awayRedPenalty * formationAttackFactor(awaySetup.formation);
-
     const homeDefenseFactor = (awayDef.concedeMod / homeRedPenalty) / formationDefenseFactor(awaySetup.formationOOP || awaySetup.formation);
     const awayDefenseFactor = (homeDef.concedeMod / awayRedPenalty) / formationDefenseFactor(homeSetup.formationOOP || homeSetup.formation);
+    // attackMod agit sur l'xG/la qualité du porteur ; defenseMod sur la pression subie (inverse du
+    // "defenseFactor" historique, qui grandissait quand l'adversaire était facile à percer).
+    // Bornes volontairement resserrées : attackMod/defenseMod se répercutent sur CHAQUE action
+    // d'une possession (passe, dribble, tir — voir matchengine-actions.js), pas sur un seul tirage
+    // au sort global comme avant. Un écart trop large s'y composerait sur plusieurs actions
+    // d'affilée et transformerait tout avantage modéré en victoire quasi certaine.
+    const homeAttackMod = clamp(homeAttackPower / 65, 0.75, 1.4);
+    const awayAttackMod = clamp(awayAttackPower / 65, 0.75, 1.4);
+    const homeDefenseMod = clamp(1 / homeDefenseFactor, 0.75, 1.4);
+    const awayDefenseMod = clamp(1 / awayDefenseFactor, 0.75, 1.4);
 
-    const possTotal = homeStrength.technique * homeAtk.possMod * homeRedPenalty + awayStrength.technique * awayAtk.possMod * awayRedPenalty;
-    const homePossession = Math.round((homeStrength.technique * homeAtk.possMod * homeRedPenalty / possTotal) * 100);
-    possessionSum += homePossession;
-    possessionCount++;
-    minuteEvents.possession = homePossession;
-    lastHomePossession = homePossession;
+    // Régénère légèrement la fatigue de tous les joueurs actifs avant de jouer les possessions
+    // de cette minute (voir MATCH_BALANCE.stamina) — un pressing haut draine davantage (appliqué
+    // séparément dans attemptRealAttack, à la charge de l'équipe qui presse).
+    regenStamina("home", homeActiveLineup);
+    regenStamina("away", awayActiveLineup);
 
     // but contre son camp (très rare)
     if (Math.random() < 0.0006) {
@@ -1060,41 +1016,36 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
       }
     }
 
-    // occasions normales basées sur possession (plus fréquentes en tout début de match)
-    const chanceFreqBoost = minute <= EARLY_PHASE_END_MINUTE ? EARLY_PHASE_CHANCE_BOOST : 1;
-    const homeChanceRoll = Math.random();
-    const awayChanceRoll = Math.random();
+    // Occasions réelles : chaque camp joue une ou plusieurs possessions complètes cette minute
+    // (voir matchengine-actions.js:simulatePossessionChain — décision/résolution action par action,
+    // pas un simple tirage au sort). Le nombre de possessions dépend du plan offensif (jeu direct/
+    // transition = tempo plus élevé) et de la phase d'escalier (0'-7', plus d'espaces = matchs plus
+    // ouverts). Une possession peut se terminer par un tir (avec xG) OU par une perte de balle
+    // (interception, tacle, dégagement) — c'est cette perte de balle "normale" qui remplace
+    // l'ancienne séquence ambiante purement décorative.
+    const earlyPhase = minute <= EARLY_PHASE_END_MINUTE;
+    const earlyPhaseBoost = earlyPhase ? EARLY_PHASE_GOAL_BOOST : 1;
+    const ctx = withSequence ? { sequence } : null;
 
-    let homeCtx = null, awayCtx = null;
-    if (withSequence) {
-      const homeAtkAnchors = phase.homeAtkAnchors;
-      const awayAtkAnchors = phase.awayAtkAnchors;
-      const homeDefAnchors = computeSideAnchors(homeSetup, homeActiveOutfield, "home", false);
-      const awayDefAnchors = computeSideAnchors(awaySetup, awayActiveOutfield, "away", false);
-      homeCtx = { sequence, atkAnchors: homeAtkAnchors, defenders: awayAttackers, defAnchors: awayDefAnchors };
-      awayCtx = { sequence, atkAnchors: awayAtkAnchors, defenders: homeAttackers, defAnchors: homeDefAnchors };
+    let homeActions = 0, awayActions = 0;
+    const homeChains = planChainCount(homeSetup.attackPlan, earlyPhase);
+    for (let i = 0; i < homeChains; i++) {
+      homeActions += attemptRealAttack(minute, minuteEvents, "home", homeTeam.name, homeAttackers, awayAttackers, awayGK, phase.homeAtkAnchors, phase.awayDefAnchors, homeSetup.attackPlan, awaySetup.defensePlan, homeAttackMod, homeDefenseMod, earlyPhaseBoost, ctx) || 0;
+    }
+    const awayChains = planChainCount(awaySetup.attackPlan, earlyPhase);
+    for (let i = 0; i < awayChains; i++) {
+      awayActions += attemptRealAttack(minute, minuteEvents, "away", awayTeam.name, awayAttackers, homeAttackers, homeGK, phase.awayAtkAnchors, phase.homeDefAnchors, awaySetup.attackPlan, homeSetup.defensePlan, awayAttackMod, awayDefenseMod, earlyPhaseBoost, ctx) || 0;
     }
 
-    // Chaque minute (match humain animé) montre AU MOINS une possession par camp, que le tirage
-    // au sort ci-dessus lui accorde ou non une vraie occasion — sans quoi la plupart des minutes
-    // (le tirage échoue le plus souvent) n'affichaient RIEN, un match entier semblant alors se
-    // résumer à une poignée d'actions isolées plutôt qu'un jeu continu. Ceci est PUREMENT visuel :
-    // aucun tir, aucune statistique, aucun Math.random() supplémentaire ne peut faire basculer le
-    // score — seul le camp SANS occasion ce tour-ci reçoit une possession "ambiante" qui se
-    // termine par une perte de balle (buildPossessionBeats avec outcome=null, même mécanique que
-    // l'occasion ratée silencieuse ci-dessous).
-    if (homeChanceRoll < 0.10 * (homePossession / 50) * chanceFreqBoost) {
-      attemptAttack(minute, minuteEvents, homeTeam.name, homeAttackers, awayGK, homeAttackPower, homeDefenseFactor, true, homeCtx);
-    } else if (homeCtx) {
-      const actor = weightedPick(homeAttackers);
-      if (actor) sequence.push(...buildPossessionBeats("home", homeAttackers, actor, homeCtx.atkAnchors, homeCtx.defenders, homeCtx.defAnchors, awayGK, null));
-    }
-    if (awayChanceRoll < 0.10 * ((100 - homePossession) / 50) * chanceFreqBoost) {
-      attemptAttack(minute, minuteEvents, awayTeam.name, awayAttackers, homeGK, awayAttackPower, awayDefenseFactor, false, awayCtx);
-    } else if (awayCtx) {
-      const actor = weightedPick(awayAttackers);
-      if (actor) sequence.push(...buildPossessionBeats("away", awayAttackers, actor, awayCtx.atkAnchors, awayCtx.defenders, awayCtx.defAnchors, homeGK, null));
-    }
+    // Possession dérivée des actions RÉELLEMENT jouées cette minute (nombre de passes/dribbles/
+    // conduites enchaînés par chaque camp), pas d'une formule de force d'équipe indépendante du
+    // jeu simulé — repli à 50/50 si, par hasard, aucune des deux possessions n'a produit d'action
+    // (chaîne coupée dès le 1er ballon).
+    const totalActions = homeActions + awayActions;
+    const homePossession = totalActions > 0 ? Math.round((homeActions / totalActions) * 100) : 50;
+    possessionSum += homePossession;
+    possessionCount++;
+    minuteEvents.possession = homePossession;
 
     events.push(...minuteEvents);
     if (withSequence) minuteEvents.sequence = sequence;
@@ -1141,7 +1092,16 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
       playerStats,
       ratings,
       penaltyWinner,
-      shootout: shootoutResult || null
+      shootout: shootoutResult || null,
+      // Statistiques détaillées, dérivées des actions réellement simulées (voir
+      // matchengine-actions.js/attemptRealAttack) — pas affichées partout dans l'UI pour l'instant,
+      // mais disponibles pour l'équilibrage (voir runBalanceSimulation) et de futurs écrans.
+      homeShotsOnTarget, awayShotsOnTarget,
+      homeXG: Math.round(homeXG * 100) / 100, awayXG: Math.round(awayXG * 100) / 100,
+      homePassesAttempted, homePassesCompleted, awayPassesAttempted, awayPassesCompleted,
+      homeInterceptions, awayInterceptions, homeTackles, awayTackles,
+      homeSaves, awaySaves, homeClearances, awayClearances,
+      homeFouls, awayFouls
     };
   }
 
@@ -1194,21 +1154,21 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
     isMatchDecided,
     getMatchballWinner,
     isSpecialActionWindowOpen,
-    // Ancre x/y de chaque joueur actif (GK inclus) pour le côté/minute donnés, dans la formation
-    // "avec balle" — utilisé par matchchoreo.js/app.js pour replacer les joueurs non impliqués
-    // dans le beat courant (repositionnement tactique crédible entre deux actions).
-    // `possessing` : reprend la possession de la DERNIÈRE minute simulée (lastHomePossession) —
-    // le camp qui domine s'affiche en formation offensive, l'autre se replie sur sa formation
-    // défensive (setup.formationOOP/assignmentsOOP) — visuellement, l'équipe sans le ballon
-    // défend enfin, plutôt que de rester poussée vers l'avant en permanence comme avant.
+    // Ancre x/y (+ poste `pos`) de chaque joueur actif (GK inclus) pour le côté/minute donnés :
+    // uniquement la structure de BASE de la formation "avec balle" — matchchoreo.js ne s'y attache
+    // plus telle quelle, il en dérive une cible dynamique recalculée en continu (position du
+    // ballon, qui possède, rôle temporaire du joueur...), voir matchchoreo.js:computeDynamicTarget.
     getFormationAnchors: (side, minute) => {
       const team = side === "home" ? homeTeam : awayTeam;
       const setup = side === "home" ? homeSetup : awaySetup;
       const gkPlayer = getGK(team, setup);
       const outfieldIds = getActiveOutfieldIds(team, setup, minute, side);
-      const possessing = side === "home" ? lastHomePossession >= 50 : lastHomePossession < 50;
-      const anchors = computeSideAnchors(setup, outfieldIds, side, possessing);
-      if (gkPlayer) anchors[gkPlayer.id] = { x: 50, y: gkAnchorY(side) };
+      const anchors = computeSideAnchors(setup, outfieldIds, side, true);
+      outfieldIds.forEach(id => {
+        const p = team.players.find(pl => pl.id === id);
+        if (anchors[id] && p) anchors[id].pos = p.pos;
+      });
+      if (gkPlayer) anchors[gkPlayer.id] = { x: 50, y: gkAnchorY(side), pos: "GK" };
       return anchors;
     }
   };
@@ -1514,14 +1474,73 @@ function simulateAIMatch(homeTeam, awayTeam) {
   const homePlans = chooseAiPlans(homeStrength, awayStrength);
   const awayPlans = chooseAiPlans(awayStrength, homeStrength);
 
-  const homeSetup = { lineup: homeLineup, formation: homeChoice.formation, attackPlan: homePlans.attackPlan, defensePlan: homePlans.defensePlan };
-  const awaySetup = { lineup: awayLineup, formation: awayChoice.formation, attackPlan: awayPlans.attackPlan, defensePlan: awayPlans.defensePlan };
+  // `assignments` (poste -> slot FORMATION_SLOTS) est indispensable à computeSideAnchors pour
+  // positionner les joueurs en formation complète plutôt que de retomber sur la disposition de
+  // secours "effectif réduit" (confinée à sa propre moitié de terrain, voir anchorToY) — sans lui,
+  // le moteur d'actions ne pouvait jamais faire progresser une équipe IA jusqu'au tiers offensif.
+  const homeSetup = { lineup: homeLineup, assignments: homeChoice.assignments, formation: homeChoice.formation, attackPlan: homePlans.attackPlan, defensePlan: homePlans.defensePlan };
+  const awaySetup = { lineup: awayLineup, assignments: awayChoice.assignments, formation: awayChoice.formation, attackPlan: awayPlans.attackPlan, defensePlan: awayPlans.defensePlan };
   const result = simulateMatch(homeTeam, homeSetup, awayTeam, awaySetup);
   applyMatchPlayerStats(homeTeam, homeSetup, result);
   applyMatchPlayerStats(awayTeam, awaySetup, result);
   updateFormAfterMatch(homeTeam, homeSetup, result.homeGoals, result.awayGoals, result.ratings);
   updateFormAfterMatch(awayTeam, awaySetup, result.awayGoals, result.homeGoals, result.ratings);
   return result;
+}
+
+// --- Outil d'équilibrage : simule un grand nombre de matchs entre deux équipes (chacune reclonée
+// à chaque essai pour ne pas laisser la forme/les stats d'un match polluer le suivant) et agrège
+// les moyennes utiles pour ajuster MATCH_BALANCE (matchengine-actions.js) sans y jouer à la main :
+// buts/tirs/xG par match, taux de passes réussies, avantage du terrain, fréquence de victoire du
+// favori, fréquence des scores extrêmes. Utilisable depuis la console ou `node tests-node.js` :
+//   runBalanceSimulation(LEAGUES.france.teams[0], LEAGUES.france.teams[1], 200)
+function runBalanceSimulation(templateHomeTeam, templateAwayTeam, n) {
+  n = n || 200;
+  let totalGoals = 0, totalShots = 0, totalXG = 0, totalPassesAtt = 0, totalPassesComp = 0;
+  let homeWins = 0, awayWins = 0, favoriteWins = 0, blowouts = 0, noDraws = 0;
+  const homeOverall = templateHomeTeam.players.reduce((s, p) => s + p.overall, 0) / templateHomeTeam.players.length;
+  const awayOverall = templateAwayTeam.players.reduce((s, p) => s + p.overall, 0) / templateAwayTeam.players.length;
+  const favoriteIsHome = homeOverall >= awayOverall;
+
+  for (let i = 0; i < n; i++) {
+    const home = JSON.parse(JSON.stringify(templateHomeTeam));
+    const away = JSON.parse(JSON.stringify(templateAwayTeam));
+    const homeChoice = chooseAiFormation(home);
+    const awayChoice = chooseAiFormation(away);
+    const homeLineup = homeChoice.assignments.filter(Boolean);
+    const awayLineup = awayChoice.assignments.filter(Boolean);
+    const homeStrength = computeTeamStrength(home, homeLineup);
+    const awayStrength = computeTeamStrength(away, awayLineup);
+    const homePlans = chooseAiPlans(homeStrength, awayStrength);
+    const awayPlans = chooseAiPlans(awayStrength, homeStrength);
+    const homeSetup = { lineup: homeLineup, assignments: homeChoice.assignments, formation: homeChoice.formation, attackPlan: homePlans.attackPlan, defensePlan: homePlans.defensePlan };
+    const awaySetup = { lineup: awayLineup, assignments: awayChoice.assignments, formation: awayChoice.formation, attackPlan: awayPlans.attackPlan, defensePlan: awayPlans.defensePlan };
+    const result = simulateMatch(home, homeSetup, away, awaySetup);
+
+    totalGoals += result.homeGoals + result.awayGoals;
+    totalShots += result.homeShots + result.awayShots;
+    totalXG += result.homeXG + result.awayXG;
+    totalPassesAtt += result.homePassesAttempted + result.awayPassesAttempted;
+    totalPassesComp += result.homePassesCompleted + result.awayPassesCompleted;
+    if (result.homeGoals !== result.awayGoals || result.penaltyWinner) noDraws++;
+    const homeWon = result.homeGoals !== result.awayGoals ? result.homeGoals > result.awayGoals : (result.penaltyWinner === "home");
+    if (homeWon) homeWins++; else awayWins++;
+    if (favoriteIsHome === homeWon) favoriteWins++;
+    if (Math.abs(result.homeGoals - result.awayGoals) >= 6) blowouts++;
+  }
+
+  return {
+    matches: n,
+    avgGoalsPerMatch: totalGoals / n,
+    avgShotsPerMatch: totalShots / n,
+    avgXGPerMatch: totalXG / n,
+    passCompletionRate: totalPassesAtt ? totalPassesComp / totalPassesAtt : 0,
+    homeWinRate: homeWins / n,
+    awayWinRate: awayWins / n,
+    favoriteWinRate: favoriteWins / n,
+    blowoutRate: blowouts / n,
+    noDrawRate: noDraws / n
+  };
 }
 
 // Effectif minimum par poste pour pouvoir aligner n'importe quelle formation (1-2-2-2 / 1-3-2-1 / 1-2-3-1)

@@ -577,7 +577,21 @@
               <div class="bar-fill" id="bar-shots"></div>
             </div><span id="txt-shots"></span>
           </div>
+          <div class="stat-bar"><span>Tirs cadrés</span>
+            <div class="bar-bg">
+              <div class="bar-fill" id="bar-shots-target"></div>
+            </div><span id="txt-shots-target"></span>
+          </div>
+          <div class="stat-bar"><span>xG</span>
+            <div class="bar-bg">
+              <div class="bar-fill" id="bar-xg"></div>
+            </div><span id="txt-xg"></span>
+          </div>
         </div>
+        <table>
+          <thead><tr><th>Statistique</th><th id="summary-home-abbr"></th><th id="summary-away-abbr"></th></tr></thead>
+          <tbody id="summary-advanced-stats"></tbody>
+        </table>
         <div class="summary-grid">
           <div>
             <h3 id="summary-home-title"></h3>
@@ -679,6 +693,7 @@
   </div>
 
   <script src="data.js"></script>
+  <script src="matchengine-actions.js"></script>
   <script src="engine.js"></script>
   <script src="matchchoreo.js"></script>
   <script src="app.js"></script>

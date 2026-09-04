@@ -2,7 +2,7 @@
 // CLAUDE.md : pas garanti dans ce projet — quand il ne l'est pas, ouvrir tests.html dans un
 // navigateur à la place, ça marche sans aucune dépendance).
 //
-// Charge data.js + engine.js + matchchoreo.js + tests.js dans un contexte vm PARTAGÉ (exactement
+// Charge data.js + matchengine-actions.js + engine.js + matchchoreo.js + tests.js dans un contexte vm PARTAGÉ (exactement
 // ce que fait un navigateur avec de simples balises <script> globales, sans bundler ni module) puis
 // appelle runAllTests(). Usage : node tests-node.js — sort avec un code de retour non-nul si un
 // test échoue, pour pouvoir être branché plus tard sur un hook CI/pre-commit.
@@ -13,7 +13,7 @@ const vm = require("vm");
 const context = {};
 vm.createContext(context);
 
-["data.js", "engine.js", "matchchoreo.js", "tests.js"].forEach(file => {
+["data.js", "matchengine-actions.js", "engine.js", "matchchoreo.js", "tests.js"].forEach(file => {
   const code = fs.readFileSync(path.join(__dirname, file), "utf8");
   vm.runInContext(code, context, { filename: file });
 });

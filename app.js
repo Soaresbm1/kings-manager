@@ -3092,6 +3092,18 @@ const MATCH_TACTICS_IDS = { formation: "match-formation-choice", pitch: "match-t
 let matchEngine = null;
 let matchState = null;
 
+// Mode de débogage visuel du terrain (désactivé par défaut, touche "D" pour basculer pendant un
+// match) : affiche la cible dynamique de chaque joueur (voir matchchoreo.js:computeDynamicTarget),
+// son rôle temporaire, le porteur/le presseur, les limites du bloc de chaque équipe et la
+// trajectoire prévue du ballon — voir renderPitchDebugOverlay. N'a aucun effet sur la simulation.
+let PITCH_DEBUG = false;
+document.addEventListener("keydown", e => {
+  if (e.key === "d" || e.key === "D") {
+    if (!document.getElementById("screen-match").classList.contains("active")) return;
+    PITCH_DEBUG = !PITCH_DEBUG;
+  }
+});
+
 // --- Simulation animée du match humain (voir matchchoreo.js) ---
 let choreo = null;          // instance courante (createChoreographer)
 let pitchRaf = null;        // id requestAnimationFrame de la boucle d'animation continue
@@ -3418,13 +3430,20 @@ function closePlayerInfoModal() {
 // boucle continue ci-dessous l'anime jusqu'à son terme avant d'enchaîner sur la suivante. Le
 // canvas dessine à la fois le terrain et les acteurs, transposés dans un affichage paysage.
 
-// Ancre chaque joueur actif de la minute donnée à sa position de formation courante (voir
-// engine.js:getFormationAnchors) — les joueurs déjà affichés ne sont jamais téléportés (ils sont
-// rappelés en douceur par matchchoreo.js), seuls les nouveaux entrants apparaissent directement
-// dessus (escalier, Dé Géant, Matchball, remplacement après carton rouge).
+// Ancre chaque joueur actif de la minute donnée à sa STRUCTURE DE BASE de formation (voir
+// engine.js:getFormationAnchors) — les joueurs déjà affichés ne sont jamais téléportés (leur cible
+// réelle est recalculée en continu par matchchoreo.js à partir de cette base, voir
+// computeDynamicTarget), seuls les nouveaux entrants apparaissent directement dessus (escalier, Dé
+// Géant, Matchball, remplacement après carton rouge). Le plan tactique de chaque camp (peut changer
+// en cours de match, voir maybeAdjustAiTactics/l'onglet Tactique) module l'amplitude de la
+// montée/repli du bloc sans ballon.
 function syncChoreoAnchors(minute) {
-  if (!choreo || !matchEngine) return;
+  if (!choreo || !matchEngine || !matchState) return;
   choreo.setAnchors(matchEngine.getFormationAnchors("home", minute), matchEngine.getFormationAnchors("away", minute));
+  choreo.setTactics(
+    { attackPlan: matchState.homeSetup.attackPlan, defensePlan: matchState.homeSetup.defensePlan },
+    { attackPlan: matchState.awaySetup.attackPlan, defensePlan: matchState.awaySetup.defensePlan }
+  );
 }
 
 function stopMatchPitch() {
@@ -3633,6 +3652,75 @@ function renderMatchPitchFrame() {
   ctx.lineWidth = Math.max(1, 0.25 * radiusScale);
   ctx.strokeStyle = "#333333";
   ctx.stroke();
+
+  if (PITCH_DEBUG) renderPitchDebugOverlay(ctx, state, sx, sy, radiusScale);
+}
+
+// Mode de débogage visuel (touche "D") : pour chaque joueur, une ligne vers sa cible dynamique
+// actuelle (voir matchchoreo.js:computeDynamicTarget) et son rôle temporaire ; le porteur et le
+// presseur du moment sont surlignés ; les limites du bloc de chaque équipe (bounding box des
+// joueurs de champ) et la trajectoire prévue du beat en cours sont tracées. Purement visuel — ne
+// modifie ni ne lit rien d'autre que ce que choreo.getState() expose déjà.
+function renderPitchDebugOverlay(ctx, state, sx, sy, radiusScale) {
+  const toScreen = (x, y) => ({ cx: y * sx, cy: x * sy });
+  ctx.save();
+
+  // trajectoire prévue du beat en cours (ballon)
+  if (state.currentBeat) {
+    const from = toScreen(state.currentBeat.from.x, state.currentBeat.from.y);
+    const to = toScreen(state.currentBeat.to.x, state.currentBeat.to.y);
+    ctx.setLineDash([6, 4]);
+    ctx.strokeStyle = "rgba(255,255,0,0.7)";
+    ctx.lineWidth = Math.max(1, 0.2 * radiusScale);
+    ctx.beginPath(); ctx.moveTo(from.cx, from.cy); ctx.lineTo(to.cx, to.cy); ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  // limites du bloc de chaque équipe (bounding box des joueurs de champ actifs)
+  const gkIds = new Set();
+  if (matchEngine) ["home", "away"].forEach(side => { const gk = matchEngine.getGK(side); if (gk) gkIds.add(gk.id); });
+  ["home", "away"].forEach(side => {
+    const outfield = state.players.filter(p => p.side === side && !gkIds.has(p.id));
+    if (!outfield.length) return;
+    const minX = Math.min(...outfield.map(p => p.x)), maxX = Math.max(...outfield.map(p => p.x));
+    const minY = Math.min(...outfield.map(p => p.y)), maxY = Math.max(...outfield.map(p => p.y));
+    const a = toScreen(minX, minY), b = toScreen(maxX, maxY);
+    ctx.strokeStyle = side === "home" ? "rgba(58,160,255,0.5)" : "rgba(255,93,93,0.5)";
+    ctx.lineWidth = Math.max(1, 0.15 * radiusScale);
+    ctx.strokeRect(Math.min(a.cx, b.cx), Math.min(a.cy, b.cy), Math.abs(b.cx - a.cx), Math.abs(b.cy - a.cy));
+  });
+
+  const involvedIds = new Set(state.involvedIds || []);
+  state.players.forEach(p => {
+    const cur = toScreen(p.x, p.y);
+    // ligne position actuelle -> cible dynamique (rien à tracer pour un joueur impliqué dans le
+    // beat en cours : sa position EST déjà pilotée directement par le beat, pas par une cible).
+    if (!involvedIds.has(p.id) && typeof p.targetX === "number") {
+      const target = toScreen(p.targetX, p.targetY);
+      ctx.strokeStyle = "rgba(0,255,140,0.6)";
+      ctx.lineWidth = Math.max(1, 0.12 * radiusScale);
+      ctx.beginPath(); ctx.moveTo(cur.cx, cur.cy); ctx.lineTo(target.cx, target.cy); ctx.stroke();
+      ctx.beginPath(); ctx.arc(target.cx, target.cy, radiusScale * 0.6, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(0,255,140,0.6)"; ctx.fill();
+    }
+    // porteur ponctuel / presseur du moment : anneau distinctif
+    if (state.ballCarrierId === p.id) {
+      ctx.beginPath(); ctx.arc(cur.cx, cur.cy, radiusScale * 4.2, 0, Math.PI * 2);
+      ctx.strokeStyle = "#ffd166"; ctx.lineWidth = Math.max(1, 0.3 * radiusScale); ctx.stroke();
+    } else if (p.role === "primaryPresser") {
+      ctx.beginPath(); ctx.arc(cur.cx, cur.cy, radiusScale * 4.2, 0, Math.PI * 2);
+      ctx.strokeStyle = "#ff5d5d"; ctx.lineWidth = Math.max(1, 0.25 * radiusScale); ctx.stroke();
+    }
+    // rôle temporaire, en petit sous le joueur
+    if (p.role) {
+      ctx.fillStyle = "#ffffff";
+      ctx.font = `${Math.max(6, 1.1 * radiusScale)}px "Rajdhani", sans-serif`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "top";
+      ctx.fillText(p.role, cur.cx, cur.cy + radiusScale * 3.2);
+    }
+  });
+  ctx.restore();
 }
 
 // Le joueur ne pilote plus aucune action : un clic sur un joueur (sien ou adverse) ouvre juste sa
@@ -4396,6 +4484,33 @@ function showMatchSummary() {
   const totalShots = result.homeShots + result.awayShots || 1;
   document.getElementById("bar-shots").style.width = (result.homeShots / totalShots * 100) + "%";
   document.getElementById("txt-shots").textContent = `${result.homeShots} - ${result.awayShots}`;
+
+  const totalShotsOnTarget = result.homeShotsOnTarget + result.awayShotsOnTarget || 1;
+  document.getElementById("bar-shots-target").style.width = (result.homeShotsOnTarget / totalShotsOnTarget * 100) + "%";
+  document.getElementById("txt-shots-target").textContent = `${result.homeShotsOnTarget} - ${result.awayShotsOnTarget}`;
+
+  const totalXG = result.homeXG + result.awayXG || 1;
+  document.getElementById("bar-xg").style.width = (result.homeXG / totalXG * 100) + "%";
+  document.getElementById("txt-xg").textContent = `${result.homeXG.toFixed(2)} - ${result.awayXG.toFixed(2)}`;
+
+  // Statistiques détaillées dérivées des actions réellement simulées (voir matchengine-actions.js
+  // et engine.js:attemptRealAttack) — passes/interceptions/tacles/arrêts, pas affichées avant.
+  document.getElementById("summary-home-abbr").textContent = teamInitials(homeTeam.name);
+  document.getElementById("summary-away-abbr").textContent = teamInitials(awayTeam.name);
+  function passLine(attempted, completed) {
+    const pct = attempted ? Math.round((completed / attempted) * 100) : 0;
+    return `${completed}/${attempted} (${pct}%)`;
+  }
+  const advancedRows = [
+    ["Passes réussies", passLine(result.homePassesAttempted, result.homePassesCompleted), passLine(result.awayPassesAttempted, result.awayPassesCompleted)],
+    ["Interceptions", result.homeInterceptions, result.awayInterceptions],
+    ["Tacles", result.homeTackles, result.awayTackles],
+    ["Arrêts du gardien", result.homeSaves, result.awaySaves],
+    ["Fautes", result.homeFouls, result.awayFouls]
+  ];
+  document.getElementById("summary-advanced-stats").innerHTML = advancedRows
+    .map(([label, h, a]) => `<tr><td class="name">${label}</td><td>${h}</td><td>${a}</td></tr>`)
+    .join("");
 
   document.getElementById("summary-home-title").textContent = homeTeam.name + " — Notes";
   document.getElementById("summary-away-title").textContent = awayTeam.name + " — Notes";

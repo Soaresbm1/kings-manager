@@ -20,18 +20,34 @@ statique.
 1. **`data.js`** — données statiques : `LEAGUES` (les 6 ligues, chacune avec ses
    équipes/joueurs, ex. `FRANCE_TEAMS`, `SPAIN_TEAMS`...), `FORMATIONS` / `FORMATION_SLOTS`,
    `ATTACK_PLANS` / `DEFENSE_PLANS`, `SECRET_CARDS`.
-2. **`engine.js`** — moteur de simulation pur (pas de DOM) : calendrier
-   (`generateSchedule`), simulation minute par minute (`createMatchEngine`,
-   `simulateMatch`), classement (`computeStandings`), progression des joueurs
-   (`developPlayer`), IA (voir plus bas). Pour le match humain, produit aussi une
-   chorégraphie animée par minute (`simulateMinute(minute, {withSequence:true})`).
-3. **`matchchoreo.js`** — module d'interpolation pur (pas de DOM, aucun `Math.random()`)
-   qui anime cette chorégraphie (positions joueurs/ballon frame par frame), façon Football
-   Manager Mobile : `createChoreographer()`, `setAnchors`, `loadSequence`, `step(dt)`,
-   `insertNext` (pour intercaler Arme Secrète/Penalty en cours de séquence).
-4. **`app.js`** — état du jeu (`STATE`), rendu des écrans, gestion des événements DOM,
+2. **`matchengine-actions.js`** — moteur d'actions pur (pas de DOM, pas de `STATE`) : décide et
+   résout, ACTION PAR ACTION, ce qui se passe pendant une possession (porteur → décision → passe/
+   dribble/centre/tir → xG → issue), via `simulatePossessionChain()`. Contient aussi les constantes
+   d'équilibrage centralisées (`MATCH_BALANCE`), les attributs dérivés (`computePassingRating`,
+   `computeDribblingRating`, `computeFinishingRating`, `computeDefendingRating`,
+   `computeGoalkeepingRating`) et la géométrie du terrain (`PITCH_W`, `clamp`,
+   `computeSideAnchors`...). Chargé avant `engine.js` : ordre technique arbitraire (ce sont des
+   déclarations de fonctions/constantes globales, jamais exécutées au chargement), mais reflète la
+   dépendance logique — `engine.js` appelle ce module, jamais l'inverse.
+3. **`engine.js`** — orchestration du match (pas de DOM) : calendrier (`generateSchedule`),
+   bookkeeping minute par minute (`createMatchEngine`, règles Kings League, cartons, score,
+   fatigue — voir plus bas), résolution instantanée (`simulateMatch`), classement
+   (`computeStandings`), progression des joueurs (`developPlayer`), IA (voir plus bas). Délègue à
+   `matchengine-actions.js` la simulation de chaque possession via `attemptRealAttack()` (interne),
+   qu'il s'agisse d'un match IA instantané ou du match humain animé
+   (`simulateMinute(minute, {withSequence:true})`, qui demande en plus les beats d'animation).
+   `runBalanceSimulation(homeTeam, awayTeam, n)` simule un grand nombre de matchs et agrège les
+   moyennes utiles (buts/tirs/xG par match, taux de passes réussies, avantage du terrain, taux de
+   victoire du favori...) pour ajuster `MATCH_BALANCE` sans y jouer à la main.
+4. **`matchchoreo.js`** — module d'interpolation pur (pas de DOM, aucun `Math.random()`)
+   qui anime la chorégraphie produite par `engine.js`/`matchengine-actions.js` (positions
+   joueurs/ballon frame par frame), façon Football Manager Mobile : `createChoreographer()`,
+   `setAnchors`, `loadSequence`, `step(dt)`, `insertNext` (pour intercaler Arme Secrète/Penalty en
+   cours de séquence). Ne décide jamais rien : consomme des "beats" déjà résolus (pass/cross/carry/
+   dribble/tackle/interception/clear/out/shot/goal/save/miss/owngoal/phase).
+5. **`app.js`** — état du jeu (`STATE`), rendu des écrans, gestion des événements DOM,
    sauvegardes (`localStorage` + export/import JSON).
-5. **`index.html` / `style.css`** — structure des écrans et mise en forme.
+6. **`index.html` / `style.css`** — structure des écrans et mise en forme.
 
 Dossiers `images/players/<dossier-ligue>/<club-slug>/<joueur-slug>.png` (photos, fallback
 initiales si absentes ; le nom du dossier de ligue peut différer de la clé interne — voir
@@ -67,14 +83,44 @@ Kings League) ; pas de photos/blasons pour ces 4 ligues pour l'instant.
 - `app.js:chooseAiTurn` — IA du plateau physique en match humain, indépendante de l'IA
   "macro" ci-dessus.
 
-## Match humain : simulation animée, pas jouable directement
+## Simulation du match : action par action, façon Football Manager Mobile
 
-Le match du joueur se déroule **automatiquement**, minute par minute (tactique réglable
-avant/pendant) — l'ancien plateau à tour de rôle façon Soccer Stars a été retiré. Les matchs
-IA vs IA restent strictement inchangés (résolution instantanée par tirage au sort). Voir
-`engine.js:simulateMinute` (option `withSequence`, construit des "beats" de possession) et
-`matchchoreo.js` (interpolation déterministe de ces beats) pour le détail — c'est le système
-le plus dense du code, à relire directement plutôt que de dupliquer ici.
+Une possession n'est plus un simple tirage au sort narré après coup : elle est construite,
+action par action, par `matchengine-actions.js:simulatePossessionChain()` — choix du porteur,
+positionnement (formations avec/sans balle, `computeSideAnchors`), décision cohérente (passe
+courte/progressive/en profondeur, conduite, dribble, centre, tir, dégagement — voir
+`chooseActionType`), résolution en comparant les attributs des joueurs concernés (voir les
+`compute*Rating` dérivés), déplacement réel du ballon, puis éventuellement une occasion avec son
+xG (`computeShotXG`) et sa résolution face au gardien (`resolveShotOutcome`). Une possession
+s'arrête sur un tir, un dégagement, une interception ou un tacle — jamais de téléportation, jamais
+de passe vers un adversaire. `engine.js:attemptRealAttack` (interne à `createMatchEngine`) appelle
+ce moteur et applique le résultat à l'état du match (score, bonus "but double", stats détaillées,
+fatigue — `MATCH_BALANCE.stamina`) ; **le même chemin de décision/résolution sert aussi bien aux
+matchs IA instantanés (`simulateMatch`/`simulateAIMatch`, sans beats) qu'au match humain animé**
+(`engine.js:simulateMinute(minute, {withSequence:true})`, qui demande en plus les beats
+d'animation). Les tactiques (plan offensif/défensif, formation avec/sans balle) influencent
+directement les poids de décision et la pression subie — jamais rétroactivement sur une action déjà
+jouée. Voir `matchchoreo.js` pour l'interpolation déterministe de ces beats à l'écran — c'est le
+système le plus dense du code, à relire directement plutôt que de dupliquer ici. L'ancien plateau à
+tour de rôle façon Soccer Stars a été retiré depuis longtemps ; le joueur ne pilote plus aucune
+action individuelle, il règle la tactique et regarde le match se dérouler.
+
+### Déplacement collectif des joueurs sans ballon (`matchchoreo.js`)
+
+Les ancres de formation (`engine.js:getFormationAnchors`, transmises via `setAnchors`) ne sont
+qu'une **structure de départ** ("slot" de base + poste `pos`) — un joueur non impliqué dans le beat
+en cours n'y reste jamais figé. Sa position CIBLE réelle est recalculée à chaque frame
+(`computeDynamicTarget`) à partir de ce slot + un coulissement latéral vers le ballon
+(`lateralPullAttack`/`lateralPullDefend`) + une montée/repli du bloc selon la possession/le poste/le
+plan défensif (`depthShift`, `depthShiftDefendFactor`) + un ajustement de rôle temporaire
+(`assignRoles` : `shortSupport`/`forwardRunner`/`wideSupport`/`restDefense` en possession,
+`primaryPresser`/`coverDefender`/`farSideCompact`/`holdShape` sans le ballon), puis rejointe
+PROGRESSIVEMENT par `steerTowards` (vitesse maximale, accélération bornée, jamais de saut). Les
+joueurs impliqués dans le beat en cours (porteur/receveur/gardien, voir `computeInvolvedIds`) ne
+passent pas par ce système : ils suivent le ballon par construction (`applyBeatFrame`, inchangé).
+`getState()` expose `role`/`targetX`/`targetY`/`involvedIds`/`possessionSide`/`currentBeat` pour le
+mode de débogage visuel (touche **D** pendant un match, voir `app.js:PITCH_DEBUG`/
+`renderPitchDebugOverlay`) — cibles, rôles, porteur/presseur, limites du bloc, trajectoire du beat.
 
 ## Autres systèmes notables (chercher le nom de fonction dans `app.js`/`engine.js` au besoin)
 
@@ -117,18 +163,29 @@ le plus dense du code, à relire directement plutôt que de dupliquer ici.
   vérifier d'abord (`where node` / `Get-Command node`) — a déjà manqué au PATH lors d'une
   session malgré cette note ; dans ce cas, relire le code attentivement à la place des tests
   automatisés et le signaler à l'utilisateur plutôt que de bloquer. Si présent : pour un test
-  rapide de la logique (sans navigateur), charger `data.js` + `engine.js` dans un
-  `vm.runInContext` Node. Pour servir les fichiers statiques en local, un petit serveur Node
-  fait main (`http.createServer`) plutôt que `python -m http.server`.
+  rapide de la logique (sans navigateur), charger `data.js` + `matchengine-actions.js` +
+  `engine.js` dans un `vm.runInContext` Node (voir `tests-node.js` pour l'ordre exact). Pour
+  servir les fichiers statiques en local, un petit serveur Node fait main (`http.createServer`)
+  plutôt que `python -m http.server`.
 
 ## Suite de tests (`tests.js`, `tests.html`, `tests-node.js`)
 
-Couvre la couche pure du jeu (`data.js` + `engine.js` + `matchchoreo.js`, aucun DOM) :
-intégrité des données, calendrier, classement, moteur de match, stats saison/carrière,
-mercato IA, IA tactique, géométrie de terrain, chorégraphie du match humain et son
-interpolation. Pas de framework (`test()`/`assert()`/`assertEqual()`/`assertClose()`/
-`runAllTests()` définis dans `tests.js`). **`tests.html`** est le point d'entrée à utiliser
-en priorité (ouverture directe dans un navigateur, aucune dépendance) vu l'indisponibilité
-fréquente de `node` ; **`tests-node.js`** (`node tests-node.js`) fait la même chose via
-`vm.runInContext` avec un code de sortie non-nul si un test échoue. Ajouter un test = un
-nouvel appel à `test("...", () => { ... })` dans `tests.js`, rien à toucher ailleurs.
+Couvre la couche pure du jeu (`data.js` + `matchengine-actions.js` + `engine.js` +
+`matchchoreo.js`, aucun DOM) : intégrité des données, calendrier, classement, moteur de match,
+moteur d'actions (structure des beats, continuité du porteur/ballon, passes uniquement vers un
+coéquipier actif, interception/tacle = changement de possession, xG borné [0,1], but jamais sans
+tir réel, cohérence des stats d'attaque, comportement à effectif réduit), stats saison/carrière,
+mercato IA, IA tactique, géométrie de terrain, équilibrage (`runBalanceSimulation` — moyennes de
+buts/tirs/xG/passes réussies, avantage du terrain, victoire du favori, influence des tactiques sur
+`chooseActionType`, bornes larges mais réelles pour capter une dérive de réglage), chorégraphie du
+match humain (tous les types de beats, y compris cross/carry/interception/clear/out/press) et son
+interpolation, déplacement collectif des joueurs sans ballon (cible valide et dans le terrain,
+plusieurs joueurs bougent à la fois, montée/repli du bloc selon la possession, coulissement latéral
+vers le ballon, un seul presseur à la fois, cibles jamais toutes identiques, vitesse maximale
+jamais dépassée, transition progressive). Pas de framework
+(`test()`/`assert()`/`assertEqual()`/`assertClose()`/`runAllTests()` définis dans `tests.js`).
+**`tests.html`** est le point d'entrée à utiliser en priorité (ouverture directe dans un
+navigateur, aucune dépendance) vu l'indisponibilité fréquente de `node` ; **`tests-node.js`**
+(`node tests-node.js`) fait la même chose via `vm.runInContext` avec un code de sortie non-nul si
+un test échoue. Ajouter un test = un nouvel appel à `test("...", () => { ... })` dans `tests.js`,
+rien à toucher ailleurs.
