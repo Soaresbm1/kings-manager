@@ -3,9 +3,10 @@
 > This is an index/roadmap, not an executable plan. Each phase below gets its own
 > bite-sized plan (`superpowers:writing-plans` format) written just before that phase
 > starts, once the previous phase has landed and we know what we actually learned from
-> it. **Phase 1** (`2026-09-04-phaser-ts-migration-phase1-tooling.md`) and **Phase 2**
-> (`2026-09-04-phaser-ts-migration-phase2-domain-types.md`) are done, each executed
-> inline in the same session that wrote its plan.
+> it. **Phase 1** (`2026-09-04-phaser-ts-migration-phase1-tooling.md`), **Phase 2**
+> (`2026-09-04-phaser-ts-migration-phase2-domain-types.md`) and **Phase 3**
+> (`2026-09-04-phaser-ts-migration-phase3-legacy-data-adapter.md`) are done, each
+> executed inline in the same session that wrote its plan.
 
 **Spec:** the user's migration brief (2026-09-04 conversation) — full requirements
 reproduced in that conversation, not duplicated here. Read it before writing any
@@ -107,6 +108,39 @@ re-litigate without a reason:
   shape now was judged higher-risk than adding it later with real information.
 - `tsconfig.json`'s `types: ["vite/client", "node"]` (set during Phase 1) was reused as-is;
   no tsconfig changes were needed for pure type files.
+
+## Phase 3 — done (2026-09-04)
+
+`src/data/legacyDataAdapter.ts` landed (4 commits including the spike record), exposing
+typed read-only accessors for every legacy static data collection plus `findTeam`/
+`findPlayer` helpers. Zero runtime/legacy-file changes, all verified green. Full detail in
+`2026-09-04-phaser-ts-migration-phase3-legacy-data-adapter.md`. Load-bearing findings for
+Phase 4+:
+
+- **A Vite-bundled ES module CAN read a classic `<script>`'s top-level `const`/`let` as a
+  bare identifier** — empirically confirmed with a temporary Playwright probe:
+  `typeof LEAGUES` from `src/main.ts` (a `type="module"` script) is `"object"`, while
+  `window.LEAGUES` is `"undefined"`. This means no `window`/`globalThis` bridge script is
+  needed anywhere in this migration to reach `data.js`'s globals (or, later,
+  `matchengine-actions.js`'s/`engine.js`'s/`matchchoreo.js`'s globals) from TypeScript
+  modules — reference them directly as bare identifiers, typed via a colocated
+  `declare global { var ... }` block (see `legacyDataAdapter.ts` for the pattern). This
+  applies equally to Phase 4 (`ActionEngine.ts` will need `MATCH_BALANCE`,
+  `computeSideAnchors`, etc. from `matchengine-actions.js` the same way) and Phase 5
+  (`MatchEngine.ts` needing `engine.js`'s exports, if any legacy code still calls into the
+  TS side rather than being fully replaced).
+- **`declare global { var X: T }` (not `const`/`let`) is the right ambient-declaration
+  keyword** even though the real script uses `const` — TypeScript treats ambient `var` as
+  assignable (needed so Vitest tests can do `Object.assign(globalThis, {LEAGUES: fixture})`
+  to inject fixtures in Node, without a real browser), while ambient `const`/`let` would be
+  rejected as read-only by `tsc` even for `globalThis.X = ...` in test setup. No ESLint rule
+  in this project's config flags this pattern.
+- **Legacy globals with no runtime test coverage possible without a browser** (i.e. every
+  future "does the TS code really see the real `data.js`/`engine.js` global, not just a
+  fixture" question) should reuse Task 1's Playwright-console-probe technique — cheap,
+  fast, and it already caught the one real unknown in this phase. Keep doing this as a
+  first step whenever a new phase needs to reach a not-yet-proven legacy global, rather
+  than assuming either direction.
 
 ## Current-state summary (established 2026-09-04)
 
