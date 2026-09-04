@@ -4,9 +4,10 @@
 > bite-sized plan (`superpowers:writing-plans` format) written just before that phase
 > starts, once the previous phase has landed and we know what we actually learned from
 > it. **Phase 1** (`2026-09-04-phaser-ts-migration-phase1-tooling.md`), **Phase 2**
-> (`2026-09-04-phaser-ts-migration-phase2-domain-types.md`) and **Phase 3**
-> (`2026-09-04-phaser-ts-migration-phase3-legacy-data-adapter.md`) are done, each
-> executed inline in the same session that wrote its plan.
+> (`2026-09-04-phaser-ts-migration-phase2-domain-types.md`), **Phase 3**
+> (`2026-09-04-phaser-ts-migration-phase3-legacy-data-adapter.md`) and **Phase 4**
+> (`2026-09-04-phaser-ts-migration-phase4-action-engine.md`) are done, each executed
+> inline in the same session that wrote its plan.
 
 **Spec:** the user's migration brief (2026-09-04 conversation) — full requirements
 reproduced in that conversation, not duplicated here. Read it before writing any
@@ -141,6 +142,60 @@ Phase 4+:
   fast, and it already caught the one real unknown in this phase. Keep doing this as a
   first step whenever a new phase needs to reach a not-yet-proven legacy global, rather
   than assuming either direction.
+
+## Phase 4 — done (2026-09-04)
+
+`src/match/ActionEngine.ts` landed (2 commits, ~740 lines): a complete, faithful,
+line-by-line TypeScript port of `matchengine-actions.js`, verified against the real
+source read in full this session. `src/tests/ActionEngine.test.ts` ports every relevant
+`tests.js` assertion (structure, continuity, pass-target validity, interception/tackle
+turnover, xG bounds, goal-requires-shot, attack-stat consistency, reduced-squad no-pass,
+recovery-line phrasing, `chooseActionType` plan-influence) plus new coverage for
+`computeSideAnchors`/`compute*Rating` that had none before — **29/29 passed on the very
+first run**, strong evidence the port is behaviorally faithful. `matchengine-actions.js`
+is completely untouched; `engine.js` still calls it exactly as before. Full detail,
+including the complete ported source, is in
+`2026-09-04-phaser-ts-migration-phase4-action-engine.md`. Load-bearing findings for
+Phase 5+:
+
+- **RNG-injection pattern to reuse**: every function that used `Math.random()` gained a
+  final `rng: () => number = Math.random` parameter, threaded explicitly (never a
+  module-level mutable RNG variable — that would be real shared state, risky under
+  Vitest's parallel test execution). `simulatePossessionChain`'s params object carries an
+  optional `rng?: () => number`. Phase 5's `MatchEngine.ts` port has MANY more
+  `Math.random()` call sites to convert this same way: injuries, yellow/red cards,
+  penalties (`performPenaltyAttempt`/`performShootoutAttempt`/
+  `performPresidentPenaltyKick`), own goals, `weightedPick`, `simulatePenaltyShootout`,
+  `runBalanceSimulation`, `chooseAiPlans`/AI card activation heuristics. Same rule: default
+  `Math.random`, explicit parameter, no shared mutable state.
+- **`npm test` (Vitest) does NOT type-check** — confirmed the hard way: a real `tsc`
+  error (`string | undefined` not assignable to `string`, from `id === null` only
+  narrowing out `null` and leaving `undefined` on an optional field) passed `npm test`
+  clean (Vitest's esbuild transform strips types without verifying them) and only
+  surfaced in `npm run build`'s `tsc --noEmit` step. **Always run `npm run build` as part
+  of verification — `npm test` passing alone is not proof of type correctness.** This
+  applies to every future phase's test files, not just this one.
+- **Optional fields narrow with `== null`, not `=== null`**: `MatchAction.toPlayerId?`/
+  `gkId?` are `string | null | undefined` (optional + explicit `| null`) — checking
+  `x === null` only excludes `null`, leaving `string | undefined` for the rest of the
+  expression, which then fails to satisfy a plain `string` parameter (e.g. `Set<string>.
+  has()`). Use `== null` (loose equality) when the intent is "absent, however that's
+  represented" — a real, recurring TS gotcha this codebase's optional fields will keep
+  hitting as more of `engine.js`'s data shapes get typed in Phase 5.
+- **The trickiest anticipated type-narrowing spot (the `decision` variable inside
+  `simulatePossessionChain`'s loop, narrowed from the full 8-value `ActionDecision`
+  union down to exactly `"short"|"progressive"|"through"` after five exhaustive-exit
+  `if` guards) type-checked correctly with zero casts needed** — confirms TypeScript's
+  control-flow narrowing handles this pattern (literal-equality checks, each branch
+  exiting via `break`/`continue` on every path) reliably. Safe to rely on the same
+  pattern in Phase 5's `simulateMinute`/`advancePhaseState` ports, which have similar
+  branching.
+- `MATCH_BALANCE` moved from a legacy global (defined inside `matchengine-actions.js`
+  itself, not `data.js`) to a plain exported `const` in `ActionEngine.ts` — no adapter
+  needed, since it isn't part of `data.js`'s legacy-global surface Phase 3 built for.
+  `computeSideAnchors` is the one function that still reaches into a `data.js` global
+  (`FORMATION_SLOTS`), now via `legacyDataAdapter.getFormationSlotsFor` instead of a
+  direct reference — the intended Phase 3 usage pattern working as designed.
 
 ## Current-state summary (established 2026-09-04)
 
