@@ -15,6 +15,17 @@ mexicaine — cf. `data.js:MEXICO_TEAMS`). 100% client-side : HTML/CSS/JS vanill
 build, aucun backend. Lancement : ouvrir `index.html` ou servir le dossier avec un serveur
 statique.
 
+> **Migration en cours (branche `migration/phaser-ts`) :** le projet passe
+> progressivement à TypeScript + Phaser 3 + Vite + Vitest (rendu du terrain seulement pour
+> l'instant — la logique ci-dessous reste la source de vérité tant que la migration
+> n'a pas atteint la parité). Voir
+> `docs/superpowers/plans/2026-09-04-phaser-ts-migration-roadmap.md` pour l'état
+> d'avancement détaillé par phase. Phase 1 (outillage) terminée : `npm install && npm run
+> dev` sert l'app actuelle inchangée via Vite ; `npm run build`/`npm test`/`npm run
+> test:legacy`/`npm run lint`/`npm run test:e2e` disponibles (voir `package.json`). Cette
+> section sera remplacée par la description définitive de l'architecture une fois la
+> migration achevée (dernière étape de la feuille de route).
+
 ## Architecture (chargement dans cet ordre, tout en portée globale — pas de modules)
 
 1. **`data.js`** — données statiques : `LEAGUES` (les 6 ligues, chacune avec ses
