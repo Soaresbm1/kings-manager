@@ -5,9 +5,12 @@
 > starts, once the previous phase has landed and we know what we actually learned from
 > it. **Phase 1** (`2026-09-04-phaser-ts-migration-phase1-tooling.md`), **Phase 2**
 > (`2026-09-04-phaser-ts-migration-phase2-domain-types.md`), **Phase 3**
-> (`2026-09-04-phaser-ts-migration-phase3-legacy-data-adapter.md`) and **Phase 4**
-> (`2026-09-04-phaser-ts-migration-phase4-action-engine.md`) are done, each executed
-> inline in the same session that wrote its plan.
+> (`2026-09-04-phaser-ts-migration-phase3-legacy-data-adapter.md`), **Phase 4**
+> (`2026-09-04-phaser-ts-migration-phase4-action-engine.md`) and **Phase 5A**
+> (`2026-09-04-phaser-ts-migration-phase5a-match-engine.md`) are done, each executed
+> inline in the same session that wrote its plan. The roadmap's original "Phase 5" was
+> split into **5A** (core match engine, done) and **5B** (schedule/standings/AI/
+> transfers, still pending — `engine.js` was too large for one bite-sized plan).
 
 **Spec:** the user's migration brief (2026-09-04 conversation) — full requirements
 reproduced in that conversation, not duplicated here. Read it before writing any
@@ -196,6 +199,65 @@ Phase 5+:
   `computeSideAnchors` is the one function that still reaches into a `data.js` global
   (`FORMATION_SLOTS`), now via `legacyDataAdapter.getFormationSlotsFor` instead of a
   direct reference — the intended Phase 3 usage pattern working as designed.
+
+## Phase 5A — done (2026-09-04)
+
+`src/match/MatchEngine.ts` landed (3 commits, ~850 lines): a faithful TypeScript port of
+`engine.js`'s core — `createMatchEngine` (the full closure-based factory, all Kings
+League special rules, cards, penalties, stamina), `simulateMatch`,
+`simulatePenaltyShootout`, and the post-match player-progression functions
+(`applyMatchPlayerStats`, `updateFormAfterMatch`, `developPlayer`, `bumpAttribute`).
+`src/tests/MatchEngine.test.ts` (40 tests) covers exact Kings League constants and the
+full escalier/matchball `getOutfieldCap` schedule, a complete 40-minute match (human +
+AI paths), beat-sequence validity, `getFormationAnchors`, penalty shootouts (never a
+draw), `simulateMatch` (never undecided), and player progression — **all 40 passed on
+the first run**. `engine.js` is completely untouched. Full detail in
+`2026-09-04-phaser-ts-migration-phase5a-match-engine.md`.
+
+**Split from the roadmap's original "Phase 5":** `engine.js` is 1685 lines — too large
+for one bite-sized plan. Phase 5A covers everything a single match needs end to end.
+**Still pending as Phase 5B** (not started): `generateSchedule`, `computeStandings`,
+`computeTopScorers`/`computeTopAssists`/`computeTopRatings`, `chooseAiFormation`,
+`chooseAiPlans`, `simulateAIMatch`, `runBalanceSimulation`, `fillPositionGaps`,
+`weakestPosition`, `neediestTeamForPosition`, `simulateAITransfers` — all still only in
+`engine.js`, unaffected by this phase.
+
+Load-bearing findings for Phase 5B+:
+
+- **RNG pattern for closure-heavy code**: `createMatchEngine(..., rng: () => number =
+  Math.random)` takes ONE rng, captured once, and every nested closure just calls it —
+  no per-function parameter threading needed (unlike `ActionEngine.ts`'s standalone
+  functions, which don't share a closure). Top-level functions (`simulateMatch`,
+  `simulatePenaltyShootout`, `developPlayer`, `bumpAttribute`, `updateFormAfterMatch`)
+  still take their own `rng` parameter, explicit, default `Math.random`. Phase 5B's
+  `runBalanceSimulation`/`simulateAIMatch` (both call `simulateMatch` in a loop) and
+  `chooseAiPlans`/AI card heuristics (which use `Math.random()` for tactical variety)
+  should reuse this same split: closures get one captured rng, top-level functions get
+  an explicit parameter.
+- **"Array with a bolted-on property" → structured object**: `EngineEventBatch {
+  events, sequence }` and `MinuteResult { events, sequence, possession?,
+  stopAfterPenalty }` replace the legacy pattern of attaching `.sequence`/`.possession`
+  directly onto a plain `MatchEvent[]`. Every internal call site updated to
+  `result.events`/`result.sequence`. No formula/constant/timing changed — purely a
+  wrapper-shape refinement, applied consistently. Nothing in Phase 5B needs this pattern
+  (no more bolted-on-array constructs found in the remaining `engine.js` functions), but
+  keep the technique in mind if one turns up.
+- **`MatchEvent.type` and `legacyDataAdapter.ts` keep growing as expected**: this phase
+  added `"shootout"`/`"shootout miss"` to `MatchEvent.type` and `getValueStarBounds()`
+  to the adapter — both anticipated by Phase 3/4's own notes ("every phase touching more
+  of `engine.js` will likely need one or two more"). Phase 5B will likely need its own
+  additions (nothing identified yet — check as you go, the same way this phase did).
+- **`MatchState`/`MatchSnapshot` (Phase 2) remain untouched** — `MatchEngine.ts`'s real
+  internal state (card sanctions, stamina, dice/president state) stays closure-private,
+  matching the legacy code, exactly as Phase 2's design note anticipated. Still nobody's
+  problem until Phase 6 (`CollectiveMovement`)/Phase 8 (`MatchBridge`) need a concrete
+  answer for what crosses that boundary.
+- **Large, closure-heavy, deeply-typed files keep type-checking clean on the first
+  try** (`ActionEngine.ts` ~740 lines, `MatchEngine.ts` ~850 lines, both zero `tsc`
+  errors on first `npm run build`) — strong signal that faithful, careful line-by-line
+  transcription with types added (not restructured logic) is a reliable strategy for the
+  remaining `engine.js` surface (Phase 5B) and for `matchchoreo.js` (Phase 6, though that
+  one gets an intentional redesign, not a faithful port — see its own section below).
 
 ## Current-state summary (established 2026-09-04)
 

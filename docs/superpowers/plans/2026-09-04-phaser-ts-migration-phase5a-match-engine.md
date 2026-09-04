@@ -44,7 +44,7 @@
 Run: `npm run build`
 Expected: clean (both edits are additive; nothing else references these yet).
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit** (bundled with the plan doc itself in this session's commit)
 
 ```bash
 git add src/match/MatchTypes.ts src/data/legacyDataAdapter.ts
@@ -68,7 +68,7 @@ EOF
 - Consumes: `Player`, `Team`, `PlayerPosition`, `SecretCardKey` (`src/data/types.ts`); `TeamSide`, `Vector2`, `TacticalSetup`, `MatchAction`, `MatchEvent`, `MatchStatistics` (`src/match/MatchTypes.ts`); `MATCH_BALANCE`, `clamp`, `PITCH_H`, `GOAL_X_MIN`, `GOAL_X_MAX`, `computeSideAnchors`, `gkAnchorY`, `simulatePossessionChain`, `planChainCount` (`src/match/ActionEngine.ts`); `getFormations`, `getAttackPlan`, `getDefensePlan`, `getValueStarBounds` (`src/data/legacyDataAdapter.ts`).
 - Produces (exported): `InjurySeverityTier`, `INJURY_SEVERITY_TIERS`, `formationAttackFactor`, `formationDefenseFactor`, `TeamStrength`, `computeTeamStrength`, `PlayerMatchStat`, `EngineEventBatch`, `MinuteResult`, `ShootoutResult`, `MatchResult`, `ActivateCardOptions`, `TriggerPresidentPenaltyOptions`, `FormationAnchor`, `SpecialActionKind`, `MatchEngine` (interface), `createMatchEngine`, `simulateMatch`, `applyMatchPlayerStats`, `updateFormAfterMatch`, `developPlayer`, `bumpAttribute`, `simulatePenaltyShootout` — consumed by Phase 5B (AI/schedule/standings) and Phase 8 (bridge).
 
-- [ ] **Step 1: Write `src/match/MatchEngine.ts`**
+- [x] **Step 1: Write `src/match/MatchEngine.ts`**
 
 ```ts
 import type { Player, Team, PlayerPosition, SecretCardKey } from "../data/types";
@@ -1344,12 +1344,12 @@ export function simulatePenaltyShootout(homeTeam: Team, homeSetup: TacticalSetup
 }
 ```
 
-- [ ] **Step 2: Type-check**
+- [x] **Step 2: Type-check**
 
 Run: `npm run build`
-Expected: clean. If `homeShooters`/`awayShooters` empty-array indexing or similar raises no error (tsconfig does not set `noUncheckedIndexedAccess`), that's expected — matches every other file in this migration so far.
+Expected: clean. If `homeShooters`/`awayShooters` empty-array indexing or similar raises no error (tsconfig does not set `noUncheckedIndexedAccess`), that's expected — matches every other file in this migration so far. (Actual: clean on the first try — `✓ built in 1.11s`, no `tsc` errors across the whole ~850-line file.)
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add src/match/MatchEngine.ts
@@ -1372,7 +1372,7 @@ EOF
 **Interfaces:**
 - Consumes: everything exported from `src/match/MatchEngine.ts` (Task 2), plus the `makeTestPlayer`/`buildTestSquad`/`buildTestSetup` fixture pattern from `src/tests/ActionEngine.test.ts` (Phase 4), duplicated locally (small enough not to warrant a shared test-utils module yet — revisit if a third test file needs it).
 
-- [ ] **Step 1: Write `src/tests/MatchEngine.test.ts`**
+- [x] **Step 1: Write `src/tests/MatchEngine.test.ts`**
 
 ```ts
 import { describe, it, expect, beforeAll } from "vitest";
@@ -1633,17 +1633,17 @@ describe("applyMatchPlayerStats / updateFormAfterMatch / developPlayer", () => {
 });
 ```
 
-- [ ] **Step 2: Run it**
+- [x] **Step 2: Run it**
 
 Run: `npm test`
-Expected: all pass. Given this is a faithful port with the same probabilistic structure as `ActionEngine.ts` (which passed 29/29 on the first run), a first-run failure most likely indicates a real port bug (a formula/branch transcribed incorrectly) — compare carefully against the literal `engine.js` source before changing a test's expectation.
+Expected: all pass. Given this is a faithful port with the same probabilistic structure as `ActionEngine.ts` (which passed 29/29 on the first run), a first-run failure most likely indicates a real port bug (a formula/branch transcribed incorrectly) — compare carefully against the literal `engine.js` source before changing a test's expectation. (Actual: `Test Files 5 passed`, `Tests 40 passed` — passed on the very first run.)
 
-- [ ] **Step 3: Full verification**
+- [x] **Step 3: Full verification**
 
 Run, in order: `npm run build`, `npm test`, `npm run test:legacy` (expect unchanged `59/60`), `npm run lint`.
-Expected: all green, no regressions.
+Expected: all green, no regressions. (Actual: all green.)
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add src/tests/MatchEngine.test.ts
@@ -1663,7 +1663,7 @@ EOF
 **Files:**
 - Modify: `docs/superpowers/plans/2026-09-04-phaser-ts-migration-roadmap.md`
 
-- [ ] **Step 1: Update the roadmap with a "Phase 5A — done" note**
+- [x] **Step 1: Update the roadmap with a "Phase 5A — done" note**
 
 Record: what's ported vs. deferred to Phase 5B (`generateSchedule`, `computeStandings`, `computeTopScorers/Assists/Ratings`, `chooseAiFormation`, `chooseAiPlans`, `simulateAIMatch`, `runBalanceSimulation`, `fillPositionGaps`, `simulateAITransfers` — still only in `engine.js`); the `EngineEventBatch`/`MinuteResult` design (replaces bolted-on array properties); the single-closure-rng pattern for `createMatchEngine` vs. explicit-parameter rng for top-level functions; the two `legacyDataAdapter.ts`/`MatchTypes.ts` extensions this phase needed and why (a reminder that every phase touching more of `engine.js` will likely need one or two more).
 
@@ -1684,10 +1684,12 @@ EOF
 
 ## Definition of done for Phase 5A
 
-- [ ] `src/match/MatchEngine.ts` exists: `createMatchEngine`, `simulateMatch`, `simulatePenaltyShootout`, `applyMatchPlayerStats`, `updateFormAfterMatch`, `developPlayer`, `bumpAttribute`, `formationAttackFactor`, `formationDefenseFactor`, `computeTeamStrength`, `INJURY_SEVERITY_TIERS` — faithful, typed, injectable RNG.
-- [ ] `src/tests/MatchEngine.test.ts` covers: exact Kings League constants (`ESCALIER_END_MINUTE`, `MATCHBALL_START_MINUTE`), the full escalier/matchball `getOutfieldCap` schedule, a full 40-minute match (human + AI paths), beat-sequence validity, `getFormationAnchors`, penalty shootout (never a draw), `simulateMatch` (never undecided), and player-progression bookkeeping.
-- [ ] `npm run build`, `npm test`, `npm run test:legacy` (`59/60`, unchanged), `npm run lint` all pass.
-- [ ] Zero changes to `engine.js` or any other pre-existing `.js`/`.html` file.
-- [ ] Roadmap updated, Phase 5B scope explicitly named as still pending.
+- [x] `src/match/MatchEngine.ts` exists: `createMatchEngine`, `simulateMatch`, `simulatePenaltyShootout`, `applyMatchPlayerStats`, `updateFormAfterMatch`, `developPlayer`, `bumpAttribute`, `formationAttackFactor`, `formationDefenseFactor`, `computeTeamStrength`, `INJURY_SEVERITY_TIERS` — faithful, typed, injectable RNG.
+- [x] `src/tests/MatchEngine.test.ts` covers: exact Kings League constants (`ESCALIER_END_MINUTE`, `MATCHBALL_START_MINUTE`), the full escalier/matchball `getOutfieldCap` schedule, a full 40-minute match (human + AI paths), beat-sequence validity, `getFormationAnchors`, penalty shootout (never a draw), `simulateMatch` (never undecided), and player-progression bookkeeping.
+- [x] `npm run build`, `npm test`, `npm run test:legacy` (`59/60`, unchanged), `npm run lint` all pass.
+- [x] Zero changes to `engine.js` or any other pre-existing `.js`/`.html` file (confirmed via `git diff --stat` across all Phase 5A commits — only `.ts`/`.md` files touched).
+- [x] Roadmap updated, Phase 5B scope explicitly named as still pending.
+
+**Phase 5A completed 2026-09-04.**
 
 Do not start Phase 5B (schedule/standings/AI/transfers) or Phase 6 in this plan — write Phase 5B's own bite-sized plan once this Definition of Done is fully checked off.
