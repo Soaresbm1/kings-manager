@@ -4760,22 +4760,27 @@ function showMatchSummary() {
   document.getElementById("summary-home-title").textContent = homeTeam.name + " — Notes";
   document.getElementById("summary-away-title").textContent = awayTeam.name + " — Notes";
 
-  function renderRatings(team, setup, tbodyId) {
+  function renderRatings(team, setup, side, tbodyId) {
     const tbody = document.getElementById(tbodyId);
     tbody.innerHTML = "";
-    setup.lineup.forEach(id => {
+    // Le sept préparé peut contenir des joueurs jamais entrés (phases réduites),
+    // et ne contient plus forcément les joueurs remplacés ou expulsés.
+    const participantIds = result.participants?.[side] ?? setup.lineup;
+    [...new Set(participantIds)].forEach(id => {
       const p = team.players.find(pl => pl.id === id);
       if (!p) return;
-      const stat = result.playerStats[id];
+      const stat = result.playerStats?.[id];
       const goalsText = stat && stat.goals ? ` ⚽x${stat.goals}` : "";
       const assistText = stat && stat.assists ? ` 🅰️x${stat.assists}` : "";
+      const rating = result.ratings?.[id];
+      const ratingText = Number.isFinite(rating) ? rating.toFixed(1) : "—";
       const tr = document.createElement("tr");
-      tr.innerHTML = `<td class="name">${p.name}${goalsText}${assistText}</td><td><b>${result.ratings[id].toFixed(1)}</b></td>`;
+      tr.innerHTML = `<td class="name">${p.name}${goalsText}${assistText}</td><td><b>${ratingText}</b></td>`;
       tbody.appendChild(tr);
     });
   }
-  renderRatings(homeTeam, homeSetup, "summary-home-ratings");
-  renderRatings(awayTeam, awaySetup, "summary-away-ratings");
+  renderRatings(homeTeam, homeSetup, "home", "summary-home-ratings");
+  renderRatings(awayTeam, awaySetup, "away", "summary-away-ratings");
 
   showScreen("screen-summary");
 }

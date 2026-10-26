@@ -172,6 +172,8 @@ mode de débogage visuel (touche **D** pendant un match, voir `app.js:PITCH_DEBU
   jamais aligné dans le champ. Un gardien de fortune couvre une sortie sans remplaçant.
 - **Participation** : `result.participants` et `minutesPlayed` conservent les joueurs
   sortis ; notes, statistiques et progression s'appliquent aux participants réels.
+  Le résumé utilise cette liste par camp, et affiche « — » si une ancienne note
+  manque, sans bloquer la validation du résultat.
 - **Historique des transferts** (`STATE.transferLog`) et **alertes/intérêt sur la liste de
   suivi** (`computeShortlistInterest`, `checkShortlistTransferAlerts`).
 - Attention aux sauvegardes anciennes : plusieurs migrations silencieuses vivent dans
