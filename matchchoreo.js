@@ -16,7 +16,7 @@
 //   { type, side, playerId, toPlayerId, gkId, from:{x,y}, to:{x,y}, duration, event }
 // - type: "pass"|"cross"|"carry"|"dribble"|"tackle"|"interception"|"clear"|"out"|"press"|
 //         "shot"|"goal"|"save"|"miss"|"owngoal"|"phase"
-//   (pass/cross : le ballon rejoint toPlayerId ; carry/dribble/tackle/interception : le ballon
+//   (pass/cross : le ballon rejoint toPlayerId qui court depuis sa propre position ; carry/dribble/tackle/interception : le ballon
 //   suit playerId, qui vient de le gagner/garder ; clear/out/shot/goal/save/miss/owngoal : ballon
 //   libre, le ou les joueurs impliqués restent sur place pendant qu'il file vers `to` ; press :
 //   playerId (un défenseur) se déplace seul vers `to` pour presser le porteur, le ballon ne bouge
@@ -76,6 +76,7 @@ function createChoreographer() {
   let beats = [];
   let beatIndex = 0;
   let beatElapsed = 0;
+  let activeMotion = null; // positions réelles au début du beat, distinctes du trajet du ballon
   const finishedEvents = []; // événements des beats déjà terminés, pas encore consommés par app.js
 
   // Synchronise le roster affiché avec les ancres de BASE fournies pour la minute en cours (une
@@ -122,6 +123,7 @@ function createChoreographer() {
     beats = Array.isArray(newBeats) ? newBeats : [];
     beatIndex = 0;
     beatElapsed = 0;
+    activeMotion = null;
   }
 
   function isSequenceDone() { return beatIndex >= beats.length; }
@@ -136,6 +138,35 @@ function createChoreographer() {
   }
 
   function currentBeat() { return beats[beatIndex] || null; }
+
+  // Une passe déplace le BALLON depuis le passeur. Le receveur part de sa propre
+  // position : le coller au ballon le téléportait chez le passeur dès la première frame.
+  // Même principe pour le défenseur qui coupe la passe et le gardien qui plonge.
+  function prepareMotion(beat) {
+    const starts = new Map();
+    let duration = Math.max(0, beat.duration || 0);
+    function track(id, target, speedFactor) {
+      const p = players.get(id);
+      if (!p || !target) return;
+      starts.set(id, { x: p.x, y: p.y });
+      duration = Math.max(duration, Math.hypot(target.x - p.x, target.y - p.y) * (speedFactor || 1) / MOVE.maxSpeedRun);
+    }
+    if (beat.type === "pass" || beat.type === "cross") {
+      track(beat.toPlayerId, beat.to);
+      track(beat.interceptorId, beat.interceptorTo || beat.to);
+    }
+    if (beat.type === "press") track(beat.playerId, beat.to, 2); // easing quadratique : pic à 2x la vitesse moyenne
+    if (beat.gkId) {
+      const gk = players.get(beat.gkId);
+      if (gk) track(beat.gkId, { x: clampToGoalMouth(beat.to.x), y: gk.y });
+    }
+    activeMotion = { beat, starts, duration };
+  }
+
+  function moveFromStart(id, target, t) {
+    const start = activeMotion && activeMotion.starts.get(id);
+    if (start) setPlayerPos(id, choreoLerp(start.x, target.x, t), choreoLerp(start.y, target.y, t));
+  }
 
   // Porteur ponctuel du ballon (voir getState) : seuls les beats où le ballon est physiquement
   // "collé" à un joueur en désignent un — en vol (passe/centre) ou hors-jeu (tir, dégagement...),
@@ -157,7 +188,8 @@ function createChoreographer() {
       const beat = currentBeat();
       if (!beat) { updateOffBall(remaining, null); remaining = 0; break; }
 
-      const duration = Math.max(0, beat.duration || 0);
+      if (!activeMotion || activeMotion.beat !== beat) prepareMotion(beat);
+      const duration = activeMotion.duration;
       const timeLeftInBeat = Math.max(0, duration - beatElapsed);
       const consumed = Math.min(remaining, timeLeftInBeat);
       beatElapsed += consumed;
@@ -169,6 +201,7 @@ function createChoreographer() {
         if (beat.event) finishedEvents.push(beat.event);
         beatIndex++;
         beatElapsed = 0;
+        activeMotion = null;
         // Un beat à durée nulle enchaîne immédiatement sur le suivant dans la même frame plutôt
         // que de laisser `remaining` se perdre sans jamais faire avancer la lecture.
         if (duration <= 0 && remaining <= 0 && beatIndex < beats.length) remaining = 1e-6;
@@ -187,7 +220,7 @@ function createChoreographer() {
     // reste exactement où il est (sinon il "sauterait" jusqu'à la position du défenseur).
     if (beat.type === "press") {
       const eased = choreoEasingForBeat(beat.type)(t);
-      setPlayerPos(beat.playerId, choreoLerp(beat.from.x, beat.to.x, eased), choreoLerp(beat.from.y, beat.to.y, eased));
+      moveFromStart(beat.playerId, beat.to, eased);
       return;
     }
     const eased = choreoEasingForBeat(beat.type)(t);
@@ -198,15 +231,17 @@ function createChoreographer() {
       // le joueur qui a le ballon (conduite, dribble, ou défenseur qui vient de tacler/intercepter) le suit
       setPlayerPos(beat.playerId, ball.x, ball.y);
     } else if (beat.type === "pass" || beat.type === "cross") {
-      // le passeur/centreur reste sur sa position de départ, le receveur avance pour accueillir le ballon
-      setPlayerPos(beat.toPlayerId, ball.x, ball.y);
+      // Le receveur court vers le point de réception pendant que le ballon voyage.
+      moveFromStart(beat.toPlayerId, beat.to, t);
+      moveFromStart(beat.interceptorId, beat.interceptorTo || beat.to, t);
     }
     // clear/out/shot/goal/save/miss/owngoal : le joueur reste sur place (from), seul le ballon avance.
 
     if (beat.gkId) {
       const diveX = clampToGoalMouth(beat.to.x);
       const gk = players.get(beat.gkId);
-      if (gk) setPlayerPos(beat.gkId, diveX, gk.y);
+      const start = activeMotion.starts.get(beat.gkId);
+      if (gk && start) moveFromStart(beat.gkId, { x: diveX, y: start.y }, t);
     }
   }
 
@@ -382,6 +417,7 @@ function createChoreographer() {
       if (beat.playerId) involved.add(beat.playerId);
       if (beat.toPlayerId) involved.add(beat.toPlayerId);
       if (beat.gkId) involved.add(beat.gkId);
+      if (beat.interceptorId) involved.add(beat.interceptorId);
     }
     return involved;
   }
@@ -438,3 +474,4 @@ function createChoreographer() {
     setAnchors, setTactics, loadSequence, isSequenceDone, insertNext, step, consumeFinishedEvents, getState
   };
 }
+

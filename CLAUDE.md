@@ -45,6 +45,10 @@ statique.
    `setAnchors`, `loadSequence`, `step(dt)`, `insertNext` (pour intercaler Arme Secrète/Penalty en
    cours de séquence). Ne décide jamais rien : consomme des "beats" déjà résolus (pass/cross/carry/
    dribble/tackle/interception/clear/out/shot/goal/save/miss/owngoal/phase).
+   Les receveurs, gardiens et presseurs partent de leur position affichée ; la durée
+   d'animation est prolongée si nécessaire pour respecter la vitesse des joueurs.
+   Une passe interceptée porte `interceptorId`/`interceptorFrom`/`interceptorTo` : le
+   défenseur rejoint le point de contact pendant le vol du ballon.
 5. **`app.js`** — état du jeu (`STATE`), rendu des écrans, gestion des événements DOM,
    sauvegardes (`localStorage` + export/import JSON).
 6. **`index.html` / `style.css`** — structure des écrans et mise en forme.
@@ -84,6 +88,12 @@ Kings League) ; pas de photos/blasons pour ces 4 ligues pour l'instant.
   "macro" ci-dessus.
 
 ## Simulation du match : action par action, façon Football Manager Mobile
+
+Les duels exigent un défenseur à portée (`MATCH_BALANCE.dribble.duelDistance`) ;
+sans adversaire proche, le porteur conduit librement. Les interceptions vérifient
+la distance au segment de passe et le temps de déplacement disponible ; une passe
+ratée sans intercepteur atteignable sort du terrain. Le Matchball interrompt toute
+action dès la décision, y compris les possessions restantes de la même minute.
 
 Une possession n'est plus un simple tirage au sort narré après coup : elle est construite,
 action par action, par `matchengine-actions.js:simulatePossessionChain()` — choix du porteur,
@@ -189,3 +199,9 @@ navigateur, aucune dépendance) vu l'indisponibilité fréquente de `node` ; **`
 (`node tests-node.js`) fait la même chose via `vm.runInContext` avec un code de sortie non-nul si
 un test échoue. Ajouter un test = un nouvel appel à `test("...", () => { ... })` dans `tests.js`,
 rien à toucher ailleurs.
+
+Régressions ciblées du réalisme (Node, sans dépendances) :
+`node tests-simulation-actions.js`, `node tests-simulation-choreo.js` et
+`node tests-simulation-engine.js`. Elles couvrent les duels/interceptions,
+les trajectoires distinctes ballon/receveur et la fin immédiate du Matchball.
+

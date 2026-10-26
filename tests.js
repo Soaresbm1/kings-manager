@@ -685,7 +685,7 @@ test("setAnchors : un joueur qui sort de l'ancrage (sub/carton) disparaît, sans
 
 test("step : une passe fait avancer le ballon de from vers to, exactement selon l'easing attendu", () => {
   const choreo = createChoreographer();
-  choreo.setAnchors({ h1: { x: 20, y: 20 }, h2: { x: 40, y: 40 } }, {});
+  choreo.setAnchors({ h1: { x: 20, y: 20 }, h2: { x: 60, y: 60 } }, {});
   choreo.loadSequence([{ type: "pass", side: "home", playerId: "h1", toPlayerId: "h2", from: { x: 20, y: 20 }, to: { x: 60, y: 60 }, duration: 1, event: null }]);
   choreo.step(0.5); // mi-parcours du beat
   const midT = 0.5, eased = midT < 0.5 ? 2 * midT * midT : 1 - Math.pow(-2 * midT + 2, 2) / 2; // easeInOutQuad(0.5) = 0.5
@@ -737,12 +737,15 @@ test("step : pressing (press) — le défenseur avance vers le porteur sans jama
     { type: "press", side: "away", playerId: "a1", from: { x: 45, y: 60 }, to: { x: 40, y: 45 }, duration: 0.5, event: null }
   ]);
   choreo.step(0.4); // termine la conduite : le ballon (et h1) arrivent à ballBefore
+  const defenderBefore = choreo.getState().players.find(p => p.id === "a1");
   choreo.step(0.25); // mi-parcours du beat "press"
   const state = choreo.getState();
   assertClose(state.ball.x, ballBefore.x, 1e-9, "le ballon ne doit pas bouger pendant un beat \"press\" (x)");
   assertClose(state.ball.y, ballBefore.y, 1e-9, "le ballon ne doit pas bouger pendant un beat \"press\" (y)");
   const a1 = state.players.find(p => p.id === "a1");
-  assert(a1.x > 40 && a1.x < 45, "le défenseur doit être à mi-chemin de son avancée (x)");
+  const defenderTravel = Math.hypot(a1.x - defenderBefore.x, a1.y - defenderBefore.y);
+  assert(defenderTravel > 0 && defenderTravel <= MOVE.maxSpeedRun * 0.25 + 1e-6,
+    "le défenseur doit avancer depuis sa position réelle, dans la limite de sa vitesse");
   assertEqual(state.ballCarrierId, null, "un beat \"press\" ne rend jamais le défenseur porteur du ballon");
 });
 
@@ -962,3 +965,4 @@ test("déplacement collectif : une transition (perte de balle) fait évoluer la 
   const yLongAfter = choreo.getState().players.find(p => p.id === "h2").y;
   assert(yLongAfter < yBeforeTurnover, `h2 devrait avoir reculé après la transition (avant=${yBeforeTurnover.toFixed(1)}, longtemps après=${yLongAfter.toFixed(1)})`);
 });
+

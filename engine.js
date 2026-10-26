@@ -219,6 +219,7 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
   // Fenêtre d'activation : Cartes Secrètes (5-17 puis 23-36) et Penalty du Président
   // (5-17 puis 23-35, doit être déclenché avant 35:59 — interdit pendant escalier/dé/Matchball).
   function isSpecialActionWindowOpen(minute, kind) {
+    if (isMatchDecided()) return false;
     const deadline = kind === "president" ? PRESIDENT_PENALTY_DEADLINE : SPECIAL_WINDOW_2[1];
     return isInWindow(minute, SPECIAL_WINDOW_1) || isInWindow(minute, [SPECIAL_WINDOW_2[0], deadline]);
   }
@@ -298,6 +299,7 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
   // immédiate du match si l'on est en phase Matchball : la première équipe à atteindre
   // le total de buts cible (= score du leader + 1 au début de la phase) gagne.
   function registerGoal(side, minute, scorerId) {
+    if (isMatchDecided()) return "";
     if (side === "home") homeGoals++; else awayGoals++;
     const tag = applyGoalBonus(side, minute, scorerId);
     if (matchballTarget !== null && !matchballDecided) {
@@ -634,6 +636,7 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
   // fatigue) exactement comme le faisait l'ancien tirage au sort direct. `ctx` (fourni seulement
   // pour le match humain animé) reçoit les beats produits, dans l'ordre, pour l'animation.
   function attemptRealAttack(minute, minuteEvents, side, teamName, attackers, defenders, gk, atkAnchors, defAnchors, attackPlanKey, defensePlanKey, attackMod, defenseMod, earlyPhaseBoost, ctx) {
+    if (isMatchDecided()) return 0;
     const oppSide = side === "home" ? "away" : "home";
     const defensePressingExtra = defensePlanKey === "high" ? MATCH_BALANCE.stamina.pressingExtraDrain : 0;
 
@@ -710,7 +713,7 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
     // penalty dans la surface (même mécanisme que le penalty aléatoire existant), sinon carton
     // jaune classique (même mécanisme que le carton aléatoire existant) — le fautif appartient à
     // `oppSide` (l'équipe qui défendait pendant cette possession), jamais `side`.
-    if (chain.foul) {
+    if (chain.foul && !isMatchDecided()) {
       if (chain.foul.severity === "penalty") {
         const penaltyEvts = performPenaltyAttempt(side, minute, { taker: chain.foul.against, withSequence: !!ctx }, "Penalty (faute dans la surface)");
         minuteEvents.push(...penaltyEvts);
@@ -851,7 +854,7 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
     // Math.max avec une blessure déjà en cours : ne raccourcit jamais une indisponibilité plus
     // longue déjà entamée (ex. rechute pendant la convalescence, cas rare mais possible puisque le
     // joueur reste "actif" tant qu'il joue le match en cours).
-    if (Math.random() < 0.004) {
+    if (!isMatchDecided() && Math.random() < 0.004) {
       const side = Math.random() < 0.5 ? "home" : "away";
       const pool = side === "home" ? homeActiveLineup.map(id => homeTeam.players.find(p => p.id === id)) : awayActiveLineup.map(id => awayTeam.players.find(p => p.id === id));
       const victim = pool.filter(Boolean)[Math.floor(Math.random() * pool.filter(Boolean).length)];
@@ -876,7 +879,7 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
 
     // événement spécial: carton jaune (rare, indépendant des actions — voir aussi la faute possible
     // lors d'un duel de dribble perdu, gérée dans attemptRealAttack via ce même issueYellowCard)
-    if (Math.random() < 0.012) {
+    if (!isMatchDecided() && Math.random() < 0.012) {
       const side = Math.random() < 0.5 ? "home" : "away";
       const pool = side === "home" ? homeAttackers : awayAttackers;
       const victim = pool[Math.floor(Math.random() * pool.length)];
@@ -884,7 +887,7 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
     }
 
     // événement spécial: carton rouge (très rare)
-    if (Math.random() < 0.002) {
+    if (!isMatchDecided() && Math.random() < 0.002) {
       const side = Math.random() < 0.5 ? "home" : "away";
       const pool = side === "home" ? homeAttackers.concat([homeGK]).filter(Boolean) : awayAttackers.concat([awayGK]).filter(Boolean);
       const victim = pool[Math.floor(Math.random() * pool.length)];
@@ -919,7 +922,7 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
 
     // événement spécial: penalty (rare) — tranche 50/50, consomme l'action de cette minute.
     let stopAfterPenalty = false;
-    if (Math.random() < 0.006) {
+    if (!isMatchDecided() && Math.random() < 0.006) {
       const isHome = Math.random() < 0.5;
       const side = isHome ? "home" : "away";
       const attackers = isHome ? homeAttackers : awayAttackers;
@@ -943,9 +946,16 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
   // simulateMatch/simulateAIMatch (matchs IA) l'appellent sans options : coût inchangé.
   function simulateMinute(minute, opts) {
     const withSequence = !!(opts && opts.withSequence);
+    // Le but décisif (ou l'égalité à l'entrée du Matchball) clôt définitivement le jeu :
+    // aucun appel tardif, événement de phase ou possession restante ne peut modifier le résultat.
+    if (isMatchDecided()) {
+      const minuteEvents = [];
+      if (withSequence) minuteEvents.sequence = [];
+      return minuteEvents;
+    }
     const phase = advancePhaseState(minute, withSequence);
     const minuteEvents = phase.minuteEvents;
-    if (phase.stopAfterPenalty) {
+    if (phase.stopAfterPenalty || isMatchDecided()) {
       events.push(...minuteEvents);
       if (withSequence) minuteEvents.sequence = phase.sequence;
       return minuteEvents;
@@ -1028,12 +1038,12 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
     const ctx = withSequence ? { sequence } : null;
 
     let homeActions = 0, awayActions = 0;
-    const homeChains = planChainCount(homeSetup.attackPlan, earlyPhase);
-    for (let i = 0; i < homeChains; i++) {
+    const homeChains = isMatchDecided() ? 0 : planChainCount(homeSetup.attackPlan, earlyPhase);
+    for (let i = 0; i < homeChains && !isMatchDecided(); i++) {
       homeActions += attemptRealAttack(minute, minuteEvents, "home", homeTeam.name, homeAttackers, awayAttackers, awayGK, phase.homeAtkAnchors, phase.awayDefAnchors, homeSetup.attackPlan, awaySetup.defensePlan, homeAttackMod, homeDefenseMod, earlyPhaseBoost, ctx) || 0;
     }
-    const awayChains = planChainCount(awaySetup.attackPlan, earlyPhase);
-    for (let i = 0; i < awayChains; i++) {
+    const awayChains = isMatchDecided() ? 0 : planChainCount(awaySetup.attackPlan, earlyPhase);
+    for (let i = 0; i < awayChains && !isMatchDecided(); i++) {
       awayActions += attemptRealAttack(minute, minuteEvents, "away", awayTeam.name, awayAttackers, homeAttackers, homeGK, phase.awayAtkAnchors, phase.homeDefAnchors, awaySetup.attackPlan, homeSetup.defensePlan, awayAttackMod, awayDefenseMod, earlyPhaseBoost, ctx) || 0;
     }
 
@@ -1682,3 +1692,4 @@ function simulateAITransfers(league, humanTeamId) {
   });
   return events;
 }
+

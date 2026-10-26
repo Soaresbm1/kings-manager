@@ -145,9 +145,10 @@ const MATCH_BALANCE = {
   },
   pass: {
     baseSuccess: { short: 0.87, progressive: 0.74, through: 0.55, cross: 0.50 },
-    ratingSpread: 220, pressurePenalty: 0.35, defenderPenaltySpread: 300
+    ratingSpread: 220, pressurePenalty: 0.35, defenderPenaltySpread: 300,
+    interceptionControlRadius: 2.5, interceptionMaxSpeed: 26
   },
-  dribble: { base: 0.50, ratingSpread: 140, advanceDistance: 9 },
+  dribble: { base: 0.50, ratingSpread: 140, advanceDistance: 9, duelDistance: 5 },
   carry: { advanceDistance: 7 },
   // Faute lors d'un duel perdu par le défenseur (voir computeFoulChance) : plus il est dominé par
   // le dribbleur, plus il risque la faute plutôt que le tacle propre ; `pressureBonus` ajoute un
@@ -278,10 +279,13 @@ function resolvePassChance(kind, passer, pressure, defenderRating, staminaFactor
   if (defenderRating != null) chance -= (defenderRating - 70) / B.defenderPenaltySpread;
   return clamp(chance, 0.12, 0.97);
 }
-function resolveDribbleChance(attacker, defender, staminaFactor) {
+function resolveDribbleChance(attacker, defender, staminaFactor, distance) {
+  // Un duel suppose un adversaire à portée : sans lui, c'est une conduite libre,
+  // pas un tacle gagné à distance par un défenseur fictif.
+  if (!defender || (distance != null && distance > MATCH_BALANCE.dribble.duelDistance)) return 1;
   const B = MATCH_BALANCE.dribble;
   const atk = computeDribblingRating(attacker) * (staminaFactor || 1);
-  const def = defender ? computeDefendingRating(defender) : 40;
+  const def = computeDefendingRating(defender);
   return clamp(B.base + (atk - def) / B.ratingSpread, 0.15, 0.9);
 }
 
@@ -376,6 +380,40 @@ function pickShotTarget(side, onTarget) {
 }
 function lerpPoint(a, b, t) { return { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t }; }
 
+// Coupe une passe uniquement si un défenseur peut rejoindre sa trajectoire pendant
+// le vol du ballon. Le défenseur proche du passeur n'est pas forcément l'intercepteur.
+function findPassInterception(from, to, defenders, defAnchors, duration) {
+  const dx = to.x - from.x, dy = to.y - from.y;
+  const lengthSquared = dx * dx + dy * dy;
+  if (lengthSquared < 0.01) return null;
+  let best = null;
+  defenders.forEach(defender => {
+    const origin = defAnchors[defender.id];
+    if (!origin) return;
+    const fraction = clamp(((origin.x - from.x) * dx + (origin.y - from.y) * dy) / lengthSquared, 0.08, 0.96);
+    const point = lerpPoint(from, to, fraction);
+    const distance = Math.hypot(point.x - origin.x, point.y - origin.y);
+    const speed = MATCH_BALANCE.pass.interceptionMaxSpeed * clamp(defender.speed / 100, 0.55, 1);
+    const travelTime = duration * fraction;
+    if (distance > MATCH_BALANCE.pass.interceptionControlRadius + speed * travelTime) return;
+    if (!best || fraction < best.fraction || (fraction === best.fraction && distance < best.distance)) {
+      best = { defender, origin, point, fraction, distance };
+    }
+  });
+  return best;
+}
+
+// Une passe imprécise sans intercepteur atteignable peut sortir du terrain : on
+// prolonge sa direction jusqu'à la première ligne plutôt que d'inventer un tacle.
+function overhitPassExit(from, to) {
+  let dx = to.x - from.x, dy = to.y - from.y;
+  if (Math.hypot(dx, dy) < 0.01) dx = from.x < 50 ? -1 : 1;
+  const tx = dx > 0 ? (PITCH_W - from.x) / dx : (dx < 0 ? -from.x / dx : Infinity);
+  const ty = dy > 0 ? (PITCH_H - from.y) / dy : (dy < 0 ? -from.y / dy : Infinity);
+  const t = Math.max(0, Math.min(tx, ty));
+  return { x: clamp(from.x + dx * t, 0, PITCH_W), y: clamp(from.y + dy * t, 0, PITCH_H) };
+}
+
 function makeBeat(type, side, playerId, gkId, from, to, duration, toPlayerId) {
   return { type, side, playerId: playerId || null, toPlayerId: toPlayerId || null, gkId: gkId || null, from: { x: from.x, y: from.y }, to: { x: to.x, y: to.y }, duration, event: null };
 }
@@ -431,6 +469,7 @@ function simulatePossessionChain(params) {
   let pos = Object.assign({}, atkAnchors[carrier.id] || { x: 50, y: side === "home" ? 30 : 70 });
   const startZone = fieldZone(pos, side);
   const isCounter = startZone === "own";
+  const isHighRecovery = startZone === "final";
   const recoveryLine = buildRecoveryLine(carrier, pos, startZone);
   let lastActionType = null;
   let assister = null;
@@ -450,6 +489,31 @@ function simulatePossessionChain(params) {
   // entre deux possessions (lissage habituel de matchchoreo.js vers l'ancre "sans balle").
   const defShadow = {};
   function shadowPos(defender) { return defShadow[defender.id] || defAnchors[defender.id] || { x: 50, y: 50 }; }
+
+  function losePass(kind, target, duration) {
+    const positions = Object.assign({}, defAnchors, defShadow);
+    const interception = findPassInterception(pos, target, defenders, positions, duration);
+    const end = interception ? interception.point : overhitPassExit(pos, target);
+    if (interception) {
+      defenseStats.interceptions++;
+      touchedIds.add(interception.defender.id);
+    }
+    if (!beats) return;
+    const intendedDistance = Math.hypot(target.x - pos.x, target.y - pos.y);
+    const actualDistance = Math.hypot(end.x - pos.x, end.y - pos.y);
+    const flightDuration = interception ? duration * interception.fraction
+      : duration * Math.max(1, actualDistance / Math.max(1, intendedDistance));
+    const flight = makeBeat(kind, side, carrier.id, null, pos, end, flightDuration);
+    if (interception) {
+      flight.interceptorId = interception.defender.id;
+      flight.interceptorFrom = { x: interception.origin.x, y: interception.origin.y };
+      flight.interceptorTo = { x: end.x, y: end.y };
+    }
+    beats.push(flight);
+    // Le ballon est gagné au point de contact, jamais ramené sur l'ancienne ancre.
+    beats.push(makeBeat(interception ? "interception" : "out", oppSide,
+      interception ? interception.defender.id : null, null, end, end, MATCH_BALANCE.beatDurations.interception));
+  }
 
   let actionsLeft = MATCH_BALANCE.chain.maxActions;
   while (actionsLeft-- > 0) {
@@ -482,7 +546,7 @@ function simulatePossessionChain(params) {
       const faceToFace = (lastActionType === "through") && pressure < 0.3;
       const numericSuperiority = fieldAttackers.length > defenders.length;
       let xg = computeShotXG({
-        pos, side, pressure, assistType: lastActionType, isCounter, isHighRecovery: isCounter,
+        pos, side, pressure, assistType: lastActionType, isCounter, isHighRecovery,
         numericSuperiority, faceToFace,
         shooterQuality: computeFinishingRating(carrier) * staminaFor(carrier),
         gkQuality: finalGk ? computeGoalkeepingRating(finalGk) : 55
@@ -535,19 +599,19 @@ function simulatePossessionChain(params) {
         continue;
       }
       outcome = "turnover";
-      const target = boxTarget ? boxTarget.a : advancedPoint(pos, side, 10);
-      const cutPoint = lerpPoint(pos, target, 0.7);
-      if (nearestDef) { defenseStats.interceptions++; touchedIds.add(nearestDef.id); }
-      if (beats) {
-        beats.push(makeBeat("cross", side, carrier.id, null, pos, cutPoint, MATCH_BALANCE.beatDurations.cross * 0.7));
-        beats.push(makeBeat(nearestDef ? "interception" : "out", oppSide, nearestDef ? nearestDef.id : null, null, cutPoint, nearestDef ? shadowPos(nearestDef) : cutPoint, MATCH_BALANCE.beatDurations.interception));
-      }
+      losePass("cross", boxTarget.a, MATCH_BALANCE.beatDurations.cross);
       break;
     }
 
     if (decision === "dribble") {
-      const chance = resolveDribbleChance(carrier, nearestDef, staminaFor(carrier));
       const advance = advancedPoint(pos, side, MATCH_BALANCE.dribble.advanceDistance);
+      const duelDistance = nearestDef ? Math.hypot(shadowPos(nearestDef).x - pos.x, shadowPos(nearestDef).y - pos.y) : Infinity;
+      if (!nearestDef || duelDistance > MATCH_BALANCE.dribble.duelDistance) {
+        if (beats) beats.push(makeBeat("carry", side, carrier.id, null, pos, advance, MATCH_BALANCE.beatDurations.carry));
+        pos = advance; lastActionType = "carry";
+        continue;
+      }
+      const chance = resolveDribbleChance(carrier, nearestDef, staminaFor(carrier), duelDistance);
       if (Math.random() < chance) {
         if (beats) beats.push(makeBeat("dribble", side, carrier.id, null, pos, advance, MATCH_BALANCE.beatDurations.dribble));
         pos = advance; lastActionType = "dribble";
@@ -593,12 +657,7 @@ function simulatePossessionChain(params) {
       continue;
     }
     outcome = "turnover";
-    const cutPoint = lerpPoint(pos, targetPos, 0.65);
-    if (nearestDef) { defenseStats.interceptions++; touchedIds.add(nearestDef.id); }
-    if (beats) {
-      beats.push(makeBeat("pass", side, carrier.id, null, pos, cutPoint, MATCH_BALANCE.beatDurations[decision] * 0.7));
-      beats.push(makeBeat(nearestDef ? "interception" : "out", oppSide, nearestDef ? nearestDef.id : null, null, cutPoint, nearestDef ? shadowPos(nearestDef) : cutPoint, MATCH_BALANCE.beatDurations.interception));
-    }
+    losePass("pass", targetPos, MATCH_BALANCE.beatDurations[decision]);
     break;
   }
 
@@ -618,3 +677,4 @@ function planChainCount(attackPlanKey, earlyPhase) {
   if (earlyPhase && Math.random() < MATCH_BALANCE.tempo.earlyPhaseExtraChance) n++;
   return n;
 }
+
