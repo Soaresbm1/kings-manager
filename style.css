@@ -353,6 +353,19 @@ button.danger:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(2
 .tactics-chip-group .option-card h4 { font-size: 0.85em; margin: 0; white-space: nowrap; }
 .tactics-chip-group .option-card p { display: none; }
 
+.mentality-choices { display: flex; gap: 5px; flex-wrap: wrap; }
+.mentality-button {
+  border: 1px solid #55513d; border-radius: 8px; padding: 7px 10px;
+  background: rgba(255,255,255,0.035); color: #ccd2da;
+  font: 600 0.78em "Poppins", "Segoe UI", sans-serif; cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.mentality-button:hover { border-color: var(--accent); color: #fff; }
+.mentality-button.selected { border-color: var(--accent); background: rgba(255,199,0,0.13); color: #ffe9a1; }
+.mentality-button:focus-visible { outline: 2px solid #9fd8ff; outline-offset: 3px; }
+.mentality-button:disabled { opacity: 0.55; cursor: default; }
+.slot-role-warning { display: block; font-size: 0.58em; font-weight: 600; color: #ffd08a; line-height: 1.25; }
+
 .tactics-layout { display: flex; gap: 15px; flex: 1; min-height: 0; }
 .tactics-pitch-panel {
   flex: 2 1 420px; min-width: 0; display: flex; flex-direction: column; min-height: 0;
@@ -583,9 +596,28 @@ button.secondary.selected { border-color: var(--accent2); background: rgba(255,1
 .match-layout { display: flex; gap: 20px; align-items: stretch; justify-content: center; flex: 1; min-height: 0; }
 .match-center {
   flex: 1 1 550px; max-width: 850px; min-width: 0; min-height: 0; margin-bottom: 0;
-  display: flex; flex-direction: column;
+  display: flex; flex-direction: column; overflow: hidden;
 }
 .match-center #commentary { flex: 1; height: auto; min-height: 0; }
+.match-center .match-header { flex-shrink: 0; margin-bottom: 4px; padding-top: 0; padding-bottom: 4px; }
+.match-live-context { flex-shrink: 0; margin-bottom: 9px; text-align: center; font-size: 0.72em; }
+.match-live-phase-line { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; color: #a8c8da; }
+#match-live-format { color: #ffe9a1; font-weight: 700; }
+#match-live-carrier { color: #95a0ae; margin-top: 4px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
+.match-live-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; flex-shrink: 0; margin-bottom: 10px; }
+.match-live-stats > div { padding: 7px 5px; border: 1px solid var(--panel-border); border-radius: 8px; text-align: center; background: rgba(255,255,255,0.025); }
+.match-live-stats dt { font-size: 0.65em; text-transform: uppercase; letter-spacing: 0.5px; color: #94a6b7; }
+.match-live-stats dd { font: 700 1em "Rajdhani", "Segoe UI", sans-serif; color: #e4eaf0; margin-top: 2px; }
+.touchline-panel { flex-shrink: 0; border: 1px solid var(--panel-border); border-radius: 10px; padding: 12px; background: rgba(0,0,0,0.2); margin-top: 12px; }
+.touchline-heading { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap; margin-bottom: 7px; }
+.touchline-heading h3 { margin: 0; font-size: 0.95em; }
+.match-live-energy { font-size: 0.66em; color: #98bda5; }
+.match-live-energy.is-tired { color: #ffc780; }
+.live-mentality-choices .mentality-button { flex: 1; }
+.mentality-description { font-size: 0.66em; color: #a9b0bb; line-height: 1.5; margin-top: 7px; }
+.match-tactical-insight { font-size: 0.72em; color: #d0dce6; line-height: 1.5; border-top: 1px solid rgba(255,255,255,0.07); padding-top: 7px; margin-top: 7px; }
+.match-special-status { flex-shrink: 0; text-align: center; margin-top: 7px; color: #afcfdf; font-size: 0.68em; }
+#commentary .ev.tactic { color: #afd8f1; border-left: 3px solid #70acd5; background: rgba(93,158,200,0.08); }
 
 /* Bannière indiquant à qui c'est le tour, mise à jour par updateTurnBanner() à chaque
    changement de tour (beginTurn) et à la mise en pause. */
@@ -628,8 +660,13 @@ button.secondary.selected { border-color: var(--accent2); background: rgba(255,1
 }
 
 @media (max-width: 1100px) {
-  .match-layout { flex-direction: column; }
-  .match-pitch { min-height: 200px; }
+  .match-layout { flex-direction: column; overflow-y: auto; }
+  .match-pitch-panel { flex: 0 0 auto; }
+  .match-center { flex: 1 0 420px; min-height: 420px; }
+  .match-pitch { min-height: 160px; max-width: 560px; }
+  .touchline-panel { margin-top: 10px; }
+  .touchline-heading { margin-bottom: 5px; }
+  .match-tactical-insight { padding-top: 5px; margin-top: 5px; }
 }
 .match-header {
   display: flex; justify-content: space-around; align-items: center; margin-bottom: 15px;
@@ -1106,3 +1143,4 @@ button.secondary.selected { border-color: var(--accent2); background: rgba(255,1
 .summary-grid { display: flex; gap: 20px; flex-wrap: wrap; }
 .summary-grid > div { flex: 1; min-width: 250px; }
 .summary-grid h3 { border-bottom: 2px solid var(--panel-border); padding-bottom: 6px; }
+

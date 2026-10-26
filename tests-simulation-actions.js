@@ -77,7 +77,7 @@ for (const action of ["short", "cross"]) {
     assert.equal(interception.from.y, 50);
     const pass = result.beats.find(b => b.type === (action === "cross" ? "cross" : "pass"));
     assert.equal(pass.interceptorId, "inLane");
-    assert.deepEqual(pass.interceptorFrom, { x: 50, y: 53 });
+    assert.deepEqual(pass.interceptorFrom, pass.positionsBefore ? pass.positionsBefore.inLane : { x: 50, y: 53 });
     assert.deepEqual(pass.to, interception.from);
     const distance = Math.hypot(pass.to.x - pass.interceptorFrom.x, pass.to.y - pass.interceptorFrom.y);
     assert.ok(distance <= 26 * pass.duration + 3, "interception hors de portée pendant le vol");
