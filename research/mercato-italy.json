@@ -1,0 +1,2167 @@
+{
+  "leagueKey": "italy",
+  "checkedAt": "2026-10-26",
+  "competition": "Kings Cup Italy",
+  "season": "2026/27",
+  "sources": [
+    {
+      "id": "it-index",
+      "url": "https://kingsleague.pro/it/italia/squadre",
+      "title": "Squadre — Kings Cup Italy 2026/27",
+      "official": true
+    },
+    {
+      "id": "it-team-alp",
+      "url": "https://kingsleague.pro/it/squadre/90-alpak-fc",
+      "title": "Alpak FC — Squadra, 2026/27 Kings Cup Italy",
+      "official": true
+    },
+    {
+      "id": "it-team-bbr",
+      "url": "https://kingsleague.pro/it/squadre/201-bigbro",
+      "title": "BIGBRO — Squadra, 2026/27 Kings Cup Italy",
+      "official": true
+    },
+    {
+      "id": "it-team-boo",
+      "url": "https://kingsleague.pro/it/squadre/85-boomers",
+      "title": "Boomers — Squadra, 2026/27 Kings Cup Italy",
+      "official": true
+    },
+    {
+      "id": "it-team-cir",
+      "url": "https://kingsleague.pro/it/squadre/87-circus-fc",
+      "title": "Circus FC — Squadra, 2026/27 Kings Cup Italy",
+      "official": true
+    },
+    {
+      "id": "it-team-dpw",
+      "url": "https://kingsleague.pro/it/squadre/200-d-power",
+      "title": "D-POWER — Squadra, 2026/27 Kings Cup Italy",
+      "official": true
+    },
+    {
+      "id": "it-team-cae",
+      "url": "https://kingsleague.pro/it/squadre/89-fc-caesar",
+      "title": "FC Caesar — Squadra, 2026/27 Kings Cup Italy",
+      "official": true
+    },
+    {
+      "id": "it-team-g7f",
+      "url": "https://kingsleague.pro/it/squadre/83-gear-7-fc",
+      "title": "Gear 7 FC — Squadra, 2026/27 Kings Cup Italy",
+      "official": true
+    },
+    {
+      "id": "it-team-stl",
+      "url": "https://kingsleague.pro/it/squadre/59-stallions",
+      "title": "Stallions — Squadra, 2026/27 Kings Cup Italy",
+      "official": true
+    },
+    {
+      "id": "it-team-trm",
+      "url": "https://kingsleague.pro/it/squadre/92-trm-fc",
+      "title": "TRM FC — Squadra, 2026/27 Kings Cup Italy",
+      "official": true
+    },
+    {
+      "id": "it-team-und",
+      "url": "https://kingsleague.pro/it/squadre/93-underdogs-fc",
+      "title": "Underdogs FC — Squadra, 2026/27 Kings Cup Italy",
+      "official": true
+    },
+    {
+      "id": "it-team-zeb",
+      "url": "https://kingsleague.pro/it/squadre/86-zebras-fc",
+      "title": "Zebras FC — Squadra, 2026/27 Kings Cup Italy",
+      "official": true
+    },
+    {
+      "id": "it-team-zco",
+      "url": "https://kingsleague.pro/it/squadre/88-zeta-como",
+      "title": "Zeta Como — Squadra, 2026/27 Kings Cup Italy",
+      "official": true
+    },
+    {
+      "id": "it-wildcards",
+      "url": "https://kingsleague.pro/it/italia/giocatori-wildcard",
+      "title": "Giocatori Wildcard — Kings Cup Italy",
+      "official": true
+    }
+  ],
+  "teams": [
+    {
+      "id": "alp",
+      "name": "Alpak FC",
+      "officialName": "Alpak FC",
+      "rosterStatus": "complete",
+      "sourceIds": [
+        "it-team-alp",
+        "it-wildcards"
+      ],
+      "players": [
+        {
+          "name": "Luigi Castelli",
+          "pos": "GK",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-alp"
+          ]
+        },
+        {
+          "name": "Vittorio Gilli",
+          "pos": "GK",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-alp"
+          ]
+        },
+        {
+          "name": "Alessandro Marocco",
+          "pos": "DEF",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-alp"
+          ]
+        },
+        {
+          "name": "Thomas Salvaterra",
+          "pos": "DEF",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-alp"
+          ]
+        },
+        {
+          "name": "Vlad Marin",
+          "pos": "DEF",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-alp"
+          ]
+        },
+        {
+          "name": "Niccolò Ferrarese",
+          "pos": "MID",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-alp"
+          ]
+        },
+        {
+          "name": "Nicola Cutrignelli",
+          "pos": "MID",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-alp"
+          ]
+        },
+        {
+          "name": "Abdou Doumbia",
+          "pos": "ATT",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-alp"
+          ]
+        },
+        {
+          "name": "Mauro Veneroso",
+          "pos": "ATT",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-alp"
+          ]
+        },
+        {
+          "name": "Paolo Scienza",
+          "pos": "ATT",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-alp"
+          ]
+        },
+        {
+          "name": "Pietro Arcidiacono",
+          "pos": "ATT",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-alp"
+          ]
+        },
+        {
+          "name": "Simone Lo Faso",
+          "pos": "ATT",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-alp"
+          ]
+        },
+        {
+          "name": "Riccardo Ottaviani",
+          "pos": "DEF",
+          "registrationType": "wildcard",
+          "sourceIds": [
+            "it-team-alp",
+            "it-wildcards"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bbr",
+      "name": "BIGBRO",
+      "officialName": "BIGBRO",
+      "rosterStatus": "complete",
+      "sourceIds": [
+        "it-team-bbr",
+        "it-wildcards"
+      ],
+      "players": [
+        {
+          "name": "Leandro Casapieri",
+          "pos": "GK",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-bbr"
+          ]
+        },
+        {
+          "name": "Alessandro Garilli",
+          "pos": "DEF",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-bbr"
+          ]
+        },
+        {
+          "name": "Diego Albanese",
+          "pos": "DEF",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-bbr"
+          ]
+        },
+        {
+          "name": "Riccardo Bertaglio",
+          "pos": "DEF",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-bbr"
+          ]
+        },
+        {
+          "name": "Ali Farsane",
+          "pos": "MID",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-bbr"
+          ]
+        },
+        {
+          "name": "Francesco Messina",
+          "pos": "MID",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-bbr"
+          ]
+        },
+        {
+          "name": "Spizzi",
+          "pos": "MID",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-bbr"
+          ]
+        },
+        {
+          "name": "Tiziano Merlonghi",
+          "pos": "MID",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-bbr"
+          ]
+        },
+        {
+          "name": "Alessandro Sigurtà",
+          "pos": "ATT",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-bbr"
+          ]
+        },
+        {
+          "name": "Brandon Rodriguez",
+          "pos": "ATT",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-bbr"
+          ]
+        },
+        {
+          "name": "Filippo Gagliardi",
+          "pos": "ATT",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-bbr"
+          ]
+        },
+        {
+          "name": "Manuel Leone",
+          "pos": "ATT",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-bbr"
+          ]
+        },
+        {
+          "name": "Samuele Curreli",
+          "pos": "ATT",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-bbr"
+          ]
+        },
+        {
+          "name": "Roberto Ratti",
+          "pos": "ATT",
+          "registrationType": "wildcard",
+          "sourceIds": [
+            "it-team-bbr",
+            "it-wildcards"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "boo",
+      "name": "Boomers",
+      "officialName": "Boomers",
+      "rosterStatus": "complete",
+      "sourceIds": [
+        "it-team-boo",
+        "it-wildcards"
+      ],
+      "players": [
+        {
+          "name": "Edoardo Ciancio",
+          "pos": "GK",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-boo"
+          ]
+        },
+        {
+          "name": "Jacopo Aiello",
+          "pos": "GK",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-boo"
+          ]
+        },
+        {
+          "name": "Andrea Tarasco",
+          "pos": "DEF",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-boo"
+          ]
+        },
+        {
+          "name": "Christian Dimarco",
+          "pos": "DEF",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-boo"
+          ]
+        },
+        {
+          "name": "Tommaso Caldera",
+          "pos": "DEF",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-boo"
+          ]
+        },
+        {
+          "name": "Yannick Melseaux",
+          "pos": "DEF",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-boo"
+          ]
+        },
+        {
+          "name": "Andrea D'errico",
+          "pos": "MID",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-boo"
+          ]
+        },
+        {
+          "name": "Nicholas Martini",
+          "pos": "MID",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-boo"
+          ]
+        },
+        {
+          "name": "Riccardo Losa",
+          "pos": "MID",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-boo"
+          ]
+        },
+        {
+          "name": "Assane Faye",
+          "pos": "ATT",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-boo"
+          ]
+        },
+        {
+          "name": "Carlo Ferrario",
+          "pos": "ATT",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-boo"
+          ]
+        },
+        {
+          "name": "Manuel Luca Attici",
+          "pos": "ATT",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-boo"
+          ]
+        },
+        {
+          "name": "Roc Bancells",
+          "pos": "ATT",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-boo"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cir",
+      "name": "Circus FC",
+      "officialName": "Circus FC",
+      "rosterStatus": "complete",
+      "sourceIds": [
+        "it-team-cir",
+        "it-wildcards"
+      ],
+      "players": [
+        {
+          "name": "Alessio Salvato",
+          "pos": "GK",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-cir"
+          ]
+        },
+        {
+          "name": "Simone Martino",
+          "pos": "GK",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-cir"
+          ]
+        },
+        {
+          "name": "Iván Torres",
+          "pos": "DEF",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-cir"
+          ]
+        },
+        {
+          "name": "Lorenzo Mantovani",
+          "pos": "DEF",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-cir"
+          ]
+        },
+        {
+          "name": "Marco Bianchi",
+          "pos": "DEF",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-cir"
+          ]
+        },
+        {
+          "name": "Tiziano Prinari",
+          "pos": "DEF",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-cir"
+          ]
+        },
+        {
+          "name": "Nico Federici",
+          "pos": "MID",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-cir"
+          ]
+        },
+        {
+          "name": "Pol Ortega",
+          "pos": "MID",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-cir"
+          ]
+        },
+        {
+          "name": "Samuele Pinna",
+          "pos": "MID",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-cir"
+          ]
+        },
+        {
+          "name": "Davide Bertocchi",
+          "pos": "ATT",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-cir"
+          ]
+        },
+        {
+          "name": "Lorenzo Berra",
+          "pos": "ATT",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-cir"
+          ]
+        },
+        {
+          "name": "Matteo Siano",
+          "pos": "ATT",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-cir"
+          ]
+        },
+        {
+          "name": "David Grifell",
+          "pos": "DEF",
+          "registrationType": "wildcard",
+          "sourceIds": [
+            "it-team-cir",
+            "it-wildcards"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dpw",
+      "name": "D-POWER",
+      "officialName": "D-POWER",
+      "rosterStatus": "complete",
+      "sourceIds": [
+        "it-team-dpw",
+        "it-wildcards"
+      ],
+      "players": [
+        {
+          "name": "Valerio Vimercati",
+          "pos": "GK",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-dpw"
+          ]
+        },
+        {
+          "name": "Enea Cehu",
+          "pos": "DEF",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-dpw"
+          ]
+        },
+        {
+          "name": "Antonio Altieri",
+          "pos": "MID",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-dpw"
+          ]
+        },
+        {
+          "name": "Felipe Diogo",
+          "pos": "MID",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-dpw"
+          ]
+        },
+        {
+          "name": "Marco Gallizia",
+          "pos": "MID",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-dpw"
+          ]
+        },
+        {
+          "name": "Mattia Pensalfini",
+          "pos": "MID",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-dpw"
+          ]
+        },
+        {
+          "name": "Riccardo Restelli",
+          "pos": "MID",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-dpw"
+          ]
+        },
+        {
+          "name": "Simone Soprano",
+          "pos": "MID",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-dpw"
+          ]
+        },
+        {
+          "name": "Edoardo Matta",
+          "pos": "ATT",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-dpw"
+          ]
+        },
+        {
+          "name": "Elia Ferrario",
+          "pos": "ATT",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-dpw"
+          ]
+        },
+        {
+          "name": "Fallou Cisse",
+          "pos": "ATT",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-dpw"
+          ]
+        },
+        {
+          "name": "Federico Scappi",
+          "pos": "ATT",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-dpw"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cae",
+      "name": "FC Caesar",
+      "officialName": "FC Caesar",
+      "rosterStatus": "complete",
+      "sourceIds": [
+        "it-team-cae",
+        "it-wildcards"
+      ],
+      "players": [
+        {
+          "name": "Gabriele Zappalà",
+          "pos": "GK",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-cae"
+          ]
+        },
+        {
+          "name": "Giovanni Bassi",
+          "pos": "GK",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-cae"
+          ]
+        },
+        {
+          "name": "Andrea Pozzi",
+          "pos": "DEF",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-cae"
+          ]
+        },
+        {
+          "name": "Christian Mancino",
+          "pos": "DEF",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-cae"
+          ]
+        },
+        {
+          "name": "Stefano Di Pentima",
+          "pos": "DEF",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-cae"
+          ]
+        },
+        {
+          "name": "Alessandro Comentale",
+          "pos": "MID",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-cae"
+          ]
+        },
+        {
+          "name": "Daniel Esposito",
+          "pos": "MID",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-cae"
+          ]
+        },
+        {
+          "name": "Edoardo Massafra",
+          "pos": "MID",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-cae"
+          ]
+        },
+        {
+          "name": "Hamadi Zakaria",
+          "pos": "MID",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-cae"
+          ]
+        },
+        {
+          "name": "Riccardo Fiorella",
+          "pos": "MID",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-cae"
+          ]
+        },
+        {
+          "name": "Ergys Ballgjini",
+          "pos": "ATT",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-cae"
+          ]
+        },
+        {
+          "name": "Remo Masoello Perlino",
+          "pos": "ATT",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-cae"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "g7f",
+      "name": "Gear 7 FC",
+      "officialName": "Gear 7 FC",
+      "rosterStatus": "complete",
+      "sourceIds": [
+        "it-team-g7f",
+        "it-wildcards"
+      ],
+      "players": [
+        {
+          "name": "Antonio Iuliano",
+          "pos": "GK",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-g7f"
+          ]
+        },
+        {
+          "name": "Valerio Anane",
+          "pos": "GK",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-g7f"
+          ]
+        },
+        {
+          "name": "Angelo Panarello",
+          "pos": "DEF",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-g7f"
+          ]
+        },
+        {
+          "name": "Diego de la Mata",
+          "pos": "DEF",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-g7f"
+          ]
+        },
+        {
+          "name": "Joan Oriol",
+          "pos": "DEF",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-g7f"
+          ]
+        },
+        {
+          "name": "Benito Dragone",
+          "pos": "MID",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-g7f"
+          ]
+        },
+        {
+          "name": "Christophe Renault",
+          "pos": "MID",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-g7f"
+          ]
+        },
+        {
+          "name": "Emmanuele Garofalo",
+          "pos": "MID",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-g7f"
+          ]
+        },
+        {
+          "name": "Luis García",
+          "pos": "MID",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-g7f"
+          ]
+        },
+        {
+          "name": "Adri Espinar",
+          "pos": "ATT",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-g7f"
+          ]
+        },
+        {
+          "name": "Adrián de la Cruz",
+          "pos": "ATT",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-g7f"
+          ]
+        },
+        {
+          "name": "Jacopo Cerasani",
+          "pos": "ATT",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-g7f"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "stl",
+      "name": "Stallions",
+      "officialName": "Stallions",
+      "rosterStatus": "complete",
+      "sourceIds": [
+        "it-team-stl",
+        "it-wildcards"
+      ],
+      "players": [
+        {
+          "name": "Alessio Buono",
+          "pos": "GK",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-stl"
+          ]
+        },
+        {
+          "name": "Gianluca Bressan",
+          "pos": "GK",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-stl"
+          ]
+        },
+        {
+          "name": "Alessandro Di Dio",
+          "pos": "DEF",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-stl"
+          ]
+        },
+        {
+          "name": "Carles Planas",
+          "pos": "DEF",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-stl"
+          ]
+        },
+        {
+          "name": "Marco Evangelisti",
+          "pos": "DEF",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-stl"
+          ]
+        },
+        {
+          "name": "Alessandro Gelsi",
+          "pos": "MID",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-stl"
+          ]
+        },
+        {
+          "name": "Ivan Altamura",
+          "pos": "MID",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-stl"
+          ]
+        },
+        {
+          "name": "Niccolò Marino",
+          "pos": "MID",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-stl"
+          ]
+        },
+        {
+          "name": "Pietro Brusadelli",
+          "pos": "MID",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-stl"
+          ]
+        },
+        {
+          "name": "Dennis Stojkovic",
+          "pos": "ATT",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-stl"
+          ]
+        },
+        {
+          "name": "Matteo Perrotti",
+          "pos": "ATT",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-stl"
+          ]
+        },
+        {
+          "name": "Nico Santos",
+          "pos": "ATT",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-stl"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "trm",
+      "name": "TRM FC",
+      "officialName": "TRM FC",
+      "rosterStatus": "complete",
+      "sourceIds": [
+        "it-team-trm",
+        "it-wildcards"
+      ],
+      "players": [
+        {
+          "name": "Alessandro Vagge",
+          "pos": "GK",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-trm"
+          ]
+        },
+        {
+          "name": "Koussay Amari",
+          "pos": "GK",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-trm"
+          ]
+        },
+        {
+          "name": "Alessio Marcone",
+          "pos": "DEF",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-trm"
+          ]
+        },
+        {
+          "name": "Carlos Filippi",
+          "pos": "DEF",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-trm"
+          ]
+        },
+        {
+          "name": "Gonzalo Escudero",
+          "pos": "DEF",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-trm"
+          ]
+        },
+        {
+          "name": "Matteo Vincenzi",
+          "pos": "DEF",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-trm"
+          ]
+        },
+        {
+          "name": "Tommaso Conte",
+          "pos": "DEF",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-trm"
+          ]
+        },
+        {
+          "name": "Ernesto Pagliaro",
+          "pos": "MID",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-trm"
+          ]
+        },
+        {
+          "name": "Simone Isacco",
+          "pos": "MID",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-trm"
+          ]
+        },
+        {
+          "name": "Kevin Girgenti",
+          "pos": "ATT",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-trm"
+          ]
+        },
+        {
+          "name": "Pablo Beguer",
+          "pos": "ATT",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-trm"
+          ]
+        },
+        {
+          "name": "Simone Bramante",
+          "pos": "ATT",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-trm"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "und",
+      "name": "Underdogs FC",
+      "officialName": "Underdogs FC",
+      "rosterStatus": "complete",
+      "sourceIds": [
+        "it-team-und",
+        "it-wildcards"
+      ],
+      "players": [
+        {
+          "name": "Alessio D'Aniello",
+          "pos": "GK",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-und"
+          ]
+        },
+        {
+          "name": "Gianmarco Chironi",
+          "pos": "GK",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-und"
+          ]
+        },
+        {
+          "name": "Andrea Calandra",
+          "pos": "DEF",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-und"
+          ]
+        },
+        {
+          "name": "Andrea Gorgoglione",
+          "pos": "DEF",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-und"
+          ]
+        },
+        {
+          "name": "Nadir Louah",
+          "pos": "DEF",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-und"
+          ]
+        },
+        {
+          "name": "Omar Nejmi",
+          "pos": "DEF",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-und"
+          ]
+        },
+        {
+          "name": "Alessandro Cannataro",
+          "pos": "MID",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-und"
+          ]
+        },
+        {
+          "name": "Domenico Rossi",
+          "pos": "MID",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-und"
+          ]
+        },
+        {
+          "name": "Gerard Nolla",
+          "pos": "ATT",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-und"
+          ]
+        },
+        {
+          "name": "Jorginho Fernandes",
+          "pos": "ATT",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-und"
+          ]
+        },
+        {
+          "name": "Mattia Invernizzi",
+          "pos": "ATT",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-und"
+          ]
+        },
+        {
+          "name": "Mirko Montalbano",
+          "pos": "ATT",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-und"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "zeb",
+      "name": "Zebras FC",
+      "officialName": "Zebras FC",
+      "rosterStatus": "complete",
+      "sourceIds": [
+        "it-team-zeb",
+        "it-wildcards"
+      ],
+      "players": [
+        {
+          "name": "Alberto Calabrò",
+          "pos": "GK",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-zeb"
+          ]
+        },
+        {
+          "name": "Luca Mascherpa",
+          "pos": "GK",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-zeb"
+          ]
+        },
+        {
+          "name": "Fabio Varoli",
+          "pos": "DEF",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-zeb"
+          ]
+        },
+        {
+          "name": "Andrea Meta",
+          "pos": "MID",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-zeb"
+          ]
+        },
+        {
+          "name": "Andrea Schenetti",
+          "pos": "MID",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-zeb"
+          ]
+        },
+        {
+          "name": "Daniele Prato",
+          "pos": "MID",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-zeb"
+          ]
+        },
+        {
+          "name": "Manolo Mosciaro",
+          "pos": "MID",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-zeb"
+          ]
+        },
+        {
+          "name": "Matia Iervolino",
+          "pos": "MID",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-zeb"
+          ]
+        },
+        {
+          "name": "Emanuele Bardelloni",
+          "pos": "ATT",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-zeb"
+          ]
+        },
+        {
+          "name": "Emanuele Romanini",
+          "pos": "ATT",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-zeb"
+          ]
+        },
+        {
+          "name": "Giuseppe De Luca",
+          "pos": "ATT",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-zeb"
+          ]
+        },
+        {
+          "name": "Nicolas Kalaja",
+          "pos": "ATT",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-zeb"
+          ]
+        },
+        {
+          "name": "Salvatore Lillo",
+          "pos": "ATT",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-zeb"
+          ]
+        },
+        {
+          "name": "Raoul Squitieri",
+          "pos": "DEF",
+          "registrationType": "wildcard",
+          "sourceIds": [
+            "it-team-zeb",
+            "it-wildcards"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "zco",
+      "name": "Zeta Como",
+      "officialName": "Zeta Como",
+      "rosterStatus": "complete",
+      "sourceIds": [
+        "it-team-zco",
+        "it-wildcards"
+      ],
+      "players": [
+        {
+          "name": "Andrea Bianchi",
+          "pos": "GK",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-zco"
+          ]
+        },
+        {
+          "name": "Samuele Guddo",
+          "pos": "GK",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-zco"
+          ]
+        },
+        {
+          "name": "Michael Kabamba",
+          "pos": "DEF",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-zco"
+          ]
+        },
+        {
+          "name": "Stefan Kladar",
+          "pos": "DEF",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-zco"
+          ]
+        },
+        {
+          "name": "Dilan Mojica",
+          "pos": "MID",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-zco"
+          ]
+        },
+        {
+          "name": "Gabriele Geraci",
+          "pos": "MID",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-zco"
+          ]
+        },
+        {
+          "name": "Imad Tijani",
+          "pos": "MID",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-zco"
+          ]
+        },
+        {
+          "name": "Kevin Caporale",
+          "pos": "MID",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-zco"
+          ]
+        },
+        {
+          "name": "Oussama M'Hamsi",
+          "pos": "MID",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-zco"
+          ]
+        },
+        {
+          "name": "Angelo Azzara",
+          "pos": "ATT",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-zco"
+          ]
+        },
+        {
+          "name": "Gabriele Giacchino",
+          "pos": "ATT",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-zco"
+          ]
+        },
+        {
+          "name": "Giovanni Kean",
+          "pos": "ATT",
+          "registrationType": "registered",
+          "sourceIds": [
+            "it-team-zco"
+          ]
+        },
+        {
+          "name": "Marco Longoni",
+          "pos": "MID",
+          "registrationType": "wildcard",
+          "sourceIds": [
+            "it-team-zco",
+            "it-wildcards"
+          ]
+        }
+      ]
+    }
+  ],
+  "confirmedTransfers": [
+    {
+      "name": "Alessandro Marocco",
+      "toTeamId": "alp",
+      "sourceIds": [
+        "it-team-alp"
+      ]
+    },
+    {
+      "name": "Niccolò Ferrarese",
+      "toTeamId": "alp",
+      "sourceIds": [
+        "it-team-alp"
+      ]
+    },
+    {
+      "name": "Abdou Doumbia",
+      "toTeamId": "alp",
+      "sourceIds": [
+        "it-team-alp"
+      ]
+    },
+    {
+      "name": "Pietro Arcidiacono",
+      "toTeamId": "alp",
+      "sourceIds": [
+        "it-team-alp"
+      ]
+    },
+    {
+      "name": "Simone Lo Faso",
+      "toTeamId": "alp",
+      "sourceIds": [
+        "it-team-alp"
+      ]
+    },
+    {
+      "name": "Diego Albanese",
+      "toTeamId": "bbr",
+      "sourceIds": [
+        "it-team-bbr"
+      ]
+    },
+    {
+      "name": "Riccardo Bertaglio",
+      "toTeamId": "bbr",
+      "sourceIds": [
+        "it-team-bbr"
+      ]
+    },
+    {
+      "name": "Ali Farsane",
+      "toTeamId": "bbr",
+      "sourceIds": [
+        "it-team-bbr"
+      ]
+    },
+    {
+      "name": "Francesco Messina",
+      "toTeamId": "bbr",
+      "sourceIds": [
+        "it-team-bbr"
+      ]
+    },
+    {
+      "name": "Brandon Rodriguez",
+      "toTeamId": "bbr",
+      "sourceIds": [
+        "it-team-bbr"
+      ]
+    },
+    {
+      "name": "Filippo Gagliardi",
+      "toTeamId": "bbr",
+      "sourceIds": [
+        "it-team-bbr"
+      ]
+    },
+    {
+      "name": "Manuel Leone",
+      "toTeamId": "bbr",
+      "sourceIds": [
+        "it-team-bbr"
+      ]
+    },
+    {
+      "name": "Samuele Curreli",
+      "toTeamId": "bbr",
+      "sourceIds": [
+        "it-team-bbr"
+      ]
+    },
+    {
+      "name": "Jacopo Aiello",
+      "toTeamId": "boo",
+      "sourceIds": [
+        "it-team-boo"
+      ]
+    },
+    {
+      "name": "Christian Dimarco",
+      "toTeamId": "boo",
+      "sourceIds": [
+        "it-team-boo"
+      ]
+    },
+    {
+      "name": "Tommaso Caldera",
+      "toTeamId": "boo",
+      "sourceIds": [
+        "it-team-boo"
+      ]
+    },
+    {
+      "name": "Yannick Melseaux",
+      "toTeamId": "boo",
+      "sourceIds": [
+        "it-team-boo"
+      ]
+    },
+    {
+      "name": "Andrea D'errico",
+      "toTeamId": "boo",
+      "sourceIds": [
+        "it-team-boo"
+      ]
+    },
+    {
+      "name": "Riccardo Losa",
+      "toTeamId": "boo",
+      "sourceIds": [
+        "it-team-boo"
+      ]
+    },
+    {
+      "name": "Assane Faye",
+      "toTeamId": "boo",
+      "sourceIds": [
+        "it-team-boo"
+      ]
+    },
+    {
+      "name": "Carlo Ferrario",
+      "toTeamId": "boo",
+      "sourceIds": [
+        "it-team-boo"
+      ]
+    },
+    {
+      "name": "Manuel Luca Attici",
+      "toTeamId": "boo",
+      "sourceIds": [
+        "it-team-boo"
+      ]
+    },
+    {
+      "name": "Roc Bancells",
+      "toTeamId": "boo",
+      "sourceIds": [
+        "it-team-boo"
+      ]
+    },
+    {
+      "name": "Alessio Salvato",
+      "toTeamId": "cir",
+      "sourceIds": [
+        "it-team-cir"
+      ]
+    },
+    {
+      "name": "Iván Torres",
+      "toTeamId": "cir",
+      "sourceIds": [
+        "it-team-cir"
+      ]
+    },
+    {
+      "name": "Marco Bianchi",
+      "toTeamId": "cir",
+      "sourceIds": [
+        "it-team-cir"
+      ]
+    },
+    {
+      "name": "Tiziano Prinari",
+      "toTeamId": "cir",
+      "sourceIds": [
+        "it-team-cir"
+      ]
+    },
+    {
+      "name": "Pol Ortega",
+      "toTeamId": "cir",
+      "sourceIds": [
+        "it-team-cir"
+      ]
+    },
+    {
+      "name": "Samuele Pinna",
+      "toTeamId": "cir",
+      "sourceIds": [
+        "it-team-cir"
+      ]
+    },
+    {
+      "name": "Matteo Siano",
+      "toTeamId": "cir",
+      "sourceIds": [
+        "it-team-cir"
+      ]
+    },
+    {
+      "name": "Enea Cehu",
+      "toTeamId": "dpw",
+      "sourceIds": [
+        "it-team-dpw"
+      ]
+    },
+    {
+      "name": "Antonio Altieri",
+      "toTeamId": "dpw",
+      "sourceIds": [
+        "it-team-dpw"
+      ]
+    },
+    {
+      "name": "Felipe Diogo",
+      "toTeamId": "dpw",
+      "sourceIds": [
+        "it-team-dpw"
+      ]
+    },
+    {
+      "name": "Marco Gallizia",
+      "toTeamId": "dpw",
+      "sourceIds": [
+        "it-team-dpw"
+      ]
+    },
+    {
+      "name": "Mattia Pensalfini",
+      "toTeamId": "dpw",
+      "sourceIds": [
+        "it-team-dpw"
+      ]
+    },
+    {
+      "name": "Riccardo Restelli",
+      "toTeamId": "dpw",
+      "sourceIds": [
+        "it-team-dpw"
+      ]
+    },
+    {
+      "name": "Simone Soprano",
+      "toTeamId": "dpw",
+      "sourceIds": [
+        "it-team-dpw"
+      ]
+    },
+    {
+      "name": "Edoardo Matta",
+      "toTeamId": "dpw",
+      "sourceIds": [
+        "it-team-dpw"
+      ]
+    },
+    {
+      "name": "Elia Ferrario",
+      "toTeamId": "dpw",
+      "sourceIds": [
+        "it-team-dpw"
+      ]
+    },
+    {
+      "name": "Fallou Cisse",
+      "toTeamId": "dpw",
+      "sourceIds": [
+        "it-team-dpw"
+      ]
+    },
+    {
+      "name": "Federico Scappi",
+      "toTeamId": "dpw",
+      "sourceIds": [
+        "it-team-dpw"
+      ]
+    },
+    {
+      "name": "Gabriele Zappalà",
+      "toTeamId": "cae",
+      "sourceIds": [
+        "it-team-cae"
+      ]
+    },
+    {
+      "name": "Giovanni Bassi",
+      "toTeamId": "cae",
+      "sourceIds": [
+        "it-team-cae"
+      ]
+    },
+    {
+      "name": "Andrea Pozzi",
+      "toTeamId": "cae",
+      "sourceIds": [
+        "it-team-cae"
+      ]
+    },
+    {
+      "name": "Christian Mancino",
+      "toTeamId": "cae",
+      "sourceIds": [
+        "it-team-cae"
+      ]
+    },
+    {
+      "name": "Stefano Di Pentima",
+      "toTeamId": "cae",
+      "sourceIds": [
+        "it-team-cae"
+      ]
+    },
+    {
+      "name": "Alessandro Comentale",
+      "toTeamId": "cae",
+      "sourceIds": [
+        "it-team-cae"
+      ]
+    },
+    {
+      "name": "Daniel Esposito",
+      "toTeamId": "cae",
+      "sourceIds": [
+        "it-team-cae"
+      ]
+    },
+    {
+      "name": "Edoardo Massafra",
+      "toTeamId": "cae",
+      "sourceIds": [
+        "it-team-cae"
+      ]
+    },
+    {
+      "name": "Hamadi Zakaria",
+      "toTeamId": "cae",
+      "sourceIds": [
+        "it-team-cae"
+      ]
+    },
+    {
+      "name": "Riccardo Fiorella",
+      "toTeamId": "cae",
+      "sourceIds": [
+        "it-team-cae"
+      ]
+    },
+    {
+      "name": "Ergys Ballgjini",
+      "toTeamId": "cae",
+      "sourceIds": [
+        "it-team-cae"
+      ]
+    },
+    {
+      "name": "Remo Masoello Perlino",
+      "toTeamId": "cae",
+      "sourceIds": [
+        "it-team-cae"
+      ]
+    },
+    {
+      "name": "Antonio Iuliano",
+      "toTeamId": "g7f",
+      "sourceIds": [
+        "it-team-g7f"
+      ]
+    },
+    {
+      "name": "Diego de la Mata",
+      "toTeamId": "g7f",
+      "sourceIds": [
+        "it-team-g7f"
+      ]
+    },
+    {
+      "name": "Joan Oriol",
+      "toTeamId": "g7f",
+      "sourceIds": [
+        "it-team-g7f"
+      ]
+    },
+    {
+      "name": "Benito Dragone",
+      "toTeamId": "g7f",
+      "sourceIds": [
+        "it-team-g7f"
+      ]
+    },
+    {
+      "name": "Emmanuele Garofalo",
+      "toTeamId": "g7f",
+      "sourceIds": [
+        "it-team-g7f"
+      ]
+    },
+    {
+      "name": "Luis García",
+      "toTeamId": "g7f",
+      "sourceIds": [
+        "it-team-g7f"
+      ]
+    },
+    {
+      "name": "Adri Espinar",
+      "toTeamId": "g7f",
+      "sourceIds": [
+        "it-team-g7f"
+      ]
+    },
+    {
+      "name": "Adrián de la Cruz",
+      "toTeamId": "g7f",
+      "sourceIds": [
+        "it-team-g7f"
+      ]
+    },
+    {
+      "name": "Jacopo Cerasani",
+      "toTeamId": "g7f",
+      "sourceIds": [
+        "it-team-g7f"
+      ]
+    },
+    {
+      "name": "Alessio Buono",
+      "toTeamId": "stl",
+      "sourceIds": [
+        "it-team-stl"
+      ]
+    },
+    {
+      "name": "Alessandro Di Dio",
+      "toTeamId": "stl",
+      "sourceIds": [
+        "it-team-stl"
+      ]
+    },
+    {
+      "name": "Carles Planas",
+      "toTeamId": "stl",
+      "sourceIds": [
+        "it-team-stl"
+      ]
+    },
+    {
+      "name": "Alessandro Gelsi",
+      "toTeamId": "stl",
+      "sourceIds": [
+        "it-team-stl"
+      ]
+    },
+    {
+      "name": "Ivan Altamura",
+      "toTeamId": "stl",
+      "sourceIds": [
+        "it-team-stl"
+      ]
+    },
+    {
+      "name": "Matteo Perrotti",
+      "toTeamId": "stl",
+      "sourceIds": [
+        "it-team-stl"
+      ]
+    },
+    {
+      "name": "Nico Santos",
+      "toTeamId": "stl",
+      "sourceIds": [
+        "it-team-stl"
+      ]
+    },
+    {
+      "name": "Koussay Amari",
+      "toTeamId": "trm",
+      "sourceIds": [
+        "it-team-trm"
+      ]
+    },
+    {
+      "name": "Gonzalo Escudero",
+      "toTeamId": "trm",
+      "sourceIds": [
+        "it-team-trm"
+      ]
+    },
+    {
+      "name": "Matteo Vincenzi",
+      "toTeamId": "trm",
+      "sourceIds": [
+        "it-team-trm"
+      ]
+    },
+    {
+      "name": "Tommaso Conte",
+      "toTeamId": "trm",
+      "sourceIds": [
+        "it-team-trm"
+      ]
+    },
+    {
+      "name": "Ernesto Pagliaro",
+      "toTeamId": "trm",
+      "sourceIds": [
+        "it-team-trm"
+      ]
+    },
+    {
+      "name": "Simone Isacco",
+      "toTeamId": "trm",
+      "sourceIds": [
+        "it-team-trm"
+      ]
+    },
+    {
+      "name": "Kevin Girgenti",
+      "toTeamId": "trm",
+      "sourceIds": [
+        "it-team-trm"
+      ]
+    },
+    {
+      "name": "Pablo Beguer",
+      "toTeamId": "trm",
+      "sourceIds": [
+        "it-team-trm"
+      ]
+    },
+    {
+      "name": "Simone Bramante",
+      "toTeamId": "trm",
+      "sourceIds": [
+        "it-team-trm"
+      ]
+    },
+    {
+      "name": "Alessio D'Aniello",
+      "toTeamId": "und",
+      "sourceIds": [
+        "it-team-und"
+      ]
+    },
+    {
+      "name": "Andrea Calandra",
+      "toTeamId": "und",
+      "sourceIds": [
+        "it-team-und"
+      ]
+    },
+    {
+      "name": "Nadir Louah",
+      "toTeamId": "und",
+      "sourceIds": [
+        "it-team-und"
+      ]
+    },
+    {
+      "name": "Omar Nejmi",
+      "toTeamId": "und",
+      "sourceIds": [
+        "it-team-und"
+      ]
+    },
+    {
+      "name": "Gerard Nolla",
+      "toTeamId": "und",
+      "sourceIds": [
+        "it-team-und"
+      ]
+    },
+    {
+      "name": "Mattia Invernizzi",
+      "toTeamId": "und",
+      "sourceIds": [
+        "it-team-und"
+      ]
+    },
+    {
+      "name": "Mirko Montalbano",
+      "toTeamId": "und",
+      "sourceIds": [
+        "it-team-und"
+      ]
+    },
+    {
+      "name": "Fabio Varoli",
+      "toTeamId": "zeb",
+      "sourceIds": [
+        "it-team-zeb"
+      ]
+    },
+    {
+      "name": "Andrea Meta",
+      "toTeamId": "zeb",
+      "sourceIds": [
+        "it-team-zeb"
+      ]
+    },
+    {
+      "name": "Andrea Schenetti",
+      "toTeamId": "zeb",
+      "sourceIds": [
+        "it-team-zeb"
+      ]
+    },
+    {
+      "name": "Daniele Prato",
+      "toTeamId": "zeb",
+      "sourceIds": [
+        "it-team-zeb"
+      ]
+    },
+    {
+      "name": "Manolo Mosciaro",
+      "toTeamId": "zeb",
+      "sourceIds": [
+        "it-team-zeb"
+      ]
+    },
+    {
+      "name": "Emanuele Romanini",
+      "toTeamId": "zeb",
+      "sourceIds": [
+        "it-team-zeb"
+      ]
+    },
+    {
+      "name": "Giuseppe De Luca",
+      "toTeamId": "zeb",
+      "sourceIds": [
+        "it-team-zeb"
+      ]
+    },
+    {
+      "name": "Nicolas Kalaja",
+      "toTeamId": "zeb",
+      "sourceIds": [
+        "it-team-zeb"
+      ]
+    },
+    {
+      "name": "Andrea Bianchi",
+      "toTeamId": "zco",
+      "sourceIds": [
+        "it-team-zco"
+      ]
+    },
+    {
+      "name": "Samuele Guddo",
+      "toTeamId": "zco",
+      "sourceIds": [
+        "it-team-zco"
+      ]
+    },
+    {
+      "name": "Dilan Mojica",
+      "toTeamId": "zco",
+      "sourceIds": [
+        "it-team-zco"
+      ]
+    },
+    {
+      "name": "Imad Tijani",
+      "toTeamId": "zco",
+      "sourceIds": [
+        "it-team-zco"
+      ]
+    },
+    {
+      "name": "Kevin Caporale",
+      "toTeamId": "zco",
+      "sourceIds": [
+        "it-team-zco"
+      ]
+    },
+    {
+      "name": "Angelo Azzara",
+      "toTeamId": "zco",
+      "sourceIds": [
+        "it-team-zco"
+      ]
+    },
+    {
+      "name": "Giovanni Kean",
+      "toTeamId": "zco",
+      "sourceIds": [
+        "it-team-zco"
+      ]
+    }
+  ],
+  "uncertainties": [
+    "Latest verified competition is 2026/27 Kings Cup Italy, started 2026-10-19. These current competition squad pages supersede the older global Mercato 2026 registration table.",
+    "ConfirmedTransfers here records players newly present at a club relative to the supplied game baseline and confirmed on the official current squad page. Dates, fees, and originating clubs are omitted where not independently verified; this is evidence of current registration, not a claimed transfer-contract chronology.",
+    "No birth dates, ages, ratings or attributes were inferred. Official display names and positions were copied from current squad pages.",
+    "All current official club-page profiles are retained, including the five directory-classified wildcards Roberto Ratti, David Grifell, Riccardo Ottaviani, Marco Longoni and Raoul Squitieri. Wildcard classification and 0-2 appearances at the start of the Cup do not establish a one-match-only contract or expiry."
+  ]
+}

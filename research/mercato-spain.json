@@ -1,0 +1,1844 @@
+{
+  "leagueKey": "spain",
+  "checkedAt": "2026-10-26",
+  "competition": "Latest published domestic competition: Split 6; current October destinations checked against 2026/27 Italy/Brazil Cups",
+  "season": "2025/26 (Spain publication); 2026/27 (confirmed destinations)",
+  "sources": [
+    {
+      "id": "es-index",
+      "url": "https://kingsleague.pro/es/espana/equipos",
+      "title": "Equipos — Kings League Spain, latest published season 2025/26",
+      "official": true
+    },
+    {
+      "id": "es-team-1kf",
+      "url": "https://kingsleague.pro/es/equipos/12-1k-fc",
+      "title": "1K FC — latest published squad, Split 6 2025/26",
+      "official": true
+    },
+    {
+      "id": "es-team-ebr",
+      "url": "https://kingsleague.pro/es/equipos/9-el-barrio",
+      "title": "El Barrio — latest published squad, Split 6 2025/26",
+      "official": true
+    },
+    {
+      "id": "es-team-jig",
+      "url": "https://kingsleague.pro/es/equipos/4-jijantes-fc",
+      "title": "Jijantes FC — latest published squad, Split 6 2025/26",
+      "official": true
+    },
+    {
+      "id": "es-team-lcc",
+      "url": "https://kingsleague.pro/es/equipos/179-la-capital-cf",
+      "title": "La Capital CF — latest published squad, KWC Clubs 2025/26",
+      "official": true
+    },
+    {
+      "id": "es-team-ltf",
+      "url": "https://kingsleague.pro/es/equipos/6-los-troncos-fc",
+      "title": "Los Troncos FC — latest published squad, KWC Clubs 2025/26",
+      "official": true
+    },
+    {
+      "id": "es-team-pio",
+      "url": "https://kingsleague.pro/es/equipos/10-pio-fc",
+      "title": "PIO FC — latest published squad, Split 6 2025/26",
+      "official": true
+    },
+    {
+      "id": "es-team-por",
+      "url": "https://kingsleague.pro/es/equipos/2-porcinos-fc",
+      "title": "Porcinos FC — latest published squad, KWC Clubs 2025/26",
+      "official": true
+    },
+    {
+      "id": "es-team-rdb",
+      "url": "https://kingsleague.pro/es/equipos/5-rayo-de-barcelona",
+      "title": "Rayo de Barcelona — latest published squad, Split 6 2025/26",
+      "official": true
+    },
+    {
+      "id": "es-team-say",
+      "url": "https://kingsleague.pro/es/equipos/3-saiyans-fc",
+      "title": "Saiyans FC — latest published squad, Split 6 2025/26",
+      "official": true
+    },
+    {
+      "id": "es-team-skl",
+      "url": "https://kingsleague.pro/es/equipos/210-skull-fc",
+      "title": "Skull FC — latest published squad, Split 6 2025/26",
+      "official": true
+    },
+    {
+      "id": "es-team-umo",
+      "url": "https://kingsleague.pro/es/equipos/7-ultimate-mostoles",
+      "title": "Ultimate Móstoles — latest published squad, KWC Clubs 2025/26",
+      "official": true
+    },
+    {
+      "id": "es-team-xby",
+      "url": "https://kingsleague.pro/es/equipos/8-xbuyer-team",
+      "title": "xBuyer Team — latest published squad, Split 6 2025/26",
+      "official": true
+    },
+    {
+      "id": "es-wildcards-1",
+      "url": "https://kingsleague.pro/es/espana/jugadores-wildcard",
+      "title": "Jugadores wildcard — Split 6, page 1",
+      "official": true
+    },
+    {
+      "id": "es-wildcards-2",
+      "url": "https://kingsleague.pro/es/espana/jugadores-wildcard?page=2",
+      "title": "Jugadores wildcard — Split 6, page 2",
+      "official": true
+    },
+    {
+      "id": "es-wildcards-3",
+      "url": "https://kingsleague.pro/es/espana/jugadores-wildcard?page=3",
+      "title": "Jugadores wildcard — Split 6, page 3",
+      "official": true
+    },
+    {
+      "id": "it-team-alp",
+      "url": "https://kingsleague.pro/it/squadre/90-alpak-fc",
+      "title": "Alpak FC — Squadra, 2026/27 Kings Cup Italy",
+      "official": true
+    },
+    {
+      "id": "it-team-bbr",
+      "url": "https://kingsleague.pro/it/squadre/201-bigbro",
+      "title": "BIGBRO — Squadra, 2026/27 Kings Cup Italy",
+      "official": true
+    },
+    {
+      "id": "it-team-boo",
+      "url": "https://kingsleague.pro/it/squadre/85-boomers",
+      "title": "Boomers — Squadra, 2026/27 Kings Cup Italy",
+      "official": true
+    },
+    {
+      "id": "it-team-cir",
+      "url": "https://kingsleague.pro/it/squadre/87-circus-fc",
+      "title": "Circus FC — Squadra, 2026/27 Kings Cup Italy",
+      "official": true
+    },
+    {
+      "id": "it-team-dpw",
+      "url": "https://kingsleague.pro/it/squadre/200-d-power",
+      "title": "D-POWER — Squadra, 2026/27 Kings Cup Italy",
+      "official": true
+    },
+    {
+      "id": "it-team-cae",
+      "url": "https://kingsleague.pro/it/squadre/89-fc-caesar",
+      "title": "FC Caesar — Squadra, 2026/27 Kings Cup Italy",
+      "official": true
+    },
+    {
+      "id": "it-team-g7f",
+      "url": "https://kingsleague.pro/it/squadre/83-gear-7-fc",
+      "title": "Gear 7 FC — Squadra, 2026/27 Kings Cup Italy",
+      "official": true
+    },
+    {
+      "id": "it-team-stl",
+      "url": "https://kingsleague.pro/it/squadre/59-stallions",
+      "title": "Stallions — Squadra, 2026/27 Kings Cup Italy",
+      "official": true
+    },
+    {
+      "id": "it-team-trm",
+      "url": "https://kingsleague.pro/it/squadre/92-trm-fc",
+      "title": "TRM FC — Squadra, 2026/27 Kings Cup Italy",
+      "official": true
+    },
+    {
+      "id": "it-team-und",
+      "url": "https://kingsleague.pro/it/squadre/93-underdogs-fc",
+      "title": "Underdogs FC — Squadra, 2026/27 Kings Cup Italy",
+      "official": true
+    },
+    {
+      "id": "it-team-zeb",
+      "url": "https://kingsleague.pro/it/squadre/86-zebras-fc",
+      "title": "Zebras FC — Squadra, 2026/27 Kings Cup Italy",
+      "official": true
+    },
+    {
+      "id": "it-team-zco",
+      "url": "https://kingsleague.pro/it/squadre/88-zeta-como",
+      "title": "Zeta Como — Squadra, 2026/27 Kings Cup Italy",
+      "official": true
+    },
+    {
+      "id": "br-oct-draft",
+      "url": "https://www.kingsleague.pro/es/brazil/actualidad/plantillas-kings-cup-brazil-draft-gutinho-aleix-marti",
+      "title": "Gutinho, Pick 1 del Draft, ya tiene equipo: así quedan las 10 plantillas de la Kings Cup Brazil",
+      "publishedAt": "2026-10-05",
+      "official": true
+    }
+  ],
+  "teams": [
+    {
+      "id": "1kf",
+      "name": "1K FC",
+      "officialName": "1K FC",
+      "rosterStatus": "partial",
+      "sourceIds": [
+        "es-team-1kf",
+        "es-index"
+      ],
+      "players": [],
+      "lastPublishedSeason": "2025/26",
+      "lastPublishedCompetition": "Split 6",
+      "lastPublishedRoster": [
+        {
+          "name": "Iván Rivera",
+          "pos": "GK",
+          "sourceIds": [
+            "es-team-1kf"
+          ]
+        },
+        {
+          "name": "Pol Lechuga",
+          "pos": "GK",
+          "sourceIds": [
+            "es-team-1kf"
+          ]
+        },
+        {
+          "name": "Achraf Laiti",
+          "pos": "DEF",
+          "sourceIds": [
+            "es-team-1kf"
+          ]
+        },
+        {
+          "name": "Cristian Faura",
+          "pos": "DEF",
+          "sourceIds": [
+            "es-team-1kf"
+          ]
+        },
+        {
+          "name": "Guelmi Pons",
+          "pos": "DEF",
+          "sourceIds": [
+            "es-team-1kf"
+          ]
+        },
+        {
+          "name": "Karim Moya",
+          "pos": "DEF",
+          "sourceIds": [
+            "es-team-1kf"
+          ]
+        },
+        {
+          "name": "Michel Owono",
+          "pos": "DEF",
+          "sourceIds": [
+            "es-team-1kf"
+          ]
+        },
+        {
+          "name": "Pau 'ZZ' Ruiz",
+          "pos": "DEF",
+          "sourceIds": [
+            "es-team-1kf"
+          ]
+        },
+        {
+          "name": "Erik Beattie",
+          "pos": "MID",
+          "sourceIds": [
+            "es-team-1kf"
+          ]
+        },
+        {
+          "name": "Gerard Verge",
+          "pos": "MID",
+          "sourceIds": [
+            "es-team-1kf"
+          ]
+        },
+        {
+          "name": "Joel Navas",
+          "pos": "MID",
+          "sourceIds": [
+            "es-team-1kf"
+          ]
+        },
+        {
+          "name": "Isma Reguia",
+          "pos": "ATT",
+          "sourceIds": [
+            "es-team-1kf"
+          ]
+        },
+        {
+          "name": "Joel Paredes",
+          "pos": "ATT",
+          "sourceIds": [
+            "es-team-1kf"
+          ]
+        },
+        {
+          "name": "Eric Jiménez",
+          "pos": "ATT",
+          "sourceIds": [
+            "es-team-1kf"
+          ],
+          "registrationType": "wildcard"
+        },
+        {
+          "name": "Pol Requena",
+          "pos": "ATT",
+          "sourceIds": [
+            "es-team-1kf"
+          ],
+          "registrationType": "wildcard"
+        }
+      ],
+      "observedWildcardPlayers": [
+        "Eric Jiménez",
+        "Pol Requena"
+      ]
+    },
+    {
+      "id": "ebr",
+      "name": "El Barrio",
+      "officialName": "El Barrio",
+      "rosterStatus": "partial",
+      "sourceIds": [
+        "es-team-ebr",
+        "es-index"
+      ],
+      "players": [],
+      "lastPublishedSeason": "2025/26",
+      "lastPublishedCompetition": "Split 6",
+      "lastPublishedRoster": [
+        {
+          "name": "Hugo Eyre",
+          "pos": "GK",
+          "sourceIds": [
+            "es-team-ebr"
+          ]
+        },
+        {
+          "name": "Sergio Fernández",
+          "pos": "GK",
+          "sourceIds": [
+            "es-team-ebr"
+          ]
+        },
+        {
+          "name": "Carlos Val",
+          "pos": "DEF",
+          "sourceIds": [
+            "es-team-ebr"
+          ]
+        },
+        {
+          "name": "Joel Bañuls",
+          "pos": "DEF",
+          "sourceIds": [
+            "es-team-ebr"
+          ]
+        },
+        {
+          "name": "Sergio Herrero",
+          "pos": "DEF",
+          "sourceIds": [
+            "es-team-ebr"
+          ]
+        },
+        {
+          "name": "Cristian Ubón",
+          "pos": "MID",
+          "sourceIds": [
+            "es-team-ebr"
+          ]
+        },
+        {
+          "name": "Gerard Puigvert",
+          "pos": "MID",
+          "sourceIds": [
+            "es-team-ebr"
+          ]
+        },
+        {
+          "name": "Ñito Martín",
+          "pos": "MID",
+          "sourceIds": [
+            "es-team-ebr"
+          ]
+        },
+        {
+          "name": "Pablo Saborido",
+          "pos": "MID",
+          "sourceIds": [
+            "es-team-ebr"
+          ]
+        },
+        {
+          "name": "Pol Molés",
+          "pos": "MID",
+          "sourceIds": [
+            "es-team-ebr"
+          ]
+        },
+        {
+          "name": "Haitam Babia",
+          "pos": "ATT",
+          "sourceIds": [
+            "es-team-ebr"
+          ]
+        },
+        {
+          "name": "Pau Fernández",
+          "pos": "ATT",
+          "sourceIds": [
+            "es-team-ebr"
+          ]
+        },
+        {
+          "name": "Raúl Inocencio",
+          "pos": "ATT",
+          "sourceIds": [
+            "es-team-ebr"
+          ]
+        },
+        {
+          "name": "Robert Vallribera",
+          "pos": "ATT",
+          "sourceIds": [
+            "es-team-ebr"
+          ]
+        },
+        {
+          "name": "Marçal Ros",
+          "pos": "GK",
+          "sourceIds": [
+            "es-team-ebr"
+          ],
+          "registrationType": "wildcard"
+        },
+        {
+          "name": "Marc Pérez",
+          "pos": "ATT",
+          "sourceIds": [
+            "es-team-ebr"
+          ],
+          "registrationType": "wildcard"
+        },
+        {
+          "name": "Naoufal Talkam",
+          "pos": "ATT",
+          "sourceIds": [
+            "es-team-ebr"
+          ],
+          "registrationType": "wildcard"
+        }
+      ],
+      "observedWildcardPlayers": [
+        "Marçal Ros",
+        "Marc Pérez",
+        "Naoufal Talkam"
+      ]
+    },
+    {
+      "id": "jig",
+      "name": "Jijantes FC",
+      "officialName": "Jijantes FC",
+      "rosterStatus": "partial",
+      "sourceIds": [
+        "es-team-jig",
+        "es-index"
+      ],
+      "players": [],
+      "lastPublishedSeason": "2025/26",
+      "lastPublishedCompetition": "Split 6",
+      "lastPublishedRoster": [
+        {
+          "name": "José Segovia",
+          "pos": "GK",
+          "sourceIds": [
+            "es-team-jig"
+          ]
+        },
+        {
+          "name": "Mario León",
+          "pos": "GK",
+          "sourceIds": [
+            "es-team-jig"
+          ]
+        },
+        {
+          "name": "Dani Martí",
+          "pos": "DEF",
+          "sourceIds": [
+            "es-team-jig"
+          ]
+        },
+        {
+          "name": "Iker Hernández",
+          "pos": "DEF",
+          "sourceIds": [
+            "es-team-jig"
+          ]
+        },
+        {
+          "name": "Ion Vázquez",
+          "pos": "DEF",
+          "sourceIds": [
+            "es-team-jig"
+          ]
+        },
+        {
+          "name": "Víctor Pérez Bello",
+          "pos": "DEF",
+          "sourceIds": [
+            "es-team-jig"
+          ]
+        },
+        {
+          "name": "Cristian Lobato",
+          "pos": "MID",
+          "sourceIds": [
+            "es-team-jig"
+          ]
+        },
+        {
+          "name": "Daniel Plaza",
+          "pos": "MID",
+          "sourceIds": [
+            "es-team-jig"
+          ]
+        },
+        {
+          "name": "Juanpe Nzo",
+          "pos": "MID",
+          "sourceIds": [
+            "es-team-jig"
+          ]
+        },
+        {
+          "name": "Michel Herrero",
+          "pos": "MID",
+          "sourceIds": [
+            "es-team-jig"
+          ]
+        },
+        {
+          "name": "Pau Fer",
+          "pos": "MID",
+          "sourceIds": [
+            "es-team-jig"
+          ]
+        },
+        {
+          "name": "Álex Cañero",
+          "pos": "ATT",
+          "sourceIds": [
+            "es-team-jig"
+          ]
+        },
+        {
+          "name": "David Toro",
+          "pos": "ATT",
+          "sourceIds": [
+            "es-team-jig"
+          ]
+        },
+        {
+          "name": "Sergi Torres",
+          "pos": "ATT",
+          "sourceIds": [
+            "es-team-jig"
+          ]
+        },
+        {
+          "name": "Cristian Gómez",
+          "pos": "MID",
+          "sourceIds": [
+            "es-team-jig"
+          ],
+          "registrationType": "wildcard"
+        },
+        {
+          "name": "Marc Montejo",
+          "pos": "ATT",
+          "sourceIds": [
+            "es-team-jig"
+          ],
+          "registrationType": "wildcard"
+        }
+      ],
+      "observedWildcardPlayers": [
+        "Cristian Gómez",
+        "Marc Montejo"
+      ]
+    },
+    {
+      "id": "lcc",
+      "name": "La Capital CF",
+      "officialName": "La Capital CF",
+      "rosterStatus": "partial",
+      "sourceIds": [
+        "es-team-lcc",
+        "es-index"
+      ],
+      "players": [],
+      "lastPublishedSeason": "2025/26",
+      "lastPublishedCompetition": "KWC Clubs",
+      "lastPublishedRoster": [
+        {
+          "name": "Manel Jiménez",
+          "pos": "GK",
+          "sourceIds": [
+            "es-team-lcc"
+          ]
+        },
+        {
+          "name": "Roger García",
+          "pos": "GK",
+          "sourceIds": [
+            "es-team-lcc"
+          ],
+          "registrationType": "wildcard"
+        },
+        {
+          "name": "Daniel Pérez",
+          "pos": "DEF",
+          "sourceIds": [
+            "es-team-lcc"
+          ]
+        },
+        {
+          "name": "Mario Victorio",
+          "pos": "DEF",
+          "sourceIds": [
+            "es-team-lcc"
+          ]
+        },
+        {
+          "name": "Sergi Vives",
+          "pos": "DEF",
+          "sourceIds": [
+            "es-team-lcc"
+          ]
+        },
+        {
+          "name": "Daouda Bamma",
+          "pos": "MID",
+          "sourceIds": [
+            "es-team-lcc"
+          ]
+        },
+        {
+          "name": "Iñaki Villalba",
+          "pos": "MID",
+          "sourceIds": [
+            "es-team-lcc"
+          ]
+        },
+        {
+          "name": "Sohaib Rektout",
+          "pos": "MID",
+          "sourceIds": [
+            "es-team-lcc"
+          ]
+        },
+        {
+          "name": "Antoni Hernández",
+          "pos": "ATT",
+          "sourceIds": [
+            "es-team-lcc"
+          ]
+        },
+        {
+          "name": "Julen Álvarez",
+          "pos": "ATT",
+          "sourceIds": [
+            "es-team-lcc"
+          ]
+        },
+        {
+          "name": "Omar Dambelleh",
+          "pos": "ATT",
+          "sourceIds": [
+            "es-team-lcc"
+          ]
+        },
+        {
+          "name": "Pablo Beguer",
+          "pos": "ATT",
+          "sourceIds": [
+            "es-team-lcc"
+          ]
+        },
+        {
+          "name": "Roc Bancells",
+          "pos": "ATT",
+          "sourceIds": [
+            "es-team-lcc"
+          ]
+        }
+      ],
+      "observedWildcardPlayers": [
+        "Roger García"
+      ]
+    },
+    {
+      "id": "ltf",
+      "name": "Los Troncos FC",
+      "officialName": "Los Troncos FC",
+      "rosterStatus": "partial",
+      "sourceIds": [
+        "es-team-ltf",
+        "es-index"
+      ],
+      "players": [],
+      "lastPublishedSeason": "2025/26",
+      "lastPublishedCompetition": "KWC Clubs",
+      "lastPublishedRoster": [
+        {
+          "name": "Eloy Amoedo",
+          "pos": "GK",
+          "sourceIds": [
+            "es-team-ltf"
+          ]
+        },
+        {
+          "name": "Yaroslav Toporkov",
+          "pos": "GK",
+          "sourceIds": [
+            "es-team-ltf"
+          ]
+        },
+        {
+          "name": "Alex Cubedo",
+          "pos": "DEF",
+          "sourceIds": [
+            "es-team-ltf"
+          ]
+        },
+        {
+          "name": "Carles Planas",
+          "pos": "DEF",
+          "sourceIds": [
+            "es-team-ltf"
+          ]
+        },
+        {
+          "name": "Joan Oriol",
+          "pos": "DEF",
+          "sourceIds": [
+            "es-team-ltf"
+          ]
+        },
+        {
+          "name": "Sagar Escoto",
+          "pos": "DEF",
+          "sourceIds": [
+            "es-team-ltf"
+          ]
+        },
+        {
+          "name": "David Reyes",
+          "pos": "MID",
+          "sourceIds": [
+            "es-team-ltf"
+          ]
+        },
+        {
+          "name": "Gerard Verge",
+          "pos": "MID",
+          "sourceIds": [
+            "es-team-ltf"
+          ]
+        },
+        {
+          "name": "Jordi Gómez",
+          "pos": "MID",
+          "sourceIds": [
+            "es-team-ltf"
+          ]
+        },
+        {
+          "name": "Mark Sorroche",
+          "pos": "MID",
+          "sourceIds": [
+            "es-team-ltf"
+          ]
+        },
+        {
+          "name": "Álvaro Arché",
+          "pos": "ATT",
+          "sourceIds": [
+            "es-team-ltf"
+          ]
+        },
+        {
+          "name": "Carlos Contreras",
+          "pos": "ATT",
+          "sourceIds": [
+            "es-team-ltf"
+          ]
+        },
+        {
+          "name": "Masi Dabo",
+          "pos": "ATT",
+          "sourceIds": [
+            "es-team-ltf"
+          ]
+        }
+      ],
+      "observedWildcardPlayers": []
+    },
+    {
+      "id": "pio",
+      "name": "PIO FC",
+      "officialName": "PIO FC",
+      "rosterStatus": "partial",
+      "sourceIds": [
+        "es-team-pio",
+        "es-index"
+      ],
+      "players": [],
+      "lastPublishedSeason": "2025/26",
+      "lastPublishedCompetition": "Split 6",
+      "lastPublishedRoster": [
+        {
+          "name": "Iker Bartolomé",
+          "pos": "GK",
+          "sourceIds": [
+            "es-team-pio"
+          ]
+        },
+        {
+          "name": "Marc Briones",
+          "pos": "GK",
+          "sourceIds": [
+            "es-team-pio"
+          ]
+        },
+        {
+          "name": "Adrián Frutos",
+          "pos": "DEF",
+          "sourceIds": [
+            "es-team-pio"
+          ]
+        },
+        {
+          "name": "Joan Luque",
+          "pos": "DEF",
+          "sourceIds": [
+            "es-team-pio"
+          ]
+        },
+        {
+          "name": "Marc Grifell",
+          "pos": "DEF",
+          "sourceIds": [
+            "es-team-pio"
+          ]
+        },
+        {
+          "name": "Álex Sánchez",
+          "pos": "MID",
+          "sourceIds": [
+            "es-team-pio"
+          ]
+        },
+        {
+          "name": "Fernando Velillas",
+          "pos": "MID",
+          "sourceIds": [
+            "es-team-pio"
+          ]
+        },
+        {
+          "name": "Luis García",
+          "pos": "MID",
+          "sourceIds": [
+            "es-team-pio"
+          ]
+        },
+        {
+          "name": "Marcos Ibañez",
+          "pos": "MID",
+          "sourceIds": [
+            "es-team-pio"
+          ]
+        },
+        {
+          "name": "Pol Benito",
+          "pos": "MID",
+          "sourceIds": [
+            "es-team-pio"
+          ]
+        },
+        {
+          "name": "Adri Espinar",
+          "pos": "ATT",
+          "sourceIds": [
+            "es-team-pio"
+          ]
+        },
+        {
+          "name": "Izan Grande",
+          "pos": "ATT",
+          "sourceIds": [
+            "es-team-pio"
+          ]
+        },
+        {
+          "name": "Sergio Mulero",
+          "pos": "ATT",
+          "sourceIds": [
+            "es-team-pio"
+          ]
+        },
+        {
+          "name": "Yeray Muñoz",
+          "pos": "ATT",
+          "sourceIds": [
+            "es-team-pio"
+          ]
+        },
+        {
+          "name": "Víctor Montoya",
+          "pos": "GK",
+          "sourceIds": [
+            "es-team-pio"
+          ],
+          "registrationType": "wildcard"
+        },
+        {
+          "name": "Gabriel Cichero",
+          "pos": "DEF",
+          "sourceIds": [
+            "es-team-pio"
+          ],
+          "registrationType": "wildcard"
+        },
+        {
+          "name": "Manel Beneite",
+          "pos": "DEF",
+          "sourceIds": [
+            "es-team-pio"
+          ],
+          "registrationType": "wildcard"
+        },
+        {
+          "name": "Marcel García",
+          "pos": "DEF",
+          "sourceIds": [
+            "es-team-pio"
+          ],
+          "registrationType": "wildcard"
+        }
+      ],
+      "observedWildcardPlayers": [
+        "Víctor Montoya",
+        "Gabriel Cichero",
+        "Manel Beneite",
+        "Marcel García"
+      ]
+    },
+    {
+      "id": "por",
+      "name": "Porcinos FC",
+      "officialName": "Porcinos FC",
+      "rosterStatus": "partial",
+      "sourceIds": [
+        "es-team-por",
+        "es-index"
+      ],
+      "players": [],
+      "lastPublishedSeason": "2025/26",
+      "lastPublishedCompetition": "KWC Clubs",
+      "lastPublishedRoster": [
+        {
+          "name": "Dani Pérez",
+          "pos": "GK",
+          "sourceIds": [
+            "es-team-por"
+          ]
+        },
+        {
+          "name": "Victor Rodríguez",
+          "pos": "GK",
+          "sourceIds": [
+            "es-team-por"
+          ]
+        },
+        {
+          "name": "Álex Guti",
+          "pos": "DEF",
+          "sourceIds": [
+            "es-team-por"
+          ]
+        },
+        {
+          "name": "David Soriano",
+          "pos": "DEF",
+          "sourceIds": [
+            "es-team-por"
+          ]
+        },
+        {
+          "name": "Nadir Louah",
+          "pos": "DEF",
+          "sourceIds": [
+            "es-team-por"
+          ]
+        },
+        {
+          "name": "Cristian Lobato",
+          "pos": "MID",
+          "sourceIds": [
+            "es-team-por"
+          ]
+        },
+        {
+          "name": "Fouad El Amrani",
+          "pos": "MID",
+          "sourceIds": [
+            "es-team-por"
+          ]
+        },
+        {
+          "name": "Franc Samaniego",
+          "pos": "MID",
+          "sourceIds": [
+            "es-team-por"
+          ]
+        },
+        {
+          "name": "Marc Pelaz",
+          "pos": "MID",
+          "sourceIds": [
+            "es-team-por"
+          ]
+        },
+        {
+          "name": "Oscar Coll",
+          "pos": "MID",
+          "sourceIds": [
+            "es-team-por"
+          ]
+        },
+        {
+          "name": "Edgar Alvaro",
+          "pos": "ATT",
+          "sourceIds": [
+            "es-team-por"
+          ]
+        },
+        {
+          "name": "Nico Santos",
+          "pos": "ATT",
+          "sourceIds": [
+            "es-team-por"
+          ]
+        },
+        {
+          "name": "Roger Carbó",
+          "pos": "ATT",
+          "sourceIds": [
+            "es-team-por"
+          ]
+        }
+      ],
+      "observedWildcardPlayers": []
+    },
+    {
+      "id": "rdb",
+      "name": "Rayo de Barcelona",
+      "officialName": "Rayo de Barcelona",
+      "rosterStatus": "partial",
+      "sourceIds": [
+        "es-team-rdb",
+        "es-index"
+      ],
+      "players": [],
+      "lastPublishedSeason": "2025/26",
+      "lastPublishedCompetition": "Split 6",
+      "lastPublishedRoster": [
+        {
+          "name": "David Moreno",
+          "pos": "GK",
+          "sourceIds": [
+            "es-team-rdb"
+          ]
+        },
+        {
+          "name": "Jorge Ibáñez",
+          "pos": "GK",
+          "sourceIds": [
+            "es-team-rdb"
+          ]
+        },
+        {
+          "name": "Abde Bakkali",
+          "pos": "DEF",
+          "sourceIds": [
+            "es-team-rdb"
+          ]
+        },
+        {
+          "name": "Guillem 'ZZ' Ruiz",
+          "pos": "DEF",
+          "sourceIds": [
+            "es-team-rdb"
+          ]
+        },
+        {
+          "name": "Ismael González",
+          "pos": "DEF",
+          "sourceIds": [
+            "es-team-rdb"
+          ]
+        },
+        {
+          "name": "Iván Torres",
+          "pos": "DEF",
+          "sourceIds": [
+            "es-team-rdb"
+          ]
+        },
+        {
+          "name": "Adrià Escribano",
+          "pos": "MID",
+          "sourceIds": [
+            "es-team-rdb"
+          ]
+        },
+        {
+          "name": "Carlos Heredia",
+          "pos": "MID",
+          "sourceIds": [
+            "es-team-rdb"
+          ]
+        },
+        {
+          "name": "Jordi Gómez",
+          "pos": "MID",
+          "sourceIds": [
+            "es-team-rdb"
+          ]
+        },
+        {
+          "name": "Carlos Omabegho",
+          "pos": "ATT",
+          "sourceIds": [
+            "es-team-rdb"
+          ]
+        },
+        {
+          "name": "Gerard Oliva",
+          "pos": "ATT",
+          "sourceIds": [
+            "es-team-rdb"
+          ]
+        },
+        {
+          "name": "Roc Bancells",
+          "pos": "ATT",
+          "sourceIds": [
+            "es-team-rdb"
+          ]
+        },
+        {
+          "name": "Nil Pradas",
+          "pos": "DEF",
+          "sourceIds": [
+            "es-team-rdb"
+          ],
+          "registrationType": "wildcard"
+        },
+        {
+          "name": "Adam Tahere",
+          "pos": "MID",
+          "sourceIds": [
+            "es-team-rdb"
+          ],
+          "registrationType": "wildcard"
+        },
+        {
+          "name": "Alhagi Marie Touray",
+          "pos": "ATT",
+          "sourceIds": [
+            "es-team-rdb"
+          ],
+          "registrationType": "wildcard"
+        },
+        {
+          "name": "Mohamed Boullouh",
+          "pos": "ATT",
+          "sourceIds": [
+            "es-team-rdb"
+          ],
+          "registrationType": "wildcard"
+        }
+      ],
+      "observedWildcardPlayers": [
+        "Nil Pradas",
+        "Adam Tahere",
+        "Alhagi Marie Touray",
+        "Mohamed Boullouh"
+      ]
+    },
+    {
+      "id": "say",
+      "name": "Saiyans FC",
+      "officialName": "Saiyans FC",
+      "rosterStatus": "partial",
+      "sourceIds": [
+        "es-team-say",
+        "es-index"
+      ],
+      "players": [],
+      "lastPublishedSeason": "2025/26",
+      "lastPublishedCompetition": "Split 6",
+      "lastPublishedRoster": [
+        {
+          "name": "Gerard Vacas",
+          "pos": "GK",
+          "sourceIds": [
+            "es-team-say"
+          ]
+        },
+        {
+          "name": "Iván Fajardo",
+          "pos": "GK",
+          "sourceIds": [
+            "es-team-say"
+          ]
+        },
+        {
+          "name": "Alex Campu",
+          "pos": "DEF",
+          "sourceIds": [
+            "es-team-say"
+          ]
+        },
+        {
+          "name": "Borja Montejo",
+          "pos": "DEF",
+          "sourceIds": [
+            "es-team-say"
+          ]
+        },
+        {
+          "name": "Dani Santiago",
+          "pos": "DEF",
+          "sourceIds": [
+            "es-team-say"
+          ]
+        },
+        {
+          "name": "Feliu Torrus",
+          "pos": "MID",
+          "sourceIds": [
+            "es-team-say"
+          ]
+        },
+        {
+          "name": "Juanan Gallego",
+          "pos": "MID",
+          "sourceIds": [
+            "es-team-say"
+          ]
+        },
+        {
+          "name": "Diego Jiménez",
+          "pos": "ATT",
+          "sourceIds": [
+            "es-team-say"
+          ]
+        },
+        {
+          "name": "Gio Ferinu",
+          "pos": "ATT",
+          "sourceIds": [
+            "es-team-say"
+          ]
+        },
+        {
+          "name": "Isaac Maldonado",
+          "pos": "ATT",
+          "sourceIds": [
+            "es-team-say"
+          ]
+        },
+        {
+          "name": "Pablo Fernández",
+          "pos": "ATT",
+          "sourceIds": [
+            "es-team-say"
+          ]
+        },
+        {
+          "name": "Sergi Gestí",
+          "pos": "ATT",
+          "sourceIds": [
+            "es-team-say"
+          ]
+        },
+        {
+          "name": "Albert De Verdonces",
+          "pos": "DEF",
+          "sourceIds": [
+            "es-team-say"
+          ],
+          "registrationType": "wildcard"
+        },
+        {
+          "name": "Albert Garcia",
+          "pos": "ATT",
+          "sourceIds": [
+            "es-team-say"
+          ]
+        }
+      ],
+      "observedWildcardPlayers": [
+        "Albert De Verdonces"
+      ]
+    },
+    {
+      "id": "skl",
+      "name": "Skull FC",
+      "officialName": "Skull FC",
+      "rosterStatus": "partial",
+      "sourceIds": [
+        "es-team-skl",
+        "es-index"
+      ],
+      "players": [],
+      "lastPublishedSeason": "2025/26",
+      "lastPublishedCompetition": "Split 6",
+      "lastPublishedRoster": [
+        {
+          "name": "Alberto Arnalot",
+          "pos": "GK",
+          "sourceIds": [
+            "es-team-skl"
+          ]
+        },
+        {
+          "name": "Kevin Zárate",
+          "pos": "GK",
+          "sourceIds": [
+            "es-team-skl"
+          ]
+        },
+        {
+          "name": "Álex Salas",
+          "pos": "DEF",
+          "sourceIds": [
+            "es-team-skl"
+          ]
+        },
+        {
+          "name": "David Asensio",
+          "pos": "DEF",
+          "sourceIds": [
+            "es-team-skl"
+          ]
+        },
+        {
+          "name": "Koke Navares",
+          "pos": "DEF",
+          "sourceIds": [
+            "es-team-skl"
+          ]
+        },
+        {
+          "name": "Roberto Tobe",
+          "pos": "DEF",
+          "sourceIds": [
+            "es-team-skl"
+          ]
+        },
+        {
+          "name": "Víctor Mongil",
+          "pos": "DEF",
+          "sourceIds": [
+            "es-team-skl"
+          ]
+        },
+        {
+          "name": "David 'Burrito' Ruiz",
+          "pos": "MID",
+          "sourceIds": [
+            "es-team-skl"
+          ]
+        },
+        {
+          "name": "Jorge Escobar",
+          "pos": "MID",
+          "sourceIds": [
+            "es-team-skl"
+          ]
+        },
+        {
+          "name": "Manu García",
+          "pos": "MID",
+          "sourceIds": [
+            "es-team-skl"
+          ]
+        },
+        {
+          "name": "Manu García",
+          "pos": "MID",
+          "sourceIds": [
+            "es-team-skl"
+          ]
+        },
+        {
+          "name": "Pablo de Castro",
+          "pos": "MID",
+          "sourceIds": [
+            "es-team-skl"
+          ]
+        },
+        {
+          "name": "Sergio Sánchez",
+          "pos": "MID",
+          "sourceIds": [
+            "es-team-skl"
+          ]
+        },
+        {
+          "name": "Ayoub El Battioui",
+          "pos": "ATT",
+          "sourceIds": [
+            "es-team-skl"
+          ]
+        },
+        {
+          "name": "Dani Santos",
+          "pos": "ATT",
+          "sourceIds": [
+            "es-team-skl"
+          ]
+        },
+        {
+          "name": "Nano Modrego",
+          "pos": "ATT",
+          "sourceIds": [
+            "es-team-skl"
+          ]
+        },
+        {
+          "name": "Raúl Escobar",
+          "pos": "ATT",
+          "sourceIds": [
+            "es-team-skl"
+          ]
+        },
+        {
+          "name": "Samuel Aparicio",
+          "pos": "ATT",
+          "sourceIds": [
+            "es-team-skl"
+          ]
+        },
+        {
+          "name": "José Hermosa",
+          "pos": "DEF",
+          "sourceIds": [
+            "es-team-skl"
+          ],
+          "registrationType": "wildcard"
+        },
+        {
+          "name": "Marcelo Vieira",
+          "pos": "DEF",
+          "sourceIds": [
+            "es-team-skl"
+          ]
+        }
+      ],
+      "observedWildcardPlayers": [
+        "José Hermosa"
+      ]
+    },
+    {
+      "id": "umo",
+      "name": "Ultimate Móstoles",
+      "officialName": "Ultimate Móstoles",
+      "rosterStatus": "partial",
+      "sourceIds": [
+        "es-team-umo",
+        "es-index"
+      ],
+      "players": [],
+      "lastPublishedSeason": "2025/26",
+      "lastPublishedCompetition": "KWC Clubs",
+      "lastPublishedRoster": [
+        {
+          "name": "Juan Lorente",
+          "pos": "GK",
+          "sourceIds": [
+            "es-team-umo"
+          ]
+        },
+        {
+          "name": "Víctor Vidal",
+          "pos": "GK",
+          "sourceIds": [
+            "es-team-umo"
+          ]
+        },
+        {
+          "name": "Alex 'Capi' Domingo",
+          "pos": "DEF",
+          "sourceIds": [
+            "es-team-umo"
+          ]
+        },
+        {
+          "name": "David Grifell",
+          "pos": "DEF",
+          "sourceIds": [
+            "es-team-umo"
+          ]
+        },
+        {
+          "name": "Eloy Pizarro",
+          "pos": "DEF",
+          "sourceIds": [
+            "es-team-umo"
+          ]
+        },
+        {
+          "name": "Iván Torres",
+          "pos": "DEF",
+          "sourceIds": [
+            "es-team-umo"
+          ]
+        },
+        {
+          "name": "Aleix Lage",
+          "pos": "MID",
+          "sourceIds": [
+            "es-team-umo"
+          ]
+        },
+        {
+          "name": "Dani Liñares",
+          "pos": "MID",
+          "sourceIds": [
+            "es-team-umo"
+          ]
+        },
+        {
+          "name": "Javi Espinosa",
+          "pos": "MID",
+          "sourceIds": [
+            "es-team-umo"
+          ]
+        },
+        {
+          "name": "Luis García",
+          "pos": "MID",
+          "sourceIds": [
+            "es-team-umo"
+          ]
+        },
+        {
+          "name": "Aleix Martí",
+          "pos": "ATT",
+          "sourceIds": [
+            "es-team-umo"
+          ]
+        },
+        {
+          "name": "Marc Granero",
+          "pos": "ATT",
+          "sourceIds": [
+            "es-team-umo"
+          ]
+        },
+        {
+          "name": "Mikhail Prokopev",
+          "pos": "ATT",
+          "sourceIds": [
+            "es-team-umo"
+          ]
+        }
+      ],
+      "observedWildcardPlayers": []
+    },
+    {
+      "id": "xby",
+      "name": "xBuyer Team",
+      "officialName": "xBuyer Team",
+      "rosterStatus": "partial",
+      "sourceIds": [
+        "es-team-xby",
+        "es-index"
+      ],
+      "players": [],
+      "lastPublishedSeason": "2025/26",
+      "lastPublishedCompetition": "Split 6",
+      "lastPublishedRoster": [
+        {
+          "name": "Aleix Ruiz",
+          "pos": "GK",
+          "sourceIds": [
+            "es-team-xby"
+          ]
+        },
+        {
+          "name": "Álex Romero",
+          "pos": "GK",
+          "sourceIds": [
+            "es-team-xby"
+          ]
+        },
+        {
+          "name": "Joel Espinosa",
+          "pos": "DEF",
+          "sourceIds": [
+            "es-team-xby"
+          ]
+        },
+        {
+          "name": "Mario Reyes",
+          "pos": "DEF",
+          "sourceIds": [
+            "es-team-xby"
+          ]
+        },
+        {
+          "name": "Sergio Campos",
+          "pos": "DEF",
+          "sourceIds": [
+            "es-team-xby"
+          ]
+        },
+        {
+          "name": "Víctor Vargas",
+          "pos": "DEF",
+          "sourceIds": [
+            "es-team-xby"
+          ]
+        },
+        {
+          "name": "Eric Sánchez",
+          "pos": "MID",
+          "sourceIds": [
+            "es-team-xby"
+          ]
+        },
+        {
+          "name": "Xavier Cabezas",
+          "pos": "MID",
+          "sourceIds": [
+            "es-team-xby"
+          ]
+        },
+        {
+          "name": "Antonio Domenech",
+          "pos": "ATT",
+          "sourceIds": [
+            "es-team-xby"
+          ]
+        },
+        {
+          "name": "Galde Hugue",
+          "pos": "ATT",
+          "sourceIds": [
+            "es-team-xby"
+          ]
+        },
+        {
+          "name": "Jacobo Liencres",
+          "pos": "ATT",
+          "sourceIds": [
+            "es-team-xby"
+          ]
+        },
+        {
+          "name": "Javier Comas",
+          "pos": "ATT",
+          "sourceIds": [
+            "es-team-xby"
+          ]
+        },
+        {
+          "name": "Juanma González",
+          "pos": "ATT",
+          "sourceIds": [
+            "es-team-xby"
+          ]
+        },
+        {
+          "name": "Sergio 'Chechi' Costa",
+          "pos": "ATT",
+          "sourceIds": [
+            "es-team-xby"
+          ]
+        },
+        {
+          "name": "Eric Pérez",
+          "pos": "DEF",
+          "sourceIds": [
+            "es-team-xby"
+          ],
+          "registrationType": "wildcard"
+        },
+        {
+          "name": "Zaid Saban",
+          "pos": "DEF",
+          "sourceIds": [
+            "es-team-xby"
+          ],
+          "registrationType": "wildcard"
+        },
+        {
+          "name": "Albert López",
+          "pos": "ATT",
+          "sourceIds": [
+            "es-team-xby"
+          ],
+          "registrationType": "wildcard"
+        },
+        {
+          "name": "Marc Gulias",
+          "pos": "ATT",
+          "sourceIds": [
+            "es-team-xby"
+          ],
+          "registrationType": "wildcard"
+        }
+      ],
+      "observedWildcardPlayers": [
+        "Eric Pérez",
+        "Zaid Saban",
+        "Albert López",
+        "Marc Gulias"
+      ]
+    }
+  ],
+  "confirmedTransfers": [
+    {
+      "name": "Pablo Beguer",
+      "fromTeamId": "lcc",
+      "toTeamId": "trm",
+      "sourceIds": [
+        "es-team-lcc",
+        "it-team-trm"
+      ]
+    },
+    {
+      "name": "Roc Bancells",
+      "fromTeamId": "rdb",
+      "toTeamId": "boo",
+      "sourceIds": [
+        "es-team-rdb",
+        "it-team-boo"
+      ]
+    },
+    {
+      "name": "Carles Planas",
+      "fromTeamId": "ltf",
+      "toTeamId": "stl",
+      "sourceIds": [
+        "es-team-ltf",
+        "it-team-stl"
+      ]
+    },
+    {
+      "name": "Joan Oriol",
+      "fromTeamId": "ltf",
+      "toTeamId": "g7f",
+      "sourceIds": [
+        "es-team-ltf",
+        "it-team-g7f"
+      ]
+    },
+    {
+      "name": "Nadir Louah",
+      "fromTeamId": "por",
+      "toTeamId": "und",
+      "sourceIds": [
+        "es-team-por",
+        "it-team-und"
+      ]
+    },
+    {
+      "name": "Nico Santos",
+      "fromTeamId": "por",
+      "toTeamId": "stl",
+      "sourceIds": [
+        "es-team-por",
+        "it-team-stl"
+      ]
+    },
+    {
+      "name": "Luis García",
+      "fromTeamId": "pio",
+      "toTeamId": "g7f",
+      "sourceIds": [
+        "es-team-pio",
+        "it-team-g7f"
+      ]
+    },
+    {
+      "name": "Adri Espinar",
+      "fromTeamId": "pio",
+      "toTeamId": "g7f",
+      "sourceIds": [
+        "es-team-pio",
+        "it-team-g7f"
+      ]
+    },
+    {
+      "name": "Iván Torres",
+      "fromTeamId": "rdb",
+      "toTeamId": "cir",
+      "sourceIds": [
+        "es-team-rdb",
+        "it-team-cir"
+      ]
+    },
+    {
+      "name": "Aleix Martí",
+      "fromTeamId": "umo",
+      "toTeamId": "g3x",
+      "sourceIds": [
+        "es-team-umo",
+        "br-oct-draft"
+      ]
+    },
+    {
+      "name": "Álex Guti",
+      "fromTeamId": "por",
+      "toTeamId": "cap",
+      "sourceIds": [
+        "es-team-por",
+        "br-oct-draft"
+      ]
+    }
+  ],
+  "uncertainties": [
+    "All 12 Spain clubs were checked. The official Spain team season selector exposes 2023/24, 2024/25 and 2025/26 only; no complete 2026/27 domestic registration list was verified. Consequently every Spain roster is partial as of 2026-10-26 and players is intentionally empty: retain the supplied baseline except for independently confirmed moves and explicit guest-appearance evidence.",
+    "lastPublishedRoster is historical evidence for review, not a claim of current October registration. Most club pages default to Split 6 (March–May 2026); La Capital CF, Los Troncos FC, Porcinos FC and Ultimate Móstoles default to KWC Clubs (July 2026). Tournament guest/loan squads must not overwrite domestic club registrations.",
+    "KC Spain selector resolves to season=3, split=45 and is an earlier 2025/26 competition, not a newly published 2026/27 October roster. Observed source: https://kingsleague.pro/es/equipos/12-1k-fc?region=1&season=3&split=45.",
+    "ConfirmedTransfers establishes later current team registrations from official Italy Cup pages or the Brazil October Draft announcement. No contract termination, transfer fee, exact signing date or permanent/loan status is inferred.",
+    "Luis García appears in the supplied PIO and Ultimate Móstoles baseline; current Italy Gear 7 registration is the same named Spanish player. Roc Bancells appears in Rayo and La Capital baseline; current Italy Boomers registration supersedes those historical lists. Iván Torres similarly appears at Rayo and Ultimate. Avoid duplicate current player identities across leagues.",
+    "Alias for confirmed Brazil move: Álex Guti in official club pages / Alex Guti in the October article / Álex Gutiérrez in the supplied Porcinos baseline. Current club Capim FC.",
+    "Official Split 6 wildcard directory contains 28 names. observedWildcardPlayers identifies matching historical squad profiles; classification alone does not establish a one-match appearance, an expiry or a departure.",
+    "Skull FC official historical page publishes two different Manu García profile rows (#77 and #70). They have not been collapsed into a purported current identity.",
+    "All baseline team names match the current official Spain club index; no new club, dissolution or rename was verified. No ages, birth dates, ratings or attributes were invented."
+  ]
+}

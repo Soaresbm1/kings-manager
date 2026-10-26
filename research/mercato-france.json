@@ -1,0 +1,1557 @@
+{
+  "leagueKey": "france",
+  "identityAudit": [{"teamId":"fcs","name":"Guilherme Carvalho","officialPlayerId":79554,"birthDate":"2000-11-23","url":"https://kingsleague.pro/en/players/79554-guilherme-carvalho-feitosa","note":"Distinct from Dendele Gui Carvalho official id71567."}],
+  "checkedAt": "2026-10-26",
+  "competition": "Kings League Crédit Agricole France — Split 2",
+  "season": "2025/26",
+  "rosterScope": "Latest published domestic Split 2 squads. No post-domestic permanent move was confirmed by the official sources checked. KWC Clubs tournament selections are kept separate.",
+  "sources": [
+    {
+      "id": "france-teams",
+      "url": "https://kingsleague.pro/fr/france/equipes",
+      "title": "Équipes — Kings League France (Split 2)",
+      "official": true
+    },
+    {
+      "id": "france-golden-crown-2026-10-25",
+      "url": "https://kingsleague.pro/fr/france/actualites/candidats-kings-league-golden-crown-2026-kings-league-france-fr",
+      "title": "Moussa Sao, Guillaume Lesec et Matisse Henry, candidats au Kings League Golden Crown 2026",
+      "publishedAt": "2026-10-25",
+      "official": true
+    },
+    {
+      "id": "france-domestic-stats",
+      "url": "https://kingsleague.pro/fr/france/statistiques/defensives",
+      "title": "Statistiques par joueur — Split 2 — Défensives",
+      "official": true
+    },
+    {
+      "id": "france-sasha-profile",
+      "url": "https://www.kingsleague.pro/pt/jogadores/87355-sasha-bernard",
+      "title": "Sasha Bernard — Karasu — profil officiel Split 2",
+      "official": true
+    },
+    {
+      "id": "france-ilyes-profile",
+      "url": "https://kingsleague.pro/fr/joueurs/87472-ilyes-kallouche",
+      "title": "Ilyes Kallouche — Karasu — profil officiel",
+      "official": true
+    },
+    {
+      "id": "france-ali-profile",
+      "url": "https://kingsleague.pro/fr/joueurs/87358-ali-ouarti",
+      "title": "Ali Ouarti — Karasu — profil officiel",
+      "official": true
+    },
+    {
+      "id": "france-lyes-profile",
+      "url": "https://www.kingsleague.pro/pt/jogadores/87473-lyes-hocine",
+      "title": "Lyes Hocine — Karasu — profil officiel Split 2",
+      "official": true
+    },
+    {
+      "id": "france-marvin-profile",
+      "url": "https://kingsleague.pro/en/players/87580-marvin-gakpa",
+      "title": "Marvin Gakpa — Karasu — profil officiel",
+      "official": true
+    },
+    {
+      "id": "france-u3d-squad",
+      "url": "https://kingsleague.pro/fr/equipes/170-unit3d",
+      "title": "Unit3d — official team page (2025/26 Split 2)",
+      "official": true
+    },
+    {
+      "id": "france-kar-squad",
+      "url": "https://kingsleague.pro/fr/equipes/171-karasu",
+      "title": "Karasu — official team page (KWC Clubs context; domestic use restricted to corroborated identities)",
+      "official": true
+    },
+    {
+      "id": "france-fcs-squad",
+      "url": "https://kingsleague.pro/fr/equipes/172-fc-silmi",
+      "title": "FC Silmi — official team page (2025/26 Split 2)",
+      "official": true
+    },
+    {
+      "id": "france-gs7-squad",
+      "url": "https://kingsleague.pro/fr/equipes/173-generation-seven",
+      "title": "Generation Seven — official team page (2025/26 Split 2)",
+      "official": true
+    },
+    {
+      "id": "france-wpf-squad",
+      "url": "https://kingsleague.pro/fr/equipes/174-wolf-pack-fc",
+      "title": "Wolf Pack FC — official team page (2025/26 Split 2)",
+      "official": true
+    },
+    {
+      "id": "france-pas-squad",
+      "url": "https://kingsleague.pro/fr/equipes/175-panam-all-starz",
+      "title": "Panam All Starz — official team page (2025/26 Split 2)",
+      "official": true
+    },
+    {
+      "id": "france-tsn-squad",
+      "url": "https://kingsleague.pro/fr/equipes/176-360-nation",
+      "title": "360 Nation — official team page (2025/26 Split 2)",
+      "official": true
+    },
+    {
+      "id": "france-adb-squad",
+      "url": "https://kingsleague.pro/fr/equipes/232-athletic-dragon-blanc",
+      "title": "Athletic Dragon Blanc — official team page (2025/26 Split 2)",
+      "official": true
+    },
+    {
+      "id": "france-draft-1",
+      "url": "https://kingsleague.pro/fr/france/joueurs-draft?page=1",
+      "title": "Joueurs draft — official Split 2 directory — page 1",
+      "official": true
+    },
+    {
+      "id": "france-draft-2",
+      "url": "https://kingsleague.pro/fr/france/joueurs-draft?page=2",
+      "title": "Joueurs draft — official Split 2 directory — page 2",
+      "official": true
+    },
+    {
+      "id": "france-draft-3",
+      "url": "https://kingsleague.pro/fr/france/joueurs-draft?page=3",
+      "title": "Joueurs draft — official Split 2 directory — page 3",
+      "official": true
+    },
+    {
+      "id": "france-draft-5",
+      "url": "https://kingsleague.pro/fr/france/joueurs-draft?page=5",
+      "title": "Joueurs draft — official Split 2 directory — page 5",
+      "official": true
+    },
+    {
+      "id": "france-draft-6",
+      "url": "https://kingsleague.pro/fr/france/joueurs-draft?page=6",
+      "title": "Joueurs draft — official Split 2 directory — page 6",
+      "official": true
+    },
+    {
+      "id": "france-draft-10",
+      "url": "https://kingsleague.pro/fr/france/joueurs-draft?page=10",
+      "title": "Joueurs draft — official Split 2 directory — page 10",
+      "official": true
+    },
+    {
+      "id": "france-wildcard-2",
+      "url": "https://kingsleague.pro/fr/france/joueurs-wildcard?page=2",
+      "title": "Joueurs wildcard — official Split 2 directory — page 2",
+      "official": true
+    },
+    {
+      "id": "france-wildcard-3",
+      "url": "https://kingsleague.pro/fr/france/joueurs-wildcard?page=3",
+      "title": "Joueurs wildcard — official Split 2 directory — page 3",
+      "official": true
+    },
+    {
+      "id": "france-wildcard-1",
+      "url": "https://kingsleague.pro/fr/france/joueurs-wildcard",
+      "title": "Joueurs wildcard — official Split 2 directory — page 1",
+      "official": true
+    }
+  ],
+  "teams": [
+    {
+      "id": "tsn",
+      "name": "360 Nation",
+      "officialTeamId": 176,
+      "coach": "Mohamed Coulibaly",
+      "presidents": [
+        "Tchouameni",
+        "Koundé",
+        "Maignan",
+        "Kone",
+        "Mbeumo"
+      ],
+      "rosterStatus": "complete",
+      "sourceIds": [
+        "france-tsn-squad"
+      ],
+      "players": [
+        {
+          "name": "Charly Dosso",
+          "pos": "GK",
+          "sourceIds": [
+            "france-tsn-squad",
+            "france-draft-10"
+          ],
+          "registrationType": "registered"
+        },
+        {
+          "name": "JMK",
+          "pos": "GK",
+          "sourceIds": [
+            "france-tsn-squad",
+            "france-draft-5"
+          ],
+          "registrationType": "registered"
+        },
+        {
+          "name": "Mamadou Kamissoko",
+          "pos": "GK",
+          "sourceIds": [
+            "france-tsn-squad",
+            "france-draft-6"
+          ],
+          "registrationType": "registered"
+        },
+        {
+          "name": "Chaïb Lahmer",
+          "pos": "DEF",
+          "sourceIds": [
+            "france-tsn-squad",
+            "france-draft-6"
+          ],
+          "registrationType": "registered"
+        },
+        {
+          "name": "Jordy Kalou",
+          "pos": "DEF",
+          "sourceIds": [
+            "france-tsn-squad",
+            "france-draft-6"
+          ],
+          "registrationType": "registered"
+        },
+        {
+          "name": "Mohamed Sangare",
+          "pos": "DEF",
+          "sourceIds": [
+            "france-tsn-squad"
+          ],
+          "positionVerification": "Retained baseline position; current official sources checked do not publish a position."
+        },
+        {
+          "name": "Abdallah Yaisien",
+          "pos": "MID",
+          "sourceIds": [
+            "france-tsn-squad"
+          ]
+        },
+        {
+          "name": "Bilal Marhdaoui",
+          "pos": "MID",
+          "sourceIds": [
+            "france-tsn-squad",
+            "france-draft-6"
+          ],
+          "registrationType": "registered"
+        },
+        {
+          "name": "Mahamadou Traore",
+          "pos": "MID",
+          "sourceIds": [
+            "france-tsn-squad",
+            "france-draft-6"
+          ],
+          "registrationType": "registered"
+        },
+        {
+          "name": "Marwan Chatar",
+          "pos": "MID",
+          "sourceIds": [
+            "france-tsn-squad",
+            "france-draft-6"
+          ],
+          "registrationType": "registered"
+        },
+        {
+          "name": "Mohamadou Diarra",
+          "pos": "MID",
+          "sourceIds": [
+            "france-tsn-squad",
+            "france-draft-6"
+          ],
+          "registrationType": "registered"
+        },
+        {
+          "name": "Hamed Karamoko",
+          "pos": "MID",
+          "sourceIds": [
+            "france-tsn-squad",
+            "france-wildcard-1"
+          ],
+          "registrationType": "wildcard"
+        },
+        {
+          "name": "James Lea Siliki",
+          "pos": "MID",
+          "sourceIds": [
+            "france-tsn-squad"
+          ]
+        },
+        {
+          "name": "Daudet Ndongala",
+          "pos": "ATT",
+          "sourceIds": [
+            "france-tsn-squad",
+            "france-draft-3"
+          ],
+          "registrationType": "registered"
+        },
+        {
+          "name": "Patrick Koffi",
+          "pos": "ATT",
+          "sourceIds": [
+            "france-tsn-squad"
+          ]
+        },
+        {
+          "name": "Ayoub Sefraoui",
+          "pos": "ATT",
+          "sourceIds": [
+            "france-tsn-squad"
+          ]
+        },
+        {
+          "name": "Bilel Boucheker",
+          "pos": "ATT",
+          "sourceIds": [
+            "france-tsn-squad",
+            "france-wildcard-1"
+          ],
+          "registrationType": "wildcard"
+        },
+        {
+          "name": "Gregory Ayem",
+          "pos": "ATT",
+          "sourceIds": [
+            "france-tsn-squad"
+          ]
+        },
+        {
+          "name": "Mustapha Rabou",
+          "pos": "ATT",
+          "sourceIds": [
+            "france-tsn-squad",
+            "france-wildcard-2"
+          ],
+          "registrationType": "wildcard"
+        },
+        {
+          "name": "Yacine Boucharoud",
+          "pos": "ATT",
+          "sourceIds": [
+            "france-tsn-squad",
+            "france-wildcard-2"
+          ],
+          "registrationType": "wildcard"
+        }
+      ]
+    },
+    {
+      "id": "adb",
+      "name": "Athletic Dragon Blanc",
+      "officialTeamId": 232,
+      "coach": "Habib Boumezoued",
+      "presidents": [
+        "SDM",
+        "Guy2Bezbar"
+      ],
+      "rosterStatus": "complete",
+      "sourceIds": [
+        "france-adb-squad"
+      ],
+      "players": [
+        {
+          "name": "Ismaël Benallal",
+          "pos": "GK",
+          "sourceIds": [
+            "france-adb-squad"
+          ]
+        },
+        {
+          "name": "Parfait Mandanda",
+          "pos": "GK",
+          "sourceIds": [
+            "france-adb-squad"
+          ]
+        },
+        {
+          "name": "Karl Masua",
+          "pos": "DEF",
+          "sourceIds": [
+            "france-adb-squad"
+          ]
+        },
+        {
+          "name": "Sega Keita",
+          "pos": "DEF",
+          "sourceIds": [
+            "france-adb-squad"
+          ]
+        },
+        {
+          "name": "Adama Doucouré",
+          "pos": "DEF",
+          "sourceIds": [
+            "france-adb-squad"
+          ],
+          "positionVerification": "Retained baseline position; current official sources checked do not publish a position."
+        },
+        {
+          "name": "Alex Monde",
+          "pos": "MID",
+          "sourceIds": [
+            "france-adb-squad"
+          ]
+        },
+        {
+          "name": "Brad Onema",
+          "pos": "MID",
+          "sourceIds": [
+            "france-adb-squad"
+          ]
+        },
+        {
+          "name": "Johan Dorilas",
+          "pos": "MID",
+          "sourceIds": [
+            "france-adb-squad"
+          ]
+        },
+        {
+          "name": "Melvin Sitti",
+          "pos": "MID",
+          "sourceIds": [
+            "france-adb-squad"
+          ]
+        },
+        {
+          "name": "Redha Ghaoui",
+          "pos": "MID",
+          "sourceIds": [
+            "france-adb-squad"
+          ]
+        },
+        {
+          "name": "Rayan Belkacem",
+          "pos": "MID",
+          "sourceIds": [
+            "france-adb-squad"
+          ]
+        },
+        {
+          "name": "Anthony Adel",
+          "pos": "MID",
+          "sourceIds": [
+            "france-adb-squad"
+          ],
+          "positionVerification": "Retained baseline position; current official sources checked do not publish a position."
+        },
+        {
+          "name": "Tarek Baïch",
+          "pos": "MID",
+          "sourceIds": [
+            "france-adb-squad",
+            "france-wildcard-3"
+          ],
+          "registrationType": "wildcard"
+        },
+        {
+          "name": "Sandy Mbala",
+          "pos": "MID",
+          "sourceIds": [
+            "france-adb-squad"
+          ],
+          "positionVerification": "Retained baseline position; current official sources checked do not publish a position."
+        },
+        {
+          "name": "Alex Séné",
+          "pos": "ATT",
+          "sourceIds": [
+            "france-adb-squad",
+            "france-wildcard-2"
+          ],
+          "registrationType": "wildcard"
+        },
+        {
+          "name": "Inza Koné",
+          "pos": "ATT",
+          "sourceIds": [
+            "france-adb-squad",
+            "france-wildcard-2"
+          ],
+          "registrationType": "wildcard"
+        },
+        {
+          "name": "Aimen Belaid",
+          "pos": "ATT",
+          "sourceIds": [
+            "france-adb-squad"
+          ],
+          "positionVerification": "Retained baseline position; current official sources checked do not publish a position."
+        }
+      ]
+    },
+    {
+      "id": "fcs",
+      "name": "FC Silmi",
+      "officialTeamId": 172,
+      "coach": "Sabry Bezahaf",
+      "presidents": [
+        "Domingo"
+      ],
+      "rosterStatus": "complete",
+      "sourceIds": [
+        "france-fcs-squad"
+      ],
+      "players": [
+        {
+          "name": "Ali Ahamada",
+          "pos": "GK",
+          "sourceIds": [
+            "france-fcs-squad"
+          ]
+        },
+        {
+          "name": "Damien Mesplé",
+          "pos": "GK",
+          "sourceIds": [
+            "france-fcs-squad",
+            "france-wildcard-3"
+          ],
+          "registrationType": "wildcard"
+        },
+        {
+          "name": "Florian Forestier",
+          "pos": "GK",
+          "sourceIds": [
+            "france-fcs-squad",
+            "france-wildcard-1"
+          ],
+          "registrationType": "wildcard"
+        },
+        {
+          "name": "Axel Bamba",
+          "pos": "DEF",
+          "sourceIds": [
+            "france-fcs-squad"
+          ]
+        },
+        {
+          "name": "Hakim Bacar",
+          "pos": "DEF",
+          "sourceIds": [
+            "france-fcs-squad"
+          ]
+        },
+        {
+          "name": "Mohammed-Karim Berrabah",
+          "pos": "DEF",
+          "sourceIds": [
+            "france-fcs-squad",
+            "france-draft-2"
+          ],
+          "registrationType": "registered"
+        },
+        {
+          "name": "Aboubakar Toure",
+          "pos": "MID",
+          "sourceIds": [
+            "france-fcs-squad"
+          ]
+        },
+        {
+          "name": "Adel Berkane",
+          "pos": "MID",
+          "sourceIds": [
+            "france-fcs-squad"
+          ]
+        },
+        {
+          "name": "Chain Ghrissi",
+          "pos": "MID",
+          "sourceIds": [
+            "france-fcs-squad"
+          ]
+        },
+        {
+          "name": "Guilherme Carvalho",
+          "pos": "MID",
+          "sourceIds": [
+            "france-fcs-squad",
+            "france-draft-3"
+          ],
+          "registrationType": "registered"
+        },
+        {
+          "name": "Kevin Bru",
+          "pos": "MID",
+          "sourceIds": [
+            "france-fcs-squad"
+          ]
+        },
+        {
+          "name": "Mehdi Marin",
+          "pos": "MID",
+          "sourceIds": [
+            "france-fcs-squad",
+            "france-draft-3"
+          ],
+          "registrationType": "registered"
+        },
+        {
+          "name": "Youcef Kara",
+          "pos": "MID",
+          "sourceIds": [
+            "france-fcs-squad"
+          ]
+        },
+        {
+          "name": "Mohamed Sanou",
+          "pos": "ATT",
+          "sourceIds": [
+            "france-fcs-squad",
+            "france-draft-10"
+          ],
+          "registrationType": "registered"
+        },
+        {
+          "name": "Bakary Sako",
+          "pos": "ATT",
+          "sourceIds": [
+            "france-fcs-squad",
+            "france-wildcard-3"
+          ],
+          "registrationType": "wildcard"
+        },
+        {
+          "name": "Jimmy Briand",
+          "pos": "ATT",
+          "sourceIds": [
+            "france-fcs-squad"
+          ],
+          "positionVerification": "Retained baseline position; current official sources checked do not publish a position."
+        }
+      ]
+    },
+    {
+      "id": "gs7",
+      "name": "Generation Seven",
+      "officialTeamId": 173,
+      "coach": "Jefferson Roch",
+      "presidents": [
+        "Michou",
+        "Camavinga"
+      ],
+      "rosterStatus": "complete",
+      "sourceIds": [
+        "france-gs7-squad"
+      ],
+      "players": [
+        {
+          "name": "Christian Nsapu",
+          "pos": "GK",
+          "sourceIds": [
+            "france-gs7-squad",
+            "france-draft-1"
+          ],
+          "registrationType": "registered"
+        },
+        {
+          "name": "Ilhan Benbraham",
+          "pos": "GK",
+          "sourceIds": [
+            "france-gs7-squad"
+          ]
+        },
+        {
+          "name": "Yonni Bouguerra",
+          "pos": "GK",
+          "sourceIds": [
+            "france-gs7-squad"
+          ]
+        },
+        {
+          "name": "Bilal Hadraoui",
+          "pos": "DEF",
+          "sourceIds": [
+            "france-gs7-squad"
+          ]
+        },
+        {
+          "name": "Mehdi Tenniche",
+          "pos": "DEF",
+          "sourceIds": [
+            "france-gs7-squad",
+            "france-draft-1"
+          ],
+          "registrationType": "registered"
+        },
+        {
+          "name": "Carl Medjani",
+          "pos": "DEF",
+          "sourceIds": [
+            "france-gs7-squad",
+            "france-wildcard-1"
+          ],
+          "registrationType": "wildcard"
+        },
+        {
+          "name": "Walid Soudi",
+          "pos": "DEF",
+          "sourceIds": [
+            "france-gs7-squad",
+            "france-draft-5"
+          ],
+          "registrationType": "registered"
+        },
+        {
+          "name": "Clément Goguey",
+          "pos": "MID",
+          "sourceIds": [
+            "france-gs7-squad",
+            "france-draft-1"
+          ],
+          "registrationType": "registered"
+        },
+        {
+          "name": "Enzo Dron",
+          "pos": "MID",
+          "sourceIds": [
+            "france-gs7-squad",
+            "france-draft-2"
+          ],
+          "registrationType": "registered"
+        },
+        {
+          "name": "Ismaïl Haddou",
+          "pos": "MID",
+          "sourceIds": [
+            "france-gs7-squad",
+            "france-draft-5"
+          ],
+          "registrationType": "registered"
+        },
+        {
+          "name": "Nyls Gomez",
+          "pos": "MID",
+          "sourceIds": [
+            "france-gs7-squad",
+            "france-draft-2"
+          ],
+          "registrationType": "registered"
+        },
+        {
+          "name": "Boucif El Afghani",
+          "pos": "MID",
+          "sourceIds": [
+            "france-gs7-squad"
+          ]
+        },
+        {
+          "name": "Dalvin Fellice",
+          "pos": "MID",
+          "sourceIds": [
+            "france-gs7-squad",
+            "france-wildcard-1"
+          ],
+          "registrationType": "wildcard"
+        },
+        {
+          "name": "Youba Soumaré",
+          "pos": "MID",
+          "sourceIds": [
+            "france-gs7-squad",
+            "france-wildcard-3"
+          ],
+          "registrationType": "wildcard"
+        },
+        {
+          "name": "Haris El Mouttaqi",
+          "pos": "ATT",
+          "sourceIds": [
+            "france-gs7-squad",
+            "france-draft-2"
+          ],
+          "officialName": "Haris El mouttaqi",
+          "registrationType": "registered"
+        },
+        {
+          "name": "Oscar Le Guillou",
+          "pos": "ATT",
+          "sourceIds": [
+            "france-gs7-squad",
+            "france-draft-2"
+          ],
+          "registrationType": "registered"
+        },
+        {
+          "name": "Boutaleb Mohamed",
+          "pos": "ATT",
+          "sourceIds": [
+            "france-gs7-squad"
+          ]
+        },
+        {
+          "name": "Mamadou Kebe",
+          "pos": "ATT",
+          "sourceIds": [
+            "france-gs7-squad",
+            "france-wildcard-3"
+          ],
+          "registrationType": "wildcard"
+        }
+      ]
+    },
+    {
+      "id": "kar",
+      "name": "Karasu",
+      "officialTeamId": 171,
+      "coach": "Mokdad Abdelmalek",
+      "presidents": [
+        "Kameto",
+        "Hamza"
+      ],
+      "rosterStatus": "partial",
+      "sourceIds": [
+        "france-domestic-stats",
+        "france-draft-5",
+        "france-draft-6",
+        "france-draft-10",
+        "france-golden-crown-2026-10-25"
+      ],
+      "players": [
+        {
+          "name": "Sasha Bernard",
+          "pos": "GK",
+          "sourceIds": [
+            "france-draft-5",
+            "france-sasha-profile"
+          ],
+          "registrationType": "registered",
+          "officialPlayerId": 87355,
+          "birthDate": "1999-12-18",
+          "domesticMembershipNote": "Domestic baseline retained; official Split 2 directory/statistics/profile corroboration. KWC page alone is not used to establish a domestic transfer."
+        },
+        {
+          "name": "Simon Pontdeme",
+          "pos": "GK",
+          "sourceIds": [
+            "france-draft-6"
+          ],
+          "registrationType": "registered",
+          "domesticMembershipNote": "Domestic baseline retained; official Split 2 directory/statistics/profile corroboration. KWC page alone is not used to establish a domestic transfer."
+        },
+        {
+          "name": "Vivien Cedille",
+          "pos": "GK",
+          "sourceIds": [
+            "france-draft-10"
+          ],
+          "registrationType": "registered",
+          "domesticMembershipNote": "Domestic baseline retained; official Split 2 directory/statistics/profile corroboration. KWC page alone is not used to establish a domestic transfer."
+        },
+        {
+          "name": "Mehdi Gacem",
+          "pos": "DEF",
+          "sourceIds": [
+            "france-kar-squad",
+            "france-draft-2"
+          ],
+          "registrationType": "registered",
+          "domesticMembershipNote": "Domestic baseline retained; official Split 2 directory/statistics/profile corroboration. KWC page alone is not used to establish a domestic transfer."
+        },
+        {
+          "name": "Sahir Boumhand",
+          "pos": "DEF",
+          "sourceIds": [
+            "france-kar-squad"
+          ],
+          "domesticMembershipNote": "Domestic baseline retained; official Split 2 directory/statistics/profile corroboration. KWC page alone is not used to establish a domestic transfer."
+        },
+        {
+          "name": "Christopher Baptista",
+          "pos": "MID",
+          "sourceIds": [
+            "france-kar-squad",
+            "france-draft-3"
+          ],
+          "registrationType": "registered",
+          "domesticMembershipNote": "Domestic baseline retained; official Split 2 directory/statistics/profile corroboration. KWC page alone is not used to establish a domestic transfer."
+        },
+        {
+          "name": "Guillaume Yenoussi",
+          "pos": "MID",
+          "sourceIds": [
+            "france-draft-10"
+          ],
+          "registrationType": "registered",
+          "domesticMembershipNote": "Domestic baseline retained; official Split 2 directory/statistics/profile corroboration. KWC page alone is not used to establish a domestic transfer."
+        },
+        {
+          "name": "Ilyes Kallouche",
+          "pos": "MID",
+          "sourceIds": [
+            "france-ilyes-profile"
+          ],
+          "officialPlayerId": 87472,
+          "birthDate": "2005-02-08",
+          "domesticMembershipNote": "Domestic baseline retained; official Split 2 directory/statistics/profile corroboration. KWC page alone is not used to establish a domestic transfer."
+        },
+        {
+          "name": "Joseph Evens",
+          "pos": "MID",
+          "sourceIds": [
+            "france-draft-5"
+          ],
+          "registrationType": "registered",
+          "domesticMembershipNote": "Domestic baseline retained; official Split 2 directory/statistics/profile corroboration. KWC page alone is not used to establish a domestic transfer."
+        },
+        {
+          "name": "Lucas Valeri",
+          "pos": "MID",
+          "sourceIds": [
+            "france-draft-1"
+          ],
+          "registrationType": "registered",
+          "domesticMembershipNote": "Domestic baseline retained; official Split 2 directory/statistics/profile corroboration. KWC page alone is not used to establish a domestic transfer."
+        },
+        {
+          "name": "Driss Khalid",
+          "pos": "MID",
+          "sourceIds": [
+            "france-kar-squad",
+            "france-wildcard-2"
+          ],
+          "registrationType": "wildcard",
+          "domesticMembershipNote": "Domestic baseline retained; official Split 2 directory/statistics/profile corroboration. KWC page alone is not used to establish a domestic transfer."
+        },
+        {
+          "name": "Lyes Hocine",
+          "pos": "MID",
+          "sourceIds": [
+            "france-lyes-profile"
+          ],
+          "officialPlayerId": 87473,
+          "domesticMembershipNote": "Domestic baseline retained; official Split 2 directory/statistics/profile corroboration. KWC page alone is not used to establish a domestic transfer."
+        },
+        {
+          "name": "Youssef Hidasse",
+          "pos": "MID",
+          "sourceIds": [
+            "france-domestic-stats"
+          ],
+          "positionVerification": "Retained baseline position; current official sources checked do not publish a position.",
+          "domesticMembershipNote": "Domestic baseline retained; official Split 2 directory/statistics/profile corroboration. KWC page alone is not used to establish a domestic transfer."
+        },
+        {
+          "name": "Dramane Kone",
+          "pos": "ATT",
+          "sourceIds": [
+            "france-kar-squad",
+            "france-draft-5"
+          ],
+          "registrationType": "registered",
+          "domesticMembershipNote": "Domestic baseline retained; official Split 2 directory/statistics/profile corroboration. KWC page alone is not used to establish a domestic transfer."
+        },
+        {
+          "name": "Sita Diarra",
+          "pos": "ATT",
+          "sourceIds": [
+            "france-kar-squad",
+            "france-draft-3"
+          ],
+          "registrationType": "registered",
+          "domesticMembershipNote": "Domestic baseline retained; official Split 2 directory/statistics/profile corroboration. KWC page alone is not used to establish a domestic transfer."
+        },
+        {
+          "name": "Marvin Gakpa",
+          "pos": "ATT",
+          "sourceIds": [
+            "france-marvin-profile"
+          ],
+          "officialPlayerId": 87580,
+          "birthDate": "1993-01-11",
+          "domesticMembershipNote": "Domestic baseline retained; official Split 2 directory/statistics/profile corroboration. KWC page alone is not used to establish a domestic transfer."
+        },
+        {
+          "name": "Ali Ouarti",
+          "pos": "ATT",
+          "sourceIds": [
+            "france-draft-5",
+            "france-ali-profile"
+          ],
+          "registrationType": "registered",
+          "officialPlayerId": 87358,
+          "birthDate": "1999-07-19",
+          "domesticMembershipNote": "Domestic baseline retained; official Split 2 directory/statistics/profile corroboration. KWC page alone is not used to establish a domestic transfer."
+        },
+        {
+          "name": "Matisse Henry",
+          "pos": "ATT",
+          "sourceIds": [
+            "france-kar-squad",
+            "france-wildcard-1"
+          ],
+          "registrationType": "wildcard",
+          "domesticMembershipNote": "Domestic baseline retained; official Split 2 directory/statistics/profile corroboration. KWC page alone is not used to establish a domestic transfer."
+        },
+        {
+          "name": "Samy Mahour",
+          "pos": "ATT",
+          "sourceIds": [
+            "france-wildcard-1"
+          ],
+          "registrationType": "wildcard",
+          "domesticMembershipNote": "Domestic baseline retained; official Split 2 directory/statistics/profile corroboration. KWC page alone is not used to establish a domestic transfer."
+        }
+      ]
+    },
+    {
+      "id": "pas",
+      "name": "Panam All Starz",
+      "officialTeamId": 175,
+      "coach": "Yassine Mohammed",
+      "presidents": [
+        "Pfut"
+      ],
+      "rosterStatus": "complete",
+      "sourceIds": [
+        "france-pas-squad"
+      ],
+      "players": [
+        {
+          "name": "Adama Wagui",
+          "pos": "GK",
+          "sourceIds": [
+            "france-pas-squad"
+          ]
+        },
+        {
+          "name": "Hidris Buy-Kante",
+          "pos": "GK",
+          "sourceIds": [
+            "france-pas-squad"
+          ]
+        },
+        {
+          "name": "Souleymane Ouattara",
+          "pos": "GK",
+          "sourceIds": [
+            "france-pas-squad"
+          ]
+        },
+        {
+          "name": "Yaya Doucoure",
+          "pos": "GK",
+          "sourceIds": [
+            "france-pas-squad",
+            "france-wildcard-1"
+          ],
+          "registrationType": "wildcard"
+        },
+        {
+          "name": "Jordy Gaspar",
+          "pos": "DEF",
+          "sourceIds": [
+            "france-pas-squad"
+          ]
+        },
+        {
+          "name": "Nzaba Lungituka",
+          "pos": "DEF",
+          "sourceIds": [
+            "france-pas-squad"
+          ]
+        },
+        {
+          "name": "Yazid Ali Abdallah",
+          "pos": "DEF",
+          "sourceIds": [
+            "france-pas-squad"
+          ]
+        },
+        {
+          "name": "Alaixys Romao",
+          "pos": "DEF",
+          "sourceIds": [
+            "france-pas-squad"
+          ]
+        },
+        {
+          "name": "Rachid Bouhenna",
+          "pos": "DEF",
+          "sourceIds": [
+            "france-pas-squad",
+            "france-wildcard-3"
+          ],
+          "registrationType": "wildcard"
+        },
+        {
+          "name": "Andre De Oliveira",
+          "pos": "MID",
+          "sourceIds": [
+            "france-pas-squad",
+            "france-draft-3"
+          ],
+          "registrationType": "registered"
+        },
+        {
+          "name": "Daniel Mendy",
+          "pos": "MID",
+          "sourceIds": [
+            "france-pas-squad",
+            "france-draft-3"
+          ],
+          "registrationType": "registered"
+        },
+        {
+          "name": "Hamza Chaib",
+          "pos": "MID",
+          "sourceIds": [
+            "france-pas-squad"
+          ]
+        },
+        {
+          "name": "Harrison Manzala",
+          "pos": "MID",
+          "sourceIds": [
+            "france-pas-squad"
+          ]
+        },
+        {
+          "name": "Mohamed Sakkouh",
+          "pos": "MID",
+          "sourceIds": [
+            "france-pas-squad"
+          ]
+        },
+        {
+          "name": "Sofiane Ahmed-Kadi",
+          "pos": "MID",
+          "sourceIds": [
+            "france-pas-squad",
+            "france-draft-5"
+          ],
+          "officialName": "Sofiane Ahmed-kadi",
+          "registrationType": "registered"
+        },
+        {
+          "name": "Eric Mathieu",
+          "pos": "MID",
+          "sourceIds": [
+            "france-pas-squad",
+            "france-wildcard-1"
+          ],
+          "registrationType": "wildcard"
+        },
+        {
+          "name": "Rayan Forsa",
+          "pos": "MID",
+          "sourceIds": [
+            "france-pas-squad",
+            "france-wildcard-3"
+          ],
+          "registrationType": "wildcard"
+        },
+        {
+          "name": "Walid Betterki",
+          "pos": "MID",
+          "sourceIds": [
+            "france-pas-squad",
+            "france-wildcard-3"
+          ],
+          "registrationType": "wildcard"
+        },
+        {
+          "name": "Emmanuel Louisir",
+          "pos": "MID",
+          "sourceIds": [
+            "france-pas-squad"
+          ],
+          "positionVerification": "Retained baseline position; current official sources checked do not publish a position."
+        },
+        {
+          "name": "Elijah Boimbo",
+          "pos": "ATT",
+          "sourceIds": [
+            "france-pas-squad"
+          ]
+        },
+        {
+          "name": "Florent Sinama-Pongolle",
+          "pos": "ATT",
+          "sourceIds": [
+            "france-pas-squad"
+          ],
+          "officialName": "Florent SINAMA-PONGOLLE"
+        }
+      ]
+    },
+    {
+      "id": "u3d",
+      "name": "Unit3d",
+      "officialTeamId": 170,
+      "coach": "Grégory Campi",
+      "presidents": [
+        "Djilsi",
+        "Maxime Biaggi"
+      ],
+      "rosterStatus": "complete",
+      "sourceIds": [
+        "france-u3d-squad"
+      ],
+      "players": [
+        {
+          "name": "Florian Verplanck",
+          "pos": "GK",
+          "sourceIds": [
+            "france-u3d-squad",
+            "france-draft-5"
+          ],
+          "registrationType": "registered"
+        },
+        {
+          "name": "Jessy Moulin",
+          "pos": "GK",
+          "sourceIds": [
+            "france-u3d-squad",
+            "france-draft-6"
+          ],
+          "registrationType": "registered"
+        },
+        {
+          "name": "Alseny Sano",
+          "pos": "DEF",
+          "sourceIds": [
+            "france-u3d-squad",
+            "france-draft-1"
+          ],
+          "registrationType": "registered"
+        },
+        {
+          "name": "Yannick Mbone",
+          "pos": "DEF",
+          "sourceIds": [
+            "france-u3d-squad",
+            "france-draft-6"
+          ],
+          "registrationType": "registered"
+        },
+        {
+          "name": "Youssef Khatiri",
+          "pos": "DEF",
+          "sourceIds": [
+            "france-u3d-squad"
+          ]
+        },
+        {
+          "name": "Bryan Goncalves",
+          "pos": "DEF",
+          "sourceIds": [
+            "france-u3d-squad",
+            "france-wildcard-3"
+          ],
+          "registrationType": "wildcard"
+        },
+        {
+          "name": "Amine Kheche",
+          "pos": "MID",
+          "sourceIds": [
+            "france-u3d-squad"
+          ]
+        },
+        {
+          "name": "José Pereira",
+          "pos": "MID",
+          "sourceIds": [
+            "france-u3d-squad"
+          ]
+        },
+        {
+          "name": "Nicolas Martins",
+          "pos": "MID",
+          "sourceIds": [
+            "france-u3d-squad"
+          ]
+        },
+        {
+          "name": "Yassine Skira",
+          "pos": "MID",
+          "sourceIds": [
+            "france-u3d-squad",
+            "france-draft-2"
+          ],
+          "registrationType": "registered"
+        },
+        {
+          "name": "Maxime Corain",
+          "pos": "MID",
+          "sourceIds": [
+            "france-u3d-squad"
+          ],
+          "positionVerification": "Retained baseline position; current official sources checked do not publish a position."
+        },
+        {
+          "name": "Valère Germain",
+          "pos": "ATT",
+          "sourceIds": [
+            "france-u3d-squad",
+            "france-wildcard-2"
+          ],
+          "registrationType": "wildcard"
+        },
+        {
+          "name": "Damani Toure",
+          "pos": "ATT",
+          "sourceIds": [
+            "france-u3d-squad",
+            "france-draft-2"
+          ],
+          "registrationType": "registered"
+        },
+        {
+          "name": "Marvin Emmanuel",
+          "pos": "ATT",
+          "sourceIds": [
+            "france-u3d-squad"
+          ]
+        },
+        {
+          "name": "Amara Fofana",
+          "pos": "ATT",
+          "sourceIds": [
+            "france-u3d-squad",
+            "france-wildcard-1"
+          ],
+          "registrationType": "wildcard"
+        },
+        {
+          "name": "Clément Dragon",
+          "pos": "ATT",
+          "sourceIds": [
+            "france-u3d-squad",
+            "france-wildcard-2"
+          ],
+          "registrationType": "wildcard"
+        },
+        {
+          "name": "Enzo Arbona",
+          "pos": "ATT",
+          "sourceIds": [
+            "france-u3d-squad",
+            "france-wildcard-3"
+          ],
+          "registrationType": "wildcard"
+        },
+        {
+          "name": "Nassim Labidi",
+          "pos": "ATT",
+          "sourceIds": [
+            "france-u3d-squad",
+            "france-wildcard-2"
+          ],
+          "registrationType": "wildcard"
+        }
+      ]
+    },
+    {
+      "id": "wpf",
+      "name": "Wolf Pack FC",
+      "officialTeamId": 174,
+      "coach": "Richard Pascal",
+      "presidents": [
+        "Adil Rami",
+        "Naza"
+      ],
+      "rosterStatus": "complete",
+      "sourceIds": [
+        "france-wpf-squad"
+      ],
+      "players": [
+        {
+          "name": "Guillaume Lesec",
+          "pos": "GK",
+          "sourceIds": [
+            "france-wpf-squad",
+            "france-draft-2"
+          ],
+          "registrationType": "registered"
+        },
+        {
+          "name": "Sebastien Renot",
+          "pos": "GK",
+          "sourceIds": [
+            "france-wpf-squad"
+          ]
+        },
+        {
+          "name": "Mohamed Bencherif",
+          "pos": "DEF",
+          "sourceIds": [
+            "france-wpf-squad",
+            "france-draft-3"
+          ],
+          "registrationType": "registered"
+        },
+        {
+          "name": "Franck Noel",
+          "pos": "DEF",
+          "sourceIds": [
+            "france-wpf-squad"
+          ]
+        },
+        {
+          "name": "Giannelli Imbula",
+          "pos": "MID",
+          "sourceIds": [
+            "france-wpf-squad",
+            "france-draft-3"
+          ],
+          "registrationType": "registered"
+        },
+        {
+          "name": "Idir Ahmin",
+          "pos": "MID",
+          "sourceIds": [
+            "france-wpf-squad",
+            "france-draft-2"
+          ],
+          "registrationType": "registered"
+        },
+        {
+          "name": "Lucas De Ataïde",
+          "pos": "MID",
+          "sourceIds": [
+            "france-wpf-squad"
+          ]
+        },
+        {
+          "name": "Sofiane Bendaoud",
+          "pos": "MID",
+          "sourceIds": [
+            "france-wpf-squad",
+            "france-draft-3"
+          ],
+          "registrationType": "registered"
+        },
+        {
+          "name": "Théo Chendri",
+          "pos": "MID",
+          "sourceIds": [
+            "france-wpf-squad"
+          ]
+        },
+        {
+          "name": "Denis-Will Poha",
+          "pos": "MID",
+          "sourceIds": [
+            "france-wpf-squad",
+            "france-wildcard-2"
+          ],
+          "registrationType": "wildcard"
+        },
+        {
+          "name": "Noé Clerge",
+          "pos": "MID",
+          "sourceIds": [
+            "france-wpf-squad"
+          ],
+          "positionVerification": "Retained baseline position; current official sources checked do not publish a position."
+        },
+        {
+          "name": "Enzo Ferrara",
+          "pos": "MID",
+          "sourceIds": [
+            "france-wpf-squad"
+          ]
+        },
+        {
+          "name": "Souleymane Karamoko",
+          "pos": "MID",
+          "sourceIds": [
+            "france-wpf-squad"
+          ],
+          "positionVerification": "Retained baseline position; current official sources checked do not publish a position."
+        },
+        {
+          "name": "Jonathan Kodjia",
+          "pos": "ATT",
+          "sourceIds": [
+            "france-wpf-squad",
+            "france-draft-5"
+          ],
+          "registrationType": "registered"
+        },
+        {
+          "name": "Moussa Sao",
+          "pos": "ATT",
+          "sourceIds": [
+            "france-wpf-squad"
+          ]
+        },
+        {
+          "name": "Mehdi Chahiri",
+          "pos": "ATT",
+          "sourceIds": [
+            "france-wpf-squad",
+            "france-wildcard-2"
+          ],
+          "registrationType": "wildcard"
+        },
+        {
+          "name": "Sabry Tolgui",
+          "pos": "ATT",
+          "sourceIds": [
+            "france-wpf-squad"
+          ]
+        },
+        {
+          "name": "Wanis Aïssa",
+          "pos": "ATT",
+          "sourceIds": [
+            "france-wpf-squad"
+          ]
+        }
+      ]
+    }
+  ],
+  "confirmedTransfers": [],
+  "temporaryAppearances": [
+    {
+      "name": "Moussa Sao",
+      "pos": "ATT",
+      "teamId": "kar",
+      "domesticTeamId": "wpf",
+      "competition": "Kings World Cup Clubs 2026",
+      "registrationType": "wildcard",
+      "sourceIds": [
+        "france-kar-squad",
+        "france-golden-crown-2026-10-25"
+      ],
+      "note": "Tournament selection only. October 25 official league report explicitly says he plays for Wolf Pack FC domestically."
+    },
+    {
+      "name": "Guillaume Lesec",
+      "pos": "GK",
+      "teamId": "kar",
+      "domesticTeamId": "wpf",
+      "competition": "Kings World Cup Clubs 2026",
+      "registrationType": "wildcard",
+      "sourceIds": [
+        "france-kar-squad",
+        "france-golden-crown-2026-10-25"
+      ],
+      "note": "Tournament selection only. October 25 official league report explicitly says he plays for Wolf Pack FC domestically."
+    }
+  ],
+  "uncertainties": [
+    "Seven official team pages default to 2025/26 Split 2 and reproduce every baseline squad name (allowing case differences). Karasu defaults to 2025/26 KWC Clubs; its domestic roster is retained from baseline and corroborated through official Split 2 directories, statistics and individual profiles. Karasu rosterStatus remains partial because the complete domestic team-page selection could not be retrieved.",
+    "Wildcard directory membership is recorded as registrationType=wildcard, but is not treated as proof of a one-match temporary signing. Full-split contributors such as Matisse Henry and Bakary Sako are wildcards too. They remain attached to their published domestic club unless a separately confirmed guest-only context exists.",
+    "Official wildcard pagination is inconsistent in search cache: pages 1–3 show current Split 2; pages 4–5 return older Split 1 names and statistics. Older pages were excluded from current registration-type conclusions.",
+    "Some official team-page entries publish no position: Mohamed Sangare, Anthony Adel, Aimen Belaid, Adama Doucouré, Sandy Mbala, Jimmy Briand, Noé Clerge, Souleymane Karamoko, Maxime Corain and Emmanuel Louisir. Their existing game position is retained and explicitly marked unverified; no new position was invented.",
+    "Lyes Hocine official profile publishes the impossible birth date 25/07/2998. It was discarded; no correction was guessed.",
+    "Current official KWC Karasu names Jean Loic, Geoffroy Arthaud and Junior Sele are not imported into the domestic roster without a domestic registration source. Sao and Lesec remain Wolf Pack players.",
+    "No official post-May domestic transfer announcement affecting these eight squads was located in the checked sources. This does not establish that every historical season-page appearance is an active permanent contract."
+  ]
+}

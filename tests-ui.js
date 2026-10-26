@@ -94,6 +94,14 @@ test("ancienne sauvegarde sans intention : une tactique équilibrée reste jouab
   assert.equal(run("sanitizeTactic({mentality:'attacking'}).mentality"), "attacking");
 });
 
+test("un joueur renommé et transféré conserve le chemin de sa photo d'origine", () => {
+  const { run } = createUI();
+  assert.equal(run(`playerPhotoUrl({name:'Álex Guti',photoName:'Álex Gutiérrez',photoClub:'Porcinos FC',photoLeague:'spain'},{name:'Capim FC',photoLeague:'brazil'})`),
+    "images/players/espagne/porcinos-fc/alex-gutierrez.png");
+  assert.equal(run(`playerPhotoUrl({name:'Kelvin Oliveira'},{name:'G3X FC',photoLeague:'brazil'})`),
+    "images/players/bresil/g3x-fc/kelvin-oliveira.png");
+});
+
 test("l'intention choisie est enregistrée avec la tactique par défaut", () => {
   const { run } = createUI();
   run("tacticsSetup = sanitizeTactic({mentality:'cautious'}); tacticsSetup.persist = true; saveTactic(tacticsSetup);");
