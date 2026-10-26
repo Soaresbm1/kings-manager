@@ -1,6 +1,15 @@
-# Kings Manager 7v7
+# Kings Manager 7v7 — 1.1
 
-Jeu de simulation de football manager inspiré du format 7v7 de la Kings League (France & Brésil).
+Jeu de gestion de football en solo inspiré du format 7v7 de la Kings League : France, Brésil, Espagne, Italie, Allemagne et Mexique. Le jeu fonctionne entièrement dans le navigateur, avec des carrières sauvegardées localement et exportables en JSON.
+
+## Nouveautés de la version 1.1
+
+- **Matchs continus** : le porteur, le ballon et les positions sont conservés entre les actions et les minutes. Une interception déclenche une vraie transition ; atteindre la limite d'une séquence ne fait plus perdre le ballon.
+- **Reprises visibles** : engagements, relances, touches, corners, coups francs et shootouts se raccordent au terrain. Le placement affiché est celui utilisé par le moteur.
+- **Banc de touche** : possession, tirs, xG, énergie et contexte de jeu en direct. Les trois intentions — prudente, équilibrée, offensive — modifient les risques, les projections, le rythme et la dépense d'énergie.
+- **Décisions cohérentes** : l'IA réagit au score en fin de match. Les cartes et le penalty du président attendent la fin de la séquence déjà jouée ; le score ne révèle plus les buts à venir.
+- **Effectifs et statistiques fiables** : compositions de secours hors poste, blessures prises en compte, remplacements sans doublon et notes pour tous les joueurs ayant participé.
+- **Contrôles automatiques** : simulations reproductibles et vrais parcours du jeu sur Chromium, Firefox et WebKit ; vérification quotidienne du moteur sur GitHub Actions.
 
 ## Lancer le jeu
 
@@ -15,12 +24,14 @@ python -m http.server 8000
 
 puis ouvre `http://localhost:8000` dans ton navigateur.
 
+Avec Node.js, `npm run dev` démarre également le jeu sur `http://127.0.0.1:4173`. Les images du dépôt restent servies localement. `npm run dev:assets` est réservé à une copie de développement sans images : il autorise leur chargement depuis le site publié.
+
 ## Comment jouer
 
-1. **Accueil** : choisis ta ligue (France ou Brésil) puis ton équipe.
+1. **Accueil** : choisis ta ligue et ton équipe, ou reprends une carrière existante.
 2. **Calendrier** : consulte le calendrier complet aller-retour, prépare ton prochain match.
-3. **Avant le match** : sélectionne ton XI (7 joueurs dont 1 gardien), une formation (1-2-2-2, 1-3-2-1 ou 1-2-3-1), un plan offensif et un plan défensif.
-4. **Simulation** : le match se déroule minute par minute avec des commentaires (buts, arrêts, cartons, pénaltys...). Utilise "Avancer rapidement" pour passer directement au résumé.
+3. **Avant le match** : sélectionne tes 7 joueurs dont un gardien, une formation, un plan offensif, un plan défensif et une intention. Le symbole ↔ indique un joueur utilisé hors de son poste habituel.
+4. **Simulation** : observe les enchaînements sur le terrain, ajuste ton intention au banc de touche et consulte les statistiques. Les xG décrivent la qualité cumulée des occasions, sans garantir le résultat. Utilise "Avancer rapidement" pour terminer le match instantanément.
 5. **Résumé** : score final, possession, tirs, notes des joueurs.
 6. **Classement** : suis ta progression et celle des autres équipes.
 7. **Effectif** : consulte les statistiques et la forme de tes joueurs.
@@ -36,6 +47,18 @@ puis ouvre `http://localhost:8000` dans ton navigateur.
 
 ## Notes
 
-- Le budget de départ est de 500 000 € par équipe.
+- Le budget de départ dépend du club.
 - La forme des joueurs évolue selon leurs performances et résultats.
-- Les autres équipes de la ligue jouent et font des transferts automatiquement (IA basique).
+- Les autres équipes jouent et font des transferts automatiquement ; les autres ligues avancent aussi pendant ta carrière.
+
+## Développement et vérification
+
+```sh
+npm ci
+npm test                 # moteur, données, interface et régressions, graine reproductible
+npm run test:matrix      # trois graines indépendantes
+npm run test:e2e         # vrais parcours du jeu dans trois navigateurs
+```
+
+La CI exécute les simulations avant les tests navigateur pour chaque push et pull request. Un contrôle quotidien teste aussi le moteur ; il ne modifie ni les données ni les sauvegardes. Aucun service payant ni backend n'est requis.
+

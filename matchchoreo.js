@@ -77,6 +77,8 @@ function createChoreographer() {
   let beatIndex = 0;
   let beatElapsed = 0;
   let activeMotion = null; // positions réelles au début du beat, distinctes du trajet du ballon
+  let authoritativeMode = false;
+  let settledCarrierId = null;
   const finishedEvents = []; // événements des beats déjà terminés, pas encore consommés par app.js
 
   // Synchronise le roster affiché avec les ancres de BASE fournies pour la minute en cours (une
@@ -151,6 +153,12 @@ function createChoreographer() {
       starts.set(id, { x: p.x, y: p.y });
       duration = Math.max(duration, Math.hypot(target.x - p.x, target.y - p.y) * (speedFactor || 1) / MOVE.maxSpeedRun);
     }
+    if (beat.positionsAfter) {
+      authoritativeMode = true;
+      Object.entries(beat.positionsAfter).forEach(([id, target]) => track(id, target));
+      activeMotion = { beat, starts, duration, authoritative: true };
+      return;
+    }
     if (beat.type === "pass" || beat.type === "cross") {
       track(beat.toPlayerId, beat.to);
       track(beat.interceptorId, beat.interceptorTo || beat.to);
@@ -172,7 +180,8 @@ function createChoreographer() {
   // "collé" à un joueur en désignent un — en vol (passe/centre) ou hors-jeu (tir, dégagement...),
   // personne ne "porte" le ballon à cet instant précis.
   function getCarrierId(beat) {
-    if (!beat) return null;
+    if (!beat) return authoritativeMode ? settledCarrierId : null;
+    if (authoritativeMode && (beat.type === "phase" || beat.type === "press")) return settledCarrierId;
     return (beat.type === "dribble" || beat.type === "tackle" || beat.type === "carry" || beat.type === "interception") ? beat.playerId : null;
   }
 
@@ -199,6 +208,13 @@ function createChoreographer() {
 
       if (beatElapsed >= duration) {
         if (beat.event) finishedEvents.push(beat.event);
+        if (authoritativeMode) {
+          if (["carry", "dribble", "tackle", "interception", "restart", "recovery"].includes(beat.type)) settledCarrierId = beat.playerId || null;
+          else if (beat.type === "pass" || beat.type === "cross") settledCarrierId = beat.toPlayerId || null;
+          else if (beat.type === "save") settledCarrierId = beat.gkId || null;
+          else if (["shot", "goal", "miss", "out", "clear", "owngoal"].includes(beat.type)) settledCarrierId = null;
+          if (settledCarrierId && players.has(settledCarrierId)) ballSide = players.get(settledCarrierId).side;
+        }
         beatIndex++;
         beatElapsed = 0;
         activeMotion = null;
@@ -215,6 +231,20 @@ function createChoreographer() {
   // par convention pour ces beats), sans quoi chaque annonce le téléportait au centre du terrain.
   function applyBeatFrame(beat, t) {
     if (beat.type === "phase") return;
+    if (activeMotion && activeMotion.authoritative) {
+      // Ces trajectoires sont aussi celles utilisées pour les prochaines décisions
+      // du moteur : l'affichage ne fabrique plus un placement indépendant.
+      if (beat.type !== "press") {
+        ball.x = choreoLerp(beat.from.x, beat.to.x, t);
+        ball.y = choreoLerp(beat.from.y, beat.to.y, t);
+      }
+      Object.entries(beat.positionsAfter).forEach(([id, target]) => {
+        moveFromStart(id, target, t);
+        const p = players.get(id);
+        if (p) { p.targetX = target.x; p.targetY = target.y; p.role = id === getCarrierId(beat) ? "carrier" : "holdShape"; }
+      });
+      return;
+    }
     // "press" : un défenseur avance vers le porteur pour presser (voir matchengine-actions.js:
     // defShadow) sans qu'aucune action sur le ballon n'ait lieu — lui seul se déplace, le ballon
     // reste exactement où il est (sinon il "sauterait" jusqu'à la position du défenseur).
@@ -264,6 +294,7 @@ function createChoreographer() {
   // façon via son premier beat de possession réel.
   function updateBallSide(beat) {
     if (beat && CHOREO_POSSESSION_BEAT_TYPES.includes(beat.type) && beat.side) ballSide = beat.side;
+    if (beat && ["restart", "recovery"].includes(beat.type) && beat.side) ballSide = beat.side;
   }
 
   // Rôle temporaire de chaque joueur actif pour la frame courante, calculé UNE fois par camp (pas
@@ -425,6 +456,7 @@ function createChoreographer() {
   function updateOffBall(dt, activeBeat) {
     if (dt <= 0) return;
     updateBallSide(activeBeat || currentBeat());
+    if (authoritativeMode && (!activeBeat || activeBeat.positionsAfter || activeBeat.type === "phase")) return;
     const involved = computeInvolvedIds(activeBeat);
     const roles = assignRoles();
     const targets = new Map();
@@ -466,7 +498,7 @@ function createChoreographer() {
       // déplacement collectif continu ce tour-ci ; utile pour le mode de débogage visuel (app.js)
       // et pour distinguer, dans les tests, la vitesse du ballon de celle du déplacement collectif.
       involvedIds,
-      currentBeat: beat ? { type: beat.type, from: beat.from, to: beat.to } : null
+      currentBeat: beat ? { type: beat.type, from: beat.from, to: beat.to, restartType: beat.restartType || null } : null
     };
   }
 

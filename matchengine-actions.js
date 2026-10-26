@@ -228,7 +228,7 @@ function fieldZone(pos, side) {
 // porteur et le nombre d'actions déjà jouées dans la possession (force une conclusion en fin de
 // chaîne plutôt que de tourner indéfiniment).
 function chooseActionType(ctx) {
-  const { carrier, zone, pressure, attackPlanKey, pos, side, actionsLeft, hasPassOptions } = ctx;
+  const { carrier, zone, pressure, attackPlanKey, mentality, pos, side, actionsLeft, hasPassOptions } = ctx;
   const D = MATCH_BALANCE.decision;
   const isWide = pos.x < 25 || pos.x > 75;
   const goalDist = Math.abs(attackingGoalY(side) - pos.y);
@@ -250,6 +250,14 @@ function chooseActionType(ctx) {
   if (attackPlanKey === "possession") { w.short *= 1.5; w.through *= 0.7; w.dribble *= 0.85; }
   else if (attackPlanKey === "direct") { w.progressive *= 1.6; w.through *= 1.3; w.short *= 0.7; }
   else if (attackPlanKey === "transition") { w.through *= 1.5; w.carry *= 1.2; w.short *= 0.8; }
+
+  // La mentalité change la prise de risque, sans transformer un tir donné en but.
+  // Le mode équilibré conserve exactement les poids historiques.
+  if (mentality === "cautious") {
+    w.short *= 1.25; w.through *= 0.70; w.dribble *= 0.80; w.clear *= 1.15;
+  } else if (mentality === "attacking") {
+    w.progressive *= 1.10; w.through *= 1.20; w.carry *= 1.08; w.short *= 0.85;
+  }
 
   if (actionsLeft <= 1) {
     w.short *= 0.3; w.progressive *= 0.5; w.carry *= 0.4; w.clear *= 1.3;
@@ -339,17 +347,20 @@ function resolveShotOutcome(xg, shooterFinishing, gkRating, pressure) {
 }
 
 // ===================== CIBLAGE (choix du coéquipier/point visé) =====================
-function pickPassTarget(kind, side, teammates, carrier, atkAnchors, pos) {
+function pickPassTarget(kind, side, teammates, carrier, atkAnchors, pos, defenders, defAnchors) {
   const mates = teammates.filter(p => p.id !== carrier.id && p.pos !== "GK");
   if (!mates.length) return null;
   const scored = mates.map(p => {
     const a = atkAnchors[p.id] || pos;
     const forwardness = side === "home" ? (a.y - pos.y) : (pos.y - a.y);
     const dist = Math.hypot(a.x - pos.x, a.y - pos.y);
-    return { p, a, forwardness, dist };
+    const nearest = defenders ? nearestDefenderInfo(a, defenders, defAnchors || {}).distance : 20;
+    const openness = clamp(nearest, 0, 20);
+    const score = kind === "short" ? -dist + openness * 0.7
+      : forwardness * (kind === "through" ? 1.5 : 1.0) + openness * 0.9 - dist * 0.15;
+    return { p, a, forwardness, dist, score };
   });
-  if (kind === "short") scored.sort((x, y) => x.dist - y.dist);
-  else scored.sort((x, y) => y.forwardness - x.forwardness); // progressive/through : privilégie l'option la plus avancée
+  scored.sort((x, y) => y.score - x.score);
   const pool = scored.slice(0, Math.min(2, scored.length));
   return pool[Math.floor(Math.random() * pool.length)].p;
 }
@@ -376,7 +387,7 @@ function pickShotTarget(side, onTarget) {
   let x;
   if (onTarget) x = GOAL_X_MIN + 2 + Math.random() * (GOAL_X_MAX - GOAL_X_MIN - 4);
   else x = Math.random() < 0.5 ? GOAL_X_MIN - 3 - Math.random() * 8 : GOAL_X_MAX + 3 + Math.random() * 8;
-  return { x: clamp(x, 2, 98), y: nearY };
+  return { x: clamp(x, 2, 98), y: onTarget ? nearY : y };
 }
 function lerpPoint(a, b, t) { return { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t }; }
 
@@ -411,7 +422,13 @@ function overhitPassExit(from, to) {
   const tx = dx > 0 ? (PITCH_W - from.x) / dx : (dx < 0 ? -from.x / dx : Infinity);
   const ty = dy > 0 ? (PITCH_H - from.y) / dy : (dy < 0 ? -from.y / dy : Infinity);
   const t = Math.max(0, Math.min(tx, ty));
-  return { x: clamp(from.x + dx * t, 0, PITCH_W), y: clamp(from.y + dy * t, 0, PITCH_H) };
+  const exit = { x: clamp(from.x + dx * t, 0, PITCH_W), y: clamp(from.y + dy * t, 0, PITCH_H) };
+  // L'imprécision doit être visible : une passe déclarée sortie ne peut pas
+  // traverser le but entre les poteaux sans que le moteur compte un but.
+  if ((exit.y === 0 || exit.y === PITCH_H) && exit.x >= GOAL_X_MIN && exit.x <= GOAL_X_MAX) {
+    exit.x = exit.x < 50 ? GOAL_X_MIN - 4 : GOAL_X_MAX + 4;
+  }
+  return exit;
 }
 
 function makeBeat(type, side, playerId, gkId, from, to, duration, toPlayerId) {
@@ -441,109 +458,196 @@ function buildRecoveryLine(carrier, pos, zone) {
 
 // ===================== ORCHESTRATION D'UNE POSSESSION =====================
 // params: {
-//   side, attackers, defenders, gk, atkAnchors, defAnchors,
+//   side, attackers, defenders, gk, ownGK?, atkAnchors, defAnchors,
 //   attackPlanKey, attackMod, defenseMod,
-//   earlyPhaseBoost, withSequence, staminaFactorFor(playerId) -> multiplicateur de fatigue (0.85-1)
+//   earlyPhaseBoost, withSequence, staminaFactorFor(playerId) -> multiplicateur de fatigue (0.85-1),
+//   initialState?: {carrierId, ball, positions, isCounter, isHighRecovery, restartType}
 // }
 // Renvoie { outcome, scorer, assister, gk, xG, leadIn, recoveryLine, foul, beats, touchedIds,
 //           attackStats:{shots,shotsOnTarget,passesAttempted,passesCompleted,clearances,possessionActions},
-//           defenseStats:{interceptions,tacklesWon,fouls} }
+//           defenseStats:{interceptions,tacklesWon,fouls},
+//           endState:{carrierId,ball,positions,nextSide,restartType,releasePoint,isCounter,isHighRecovery} }
+// "retained" signifie que le budget d'actions est écoulé sans perte de possession.
+// releasePoint est le dernier point réellement atteint ; ball peut être le point de
+// reprise réglementaire suivant (engagement/dégagement du gardien). Chaque beat animé
+// contient positionsBefore/positionsAfter, utilisés aussi par la chorégraphie.
 function simulatePossessionChain(params) {
   const {
     side, attackers, defenders, gk, atkAnchors, defAnchors,
     attackPlanKey, attackMod, defenseMod, earlyPhaseBoost, withSequence,
     staminaFactorFor
   } = params;
+  const initial = params.initialState || null;
+  const mentality = params.mentality || "balanced";
+  const defenseMentality = params.defenseMentality || "balanced";
+  const ownGK = params.ownGK || attackers.find(p => p.pos === "GK") || null;
   const oppSide = side === "home" ? "away" : "home";
   const beats = withSequence ? [] : null;
   const touchedIds = new Set();
   const attackStats = { shots: 0, shotsOnTarget: 0, passesAttempted: 0, passesCompleted: 0, clearances: 0, possessionActions: 0 };
   const defenseStats = { interceptions: 0, tacklesWon: 0, fouls: 0 };
-
   const fieldAttackers = attackers.filter(p => p.pos !== "GK");
-  if (!fieldAttackers.length) return { outcome: "none", beats: beats || [], attackStats, defenseStats, touchedIds: [], xG: 0 };
+  const attackingPlayers = ownGK ? fieldAttackers.concat(ownGK) : fieldAttackers;
+  const allPlayers = attackingPlayers.concat(defenders, gk ? [gk] : []);
+  const playerById = new Map(allPlayers.map(p => [p.id, p]));
+  const positions = {};
+  const copyPoint = p => ({ x: clamp(p.x, 0, PITCH_W), y: clamp(p.y, 0, PITCH_H) });
+  const snapshot = () => Object.fromEntries(Object.entries(positions).map(([id, p]) => [id, copyPoint(p)]));
+  [atkAnchors, defAnchors, initial && initial.positions].forEach(source => {
+    Object.entries(source || {}).forEach(([id, p]) => {
+      if (playerById.has(id) && p && Number.isFinite(p.x) && Number.isFinite(p.y)) positions[id] = copyPoint(p);
+    });
+  });
+  if (ownGK && !positions[ownGK.id]) positions[ownGK.id] = { x: 50, y: gkAnchorY(side) };
+  if (gk && !positions[gk.id]) positions[gk.id] = { x: 50, y: gkAnchorY(oppSide) };
+  allPlayers.forEach(p => {
+    if (!positions[p.id]) positions[p.id] = { x: 50, y: p.pos === "GK" ? gkAnchorY(p === ownGK ? side : oppSide) : 50 };
+  });
 
-  let carrier = pickCarrierWeighted(fieldAttackers);
+  if (!fieldAttackers.length && !ownGK) {
+    return { outcome: "none", beats: beats || [], attackStats, defenseStats, touchedIds: [], xG: 0,
+      endState: { carrierId: null, ball: initial && initial.ball ? copyPoint(initial.ball) : { x: 50, y: 50 },
+        positions: snapshot(), nextSide: oppSide, restartType: "looseBall", isCounter: false, isHighRecovery: false } };
+  }
+
+  let carrier = initial && attackingPlayers.find(p => p.id === initial.carrierId);
+  if (!carrier && initial && initial.ball) {
+    carrier = [...fieldAttackers].sort((a, b) =>
+      Math.hypot(positions[a.id].x - initial.ball.x, positions[a.id].y - initial.ball.y)
+      - Math.hypot(positions[b.id].x - initial.ball.x, positions[b.id].y - initial.ball.y))[0];
+  }
+  carrier = carrier || pickCarrierWeighted(fieldAttackers) || ownGK;
+  let pos = initial && initial.ball ? copyPoint(initial.ball) : copyPoint(positions[carrier.id]);
+  positions[carrier.id] = copyPoint(pos);
   touchedIds.add(carrier.id);
-  const hasPassOptions = fieldAttackers.length >= 2; // au moins un coéquipier de champ à qui passer
-  let pos = Object.assign({}, atkAnchors[carrier.id] || { x: 50, y: side === "home" ? 30 : 70 });
   const startZone = fieldZone(pos, side);
-  const isCounter = startZone === "own";
-  const isHighRecovery = startZone === "final";
-  const recoveryLine = buildRecoveryLine(carrier, pos, startZone);
+  const isCounter = initial ? !!initial.isCounter : startZone === "own";
+  const isHighRecovery = initial ? !!initial.isHighRecovery : startZone === "final";
+  const recoveryLine = initial && !isCounter && !isHighRecovery ? null : buildRecoveryLine(carrier, pos, startZone);
   let lastActionType = null;
   let assister = null;
-  let outcome = "turnover";
-  let foul = null; // { severity: "yellow"|"penalty", by: défenseur, against: attaquant } — voir plus bas
+  let outcome = "retained";
+  let foul = null;
   let scorer = null, finalGk = gk || null, shotXG = 0, leadIn = null;
+  let terminal = null;
+  const staminaFor = p => (staminaFactorFor ? staminaFactorFor(p.id) : 1) * (attackMod || 1);
+  const playerSpeed = p => MATCH_BALANCE.pass.interceptionMaxSpeed
+    * clamp(0.6 + (p && Number.isFinite(p.speed) ? p.speed : 60) / 250, 0.6, 1);
+  function shadowPos(defender) { return positions[defender.id] || { x: 50, y: 50 }; }
 
-  // Multiplicateur d'efficacité appliqué au porteur pour CHAQUE action (pas seulement le tir) :
-  // fatigue individuelle (staminaFactorFor) x niveau/tactique/avantage du terrain de son équipe
-  // (attackMod, voir engine.js:simulateMinute) — sans ça, `attackMod` ne pesait que sur l'xG et le
-  // niveau d'une équipe n'avait presque aucun effet sur la tenue de balle ou les dribbles.
-  const staminaFor = (p) => (staminaFactorFor ? staminaFactorFor(p.id) : 1) * (attackMod || 1);
+  // Le moteur et l'animation partagent désormais les mêmes positions avant/après
+  // chaque action. Les joueurs sans ballon rejoignent des appuis ou leur bloc
+  // progressivement ; le porteur reste fixé au ballon pendant un pressing.
+  function emitBeat(beat, updates, freeze) {
+    updates = updates || {};
+    const before = beats ? snapshot() : null;
+    Object.entries(updates).forEach(([id, target]) => {
+      const origin = positions[id];
+      if (origin) beat.duration = Math.max(beat.duration,
+        Math.hypot(target.x - origin.x, target.y - origin.y) / playerSpeed(playerById.get(id)));
+    });
+    const ballAtEnd = beat.type === "press" ? pos : beat.to;
+    if (!freeze) {
+      allPlayers.forEach(player => {
+        if (player.id === carrier.id || updates[player.id]) return;
+        const current = positions[player.id];
+        const attacking = attackingPlayers.some(p => p.id === player.id);
+        const base = (attacking ? atkAnchors : defAnchors)[player.id] || current;
+        let target;
+        if (player.pos === "GK") {
+          target = { x: clamp(50 + (ballAtEnd.x - 50) * 0.12, 42, 58),
+            y: gkAnchorY(attacking ? side : oppSide) };
+        } else {
+          const lateral = clamp((ballAtEnd.x - base.x) * (attacking ? 0.22 : 0.38), -14, 14);
+          const depth = attacking ? (ballAtEnd.y - 50) * 0.18 : (ballAtEnd.y - base.y) * 0.12;
+          const teamMentality = attacking ? mentality : defenseMentality;
+          const teamSide = attacking ? side : oppSide;
+          const depthIntent = teamMentality === "attacking" ? 4 : teamMentality === "cautious" ? -4 : 0;
+          const mentalityShift = depthIntent * (teamSide === "home" ? 1 : -1);
+          target = { x: clamp(base.x + lateral, 3, 97), y: clamp(base.y + depth + mentalityShift, 3, 97) };
+        }
+        const distance = Math.hypot(target.x - current.x, target.y - current.y);
+        const step = Math.min(1, playerSpeed(player) * beat.duration / Math.max(0.001, distance));
+        positions[player.id] = lerpPoint(current, target, step);
+      });
+    }
+    Object.entries(updates).forEach(([id, target]) => { positions[id] = copyPoint(target); });
+    if (beats) {
+      beat.positionsBefore = before;
+      beat.positionsAfter = snapshot();
+      beats.push(beat);
+    }
+    return beat;
+  }
 
-  // Position "engagée" de chaque défenseur pendant CETTE possession (voir plus bas) : un défenseur
-  // qui presse le porteur avance réellement vers lui, action après action, au lieu de rester figé
-  // sur son ancre de formation jusqu'au tacle/à l'interception — il s'y replace ensuite normalement
-  // entre deux possessions (lissage habituel de matchchoreo.js vers l'ancre "sans balle").
-  const defShadow = {};
-  function shadowPos(defender) { return defShadow[defender.id] || defAnchors[defender.id] || { x: 50, y: 50 }; }
+  function finish(nextSide, carrierId, ball, restartType, releasePoint) {
+    const liveRecovery = nextSide !== side && !restartType;
+    const zone = fieldZone(ball, nextSide);
+    terminal = { nextSide, carrierId: carrierId || null, ball: copyPoint(ball),
+      restartType: restartType || null, releasePoint: copyPoint(releasePoint || ball),
+      isCounter: liveRecovery && zone === "own",
+      isHighRecovery: liveRecovery && zone === "final" };
+  }
+
+  function keeperRestart(releasePoint) {
+    const ball = finalGk ? { x: 50, y: gkAnchorY(oppSide) } : { x: 50, y: oppSide === "home" ? 8 : 92 };
+    finish(oppSide, finalGk && finalGk.id, ball, "goalKick", releasePoint);
+  }
 
   function losePass(kind, target, duration) {
-    const positions = Object.assign({}, defAnchors, defShadow);
     const interception = findPassInterception(pos, target, defenders, positions, duration);
     const end = interception ? interception.point : overhitPassExit(pos, target);
-    if (interception) {
-      defenseStats.interceptions++;
-      touchedIds.add(interception.defender.id);
-    }
-    if (!beats) return;
     const intendedDistance = Math.hypot(target.x - pos.x, target.y - pos.y);
     const actualDistance = Math.hypot(end.x - pos.x, end.y - pos.y);
     const flightDuration = interception ? duration * interception.fraction
       : duration * Math.max(1, actualDistance / Math.max(1, intendedDistance));
     const flight = makeBeat(kind, side, carrier.id, null, pos, end, flightDuration);
+    const updates = {};
     if (interception) {
+      defenseStats.interceptions++;
+      touchedIds.add(interception.defender.id);
       flight.interceptorId = interception.defender.id;
-      flight.interceptorFrom = { x: interception.origin.x, y: interception.origin.y };
-      flight.interceptorTo = { x: end.x, y: end.y };
+      flight.interceptorFrom = copyPoint(interception.origin);
+      flight.interceptorTo = copyPoint(end);
+      updates[interception.defender.id] = end;
     }
-    beats.push(flight);
-    // Le ballon est gagné au point de contact, jamais ramené sur l'ancienne ancre.
-    beats.push(makeBeat(interception ? "interception" : "out", oppSide,
-      interception ? interception.defender.id : null, null, end, end, MATCH_BALANCE.beatDurations.interception));
+    emitBeat(flight, updates);
+    emitBeat(makeBeat(interception ? "interception" : "out", oppSide,
+      interception ? interception.defender.id : null, null, end, end, MATCH_BALANCE.beatDurations.interception),
+      interception ? { [interception.defender.id]: end } : {}, true);
+    if (interception) {
+      finish(oppSide, interception.defender.id, end, null);
+    } else if (end.y === attackingGoalY(side)) {
+      keeperRestart(end);
+    } else {
+      finish(oppSide, null, end, end.y === ownGoalY(side) ? "corner" : "kickIn");
+    }
   }
 
   let actionsLeft = MATCH_BALANCE.chain.maxActions;
   while (actionsLeft-- > 0) {
     attackStats.possessionActions++;
-    const effectiveDefPos = Object.keys(defShadow).length ? Object.assign({}, defAnchors, defShadow) : defAnchors;
-    const { defender: nearestDef, distance } = nearestDefenderInfo(pos, defenders, effectiveDefPos);
+    const { defender: nearestDef, distance } = nearestDefenderInfo(pos, defenders, positions);
     const pressure = clamp(computePressure(distance) * (defenseMod || 1), 0, 1);
     const zone = fieldZone(pos, side);
-
-    // Le défenseur le plus proche avance concrètement vers le porteur dès qu'il est à portée de
-    // pressing (voir MATCH_BALANCE.pressing) — la distance ainsi réduite alimente directement la
-    // pression ressentie ci-dessus à la PROCHAINE action, cohérent aussi bien pour le match IA
-    // instantané que pour l'animation (les beats "press" ne sont émis que si withSequence).
     if (nearestDef) {
       const P = MATCH_BALANCE.pressing;
       if (pressure > P.engageThreshold) {
         const engaged = shadowPos(nearestDef);
         const stepTarget = lerpPoint(engaged, pos, P.stepFraction);
         if (Math.hypot(stepTarget.x - engaged.x, stepTarget.y - engaged.y) > P.minStepDistance) {
-          if (beats) beats.push(makeBeat("press", oppSide, nearestDef.id, null, engaged, stepTarget, MATCH_BALANCE.beatDurations.press));
-          defShadow[nearestDef.id] = stepTarget;
+          emitBeat(makeBeat("press", oppSide, nearestDef.id, null, engaged, stepTarget, MATCH_BALANCE.beatDurations.press),
+            { [nearestDef.id]: stepTarget });
         }
       }
     }
 
-    const decision = chooseActionType({ carrier, zone, pressure, attackPlanKey, pos, side, actionsLeft, hasPassOptions });
+    const hasPassOptions = fieldAttackers.some(p => p.id !== carrier.id);
+    const decision = chooseActionType({ carrier, zone, pressure, attackPlanKey, mentality, pos, side, actionsLeft, hasPassOptions });
 
     if (decision === "shot") {
       attackStats.shots++;
-      const faceToFace = (lastActionType === "through") && pressure < 0.3;
+      const faceToFace = lastActionType === "through" && pressure < 0.3;
       const numericSuperiority = fieldAttackers.length > defenders.length;
       let xg = computeShotXG({
         pos, side, pressure, assistType: lastActionType, isCounter, isHighRecovery,
@@ -553,26 +657,36 @@ function simulatePossessionChain(params) {
       });
       xg = clamp(xg * (earlyPhaseBoost || 1), 0.01, 0.95);
       shotXG = xg;
-      const res = resolveShotOutcome(xg, computeFinishingRating(carrier) * staminaFor(carrier), finalGk ? computeGoalkeepingRating(finalGk) : 55, pressure);
-      const shotFrom = Object.assign({}, pos);
-      const onTarget = res !== "miss";
-      const target = pickShotTarget(side, onTarget);
-      if (beats) beats.push(makeBeat("shot", side, carrier.id, finalGk ? finalGk.id : null, shotFrom, target, MATCH_BALANCE.beatDurations.shot));
+      const res = resolveShotOutcome(xg, computeFinishingRating(carrier) * staminaFor(carrier),
+        finalGk ? computeGoalkeepingRating(finalGk) : 55, pressure);
+      const target = pickShotTarget(side, res !== "miss");
+      const keeperTarget = finalGk ? { x: clamp(target.x, 37, 63),
+        y: res === "save" ? target.y : positions[finalGk.id].y } : null;
+      emitBeat(makeBeat("shot", side, carrier.id, finalGk ? finalGk.id : null, pos, target, MATCH_BALANCE.beatDurations.shot),
+        finalGk ? { [finalGk.id]: keeperTarget } : {});
       scorer = carrier;
+      leadIn = buildLeadIn(lastActionType, assister, scorer);
       if (res === "goal") {
         attackStats.shotsOnTarget++;
         outcome = "goal";
-        leadIn = buildLeadIn(lastActionType, assister, scorer);
-        if (beats) beats.push(makeBeat("goal", side, carrier.id, finalGk ? finalGk.id : null, target, { x: target.x, y: attackingGoalY(side) }, MATCH_BALANCE.beatDurations.outcome));
+        const goalPoint = { x: target.x, y: attackingGoalY(side) };
+        emitBeat(makeBeat("goal", side, carrier.id, finalGk ? finalGk.id : null,
+          target, goalPoint, MATCH_BALANCE.beatDurations.outcome), {}, true);
+        finish(oppSide, null, { x: 50, y: 50 }, "kickoff", goalPoint);
       } else if (res === "save") {
         attackStats.shotsOnTarget++;
         outcome = "save";
-        leadIn = buildLeadIn(lastActionType, assister, scorer);
-        if (beats) beats.push(makeBeat("save", side, carrier.id, finalGk ? finalGk.id : null, target, target, MATCH_BALANCE.beatDurations.outcome));
+        emitBeat(makeBeat("save", side, carrier.id, finalGk ? finalGk.id : null,
+          target, target, MATCH_BALANCE.beatDurations.outcome), finalGk ? { [finalGk.id]: target } : {}, true);
+        finish(oppSide, finalGk && finalGk.id, target, finalGk ? null : "looseBall");
+        // Un arrêt construit une nouvelle relance, pas une contre-attaque déjà lancée.
+        terminal.isCounter = false;
+        terminal.isHighRecovery = false;
       } else {
         outcome = "miss";
-        leadIn = buildLeadIn(lastActionType, assister, scorer);
-        if (beats) beats.push(makeBeat("miss", side, carrier.id, finalGk ? finalGk.id : null, target, target, MATCH_BALANCE.beatDurations.outcome));
+        emitBeat(makeBeat("miss", side, carrier.id, finalGk ? finalGk.id : null,
+          target, target, MATCH_BALANCE.beatDurations.outcome), {}, true);
+        keeperRestart(target);
       }
       break;
     }
@@ -581,21 +695,31 @@ function simulatePossessionChain(params) {
       attackStats.clearances++;
       outcome = "clearance";
       const target = clearTarget(pos, side);
-      if (beats) beats.push(makeBeat("clear", side, carrier.id, null, pos, target, MATCH_BALANCE.beatDurations.clear));
+      const flightTime = MATCH_BALANCE.beatDurations.clear;
+      const receiver = nearestDefenderInfo(target, defenders, positions);
+      const canReach = receiver.defender
+        && receiver.distance <= MATCH_BALANCE.pass.interceptionControlRadius + playerSpeed(receiver.defender) * flightTime;
+      const updates = canReach ? { [receiver.defender.id]: target } : {};
+      emitBeat(makeBeat("clear", side, carrier.id, null, pos, target, flightTime), updates);
+      finish(oppSide, canReach ? receiver.defender.id : null, target, canReach ? null : "looseBall");
       break;
     }
 
     if (decision === "cross") {
-      const boxTarget = pickBoxTarget(fieldAttackers, carrier, atkAnchors, side);
-      if (!boxTarget) { outcome = "turnover"; break; }
+      const boxTarget = pickBoxTarget(fieldAttackers, carrier, positions, side);
+      if (!boxTarget) break;
       attackStats.passesAttempted++;
-      const chance = resolvePassChance("cross", carrier, pressure, nearestDef ? computeDefendingRating(nearestDef) : null, staminaFor(carrier));
+      const chance = resolvePassChance("cross", carrier, pressure,
+        nearestDef ? computeDefendingRating(nearestDef) : null, staminaFor(carrier));
       if (Math.random() < chance) {
         attackStats.passesCompleted++;
         touchedIds.add(boxTarget.p.id);
-        if (beats) beats.push(makeBeat("cross", side, carrier.id, null, pos, boxTarget.a, MATCH_BALANCE.beatDurations.cross, boxTarget.p.id));
+        const target = copyPoint(boxTarget.a);
+        emitBeat(makeBeat("cross", side, carrier.id, null, pos, target,
+          MATCH_BALANCE.beatDurations.cross, boxTarget.p.id), { [boxTarget.p.id]: target });
+        positions[carrier.id] = copyPoint(pos);
         assister = carrier; lastActionType = "cross";
-        carrier = boxTarget.p; pos = Object.assign({}, boxTarget.a);
+        carrier = boxTarget.p; pos = target;
         continue;
       }
       outcome = "turnover";
@@ -607,53 +731,56 @@ function simulatePossessionChain(params) {
       const advance = advancedPoint(pos, side, MATCH_BALANCE.dribble.advanceDistance);
       const duelDistance = nearestDef ? Math.hypot(shadowPos(nearestDef).x - pos.x, shadowPos(nearestDef).y - pos.y) : Infinity;
       if (!nearestDef || duelDistance > MATCH_BALANCE.dribble.duelDistance) {
-        if (beats) beats.push(makeBeat("carry", side, carrier.id, null, pos, advance, MATCH_BALANCE.beatDurations.carry));
+        emitBeat(makeBeat("carry", side, carrier.id, null, pos, advance, MATCH_BALANCE.beatDurations.carry),
+          { [carrier.id]: advance });
         pos = advance; lastActionType = "carry";
         continue;
       }
       const chance = resolveDribbleChance(carrier, nearestDef, staminaFor(carrier), duelDistance);
       if (Math.random() < chance) {
-        if (beats) beats.push(makeBeat("dribble", side, carrier.id, null, pos, advance, MATCH_BALANCE.beatDurations.dribble));
+        emitBeat(makeBeat("dribble", side, carrier.id, null, pos, advance, MATCH_BALANCE.beatDurations.dribble),
+          { [carrier.id]: advance });
         pos = advance; lastActionType = "dribble";
         continue;
       }
-      if (nearestDef) touchedIds.add(nearestDef.id);
-      const tacklePos = nearestDef ? shadowPos(nearestDef) : advance;
-      // Un tacle raté par le dribbleur peut être une vraie FAUTE plutôt qu'un tacle propre —
-      // d'autant plus probable que le défenseur est nettement dominé (voir computeFoulChance).
-      // Dans la surface, la faute devient un penalty pour l'attaque (résolu par engine.js via
-      // performPenaltyAttempt, comme le penalty aléatoire existant) ; ailleurs, un carton jaune.
-      if (nearestDef && Math.random() < computeFoulChance(nearestDef, carrier, pressure)) {
+      touchedIds.add(nearestDef.id);
+      if (Math.random() < computeFoulChance(nearestDef, carrier, pressure)) {
         defenseStats.fouls++;
         outcome = "foul";
         foul = { severity: isInPenaltyBox(pos, side) ? "penalty" : "yellow", by: nearestDef, against: carrier };
+        finish(side, carrier.id, pos, foul.severity === "penalty" ? "penalty" : "freeKick");
       } else {
         outcome = "turnover";
         defenseStats.tacklesWon++;
+        finish(oppSide, nearestDef.id, pos, null);
       }
-      if (beats) beats.push(makeBeat("tackle", oppSide, nearestDef ? nearestDef.id : null, null, pos, tacklePos, MATCH_BALANCE.beatDurations.tackle));
+      emitBeat(makeBeat("tackle", oppSide, nearestDef.id, null, pos, pos, MATCH_BALANCE.beatDurations.tackle),
+        { [nearestDef.id]: pos });
       break;
     }
 
     if (decision === "carry") {
       const advance = advancedPoint(pos, side, MATCH_BALANCE.carry.advanceDistance);
-      if (beats) beats.push(makeBeat("carry", side, carrier.id, null, pos, advance, MATCH_BALANCE.beatDurations.carry));
+      emitBeat(makeBeat("carry", side, carrier.id, null, pos, advance, MATCH_BALANCE.beatDurations.carry),
+        { [carrier.id]: advance });
       pos = advance; lastActionType = "carry";
       continue;
     }
 
-    // passes (short / progressive / through)
-    const receiver = pickPassTarget(decision, side, fieldAttackers, carrier, atkAnchors, pos);
-    if (!receiver) { outcome = "turnover"; break; }
+    const receiver = pickPassTarget(decision, side, fieldAttackers, carrier, positions, pos, defenders, positions);
+    if (!receiver) break;
     attackStats.passesAttempted++;
-    const targetPos = atkAnchors[receiver.id] || pos;
-    const chance = resolvePassChance(decision, carrier, pressure, nearestDef ? computeDefendingRating(nearestDef) : null, staminaFor(carrier));
+    const targetPos = copyPoint(positions[receiver.id]);
+    const chance = resolvePassChance(decision, carrier, pressure,
+      nearestDef ? computeDefendingRating(nearestDef) : null, staminaFor(carrier));
     if (Math.random() < chance) {
       attackStats.passesCompleted++;
       touchedIds.add(receiver.id);
-      if (beats) beats.push(makeBeat("pass", side, carrier.id, null, pos, targetPos, MATCH_BALANCE.beatDurations[decision], receiver.id));
+      emitBeat(makeBeat("pass", side, carrier.id, null, pos, targetPos,
+        MATCH_BALANCE.beatDurations[decision], receiver.id), { [receiver.id]: targetPos });
+      positions[carrier.id] = copyPoint(pos);
       assister = carrier; lastActionType = decision;
-      carrier = receiver; pos = Object.assign({}, targetPos);
+      carrier = receiver; pos = targetPos;
       continue;
     }
     outcome = "turnover";
@@ -661,11 +788,13 @@ function simulatePossessionChain(params) {
     break;
   }
 
+  const endState = terminal || { carrierId: carrier.id, ball: copyPoint(pos), releasePoint: copyPoint(pos),
+    nextSide: side, restartType: null, isCounter, isHighRecovery };
+  endState.positions = snapshot();
   return {
     outcome, scorer, assister: (assister && scorer && assister.id === scorer.id) ? null : assister,
     gk: finalGk, xG: shotXG, leadIn, recoveryLine, foul,
-    beats: beats || [], touchedIds: Array.from(touchedIds),
-    attackStats, defenseStats
+    beats: beats || [], touchedIds: Array.from(touchedIds), attackStats, defenseStats, endState
   };
 }
 

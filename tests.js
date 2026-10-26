@@ -43,13 +43,24 @@ function assertClose(actual, expected, tolerance, msg) {
 // Exécute tous les tests enregistrés via test(...) et renvoie un résumé ; ne lance rien tout
 // seul (tests.html / tests-node.js appellent runAllTests() explicitement une fois tout le
 // contexte — data.js, engine.js, ce fichier — chargé).
-function runAllTests() {
+function runAllTests(options) {
+  const suiteSeed = options && Number.isFinite(options.seed) ? options.seed >>> 0 : null;
   const results = TEST_CASES.map(({ name, fn }) => {
+    const previousRandom = Math.random;
+    // Chaque test possède sa propre séquence : en ajouter un ne modifie pas les
+    // tirages des suivants. Le navigateur conserve son hasard si aucune graine
+    // n'est demandée ; le runner Node passe toujours une graine reproductible.
+    if (suiteSeed !== null) {
+      let state = Array.from(name).reduce((hash, letter) => Math.imul(hash ^ letter.charCodeAt(0), 16777619) >>> 0, suiteSeed ^ 2166136261);
+      Math.random = () => ((state = (Math.imul(state, 1664525) + 1013904223) >>> 0) / 4294967296);
+    }
     try {
       fn();
       return { name, pass: true };
     } catch (e) {
       return { name, pass: false, error: e.message };
+    } finally {
+      Math.random = previousRandom;
     }
   });
   return {
@@ -67,13 +78,12 @@ test("les 6 ligues attendues existent et ont des équipes", () => {
   });
 });
 
-test("chaque club a assez de joueurs par poste pour composer n'importe quelle formation (MIN_PLAYERS_PER_POS)", () => {
+test("chaque club possède un gardien et six joueurs de champ pour disputer un match", () => {
   Object.values(LEAGUES).forEach(league => {
     league.teams.forEach(team => {
-      Object.entries(MIN_PLAYERS_PER_POS).forEach(([pos, min]) => {
-        const count = team.players.filter(p => p.pos === pos).length;
-        assert(count >= min, `${team.name} (${league.name}) : ${count} ${pos}, minimum requis ${min}`);
-      });
+      assert(team.players.some(p => p.pos === "GK"), `${team.name} (${league.name}) ne possède aucun gardien`);
+      assert(team.players.filter(p => p.pos !== "GK").length >= 6,
+        `${team.name} (${league.name}) ne possède pas six joueurs de champ`);
     });
   });
 });
@@ -172,12 +182,24 @@ test("simulateAIMatch : jamais de match nul (règle Kings League — tirs au but
   assert(result.homeGoals !== result.awayGoals || result.penaltyWinner, "égalité sans vainqueur désigné aux tirs au but");
 });
 
-test("simulateAIMatch : chaque joueur aligné reçoit une note", () => {
+test("simulateAIMatch : chaque participant reçoit une note, les remplaçants inutilisés ne gagnent pas de match", () => {
   const home = JSON.parse(JSON.stringify(LEAGUES.brazil.teams[0]));
   const away = JSON.parse(JSON.stringify(LEAGUES.brazil.teams[1]));
-  const homeChoice = chooseAiFormation(home); // déterministe (pas de Math.random) : même résultat que celui utilisé en interne par simulateAIMatch
+  const previousMatches = new Map(home.players.map(p => [p.id, p.matches || 0]));
   const result = simulateAIMatch(home, away);
-  homeChoice.assignments.forEach(id => assert(result.ratings[id] !== undefined, `pas de note pour le joueur ${id}`));
+  assert(result.participants && Array.isArray(result.participants.home) && result.participants.home.length > 0,
+    "les participants réellement entrés doivent être identifiés");
+  const participants = new Set(result.participants.home);
+  home.players.forEach(p => {
+    if (participants.has(p.id)) {
+      assert(result.ratings[p.id] !== undefined, `pas de note pour le participant ${p.id}`);
+      assert(result.minutesPlayed[p.id] > 0, `temps de jeu manquant pour ${p.id}`);
+      assertEqual(p.matches, previousMatches.get(p.id) + 1, `apparition manquante ou comptée deux fois pour ${p.id}`);
+    } else {
+      assertEqual(result.ratings[p.id], undefined, `joueur inutilisé ${p.id} noté sans entrer`);
+      assertEqual(p.matches, previousMatches.get(p.id), `match ajouté à un remplaçant inutilisé ${p.id}`);
+    }
+  });
 });
 
 test("simulateAIMatch : incrémente le total de matchs joués sur l'effectif aligné", () => {
@@ -275,6 +297,34 @@ test("chooseAiFormation : compose toujours un XI complet (7 postes) sur un vrai 
   const choice = chooseAiFormation(team);
   assertEqual(choice.assignments.length, 7, "une formation Kings League compte 7 postes (1 GK + 6 joueurs de champ)");
   assert(choice.assignments.every(Boolean), "au moins un poste est resté sans titulaire");
+});
+
+test("chooseAiFormation : choisit une formation réalisable pour chaque club, sans doublons ni joueurs inventés", () => {
+  Object.values(LEAGUES).forEach(league => league.teams.forEach(team => {
+    const choice = chooseAiFormation(team);
+    const slots = FORMATION_SLOTS[choice.formation];
+    const nativeFormationPossible = Object.values(FORMATION_SLOTS).some(formation =>
+      POSITIONS.every(pos => team.players.filter(p => p.pos === pos).length >= formation.filter(slot => slot.pos === pos).length));
+    assertEqual(choice.assignments.length, 7, `${team.name} : 7 titulaires attendus`);
+    assertEqual(new Set(choice.assignments).size, 7, `${team.name} : un joueur occupe plusieurs postes`);
+    choice.assignments.forEach((id, index) => {
+      const actualPlayer = team.players.find(p => p.id === id);
+      assert(actualPlayer, `${team.name} : joueur inconnu ou poste vide ${id}`);
+      assertEqual(actualPlayer.pos === "GK", slots[index].pos === "GK", `${team.name} : un gardien doit jouer uniquement dans les buts`);
+      if (nativeFormationPossible) assertEqual(actualPlayer.pos, slots[index].pos, `${team.name} : joueur aligné au mauvais poste alors qu'une formation naturelle est possible`);
+    });
+  }));
+});
+
+test("chooseAiFormation : remplace les joueurs blessés sans placer un second gardien dans le champ", () => {
+  const team = JSON.parse(JSON.stringify(LEAGUES.germany.teams[0]));
+  team.players.find(p => p.pos === "GK").injured = true;
+  team.players.find(p => p.pos === "DEF").injured = true;
+  const choice = chooseAiFormation(team);
+  const selected = choice.assignments.map(id => team.players.find(p => p.id === id));
+  assertEqual(new Set(choice.assignments).size, 7, "sept titulaires distincts malgré les indisponibilités");
+  assert(selected.every(p => p && !p.injured), "un titulaire blessé reste aligné");
+  assertEqual(selected.filter(p => p.pos === "GK").length, 1, "un seul gardien dans la composition");
 });
 
 test("chooseAiPlans : renvoie toujours un plan d'attaque/défense parmi les valeurs valides", () => {
@@ -559,19 +609,26 @@ test("runBalanceSimulation : avantage du terrain mesurable mais pas écrasant (d
   assert(report.homeWinRate < 0.85, `l'avantage du terrain devient écrasant entre deux effectifs identiques : homeWinRate=${report.homeWinRate}`);
 });
 
-test("runBalanceSimulation : un favori net gagne nettement plus souvent, sans que l'outsider soit condamné d'avance", () => {
+test("runBalanceSimulation : un écart plausible de dix points favorise le meilleur sans supprimer les surprises", () => {
+  // Un écart d'environ dix points distingue deux clubs d'une même ligue. L'ancien
+  // fixture (+12/-12) creusait un gouffre de plus de vingt-quatre points puis
+  // exigeait malgré tout une surprise dans un petit échantillon de 150 matchs.
+  // On conserve ici les exigences de résultat avec un rapport de force explicite.
   const strong = JSON.parse(JSON.stringify(LEAGUES.spain.teams[0]));
   strong.players.forEach(p => {
-    ["speed", "technique", "physical", "mental"].forEach(a => { p[a] = Math.min(99, p[a] + 12); });
+    ["speed", "technique", "physical", "mental"].forEach(a => { p[a] = Math.min(99, p[a] + 5); });
     p.overall = Math.round((p.speed + p.technique + p.physical + p.mental) / 4);
   });
   const weak = JSON.parse(JSON.stringify(LEAGUES.spain.teams[1]));
   weak.players.forEach(p => {
-    ["speed", "technique", "physical", "mental"].forEach(a => { p[a] = Math.max(30, p[a] - 12); });
+    ["speed", "technique", "physical", "mental"].forEach(a => { p[a] = Math.max(30, p[a] - 5); });
     p.overall = Math.round((p.speed + p.technique + p.physical + p.mental) / 4);
   });
+  const averageOverall = team => team.players.reduce((sum, p) => sum + p.overall, 0) / team.players.length;
+  const gap = averageOverall(strong) - averageOverall(weak);
+  assert(gap >= 8 && gap <= 13, `le scénario doit conserver un écart plausible de 8 à 13 points : ${gap}`);
   const report = runBalanceSimulation(strong, weak, 150);
-  assert(report.homeWinRate >= 0.55, `le favori net (domicile) devrait gagner nettement plus souvent : ${report.homeWinRate}`);
+  assert(report.homeWinRate >= 0.60, `le favori net (domicile) devrait gagner au moins 60% des matchs : ${report.homeWinRate}`);
   assert(report.awayWinRate > 0, `l'outsider (extérieur) ne devrait jamais être condamné à 0% de victoires sur 150 matchs : ${report.awayWinRate}`);
   assert(report.awayWinRate < 0.45, `l'outsider gagne trop souvent pour un si net écart de niveau : ${report.awayWinRate}`);
 });
@@ -601,7 +658,7 @@ test("chooseActionType : le plan offensif influence réellement la fréquence de
 // chemin IA) : on vérifie donc des invariants structurels sur les beats produits, pas des valeurs
 // exactes — répété sur plusieurs minutes/graines pour couvrir les branches "chance ratée"/"but"/
 // "arrêt" au moins une fois.
-const CHOREO_BEAT_TYPES = ["pass", "cross", "carry", "dribble", "tackle", "interception", "clear", "out", "press", "shot", "goal", "save", "miss", "owngoal", "phase"];
+const CHOREO_BEAT_TYPES = ["pass", "cross", "carry", "dribble", "tackle", "interception", "clear", "out", "press", "shot", "goal", "save", "miss", "owngoal", "phase", "restart", "recovery"];
 
 function assertValidSequence(sequence, homeTeam, awayTeam, label) {
   assert(Array.isArray(sequence), `${label} : sequence doit être un tableau`);

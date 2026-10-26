@@ -13,7 +13,7 @@ let STATE = {
   pendingResult: null,
   mercatoOpen: false,
   shortlist: [],        // ids de joueurs (n'importe quelle ligue) ajoutés à la liste de suivi
-  savedTactic: null,    // { formation, assignments, attackPlan, defensePlan }
+  savedTactic: null,    // { formation, assignments, attackPlan, defensePlan, mentality }
   currentSlotId: null,  // identifiant de la carrière active (parmi plusieurs)
   seasonPrizeAwarded: false, // évite de créditer deux fois la prime de fin de saison (voir awardSeasonPrizeMoney)
   lastSeasonPrize: null,     // détail de la dernière prime versée, pour l'affichage dans le panneau "Saison terminée"
@@ -2412,19 +2412,7 @@ let tacticsSetup = null;
 
 // Choisit automatiquement les meilleurs joueurs disponibles pour chaque poste de la formation
 function autoAssignFormation(formationKey) {
-  const team = getUserTeam();
-  const slots = FORMATION_SLOTS[formationKey];
-  const used = new Set();
-  return slots.map(slot => {
-    const candidates = team.players
-      .filter(p => p.pos === slot.pos && !used.has(p.id))
-      .sort((a, b) => b.overall - a.overall);
-    if (candidates.length > 0) {
-      used.add(candidates[0].id);
-      return candidates[0].id;
-    }
-    return null;
-  });
+  return sanitizeAssignments(getUserTeam(), FORMATION_SLOTS[formationKey], null);
 }
 
 // Lors d'un changement de formation, conserve les joueurs déjà placés par poste
@@ -2469,7 +2457,7 @@ function remapAssignmentsTo(team, oldFormationKey, oldAssignments, newFormationK
     }
   });
 
-  return result;
+  return sanitizeAssignments(team, newSlots, result);
 }
 
 function remapAssignments(setup, newFormationKey) {
@@ -2489,7 +2477,10 @@ function sanitizeAssignments(team, slots, rawAssignments) {
   assignments = assignments.map((id, i) => {
     if (id && validIds.has(id) && !used.has(id)) {
       const player = team.players.find(p => p.id === id);
-      if (ELIGIBLE_POS[player.pos].includes(slots[i].pos)) {
+      // Un joueur de champ peut dépanner hors poste, avec le compromis annoncé
+      // sur le terrain. Un second gardien ne devient jamais joueur de champ.
+      const isKeeperSlot = slots[i].pos === "GK";
+      if (!player.injured && (isKeeperSlot ? player.pos === "GK" : player.pos !== "GK")) {
         used.add(id);
         return id;
       }
@@ -2500,11 +2491,28 @@ function sanitizeAssignments(team, slots, rawAssignments) {
   slots.forEach((slot, i) => {
     if (assignments[i]) return;
     const candidates = team.players
-      .filter(p => p.pos === slot.pos && !used.has(p.id))
+      .filter(p => p.pos === slot.pos && !p.injured && !used.has(p.id))
       .sort((a, b) => b.overall - a.overall);
     if (candidates.length > 0) {
       used.add(candidates[0].id);
       assignments[i] = candidates[0].id;
+    }
+  });
+
+  // Certains effectifs réels ont trop peu de joueurs à un poste. On complète
+  // avec un joueur existant, d'abord polyvalent, plutôt que de bloquer à 6/7.
+  slots.forEach((slot, i) => {
+    if (assignments[i]) return;
+    const candidates = team.players
+      .filter(p => !p.injured && !used.has(p.id) && (slot.pos === "GK" ? p.pos === "GK" : p.pos !== "GK"))
+      .sort((a, b) => {
+        const aFits = (ELIGIBLE_POS[a.pos] || []).includes(slot.pos) ? 1 : 0;
+        const bFits = (ELIGIBLE_POS[b.pos] || []).includes(slot.pos) ? 1 : 0;
+        return bFits - aFits || b.overall - a.overall;
+      });
+    if (candidates.length) {
+      assignments[i] = candidates[0].id;
+      used.add(candidates[0].id);
     }
   });
 
@@ -2531,6 +2539,7 @@ function sanitizeTactic(tactic) {
     assignments,
     attackPlan: (tactic && ATTACK_PLANS[tactic.attackPlan]) ? tactic.attackPlan : "possession",
     defensePlan: (tactic && DEFENSE_PLANS[tactic.defensePlan]) ? tactic.defensePlan : "zone",
+    mentality: normalizeMentality(tactic && tactic.mentality),
     formationOOP,
     assignmentsOOP,
     // Vue du plateau tactique : "in" (avec balle), "out" (sans balle) ou "both" (les deux)
@@ -2555,6 +2564,7 @@ function saveTactic(setup) {
     assignments: [...setup.assignments],
     attackPlan: setup.attackPlan,
     defensePlan: setup.defensePlan,
+    mentality: normalizeMentality(setup.mentality),
     formationOOP: setup.formationOOP || setup.formation,
     assignmentsOOP: [...setup.assignmentsOOP],
     viewMode: setup.viewMode || "in"
@@ -2619,10 +2629,12 @@ function renderPitch(setup, ids) {
     div.style.left = slot.x + "%";
     div.style.top = slot.y + "%";
 
-    div.title = slotRoleLabel(slot);
+    div.title = slotRoleLabel(slot) + (player && player.pos !== slot.pos ? ` — ${player.name} dépanne hors de son poste habituel (${player.pos}).` : "");
     if (player) {
+      const outOfPosition = player.pos !== slot.pos ? `<span class="slot-role-warning" aria-label="Poste inhabituel" title="Poste habituel : ${player.pos}">↔ ${player.pos}</span>` : "";
       div.innerHTML = `<span class="slot-tag pos-${slot.pos}">${slotShortTag(slot)}</span>
         <span class="slot-name">${player.name}</span>
+        ${outOfPosition}
         ${renderStarRating(player.overall)}`;
     } else {
       div.innerHTML = `<span class="slot-tag pos-${slot.pos}">${slotShortTag(slot)}</span>
@@ -2948,11 +2960,57 @@ function renderPlanChoices(setup, ids) {
     div.onclick = () => { setup.defensePlan = key; renderPlanChoices(setup, ids); saveTactic(setup); };
     defContainer.appendChild(div);
   });
+  renderMentalityChoices(setup, ids.mentality);
+}
+
+// Une seule consigne d'intention complète les plans d'attaque/défense. Le moteur
+// arbitre son rythme et sa prise de risque ; l'interface en annonce les compromis.
+const MATCH_MENTALITIES = {
+  cautious: { label: "Prudente", description: "Sécuriser le ballon et limiter les projections." },
+  balanced: { label: "Équilibrée", description: "Alterner conservation et progression." },
+  attacking: { label: "Offensive", description: "Accélérer et se projeter, avec plus de risques à la perte." }
+};
+
+function normalizeMentality(value) {
+  return Object.prototype.hasOwnProperty.call(MATCH_MENTALITIES, value) ? value : "balanced";
+}
+
+function renderMentalityChoices(setup, containerId) {
+  const container = document.getElementById(containerId);
+  if (!container || !setup) return;
+  setup.mentality = normalizeMentality(setup.mentality);
+  Object.entries(MATCH_MENTALITIES).forEach(([key, option]) => {
+    let button = container.querySelector(`[data-mentality="${key}"]`);
+    if (!button) {
+      button = document.createElement("button");
+      button.type = "button";
+      button.dataset.mentality = key;
+      button.className = "mentality-button";
+      button.textContent = option.label;
+      button.title = option.description;
+      container.appendChild(button);
+    }
+    const selected = setup.mentality === key;
+    button.classList.toggle("selected", selected);
+    button.setAttribute("aria-pressed", String(selected));
+    button.disabled = containerId === "live-mentality-choice" && !!(matchState && matchState.finished);
+    button.onclick = () => {
+      if (setup.mentality === key) return;
+      setup.mentality = key;
+      renderMentalityChoices(setup, containerId);
+      saveTactic(setup);
+      if (matchState && !matchState.finished && (setup === matchState.homeSetup || setup === matchState.awaySetup)) {
+        appendCommentaryEvent({ type: "tactic", text: `Consigne du banc : mentalité ${option.label.toLowerCase()} à la prochaine séquence.` });
+        renderMentalityChoices(setup, "live-mentality-choice");
+        updateMatchDashboard(false);
+      }
+    };
+  });
 }
 
 // IDs des éléments DOM pour chaque écran utilisant le plateau tactique
-const LINEUP_IDS = { formation: "formation-choice", pitch: "pitch-field", bench: "bench-list", attack: "attack-plan-choice", defense: "defense-plan-choice", count: "lineup-count", viewMode: "lineup-view-mode-choice", oopFormation: "lineup-oop-formation-choice", oopFormationWrap: "lineup-oop-formation-wrap", oopPanel: "lineup-oop-panel", oopPitch: "lineup-oop-pitch-field" };
-const TACTICS_IDS = { formation: "tactics-formation-choice", pitch: "tactics-pitch-field", bench: "tactics-bench-list", attack: "tactics-attack-plan-choice", defense: "tactics-defense-plan-choice", viewMode: "tactics-view-mode-choice", oopFormation: "tactics-oop-formation-choice", oopFormationWrap: "tactics-oop-formation-wrap", oopPanel: "tactics-oop-panel", oopPitch: "tactics-oop-pitch-field" };
+const LINEUP_IDS = { formation: "formation-choice", pitch: "pitch-field", bench: "bench-list", attack: "attack-plan-choice", defense: "defense-plan-choice", mentality: "mentality-choice", count: "lineup-count", viewMode: "lineup-view-mode-choice", oopFormation: "lineup-oop-formation-choice", oopFormationWrap: "lineup-oop-formation-wrap", oopPanel: "lineup-oop-panel", oopPitch: "lineup-oop-pitch-field" };
+const TACTICS_IDS = { formation: "tactics-formation-choice", pitch: "tactics-pitch-field", bench: "tactics-bench-list", attack: "tactics-attack-plan-choice", defense: "tactics-defense-plan-choice", mentality: "tactics-mentality-choice", viewMode: "tactics-view-mode-choice", oopFormation: "tactics-oop-formation-choice", oopFormationWrap: "tactics-oop-formation-wrap", oopPanel: "tactics-oop-panel", oopPitch: "tactics-oop-pitch-field" };
 
 // ===================== SÉLECTION DU XI (avant match) =====================
 function openLineupScreen() {
@@ -2964,7 +3022,7 @@ function openLineupScreen() {
 
   const tactic = getSavedTacticOrDefault();
   lineupSetup = {
-    lineup: [], formation: tactic.formation, attackPlan: tactic.attackPlan, defensePlan: tactic.defensePlan,
+    lineup: [], formation: tactic.formation, attackPlan: tactic.attackPlan, defensePlan: tactic.defensePlan, mentality: tactic.mentality,
     isHome, opponentId: opponent.id, userMatch,
     assignments: tactic.assignments, selectedSlot: null,
     formationOOP: tactic.formationOOP, assignmentsOOP: tactic.assignmentsOOP, viewMode: tactic.viewMode
@@ -2997,7 +3055,7 @@ function openTournamentLineupScreen(match) {
 
   const tactic = getSavedTacticOrDefault();
   lineupSetup = {
-    lineup: [], formation: tactic.formation, attackPlan: tactic.attackPlan, defensePlan: tactic.defensePlan,
+    lineup: [], formation: tactic.formation, attackPlan: tactic.attackPlan, defensePlan: tactic.defensePlan, mentality: tactic.mentality,
     isHome, opponentId: opponent.id, userMatch: null, tournamentOpponent: opponent,
     assignments: tactic.assignments, selectedSlot: null,
     formationOOP: tactic.formationOOP, assignmentsOOP: tactic.assignmentsOOP, viewMode: tactic.viewMode
@@ -3048,7 +3106,7 @@ function renderSecretCardChoice(setup) {
 function renderTacticsTab() {
   const tactic = getSavedTacticOrDefault();
   tacticsSetup = {
-    formation: tactic.formation, attackPlan: tactic.attackPlan, defensePlan: tactic.defensePlan,
+    formation: tactic.formation, attackPlan: tactic.attackPlan, defensePlan: tactic.defensePlan, mentality: tactic.mentality,
     assignments: tactic.assignments, selectedSlot: null,
     formationOOP: tactic.formationOOP, assignmentsOOP: tactic.assignmentsOOP, viewMode: tactic.viewMode,
     persist: true
@@ -3087,7 +3145,7 @@ const SHOOTOUT_TICK_MS = 1300;
 // Au-delà du temps réglementaire, le Matchball joue en prolongation jusqu'au but décisif :
 // ce plafond n'est qu'un garde-fou pour éviter une boucle infinie en cas de scénario extrême.
 const MAX_MATCH_MINUTE = 200;
-const MATCH_TACTICS_IDS = { formation: "match-formation-choice", pitch: "match-tactics-pitch-field", bench: "match-tactics-bench-list", attack: "match-attack-plan-choice", defense: "match-defense-plan-choice", viewMode: "match-tactics-view-mode-choice", oopFormation: "match-tactics-oop-formation-choice", oopFormationWrap: "match-tactics-oop-formation-wrap", oopPanel: "match-tactics-oop-panel", oopPitch: "match-tactics-oop-pitch-field" };
+const MATCH_TACTICS_IDS = { formation: "match-formation-choice", pitch: "match-tactics-pitch-field", bench: "match-tactics-bench-list", attack: "match-attack-plan-choice", defense: "match-defense-plan-choice", mentality: "match-mentality-choice", viewMode: "match-tactics-view-mode-choice", oopFormation: "match-tactics-oop-formation-choice", oopFormationWrap: "match-tactics-oop-formation-wrap", oopPanel: "match-tactics-oop-panel", oopPitch: "match-tactics-oop-pitch-field" };
 
 let matchEngine = null;
 let matchState = null;
@@ -3114,6 +3172,7 @@ function startMatch() {
   const opponent = lineupSetup.tournamentOpponent || STATE.league.teams.find(t => t.id === lineupSetup.opponentId);
 
   lineupSetup.lineup = lineupSetup.assignments.filter(Boolean);
+  lineupSetup.autoCoach = false;
 
   // l'IA adverse choisit la formation qui exploite le mieux son effectif, puis un plan
   // tactique adapté au rapport de force avec l'équipe du joueur (cf. chooseAiFormation /
@@ -3129,7 +3188,9 @@ function startMatch() {
     assignments: aiAssignments,
     formation: aiChoice.formation,
     attackPlan: aiPlans.attackPlan,
-    defensePlan: aiPlans.defensePlan
+    defensePlan: aiPlans.defensePlan,
+    mentality: normalizeMentality(aiPlans.mentality),
+    autoCoach: true
   };
 
   const homeTeam = lineupSetup.isHome ? team : opponent;
@@ -3150,7 +3211,9 @@ function startMatch() {
     minute: 0, homeTeam, awayTeam, homeSetup, awaySetup, team, opponent,
     paused: false, userPaused: false, atHalfTime: false, finished: false, subTimers: [],
     userSide, playbackSpeed: 1, sequenceActive: false, onSequenceDone: null, pendingMinute: null,
-    lastOutfieldCap: matchEngine.getOutfieldCap(0)
+    lastOutfieldCap: matchEngine.getOutfieldCap(0),
+    dashboardStats: null, dashboardUpdatedAt: 0, completedMinute: 0,
+    displayedScore: { homeGoals: 0, awayGoals: 0 }, pendingSpecialActions: []
   };
 
   // Armes secrètes : sélection du joueur + tirage IA, révélées simultanément au coup d'envoi
@@ -3193,6 +3256,8 @@ function startMatch() {
 
   choreo = createChoreographer();
   syncChoreoAnchors(0);
+  renderMentalityChoices(lineupSetup, "live-mentality-choice");
+  updateMatchDashboard(true);
   startMatchPitchLoop();
   runMinute();
 }
@@ -3204,6 +3269,7 @@ function maybeAdjustAiTactics(minute) {
   if (minute < 25 || minute % 5 !== 0) return;
   const aiSide = matchState.userSide === "home" ? "away" : "home";
   const aiSetupRef = aiSide === "home" ? matchState.homeSetup : matchState.awaySetup;
+  if (aiSetupRef.autoCoach) return; // le moteur partage désormais cette adaptation avec les matchs IA
   const score = matchEngine.getScore();
   const aiGoals = aiSide === "home" ? score.homeGoals : score.awayGoals;
   const oppGoals = aiSide === "home" ? score.awayGoals : score.homeGoals;
@@ -3460,8 +3526,8 @@ function startMatchPitchLoop() {
 // Boucle continue : fait avancer l'animation (à la vitesse de lecture choisie) tant que le match
 // n'est pas en pause, redessine à chaque frame, pousse au commentaire les événements des beats qui
 // viennent de se terminer, et déclenche onSequenceDone (chargé par playSequence) une seule fois
-// quand la séquence en cours (celle de la minute, éventuellement complétée par un beat inséré —
-// voir choreo.insertNext) est entièrement jouée.
+// quand la séquence en cours est entièrement jouée. Les actions spéciales attendent cette
+// frontière afin de respecter l'ordre réel de résolution des actions.
 function pitchFrameLoop(ts) {
   if (!choreo) return;
   if (lastPitchTs !== null && matchState && !matchState.paused) {
@@ -3469,27 +3535,36 @@ function pitchFrameLoop(ts) {
     choreo.step(dt);
     const finished = choreo.consumeFinishedEvents();
     if (finished.length) {
-      finished.forEach(appendCommentaryEvent);
-      refreshScoreDisplay();
+      finished.forEach(ev => {
+        appendCommentaryEvent(ev);
+        if (ev.score) refreshScoreDisplay(ev.score);
+      });
       updateSecretCardButton();
       updatePresidentPenaltyButton();
     }
     if (matchState.sequenceActive && choreo.isSequenceDone()) {
       matchState.sequenceActive = false;
+      matchState.completedMinute = matchState.minute;
+      refreshScoreDisplay();
+      updateMatchDashboard(true);
       const done = matchState.onSequenceDone;
       matchState.onSequenceDone = null;
       if (done) done();
     }
   }
   lastPitchTs = ts;
+  if (matchState && ts - matchState.dashboardUpdatedAt >= 300) {
+    matchState.dashboardUpdatedAt = ts;
+    updateMatchContext();
+  }
   renderMatchPitchFrame();
   pitchRaf = requestAnimationFrame(pitchFrameLoop);
 }
 
 // Charge une chorégraphie et rappelle `onDone` une fois qu'elle est entièrement jouée (utilisé
 // pour la séquence de chaque minute). Une action ponctuelle en cours de match (Arme Secrète,
-// Penalty du Président) n'appelle jamais cette fonction : elle utilise choreo.insertNext() pour
-// s'intercaler dans la séquence déjà en cours de lecture, sans perturber onSequenceDone.
+// Penalty du Président) attend la fin de l'action en cours, puis utilise sa propre
+// séquence : elle ne peut pas réécrire une possession déjà résolue par le moteur.
 function playSequence(beats, onDone) {
   matchState.sequenceActive = true;
   matchState.onSequenceDone = onDone;
@@ -3760,15 +3835,108 @@ function appendCommentaryEvent(ev) {
 function updateMatchStatusBanner() {
   const banner = document.getElementById("turn-banner");
   if (!banner || !matchState) return;
+  updateMatchDashboard(false);
   if (matchState.finished || !matchState.paused) { banner.style.display = "none"; return; }
   banner.textContent = "⏸ Match en pause";
   banner.className = "turn-banner paused";
   banner.style.display = "block";
 }
 
-function refreshScoreDisplay() {
-  const score = matchEngine.getScore();
+function refreshScoreDisplay(scoreSnapshot) {
+  // Le moteur connaît déjà la fin de la séquence animée. Pendant celle-ci, seuls
+  // les instantanés joints aux événements joués peuvent faire évoluer le score.
+  const score = scoreSnapshot || matchEngine.getScore();
+  matchState.displayedScore = { homeGoals: score.homeGoals, awayGoals: score.awayGoals };
   document.getElementById("match-score").textContent = `${score.homeGoals} - ${score.awayGoals}`;
+}
+
+function matchNumber(value, fallback) {
+  return Number.isFinite(value) ? value : (fallback == null ? 0 : fallback);
+}
+
+function updateMatchContext() {
+  if (!matchState || !matchEngine) return;
+  const format = document.getElementById("match-live-format");
+  const phase = document.getElementById("match-live-phase");
+  const carrierEl = document.getElementById("match-live-carrier");
+  if (!format || !phase || !carrierEl) return;
+  const minute = matchState.minute;
+  const homeCount = matchEngine.getActiveLineupIds("home", minute).length;
+  const awayCount = matchEngine.getActiveLineupIds("away", minute).length;
+  format.textContent = `${homeCount} contre ${awayCount}`;
+  let phaseLabel = "Jeu à 7";
+  if (minute <= matchEngine.ESCALIER_END_MINUTE) phaseLabel = "Escalier de départ";
+  else if (minute >= 17 && minute <= 20) phaseLabel = "Ballon spécial · buts doubles";
+  else if (minute >= 21 && minute <= 23) phaseLabel = "Dé Géant";
+  else if (minute >= matchEngine.MATCHBALL_START_MINUTE) phaseLabel = "Matchball · but décisif";
+  if (matchState.atHalfTime) phaseLabel = "Mi-temps";
+  if (matchState.finished) phaseLabel = "Match terminé";
+  phase.textContent = phaseLabel;
+
+  if (matchState.finished) { carrierEl.textContent = "Le match est terminé."; return; }
+  if (phaseLineupState) { carrierEl.textContent = "Choisis les joueurs de la prochaine phase."; return; }
+  const visual = choreo ? choreo.getState() : null;
+  const state = !matchState.sequenceActive && typeof matchEngine.getPossessionState === "function" ? matchEngine.getPossessionState() : null;
+  const carrierId = visual && visual.ballCarrierId || state && state.carrierId;
+  const player = carrierId ? findPitchPlayer(carrierId) : null;
+  const side = visual && visual.possessionSide || state && state.side;
+  const team = side === "home" ? matchState.homeTeam : side === "away" ? matchState.awayTeam : null;
+  const restart = visual && visual.currentBeat && visual.currentBeat.restartType || state && state.restartType;
+  const restarts = { kickoff: "Engagement", goalKick: "Relance du gardien", kickIn: "Remise en touche", corner: "Corner", freeKick: "Coup franc", penalty: "Penalty", looseBall: "Ballon récupéré" };
+  if (restart && restarts[restart]) carrierEl.textContent = `${restarts[restart]}${team ? " · " + team.name : ""}`;
+  else if (player) carrierEl.textContent = `Au ballon : ${player.name}${team ? " · " + team.name : ""}`;
+  else carrierEl.textContent = team ? `Ballon en circulation · ${team.name}` : "Les deux équipes se mettent en place.";
+}
+
+function updateMatchDashboard(refreshStats) {
+  if (!matchState || !matchEngine) return;
+  // Les chiffres décrivent les séquences déjà vues, jamais les actions encore en attente.
+  if ((refreshStats || !matchState.dashboardStats) && typeof matchEngine.getLiveStats === "function") {
+    matchState.dashboardStats = matchEngine.getLiveStats();
+  }
+  const stats = matchState.dashboardStats;
+  const userSetup = matchState.userSide === "home" ? matchState.homeSetup : matchState.awaySetup;
+  const mentality = MATCH_MENTALITIES[normalizeMentality(userSetup.mentality)];
+  const description = document.getElementById("match-mentality-description");
+  if (description) description.textContent = mentality.description + " Consigne appliquée à la prochaine séquence.";
+  renderMentalityChoices(userSetup, "live-mentality-choice");
+  const energyEl = document.getElementById("match-live-energy");
+  const insightEl = document.getElementById("match-tactical-insight");
+  if (stats) {
+    const home = stats.home || {}, away = stats.away || {};
+    const homePossession = Math.round(matchNumber(stats.possessionHome, 50));
+    document.getElementById("match-live-possession").textContent = `${homePossession}% — ${100 - homePossession}%`;
+    document.getElementById("match-live-shots").textContent = `${matchNumber(home.shots)} — ${matchNumber(away.shots)}`;
+    document.getElementById("match-live-xg").textContent = `${matchNumber(home.xG).toFixed(2)} — ${matchNumber(away.xG).toFixed(2)}`;
+    const own = matchState.userSide === "home" ? home : away;
+    const opponent = matchState.userSide === "home" ? away : home;
+    const stamina = Number.isFinite(own.stamina) ? Math.round(own.stamina) : null;
+    if (energyEl) {
+      energyEl.textContent = `Énergie : ${stamina == null ? "—" : stamina + "%"} · ${DEFENSE_PLANS[userSetup.defensePlan].name}`;
+      energyEl.classList.toggle("is-tired", stamina != null && stamina < 72);
+    }
+    if (insightEl) {
+      const attempted = matchNumber(own.passesAttempted), completed = matchNumber(own.passesCompleted);
+      const passRate = attempted ? Math.round(completed / attempted * 100) : 0;
+      if (stamina != null && stamina < 72 && userSetup.defensePlan === "high") {
+        insightEl.textContent = `Les joueurs actifs disposent de ${stamina}% d'énergie. Réduire le pressing permet de moins les solliciter.`;
+      } else if (attempted >= 8 && passRate < 65) {
+        insightEl.textContent = `${passRate}% de passes réussies. Une approche plus prudente peut limiter les prises de risque.`;
+      } else if (matchNumber(opponent.xG) > matchNumber(own.xG) + 0.5) {
+        insightEl.textContent = `L'adversaire crée davantage de danger : ${matchNumber(opponent.xG).toFixed(2)} xG contre ${matchNumber(own.xG).toFixed(2)}. Observe les espaces laissés à la perte.`;
+      } else if (matchNumber(own.shots) >= 4 && matchNumber(own.xG) / own.shots < 0.09) {
+        insightEl.textContent = "Les tirs viennent de positions peu favorables. Construire davantage peut aider à se rapprocher du but.";
+      } else if (matchState.completedMinute < 5) {
+        insightEl.textContent = "Observe les premiers échanges. La possession indique qui garde le ballon ; les xG mesurent la qualité cumulée des occasions.";
+      } else {
+        insightEl.textContent = `${completed}/${attempted} passes réussies · ${matchNumber(own.shotsOnTarget)} tir${matchNumber(own.shotsOnTarget) > 1 ? "s" : ""} cadré${matchNumber(own.shotsOnTarget) > 1 ? "s" : ""}. Ajuste l'intention selon les occasions créées, pas seulement le score.`;
+      }
+    }
+  } else {
+    if (energyEl) energyEl.textContent = "Les statistiques apparaissent après les premiers échanges.";
+    if (insightEl) insightEl.textContent = "Choisis une intention, observe ses effets et ajuste ton équipe pendant le match.";
+  }
+  updateMatchContext();
 }
 
 function checkMatchDecidedAndMaybeFinish() {
@@ -3839,7 +4007,7 @@ function advanceToMinute(nextMinute) {
   if (evts.sequence) combined.push(...evts.sequence);
 
   syncChoreoAnchors(matchState.minute);
-  playSequence(combined, () => {
+  const continueAfterMinute = () => {
     if (checkMatchDecidedAndMaybeFinish()) return;
     if (matchState.minute === matchEngine.halfTime) { showHalfTime(); return; }
     // Le Matchball (dès la 36e minute, donc toujours avant la fin du temps réglementaire à 40')
@@ -3847,7 +4015,8 @@ function advanceToMinute(nextMinute) {
     // atteint l'objectif de buts. MAX_MATCH_MINUTE n'est qu'un garde-fou de sécurité.
     if (matchState.minute >= MAX_MATCH_MINUTE) { finishMatchDisplay(); return; }
     runMinute();
-  });
+  };
+  playSequence(combined, () => playPendingSpecialActions(continueAfterMinute));
 }
 
 // Détecte, AVANT de jouer la minute donnée, un changement de format. Pour un escalier progressif
@@ -3921,7 +4090,7 @@ function openPhaseLineupModal(side, cap, poolIds) {
   phaseLineupState = { mode: "select", side, cap, players, selected: new Set(preselected) };
 
   document.getElementById("phase-lineup-title").textContent = "Dé Géant";
-  document.getElementById("phase-lineup-desc").textContent = `Format ${cap}v${cap}`;
+  document.getElementById("phase-lineup-desc").textContent = `Format ${cap + 1} contre ${cap + 1} : ${cap} joueur${cap > 1 ? "s" : ""} de champ et un gardien par équipe.`;
   renderPhaseLineupList();
   document.getElementById("phase-lineup-modal").classList.add("active");
 }
@@ -4116,6 +4285,7 @@ function closeMatchTactics() {
   document.getElementById("match-tactics-modal").classList.remove("active");
   lineupSetup.lineup = lineupSetup.assignments.filter(Boolean);
   syncChoreoAnchors(matchState.minute);
+  updateMatchDashboard(false);
 
   if (matchState.atHalfTime) {
     document.getElementById("halftime-overlay").classList.add("active");
@@ -4130,27 +4300,93 @@ function updateSecretCardButton() {
   const btn = document.getElementById("btn-secret-card");
   const used = matchEngine.isCardUsed(matchState.userSide);
   const windowOpen = matchEngine.isSpecialActionWindowOpen(matchState.minute, "card");
-  btn.disabled = used || matchState.finished || !windowOpen;
+  const queued = hasPendingSpecialAction("card");
+  btn.disabled = used || queued || matchState.finished || !windowOpen;
   btn.classList.toggle("used", used);
-  btn.title = windowOpen ? "" : "Activable entre la 5e et la 17e minute, puis entre la 23e et la 36e minute.";
+  btn.textContent = queued ? "🃏 Arme Secrète en attente" : "🃏 Activer l'Arme Secrète";
+  btn.title = queued ? "Activation à la fin de l'action en cours." : windowOpen ? "" : "Activable entre la 5e et la 17e minute, puis entre la 23e et la 36e minute.";
 }
 
 function updatePresidentPenaltyButton() {
   const btn = document.getElementById("btn-president-penalty");
   const used = matchEngine.isPresidentPenaltyUsed(matchState.userSide);
   const windowOpen = matchEngine.isSpecialActionWindowOpen(matchState.minute, "president");
-  btn.disabled = used || matchState.finished || !windowOpen;
+  const queued = hasPendingSpecialAction("president");
+  btn.disabled = used || queued || matchState.finished || !windowOpen;
   btn.classList.toggle("used", used);
-  btn.title = windowOpen ? "" : "Activable entre la 5e et la 17e minute, puis entre la 23e et la 35e minute.";
+  btn.textContent = queued ? "🛎️ Penalty en attente" : "🛎️ Penalty du Président";
+  btn.title = queued ? "Activation à la fin de l'action en cours." : windowOpen ? "" : "Activable entre la 5e et la 17e minute, puis entre la 23e et la 35e minute.";
 }
 
-// Le coach humain actionne le buzzer du Président : penalty immédiat, une fois par match. Ne met
-// jamais le match en pause : les beats s'intercalent dans l'animation en cours via insertNext,
-// exactement comme sur le plateau ils s'exécutaient sans perturber le tour en cours.
-function executeUserPresidentPenalty(presidentName) {
-  const evts = matchEngine.triggerPresidentPenalty(matchState.userSide, matchState.minute, { presidentName });
-  if (choreo && evts.sequence) choreo.insertNext(tagCardBeats(evts.sequence));
+function hasPendingSpecialAction(kind) {
+  return !!(matchState && (matchState.pendingSpecialActions || []).some(request => request.kind === kind));
+}
+
+function refreshPendingSpecialStatus() {
+  const status = document.getElementById("match-special-status");
+  if (!status || !matchState) return;
+  const pending = (matchState.pendingSpecialActions || []).length;
+  status.textContent = pending ? "Activation à la fin de l'action en cours." : "";
+  status.hidden = !pending;
+}
+
+function queueUserSpecialAction(kind, options, activationMinute) {
+  if (!matchState || matchState.finished || hasPendingSpecialAction(kind)) return false;
+  const minute = activationMinute == null ? matchState.minute : activationMinute;
+  if (!matchEngine.isSpecialActionWindowOpen(minute, kind)) return false;
+  if (kind === "card" ? matchEngine.isCardUsed(matchState.userSide) : matchEngine.isPresidentPenaltyUsed(matchState.userSide)) return false;
+  if (!matchState.pendingSpecialActions) matchState.pendingSpecialActions = [];
+  matchState.pendingSpecialActions.push({ kind, options, minute });
+  updateSecretCardButton();
   updatePresidentPenaltyButton();
+  refreshPendingSpecialStatus();
+  if (!matchState.sequenceActive) {
+    playPendingSpecialActions(() => {
+      if (checkMatchDecidedAndMaybeFinish()) return;
+      if (!matchState.atHalfTime) resumeMatchFlow();
+    });
+  }
+  return true;
+}
+
+function resolvePendingSpecialAction(request) {
+  return request.kind === "card"
+    ? matchEngine.activateCard(matchState.userSide, request.options.key, request.options.cardOptions, request.minute)
+    : matchEngine.triggerPresidentPenalty(matchState.userSide, request.minute, request.options);
+}
+
+// La minute est déjà résolue quand son animation commence. Une demande du joueur
+// attend donc sa fin : on résout puis on joue chaque action spéciale séparément,
+// avant de simuler la suivante. Le score et la possession suivent le même ordre.
+function playPendingSpecialActions(onDone, animate) {
+  const requests = matchState.pendingSpecialActions || [];
+  if (matchEngine.isMatchDecided() || matchState.finished) requests.length = 0;
+  const request = requests.shift();
+  refreshPendingSpecialStatus();
+  if (!request) {
+    updateSecretCardButton();
+    updatePresidentPenaltyButton();
+    if (onDone) onDone();
+    return;
+  }
+  const evts = resolvePendingSpecialAction(request) || [];
+  updateSecretCardButton();
+  updatePresidentPenaltyButton();
+  const next = () => playPendingSpecialActions(onDone, animate);
+  if (animate !== false && choreo && evts.sequence && evts.sequence.length) {
+    playSequence(tagCardBeats(evts.sequence), next);
+  } else {
+    evts.forEach(ev => {
+      appendCommentaryEvent(ev.type === "phase" ? Object.assign({}, ev, { type: "phase cardevent" }) : ev);
+      if (ev.score) refreshScoreDisplay(ev.score);
+    });
+    updateMatchDashboard(true);
+    next();
+  }
+}
+
+function executeUserPresidentPenalty(presidentName, activationMinute) {
+  queueUserSpecialAction("president", { presidentName }, activationMinute);
 }
 
 // Le coach humain actionne le buzzer du Président : si l'équipe a plusieurs présidents,
@@ -4158,15 +4394,19 @@ function executeUserPresidentPenalty(presidentName) {
 function triggerUserPresidentPenalty() {
   if (!matchState || matchState.finished) return;
   if (!matchEngine.isSpecialActionWindowOpen(matchState.minute, "president")) return;
-  if (matchEngine.isPresidentPenaltyUsed(matchState.userSide)) return;
+  if (matchEngine.isPresidentPenaltyUsed(matchState.userSide) || hasPendingSpecialAction("president")) return;
 
+  const activationMinute = matchState.minute;
   const presidents = matchEngine.getPresidents(matchState.userSide);
   if (presidents.length <= 1) {
-    executeUserPresidentPenalty(presidents[0]);
+    executeUserPresidentPenalty(presidents[0], activationMinute);
     return;
   }
 
   const list = document.getElementById("president-select-list");
+  matchState.paused = true;
+  document.getElementById("btn-pause-match").textContent = "▶ Reprendre";
+  updateMatchStatusBanner();
   list.innerHTML = "";
   presidents.forEach(name => {
     const btn = document.createElement("button");
@@ -4174,7 +4414,8 @@ function triggerUserPresidentPenalty() {
     btn.textContent = name;
     btn.onclick = () => {
       document.getElementById("president-select-modal").classList.remove("active");
-      executeUserPresidentPenalty(name);
+      executeUserPresidentPenalty(name, activationMinute);
+      resumeMatchAfterModal();
     };
     list.appendChild(btn);
   });
@@ -4246,7 +4487,7 @@ function openSecretCardModal() {
   if (!matchState || matchState.finished) return;
   if (!matchEngine.isSpecialActionWindowOpen(matchState.minute, "card")) return;
   const userSide = matchState.userSide;
-  if (matchEngine.isCardUsed(userSide)) return;
+  if (matchEngine.isCardUsed(userSide) || hasPendingSpecialAction("card")) return;
   matchState.paused = true;
   document.getElementById("btn-pause-match").textContent = "▶ Reprendre";
   document.getElementById("halftime-overlay").classList.remove("active");
@@ -4307,11 +4548,9 @@ function openSecretCardModal() {
   document.getElementById("secret-card-modal").classList.add("active");
 }
 
-// Referme un modal qui avait mis le match en pause (Arme Secrète) et reprend la lecture — si des
-// beats sont fournis (carte effectivement activée), ils s'intercalent dans la séquence en cours
-// via insertNext AVANT que la lecture ne reprenne, pour que l'effet s'anime dès la reprise.
-function resumeMatchAfterModal(beats) {
-  if (choreo && beats && beats.length) choreo.insertNext(beats);
+// Referme une décision du banc et reprend l'action en cours. Une éventuelle
+// activation attend sa fin ; aucune issue déjà calculée n'est rejouée à l'envers.
+function resumeMatchAfterModal() {
   if (matchState.atHalfTime) {
     document.getElementById("halftime-overlay").classList.add("active");
     return;
@@ -4342,11 +4581,11 @@ function confirmSecretCard() {
     options = gatherCardOptions(key, userSide, oppSide);
   }
 
-  const evts = matchEngine.activateCard(userSide, key, options, matchState.minute);
+  queueUserSpecialAction("card", { key, cardOptions: options }, matchState.minute);
 
   document.getElementById("secret-card-modal").classList.remove("active");
   updateSecretCardButton();
-  resumeMatchAfterModal(tagCardBeats(evts.sequence));
+  resumeMatchAfterModal();
 }
 
 // Appelé en fin de temps réglementaire. Si le score est à égalité, lance la
@@ -4385,6 +4624,8 @@ function playShootoutStep(idx) {
 function completeMatch(shootout) {
   matchState.finished = true;
   matchState.paused = true;
+  matchState.pendingSpecialActions = [];
+  refreshPendingSpecialStatus();
   stopMatchPitch();
   const result = matchEngine.finalize(shootout);
   STATE.pendingResult = {
@@ -4395,6 +4636,8 @@ function completeMatch(shootout) {
 
   document.getElementById("match-score").textContent = `${result.homeGoals} - ${result.awayGoals}`;
   document.getElementById("match-minute").textContent = matchState.minute + "'";
+  matchState.completedMinute = matchState.minute;
+  updateMatchDashboard(true);
   const div = document.createElement("div");
   div.className = "ev";
   div.style.fontWeight = "bold";
@@ -4432,10 +4675,12 @@ function skipMatch() {
   matchState.atHalfTime = false;
   matchState.paused = true;
 
+  playPendingSpecialActions(null, false);
+
   // Le Matchball garantit une équipe gagnante avant la fin du temps réglementaire (40') : on
   // simule donc en prolongation au-delà si besoin, jusqu'au but décisif. MAX_MATCH_MINUTE n'est
   // qu'un garde-fou de sécurité contre une boucle interminable en cas de scénario extrême.
-  while (matchState.minute < matchEngine.totalMinutes || (matchState.minute < MAX_MATCH_MINUTE && !matchEngine.isMatchDecided())) {
+  while (!matchEngine.isMatchDecided() && (matchState.minute < matchEngine.totalMinutes || matchState.minute < MAX_MATCH_MINUTE)) {
     matchState.minute++;
     const minuteEvents = matchEngine.simulateMinute(matchState.minute);
     minuteEvents.forEach(appendCommentaryEvent);
@@ -4630,6 +4875,7 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("btn-president-penalty").onclick = triggerUserPresidentPenalty;
   document.getElementById("btn-president-select-cancel").onclick = () => {
     document.getElementById("president-select-modal").classList.remove("active");
+    resumeMatchAfterModal();
   };
   document.getElementById("btn-secret-card-cancel").onclick = cancelSecretCard;
   document.getElementById("btn-secret-card-confirm").onclick = confirmSecretCard;
@@ -4661,3 +4907,4 @@ document.addEventListener("DOMContentLoaded", () => {
 
   window.addEventListener("beforeunload", saveGame);
 });
+

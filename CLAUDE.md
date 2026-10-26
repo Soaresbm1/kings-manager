@@ -39,6 +39,9 @@ statique.
    `runBalanceSimulation(homeTeam, awayTeam, n)` simule un grand nombre de matchs et agrège les
    moyennes utiles (buts/tirs/xG par match, taux de passes réussies, avantage du terrain, taux de
    victoire du favori...) pour ajuster `MATCH_BALANCE` sans y jouer à la main.
+   Conserve `possessionState` (camp, porteur, ballon, positions, reprise) entre les
+   séquences et les minutes. `getPossessionState`/`getLiveStats` renvoient des copies
+   de lecture ; ne jamais appeler `finalize` pour rafraîchir une statistique en direct.
 4. **`matchchoreo.js`** — module d'interpolation pur (pas de DOM, aucun `Math.random()`)
    qui anime la chorégraphie produite par `engine.js`/`matchengine-actions.js` (positions
    joueurs/ballon frame par frame), façon Football Manager Mobile : `createChoreographer()`,
@@ -49,6 +52,9 @@ statique.
    d'animation est prolongée si nécessaire pour respecter la vitesse des joueurs.
    Une passe interceptée porte `interceptorId`/`interceptorFrom`/`interceptorTo` : le
    défenseur rejoint le point de contact pendant le vol du ballon.
+   Les beats récents possèdent `positionsBefore`/`positionsAfter`, qui font autorité
+   pour tous les joueurs. Le placement décoratif historique n'est utilisé que pour
+   les anciens beats sans instantané. `restart` et `recovery` matérialisent les reprises.
 5. **`app.js`** — état du jeu (`STATE`), rendu des écrans, gestion des événements DOM,
    sauvegardes (`localStorage` + export/import JSON).
 6. **`index.html` / `style.css`** — structure des écrans et mise en forme.
@@ -66,7 +72,8 @@ Kings League) ; pas de photos/blasons pour ces 4 ligues pour l'instant.
 - Match de 40 minutes (2 x 20), pas de match nul (tirs au but si égalité).
 - **Escalier de départ** (0'-5') : montée progressive jusqu'au 7v7.
 - **Ballon spécial** (17'-20') : tous les buts comptent double.
-- **Dé Géant** (21'-23' à la reprise) : format réduit aléatoire (1v1 à 3v3).
+- **Dé Géant** (21'-23' à la reprise) : 1 à 3 joueurs de champ, plus un gardien
+  par équipe (l'affichage du format inclut toujours le gardien).
 - **Matchball** (dès 36') : escalier inversé, la première équipe à atteindre le score
   du leader + 1 but gagne immédiatement.
 - **Cartes Secrètes** (une par équipe/match) et **Penalty du Président** (un par
@@ -79,6 +86,10 @@ Kings League) ; pas de photos/blasons pour ces 4 ligues pour l'instant.
 - `chooseAiPlans(teamStrength, oppStrength)` — plan offensif/défensif pondéré par le
   rapport de force (favori = possession/pressing, outsider = direct/bloc bas).
 - `app.js:maybeAdjustAiTactics(minute)` — réévaluation du plan toutes les 5 min dès la 25e.
+- `setup.autoCoach` active désormais cette adaptation dans le moteur commun aux
+  matchs animés et aux ligues simulées ; le contrôle humain garde `autoCoach:false`.
+- `setup.mentality` : `cautious`, `balanced` (repli des anciennes sauvegardes),
+  `attacking`. Risque de passe, profondeur, rythme, exposition et énergie sont liés.
 - `app.js:maybeActivateAiCard` / `maybeActivatePresidentPenaltyAi` — activation
   situationnelle selon le score.
 - Mercato IA : `fillPositionGaps` (comble les postes sous le minimum) +
@@ -94,6 +105,19 @@ sans adversaire proche, le porteur conduit librement. Les interceptions vérifie
 la distance au segment de passe et le temps de déplacement disponible ; une passe
 ratée sans intercepteur atteignable sort du terrain. Le Matchball interrompt toute
 action dès la décision, y compris les possessions restantes de la même minute.
+
+`simulatePossessionChain` accepte `initialState` et `ownGK`, et renvoie `endState`
+(prochain camp, porteur, ballon, positions, type de reprise et point de sortie).
+L'épuisement du budget d'actions conserve la possession (`retained`). Le moteur
+enchaîne le prochain propriétaire réel ; il n'alterne plus arbitrairement les camps.
+Les déplacements sans ballon sont calculés dans le moteur d'actions et les mêmes
+instantanés alimentent l'animation. Le chemin sans animation prend les mêmes
+décisions et consomme le même hasard, sans fabriquer les instantanés des beats.
+
+Les événements de résultat portent `score:{homeGoals,awayGoals}`. L'interface
+n'affiche que les événements déjà animés, puis actualise les statistiques à la
+fin de séquence. Les demandes humaines de cartes/penalty président sont mises
+en attente jusqu'à cette limite afin de ne pas modifier rétroactivement le jeu.
 
 Une possession n'est plus un simple tirage au sort narré après coup : elle est construite,
 action par action, par `matchengine-actions.js:simulatePossessionChain()` — choix du porteur,
@@ -139,11 +163,15 @@ mode de débogage visuel (touche **D** pendant un match, voir `app.js:PITCH_DEBU
 - **Stats saison vs carrière** par joueur (`goals`/`careerGoals`, etc.) — saison remise à
   zéro à `startNewSeason()`, carrière jamais.
 - **Tournoi de fin de saison** (`STATE.tournament`, écran `#screen-tournament`) : bracket à
-  élimination directe entre le top 2 des 6 ligues, honorifique (aucun effet budget/joueurs).
+  élimination directe entre le top 2 des 6 ligues ; une prime récompense le parcours.
 - **Prime de fin de saison** (`awardSeasonPrizeMoney`) + **objectif de la direction**
   (`STATE.seasonObjective`) qui bonifie/pénalise cette prime selon le rang atteint.
-- **Blessures** (`INJURY_SEVERITY_TIERS`, `decayInjuries`) : rendent un joueur indisponible
-  pour la composition pendant N jours, jamais pour l'IA adverse.
+- **Blessures** (`INJURY_SEVERITY_TIERS`, `decayInjuries`) : indisponibilité pour
+  l'humain et l'IA, remplacement en match. Les compositions incomplètes utilisent
+  des joueurs de champ hors poste avec une pénalité ; un second gardien n'est
+  jamais aligné dans le champ. Un gardien de fortune couvre une sortie sans remplaçant.
+- **Participation** : `result.participants` et `minutesPlayed` conservent les joueurs
+  sortis ; notes, statistiques et progression s'appliquent aux participants réels.
 - **Historique des transferts** (`STATE.transferLog`) et **alertes/intérêt sur la liste de
   suivi** (`computeShortlistInterest`, `checkShortlistTransferAlerts`).
 - Attention aux sauvegardes anciennes : plusieurs migrations silencieuses vivent dans
@@ -204,4 +232,12 @@ Régressions ciblées du réalisme (Node, sans dépendances) :
 `node tests-simulation-actions.js`, `node tests-simulation-choreo.js` et
 `node tests-simulation-engine.js`. Elles couvrent les duels/interceptions,
 les trajectoires distinctes ballon/receveur et la fin immédiate du Matchball.
+
+`npm test` découvre toutes les suites `tests-*.js` (dont continuité et interface).
+`npm run test:matrix` contrôle trois graines ; `tests-node.js` isole chaque test
+pour qu'un ajout ne décale pas tous les tirages suivants. `npm run test:e2e`
+exécute les vrais parcours Kings Manager sur Chromium/Firefox/WebKit. Le workflow
+GitHub lance les simulations avant le navigateur et un contrôle quotidien du moteur.
+`npm run dev` sert le dépôt sur localhost:4173, `dev:assets` autorise explicitement
+le repli vers les images de production pour une copie partielle de développement.
 

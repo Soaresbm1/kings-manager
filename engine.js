@@ -58,6 +58,17 @@ function formationDefenseFactor(formationKey) {
   return 0.92 + f.def * 0.06 + f.mid * 0.01;
 }
 
+// Une mentalité engage un compromis : davantage de risque et de rythme expose
+// aussi les transitions et coûte de l'énergie, sans garantir une meilleure finition.
+const MATCH_MENTALITY_PROFILES = {
+  cautious: { attack: 0.97, exposure: 0.93, extraTempo: -0.2, energy: 0.1 },
+  balanced: { attack: 1, exposure: 1, extraTempo: 0, energy: 0.25 },
+  attacking: { attack: 1.03, exposure: 1.09, extraTempo: 0.3, energy: 0.45 }
+};
+function matchMentality(setup) {
+  return MATCH_MENTALITY_PROFILES[setup.mentality] || MATCH_MENTALITY_PROFILES.balanced;
+}
+
 // --- Force d'une équipe pour un match, selon XI titulaire ---
 function computeTeamStrength(team, lineup) {
   let speed = 0, technique = 0, physical = 0, mental = 0, form = 0, count = 0;
@@ -82,6 +93,14 @@ function computeTeamStrength(team, lineup) {
   };
 }
 
+function positionFitFactor(team, setup, playerId) {
+  const player = team.players.find(p => p.id === playerId);
+  const slots = FORMATION_SLOTS[setup.formation];
+  const index = Array.isArray(setup.assignments) ? setup.assignments.indexOf(playerId) : -1;
+  if (!player || index < 0 || !slots || !slots[index]) return 1;
+  return slots[index].pos === player.pos ? 1 : 0.85;
+}
+
 // --- Moteur de simulation incrémental (minute par minute) ---
 // homeSetup / awaySetup = { lineup: [ids], formation, attackPlan, defensePlan }
 // Les lineups/plans peuvent être modifiés entre deux appels à simulateMinute()
@@ -96,6 +115,10 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
   const TOTAL_MINUTES = 40;
   const HALF_TIME = 20;
   const homeBonus = 1.08;
+  const initialAiPlans = {
+    home: { attackPlan: homeSetup.attackPlan, defensePlan: homeSetup.defensePlan },
+    away: { attackPlan: awaySetup.attackPlan, defensePlan: awaySetup.defensePlan }
+  };
 
   // Début de match (effectifs réduits, 1 contre 1 jusqu'au 7v7) : plus d'occasions et de buts —
   // voir planChainCount (matchengine-actions.js, plus de possessions) et earlyPhaseBoost ci-dessous
@@ -127,6 +150,114 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
   let homeFouls = 0, awayFouls = 0; // fautes commises lors d'un duel (dribble) — voir attemptRealAttack
   let possessionSum = 0, possessionCount = 0;
   const playerStats = {}; // id -> {goals, assists}
+  const participants = { home: new Set(), away: new Set() };
+  const minutesPlayed = {};
+  const lastPlayedAt = {};
+  const possessionActions = { home: 0, away: 0 };
+  const sentOff = { home: new Set(), away: new Set() };
+  let lastMinute = 0;
+  // Le même ballon et les mêmes joueurs traversent les minutes. Les sorties,
+  // arrêts et buts définissent la reprise suivante ; aucun tour domicile/extérieur.
+  let possessionState = {
+    side: "home", carrierId: null, ball: { x: 50, y: 50 }, positions: {},
+    restartType: "kickoff", isCounter: false, isHighRecovery: false,
+    releasePoint: { x: 50, y: 50 }
+  };
+  function copyPositions(source) {
+    return Object.fromEntries(Object.entries(source || {}).map(([id, p]) => [id, { x: p.x, y: p.y }]));
+  }
+  function getPossessionState() {
+    return Object.assign({}, possessionState, {
+      ball: Object.assign({}, possessionState.ball),
+      releasePoint: Object.assign({}, possessionState.releasePoint || possessionState.ball),
+      positions: copyPositions(possessionState.positions)
+    });
+  }
+  function scoreSnapshot() { return { homeGoals, awayGoals }; }
+  function markParticipant(side, id, minute) {
+    if (!id) return;
+    participants[side].add(id);
+    if (lastPlayedAt[id] !== minute) {
+      minutesPlayed[id] = (minutesPlayed[id] || 0) + 1;
+      lastPlayedAt[id] = minute;
+    }
+  }
+  function recordSetPieceShot(side, xG, saved, onTarget) {
+    const target = onTarget === false ? 0 : 1;
+    if (side === "home") {
+      homeShots++; homeShotsOnTarget += target; homeXG += xG;
+      if (saved) awaySaves++;
+    } else {
+      awayShots++; awayShotsOnTarget += target; awayXG += xG;
+      if (saved) homeSaves++;
+    }
+  }
+  function restartAfterShot(side, scored, contact) {
+    const nextSide = side === "home" ? "away" : "home";
+    const keeper = getGK(nextSide === "home" ? homeTeam : awayTeam, nextSide === "home" ? homeSetup : awaySetup);
+    possessionState = Object.assign({}, possessionState, {
+      side: nextSide, carrierId: scored ? null : (keeper ? keeper.id : null),
+      ball: scored ? { x: 50, y: 50 } : Object.assign({}, contact),
+      releasePoint: Object.assign({}, contact), restartType: scored ? "kickoff" : "goalKick",
+      isCounter: false, isHighRecovery: false
+    });
+  }
+  // Les penalties/shootouts interrompent explicitement le jeu. La préparation
+  // remet tireur et gardien en place avant le tir ; les positions finales restent
+  // celles que réutilisera la relance suivante, avec ou sans animation.
+  function prepareSetPieceSequence(rawBeats, side, fromBall, kind, withSequence) {
+    if (!rawBeats.length) return [];
+    ["home", "away"].forEach(camp => {
+      const team = camp === "home" ? homeTeam : awayTeam;
+      const setup = camp === "home" ? homeSetup : awaySetup;
+      const ids = getActiveOutfieldIds(team, setup, lastMinute, camp);
+      const anchors = computeSideAnchors(setup, ids, camp, true);
+      const keeper = getGK(team, setup);
+      ids.concat(keeper ? [keeper.id] : []).forEach(id => {
+        if (!possessionState.positions[id]) possessionState.positions[id] = Object.assign({}, anchors[id] || { x: 50, y: gkAnchorY(camp) });
+      });
+    });
+    const before = copyPositions(possessionState.positions);
+    const first = rawBeats.find(beat => beat.type !== "phase");
+    if (!first) return rawBeats;
+    const placed = copyPositions(before);
+    if (first.playerId && placed[first.playerId]) placed[first.playerId] = Object.assign({}, first.from);
+    if (first.gkId && placed[first.gkId]) placed[first.gkId] = { x: 50, y: gkAnchorY(side === "home" ? "away" : "home") };
+    const result = [{ type: "restart", side, playerId: first.playerId || null, from: Object.assign({}, fromBall),
+      to: Object.assign({}, first.from), restartType: kind || "penalty", duration: 0.8,
+      positionsBefore: before, positionsAfter: copyPositions(placed), event: null }];
+    let positions = placed;
+    rawBeats.forEach(beat => {
+      beat.positionsBefore = copyPositions(positions);
+      if (["carry", "dribble"].includes(beat.type) && beat.playerId && positions[beat.playerId]) {
+        positions[beat.playerId] = Object.assign({}, beat.to);
+      }
+      if (beat.gkId && positions[beat.gkId] && beat.type !== "phase") {
+        positions[beat.gkId] = { x: clamp(beat.to.x, 37, 63), y: beat.type === "save" ? beat.to.y : positions[beat.gkId].y };
+      }
+      beat.positionsAfter = copyPositions(positions);
+      result.push(beat);
+    });
+    possessionState.positions = copyPositions(positions);
+    return withSequence ? result : [];
+  }
+  function getLiveStats() {
+    function averageStamina(side, team, setup) {
+      const active = getActiveOutfieldIds(team, setup, lastMinute, side);
+      if (!active.length) return 100;
+      return Math.round(active.reduce((sum, id) => sum + staminaValue(side, id), 0) / active.length);
+    }
+    const actions = possessionActions.home + possessionActions.away;
+    return {
+      home: { shots: homeShots, shotsOnTarget: homeShotsOnTarget, xG: Math.round(homeXG * 100) / 100,
+        passesAttempted: homePassesAttempted, passesCompleted: homePassesCompleted,
+        interceptions: homeInterceptions, tackles: homeTackles, stamina: averageStamina("home", homeTeam, homeSetup) },
+      away: { shots: awayShots, shotsOnTarget: awayShotsOnTarget, xG: Math.round(awayXG * 100) / 100,
+        passesAttempted: awayPassesAttempted, passesCompleted: awayPassesCompleted,
+        interceptions: awayInterceptions, tackles: awayTackles, stamina: averageStamina("away", awayTeam, awaySetup) },
+      possessionHome: actions ? Math.round(possessionActions.home / actions * 100) : 50
+    };
+  }
 
   // --- Fatigue en cours de match (état transitoire, jamais persisté dans la sauvegarde) ---
   // Un joueur qui touche beaucoup le ballon (ou défend sous pressing) perd un peu d'efficacité au
@@ -202,9 +333,10 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
     const suspended = side ? new Set(
       cardSanctions[side].yellow.filter(y => minute <= y.until).map(y => y.playerId)
     ) : new Set();
+    const keeper = getGK(team, setup);
     const outfield = setup.lineup
       .map(id => team.players.find(p => p.id === id))
-      .filter(p => p && p.pos !== "GK" && !suspended.has(p.id));
+      .filter(p => p && p.pos !== "GK" && (!keeper || p.id !== keeper.id) && !p.injured && !suspended.has(p.id) && !(side && sentOff[side].has(p.id)));
     if (outfield.length <= cap) return outfield.map(p => p.id);
 
     if (Array.isArray(setup.activeOverride) && setup.activeOverride.length) {
@@ -228,14 +360,22 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
   function getMatchballWinner() { return matchballWinnerSide; }
 
   function getAttackers(team, setup) {
+    const keeper = getGK(team, setup);
     return setup.lineup
       .map(id => team.players.find(p => p.id === id))
-      .filter(p => p && p.pos !== "GK");
+      .filter(p => p && p.pos !== "GK" && (!keeper || p.id !== keeper.id) && !p.injured);
   }
   function getGK(team, setup) {
-    return setup.lineup
+    const players = setup.lineup
       .map(id => team.players.find(p => p.id === id))
-      .find(p => p && p.pos === "GK");
+      .filter(p => p && !p.injured && !p.suspended);
+    const keeper = players.find(p => p.pos === "GK");
+    if (keeper) return keeper;
+    // Après la sortie du dernier gardien, un joueur de champ protège le but
+    // jusqu'au prochain remplacement. Sa capacité est réduite, sans modifier
+    // son véritable poste ou ses attributs de carrière.
+    const emergency = [...players].sort((a, b) => b.physical + b.mental - a.physical - a.mental)[0];
+    return emergency ? Object.assign({}, emergency, { pos: "GK", physical: emergency.physical * 0.78, mental: emergency.mental * 0.9 }) : null;
   }
 
   function weightedPick(players) {
@@ -323,13 +463,20 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
   // Fait entrer le meilleur remplaçant disponible du banc (même poste si possible) :
   // utilisé après un carton rouge (5 minutes après, l'équipe redevient au complet) ou
   // immédiatement après un carton jaune en phase Matchball.
-  function addBenchSubstitute(teamRef, setupRef, preferredPos) {
-    const benchPool = teamRef.players.filter(p => !setupRef.lineup.includes(p.id));
+  function addBenchSubstitute(teamRef, setupRef, preferredPos, excludedId) {
+    const side = teamRef === homeTeam ? "home" : "away";
+    const benchPool = teamRef.players.filter(p => !setupRef.lineup.includes(p.id) && p.id !== excludedId
+      && !p.injured && !p.suspended && !sentOff[side].has(p.id));
     if (benchPool.length === 0) return null;
     const sameRole = benchPool.filter(p => p.pos === preferredPos);
     const candidates = sameRole.length > 0 ? sameRole : benchPool;
     const best = [...candidates].sort((a, b) => b.overall - a.overall)[0];
     setupRef.lineup.push(best.id);
+    ["assignments", "assignmentsOOP"].forEach(key => {
+      if (!Array.isArray(setupRef[key]) || !excludedId) return;
+      const slot = setupRef[key].indexOf(excludedId);
+      if (slot >= 0) setupRef[key][slot] = best.id;
+    });
     return best;
   }
 
@@ -337,6 +484,7 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
   // options.withSequence : ajoute evts.sequence (1 beat : course + tir depuis le point de penalty).
   function performPenaltyAttempt(side, minute, options, label) {
     options = options || {};
+    const previousBall = Object.assign({}, possessionState.releasePoint || possessionState.ball);
     const team = side === "home" ? homeTeam : awayTeam;
     const setup = side === "home" ? homeSetup : awaySetup;
     const oppTeam = side === "home" ? awayTeam : homeTeam;
@@ -346,8 +494,11 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
     const taker = options.taker || weightedPick(getAttackers(team, setup));
     if (!taker) return evts;
 
-    if (side === "home") homeShots++; else awayShots++;
-    const scored = Math.random() < (0.7 + taker.mental / 400 - (oppGK ? oppGK.physical / 600 : 0));
+    const chance = clamp(0.7 + taker.mental / 400 - (oppGK ? oppGK.physical / 600 : 0), 0.1, 0.95);
+    const scored = Math.random() < chance;
+    recordSetPieceShot(side, chance, !scored);
+    markParticipant(side, taker.id, minute);
+    if (oppGK) markParticipant(side === "home" ? "away" : "home", oppGK.id, minute);
     let ev;
     if (scored) {
       recordStat(taker.id, "goals");
@@ -356,14 +507,22 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
     } else {
       ev = { minute, type: "save", team: team.name, side, takerId: taker.id, gkId: oppGK ? oppGK.id : null, text: `${minute}' — ⚽ ${label} ! ${taker.name} (${team.name}) tire... mais ${oppGK ? oppGK.name : "le gardien"} arrête !` };
     }
+    ev.score = scoreSnapshot();
     evts.push(ev);
-    if (options.withSequence) {
-      const penaltySpot = { x: 50, y: side === "home" ? PITCH_H - 12 : 12 };
-      const goalY = side === "home" ? PITCH_H : 0;
-      const goalX = clamp(GOAL_X_MIN + Math.random() * (GOAL_X_MAX - GOAL_X_MIN), GOAL_X_MIN, GOAL_X_MAX);
-      const finalY = scored ? goalY : (side === "home" ? goalY - 6 : goalY + 6);
-      evts.sequence = [{ type: scored ? "goal" : "save", side, playerId: taker.id, gkId: oppGK ? oppGK.id : null, from: penaltySpot, to: { x: goalX, y: finalY }, duration: 0.9, event: ev }];
-    }
+    const contact = { x: 50, y: scored ? attackingGoalY(side) : (side === "home" ? 94 : 6) };
+    restartAfterShot(side, scored, contact);
+    const penaltySpot = { x: 50, y: side === "home" ? PITCH_H - 12 : 12 };
+    const goalY = side === "home" ? PITCH_H : 0;
+    const goalX = clamp(50 + (taker.technique % 7) - 3, GOAL_X_MIN, GOAL_X_MAX);
+    const finalY = scored ? goalY : (side === "home" ? goalY - 6 : goalY + 6);
+    possessionState.releasePoint = { x: goalX, y: finalY };
+    if (!scored) possessionState.ball = { x: goalX, y: finalY };
+    const rawBeats = [{ type: "shot", side, playerId: taker.id, gkId: oppGK ? oppGK.id : null,
+      from: penaltySpot, to: { x: goalX, y: finalY }, duration: 0.45, event: null },
+      { type: scored ? "goal" : "save", side, playerId: taker.id, gkId: oppGK ? oppGK.id : null,
+        from: { x: goalX, y: finalY }, to: { x: goalX, y: finalY }, duration: 0.25, event: ev }];
+    const sequence = prepareSetPieceSequence(rawBeats, side, previousBall, "penalty", !!options.withSequence);
+    if (options.withSequence) evts.sequence = sequence;
     return evts;
   }
 
@@ -371,6 +530,7 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
   // jaune adverse en Matchball) : le tireur part seul du milieu de terrain face au gardien.
   function performShootoutAttempt(side, minute, options, label) {
     options = options || {};
+    const previousBall = Object.assign({}, possessionState.releasePoint || possessionState.ball);
     const team = side === "home" ? homeTeam : awayTeam;
     const setup = side === "home" ? homeSetup : awaySetup;
     const oppTeam = side === "home" ? awayTeam : homeTeam;
@@ -381,16 +541,21 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
     const shooter = options.taker || weightedPick(getAttackers(team, setup));
     if (!shooter) return evts;
 
-    if (side === "home") homeShots++; else awayShots++;
     const startPos = { x: 50, y: 50 };
     const goalY = side === "home" ? PITCH_H : 0;
     const goalX = clamp(GOAL_X_MIN + Math.random() * (GOAL_X_MAX - GOAL_X_MIN), GOAL_X_MIN, GOAL_X_MAX);
 
     const fault = Math.random() < 0.08;
     if (fault) {
+      recordSetPieceShot(side, 0, false, false);
+      markParticipant(side, shooter.id, minute);
       const ev = { minute, type: "miss", team: team.name, side, takerId: shooter.id, text: `${minute}' — 🥊 ${label} ! ${shooter.name} (${team.name}) commet une faute technique, le but est refusé !` };
       evts.push(ev);
-      if (options.withSequence) evts.sequence.push({ type: "dribble", side, playerId: shooter.id, from: startPos, to: { x: goalX, y: side === "home" ? goalY - 12 : goalY + 12 }, duration: 0.6, event: ev });
+      restartAfterShot(side, false, { x: goalX, y: side === "home" ? 88 : 12 });
+      const sequence = prepareSetPieceSequence([{ type: "dribble", side, playerId: shooter.id,
+        from: startPos, to: { x: goalX, y: side === "home" ? goalY - 12 : goalY + 12 }, duration: 0.6, event: ev }],
+        side, previousBall, "shootout", !!options.withSequence);
+      if (options.withSequence) evts.sequence = sequence;
       return evts;
     }
     const gkFault = Math.random() < 0.06;
@@ -398,6 +563,9 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
     if (gkFault) chance += 0.3;
     chance = Math.max(0.1, Math.min(0.95, chance));
     const scored = Math.random() < chance;
+    recordSetPieceShot(side, chance, !scored);
+    markParticipant(side, shooter.id, minute);
+    if (oppGK) markParticipant(side === "home" ? "away" : "home", oppGK.id, minute);
     let ev;
     if (scored) {
       recordStat(shooter.id, "goals");
@@ -406,11 +574,17 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
     } else {
       ev = { minute, type: "save", team: team.name, side, takerId: shooter.id, gkId: oppGK ? oppGK.id : null, text: `${minute}' — 🥊 ${label} ! ${oppGK ? oppGK.name : "Le gardien"} sort vainqueur du face-à-face avec ${shooter.name} !` };
     }
+    ev.score = scoreSnapshot();
     evts.push(ev);
-    if (options.withSequence) {
-      const finalY = scored ? goalY : (side === "home" ? goalY - 6 : goalY + 6);
-      evts.sequence.push({ type: scored ? "goal" : "save", side, playerId: shooter.id, gkId: oppGK ? oppGK.id : null, from: startPos, to: { x: goalX, y: finalY }, duration: 1, event: ev });
-    }
+    restartAfterShot(side, scored, { x: goalX, y: scored ? goalY : (side === "home" ? goalY - 6 : goalY + 6) });
+    const finalY = scored ? goalY : (side === "home" ? goalY - 6 : goalY + 6);
+    const shootingPoint = { x: goalX, y: side === "home" ? goalY - 15 : goalY + 15 };
+    const target = { x: goalX, y: finalY };
+    const rawBeats = [{ type: "carry", side, playerId: shooter.id, from: startPos, to: shootingPoint, duration: 1.2, event: null },
+      { type: "shot", side, playerId: shooter.id, gkId: oppGK ? oppGK.id : null, from: shootingPoint, to: target, duration: 0.45, event: null },
+      { type: scored ? "goal" : "save", side, playerId: shooter.id, gkId: oppGK ? oppGK.id : null, from: target, to: target, duration: 0.25, event: ev }];
+    const sequence = prepareSetPieceSequence(rawBeats, side, previousBall, "shootout", !!options.withSequence);
+    if (options.withSequence) evts.sequence = sequence;
     if (!scored && gkFault) {
       const phaseEv = { minute, type: "phase", text: `🥊 Faute du gardien de ${oppTeam.name} ! Penalty immédiat accordé.` };
       evts.push(phaseEv);
@@ -435,15 +609,16 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
   // Toujours déclenché explicitement (jamais depuis le tirage au sort des matchs IA) : la
   // séquence visuelle est donc toujours construite, pas besoin de flag withSequence ici.
   function performPresidentPenaltyKick(side, minute, presidentName) {
+    const previousBall = Object.assign({}, possessionState.releasePoint || possessionState.ball);
     const team = side === "home" ? homeTeam : awayTeam;
     const oppTeam = side === "home" ? awayTeam : homeTeam;
     const oppSetup = side === "home" ? awaySetup : homeSetup;
     const oppGK = getGK(oppTeam, oppSetup);
     const evts = [];
 
-    if (side === "home") homeShots++; else awayShots++;
     const chance = Math.max(0.25, Math.min(0.7, 0.5 - (oppGK ? oppGK.physical / 700 : 0)));
     const scored = Math.random() < chance;
+    recordSetPieceShot(side, chance, !scored);
     let ev;
     if (scored) {
       const tag = registerGoal(side, minute, null);
@@ -451,12 +626,16 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
     } else {
       ev = { minute, type: "save", team: team.name, side, takerId: null, gkId: oppGK ? oppGK.id : null, text: `${minute}' — ⚽ Penalty du Président ! ${presidentName} (président de ${team.name}) tire... mais ${oppGK ? oppGK.name : "le gardien"} arrête !` };
     }
+    ev.score = scoreSnapshot();
     evts.push(ev);
     const penaltySpot = { x: 50, y: side === "home" ? PITCH_H - 12 : 12 };
     const goalY = side === "home" ? PITCH_H : 0;
     const goalX = clamp(GOAL_X_MIN + Math.random() * (GOAL_X_MAX - GOAL_X_MIN), GOAL_X_MIN, GOAL_X_MAX);
     const finalY = scored ? goalY : (side === "home" ? goalY - 6 : goalY + 6);
-    evts.sequence = [{ type: scored ? "goal" : "save", side, playerId: null, gkId: oppGK ? oppGK.id : null, from: penaltySpot, to: { x: goalX, y: finalY }, duration: 0.9, event: ev }];
+    restartAfterShot(side, scored, { x: goalX, y: finalY });
+    evts.sequence = prepareSetPieceSequence([{ type: scored ? "goal" : "save", side, playerId: null,
+      gkId: oppGK ? oppGK.id : null, from: penaltySpot, to: { x: goalX, y: finalY }, duration: 0.9, event: ev }],
+      side, previousBall, "penalty", true);
     return evts;
   }
 
@@ -527,12 +706,15 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
         break;
       }
       case "reversePenalty": {
+        const previousBall = Object.assign({}, possessionState.releasePoint || possessionState.ball);
+        const sequenceStart = sequence.length;
         // L'adversaire tire le penalty : s'il marque, le but ne compte pas ; s'il rate, but pour vous.
         const taker = options.taker || weightedPick(getAttackers(oppTeam, oppSetup));
         if (taker) {
-          if (opp === "home") homeShots++; else awayShots++;
           const sideGK = getGK(team, setup);
-          const scored = Math.random() < (0.7 + taker.mental / 400 - (sideGK ? sideGK.physical / 600 : 0));
+          const chance = clamp(0.7 + taker.mental / 400 - (sideGK ? sideGK.physical / 600 : 0), 0.1, 0.95);
+          const scored = Math.random() < chance;
+          recordSetPieceShot(opp, chance, false, scored);
           const penaltySpot = { x: 50, y: opp === "home" ? PITCH_H - 12 : 12 };
           const goalY = opp === "home" ? PITCH_H : 0;
           const goalX = clamp(GOAL_X_MIN + Math.random() * (GOAL_X_MAX - GOAL_X_MIN), GOAL_X_MIN, GOAL_X_MAX);
@@ -546,6 +728,10 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
             sequence.push({ type: "goal", side: opp, playerId: taker.id, gkId: sideGK ? sideGK.id : null, from: penaltySpot, to: { x: goalX, y: opp === "home" ? goalY - 6 : goalY + 6 }, duration: 0.9, event: ev });
           }
           evts.push(ev);
+          ev.score = scoreSnapshot();
+          restartAfterShot(scored ? opp : side, !scored, { x: goalX, y: scored ? goalY : (opp === "home" ? 94 : 6) });
+          const rawBeats = sequence.splice(sequenceStart);
+          sequence.push(...prepareSetPieceSequence(rawBeats, opp, previousBall, "penalty", true));
         }
         break;
       }
@@ -600,7 +786,7 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
     const setupRef = side === "home" ? homeSetup : awaySetup;
     if (minute >= MATCHBALL_START_MINUTE) {
       removeFromLineup(setupRef, victim.id);
-      const sub = addBenchSubstitute(teamRef, setupRef, victim.pos);
+      const sub = addBenchSubstitute(teamRef, setupRef, victim.pos, victim.id);
       const yellowEv = {
         minute, type: "yellow", team: teamRef.name, side, playerId: victim.id, inId: sub ? sub.id : null, outId: victim.id,
         text: `${minute}' — 🟨 Carton jaune pour ${victim.name} (${teamRef.name}) ! En Matchball, pas de réduction d'effectif${sub ? `, ${sub.name} le remplace` : ""} — shootout accordé à l'adversaire !`
@@ -630,6 +816,114 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
     }
   }
 
+  // Actualise le terrain après exclusions, changement de format ou remplacement.
+  // Les joueurs déjà présents conservent leurs coordonnées ; seuls les entrants
+  // reçoivent une position initiale et les sortants cessent de toucher le ballon.
+  function refreshPhaseLineups(phase, minute) {
+    ["home", "away"].forEach(side => {
+      const team = side === "home" ? homeTeam : awayTeam;
+      const setup = side === "home" ? homeSetup : awaySetup;
+      const outfield = getActiveOutfieldIds(team, setup, minute, side);
+      const keeper = getGK(team, setup);
+      phase[side + "ActiveOutfield"] = outfield;
+      phase[side + "ActiveLineup"] = keeper ? [keeper.id, ...outfield] : outfield;
+      phase[side + "Attackers"] = outfield.map(id => team.players.find(p => p.id === id)).filter(Boolean);
+      phase[side + "GK"] = keeper;
+      phase[side + "AtkAnchors"] = computeSideAnchors(setup, outfield, side, true);
+      phase[side + "DefAnchors"] = computeSideAnchors(setup, outfield, side, false);
+      phase[side + "ActiveLineup"].forEach(id => markParticipant(side, id, minute));
+    });
+  }
+
+  function preparePossession(phase, minute, minuteEvents, sequence) {
+    const active = phase.homeActiveLineup.concat(phase.awayActiveLineup);
+    const activeSet = new Set(active);
+    const positions = possessionState.positions;
+    Object.keys(positions).forEach(id => { if (!activeSet.has(id)) delete positions[id]; });
+    ["home", "away"].forEach(side => {
+      phase[side + "ActiveLineup"].forEach(id => {
+        if (!positions[id]) positions[id] = Object.assign({}, phase[side + "AtkAnchors"][id]
+          || { x: 50, y: gkAnchorY(side) });
+      });
+    });
+    if (possessionState.carrierId && !activeSet.has(possessionState.carrierId)) {
+      possessionState.carrierId = null;
+      if (!possessionState.restartType) possessionState.restartType = "looseBall";
+    }
+    let side = possessionState.side;
+    let candidates = phase[side + "Attackers"];
+    if (!candidates.length && !phase[side + "GK"]) {
+      side = side === "home" ? "away" : "home";
+      possessionState.side = side;
+      candidates = phase[side + "Attackers"];
+      possessionState.carrierId = null;
+    }
+    const before = copyPositions(positions);
+    const release = Object.assign({}, possessionState.releasePoint || possessionState.ball);
+    const restart = possessionState.restartType;
+    if (restart === "looseBall") {
+      // Sur un ballon libre, le joueur réellement le plus proche repart avec lui.
+      const challengers = phase.homeAttackers.map(p => ({ player: p, side: "home" }))
+        .concat(phase.awayAttackers.map(p => ({ player: p, side: "away" })));
+      challengers.sort((a, b) => {
+        const distance = entry => Math.hypot(positions[entry.player.id].x - possessionState.ball.x,
+          positions[entry.player.id].y - possessionState.ball.y) / Math.max(1, entry.player.speed);
+        return distance(a) - distance(b);
+      });
+      if (challengers.length) {
+        side = challengers[0].side;
+        possessionState.side = side;
+        possessionState.carrierId = challengers[0].player.id;
+      }
+    }
+    if (restart === "kickoff") {
+      possessionState.ball = { x: 50, y: 50 };
+      ["home", "away"].forEach(camp => {
+        phase[camp + "ActiveLineup"].forEach(id => {
+          positions[id] = Object.assign({}, phase[camp + "AtkAnchors"][id] || { x: 50, y: gkAnchorY(camp) });
+        });
+      });
+      possessionState.carrierId = null;
+    } else if (restart === "goalKick") {
+      const keeper = phase[side + "GK"];
+      possessionState.ball = { x: 50, y: gkAnchorY(side) };
+      possessionState.carrierId = keeper ? keeper.id : null;
+    }
+    if (!possessionState.carrierId) {
+      const pool = phase[side + "Attackers"];
+      const ball = possessionState.ball;
+      const nearest = [...pool].sort((a, b) => Math.hypot(positions[a.id].x - ball.x, positions[a.id].y - ball.y)
+        - Math.hypot(positions[b.id].x - ball.x, positions[b.id].y - ball.y))[0];
+      possessionState.carrierId = nearest ? nearest.id : (phase[side + "GK"] || {}).id || null;
+    }
+    const carrierId = possessionState.carrierId;
+    if (carrierId) positions[carrierId] = Object.assign({}, possessionState.ball);
+    if (restart) {
+      const names = { kickoff: "Engagement", goalKick: "Relance du gardien", kickIn: "Remise en touche",
+        corner: "Corner", freeKick: "Coup franc", penalty: "Penalty", looseBall: "Ballon récupéré" };
+      const team = side === "home" ? homeTeam : awayTeam;
+      const ev = { minute, type: "restart", side, restartType: restart,
+        text: `${minute}' — ${names[restart] || "Remise en jeu"} pour ${team.name}.` };
+      // Une reprise est un arrêt de jeu explicite, une récupération reste vivante.
+      if (restart !== "looseBall") minuteEvents.push(ev);
+      if (sequence) sequence.push({ type: restart === "looseBall" ? "recovery" : "restart", side,
+        playerId: carrierId, toPlayerId: null, gkId: null, from: release, to: Object.assign({}, possessionState.ball),
+        duration: restart === "looseBall" ? 0.3 : 0.75, restartType: restart,
+        positionsBefore: before, positionsAfter: copyPositions(positions),
+        event: restart === "looseBall" ? null : ev });
+      if (restart !== "looseBall") {
+        possessionState.isCounter = false;
+        possessionState.isHighRecovery = false;
+      } else {
+        possessionState.isCounter = fieldZone(possessionState.ball, side) === "own";
+        possessionState.isHighRecovery = fieldZone(possessionState.ball, side) === "final";
+      }
+      possessionState.restartType = null;
+    }
+    possessionState.releasePoint = Object.assign({}, possessionState.ball);
+    return side;
+  }
+
   // Simule UNE possession réelle, action par action (voir matchengine-actions.js:
   // simulatePossessionChain — décision du porteur, résolution passe/dribble/centre/tir, xG...),
   // puis applique son résultat à l'état du match (score, bonus "but double", stats détaillées,
@@ -639,14 +933,20 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
     if (isMatchDecided()) return 0;
     const oppSide = side === "home" ? "away" : "home";
     const defensePressingExtra = defensePlanKey === "high" ? MATCH_BALANCE.stamina.pressingExtraDrain : 0;
+    const ownTeam = side === "home" ? homeTeam : awayTeam;
+    const ownSetup = side === "home" ? homeSetup : awaySetup;
+    const opposingSetup = side === "home" ? awaySetup : homeSetup;
 
     const chain = simulatePossessionChain({
       side, attackers, defenders, gk, atkAnchors, defAnchors,
+      ownGK: getGK(ownTeam, ownSetup), initialState: getPossessionState(),
+      mentality: ownSetup.mentality || "balanced", defenseMentality: opposingSetup.mentality || "balanced",
       attackPlanKey, attackMod, defenseMod, earlyPhaseBoost,
       withSequence: !!ctx,
-      staminaFactorFor: id => staminaFactor(side, id)
+      staminaFactorFor: id => staminaFactor(side, id) * positionFitFactor(ownTeam, ownSetup, id)
     });
     if (chain.outcome === "none") return;
+    if (chain.endState) possessionState = Object.assign({}, chain.endState, { side: chain.endState.nextSide || side });
 
     // stats détaillées, dans les deux sens (attaque pour `side`, défense pour `oppSide`)
     if (side === "home") {
@@ -704,6 +1004,7 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
       };
     }
     if (ev) {
+      ev.score = scoreSnapshot();
       minuteEvents.push(ev);
       if (ctx && chain.beats.length) chain.beats[chain.beats.length - 1].event = ev;
     }
@@ -742,7 +1043,7 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
       const sanctions = cardSanctions[side];
       sanctions.redActive = sanctions.redActive.filter(entry => {
         if (minute > entry.until) {
-          const sub = addBenchSubstitute(teamRef, setupRef, entry.pos);
+          const sub = addBenchSubstitute(teamRef, setupRef, entry.pos, entry.playerId);
           if (sub) {
             const ev = {
               minute, type: "phase", team: teamRef.name, side, inId: sub.id, outId: entry.playerId,
@@ -789,7 +1090,7 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
       const count = ensureDiceRolled();
       const ev = {
         minute, type: "phase",
-        text: `🎲 LE DÉ GÉANT tombe sur ${count} ! Format ${count}v${count} jusqu'à la 23e minute !`
+        text: `🎲 LE DÉ GÉANT tombe sur ${count} ! ${count} joueur${count > 1 ? "s" : ""} de champ et un gardien par équipe (${count + 1}v${count + 1}) jusqu'à la 23e minute !`
       };
       minuteEvents.push(ev);
       if (withSequence) announce(ev);
@@ -844,6 +1145,8 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
     const awayAtkAnchors = computeSideAnchors(awaySetup, awayActiveOutfield, "away", true);
     const homeDefAnchors = computeSideAnchors(homeSetup, homeActiveOutfield, "home", false);
     const awayDefAnchors = computeSideAnchors(awaySetup, awayActiveOutfield, "away", false);
+    homeActiveLineup.forEach(id => markParticipant("home", id, minute));
+    awayActiveLineup.forEach(id => markParticipant("away", id, minute));
     function anchorFor(side, playerId) {
       const anchors = side === "home" ? homeAtkAnchors : awayAtkAnchors;
       return (anchors && anchors[playerId]) || { x: 50, y: side === "home" ? 30 : 70 };
@@ -865,9 +1168,14 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
         victim.injuryDaysLeft = Math.max(victim.injuryDaysLeft || 0, daysOut);
         victim.injurySeverity = tier.label;
         victim.injured = true;
+        const injuredSetup = side === "home" ? homeSetup : awaySetup;
+        const injuredTeam = side === "home" ? homeTeam : awayTeam;
+        removeFromLineup(injuredSetup, victim.id);
+        const substitute = addBenchSubstitute(injuredTeam, injuredSetup, victim.pos, victim.id);
         const ev = {
           minute, type: "injury", team: side === "home" ? homeTeam.name : awayTeam.name, side, playerId: victim.id,
-          text: `${minute}' — ${victim.name} se blesse (${tier.label}) : indisponible ${daysOut} jour${daysOut > 1 ? "s" : ""} !`
+          inId: substitute ? substitute.id : null, outId: victim.id,
+          text: `${minute}' — ${victim.name} se blesse (${tier.label}) : indisponible ${daysOut} jour${daysOut > 1 ? "s" : ""} !${substitute ? ` ${substitute.name} entre à sa place.` : ""}`
         };
         minuteEvents.push(ev);
         if (withSequence) {
@@ -904,6 +1212,7 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
           sequence.push({ type: "phase", side, playerId: victim.id, from: pos, to: pos, duration: 1.4, event: redEv });
         }
         removeFromLineup(setupRef, victim.id);
+        sentOff[side].add(victim.id);
         if (minute >= MATCHBALL_START_MINUTE) {
           // En Matchball, le carton rouge octroie un penalty classique immédiat à l'adversaire.
           const oppSide = side === "home" ? "away" : "home";
@@ -953,6 +1262,22 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
       if (withSequence) minuteEvents.sequence = [];
       return minuteEvents;
     }
+    lastMinute = minute;
+    // Les entraîneurs IA partagent la même réaction au score en match animé et
+    // dans les ligues simulées : pousser quand ils sont menés, protéger une avance.
+    if (minute >= 25 && minute % 5 === 0) {
+      [["home", homeSetup, homeGoals - awayGoals], ["away", awaySetup, awayGoals - homeGoals]].forEach(([side, setup, difference]) => {
+        if (!setup.autoCoach) return;
+        if (difference < 0) {
+          setup.mentality = "attacking"; setup.attackPlan = "transition"; setup.defensePlan = "high";
+        } else if (difference > 0 && minute >= 30) {
+          setup.mentality = "cautious"; setup.attackPlan = "direct"; setup.defensePlan = "low";
+        } else {
+          setup.mentality = "balanced";
+          Object.assign(setup, initialAiPlans[side]);
+        }
+      });
+    }
     const phase = advancePhaseState(minute, withSequence);
     const minuteEvents = phase.minuteEvents;
     if (phase.stopAfterPenalty || isMatchDecided()) {
@@ -961,6 +1286,7 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
       return minuteEvents;
     }
 
+    refreshPhaseLineups(phase, minute);
     const { homeActiveOutfield, awayActiveOutfield, homeActiveLineup, awayActiveLineup, homeAttackers, awayAttackers, homeGK, awayGK } = phase;
     const sequence = phase.sequence;
 
@@ -983,10 +1309,11 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
     // formules qu'avant le passage au moteur d'actions (préserve l'équilibrage existant — avantage
     // du terrain, pénalité d'infériorité numérique, tactiques) : seulement rescalées ci-dessous en
     // multiplicateurs `attackMod`/`defenseMod` consommés par simulatePossessionChain (matchengine-actions.js).
-    const homeAttackPower = homeStrength.overall * homeAtk.goalMod * homeBonus * homeRedPenalty * formationAttackFactor(homeSetup.formation);
-    const awayAttackPower = awayStrength.overall * awayAtk.goalMod * awayRedPenalty * formationAttackFactor(awaySetup.formation);
-    const homeDefenseFactor = (awayDef.concedeMod / homeRedPenalty) / formationDefenseFactor(awaySetup.formationOOP || awaySetup.formation);
-    const awayDefenseFactor = (homeDef.concedeMod / awayRedPenalty) / formationDefenseFactor(homeSetup.formationOOP || homeSetup.formation);
+    const homeMentality = matchMentality(homeSetup), awayMentality = matchMentality(awaySetup);
+    const homeAttackPower = homeStrength.overall * homeAtk.goalMod * homeBonus * homeRedPenalty * formationAttackFactor(homeSetup.formation) * homeMentality.attack;
+    const awayAttackPower = awayStrength.overall * awayAtk.goalMod * awayRedPenalty * formationAttackFactor(awaySetup.formation) * awayMentality.attack;
+    const homeDefenseFactor = (awayDef.concedeMod / homeRedPenalty) / formationDefenseFactor(awaySetup.formationOOP || awaySetup.formation) * awayMentality.exposure;
+    const awayDefenseFactor = (homeDef.concedeMod / awayRedPenalty) / formationDefenseFactor(homeSetup.formationOOP || homeSetup.formation) * homeMentality.exposure;
     // attackMod agit sur l'xG/la qualité du porteur ; defenseMod sur la pression subie (inverse du
     // "defenseFactor" historique, qui grandissait quand l'adversaire était facile à percer).
     // Bornes volontairement resserrées : attackMod/defenseMod se répercutent sur CHAQUE action
@@ -1003,6 +1330,16 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
     // séparément dans attemptRealAttack, à la charge de l'équipe qui presse).
     regenStamina("home", homeActiveLineup);
     regenStamina("away", awayActiveLineup);
+    // Les courses sans ballon et le pressing coûtent aussi de l'énergie. Les
+    // remplaçants récupèrent pendant qu'ils sont sur le banc.
+    [["home", homeTeam, homeSetup, homeActiveOutfield, homeMentality],
+      ["away", awayTeam, awaySetup, awayActiveOutfield, awayMentality]].forEach(([side, team, setup, active, mentality]) => {
+      const effort = mentality.energy + (setup.defensePlan === "high" ? 0.35 : 0.1);
+      active.forEach(id => { staminaState[side][id] = clamp(staminaValue(side, id) - effort, MATCH_BALANCE.stamina.min, 100); });
+      team.players.filter(p => !active.includes(p.id)).forEach(p => {
+        staminaState[side][p.id] = clamp(staminaValue(side, p.id) + 1.2, MATCH_BALANCE.stamina.min, 100);
+      });
+    });
 
     // but contre son camp (très rare)
     if (Math.random() < 0.0006) {
@@ -1013,15 +1350,24 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
       const victim = lineupPlayers[Math.floor(Math.random() * lineupPlayers.length)];
       if (victim) {
         const ownGoalSide = isHomeOG ? "home" : "away";
+        const ownGoalFrom = Object.assign({}, possessionState.releasePoint || possessionState.ball);
+        const before = copyPositions(possessionState.positions);
+        const contactPositions = copyPositions(before);
+        contactPositions[victim.id] = Object.assign({}, ownGoalFrom);
+        const goalX = clamp(50 + (victim.technique % 7) - 3, GOAL_X_MIN, GOAL_X_MAX);
+        const ownGoalY = ownGoalSide === "home" ? 0 : PITCH_H;
         const tag = registerGoal(isHomeOG ? "away" : "home", minute, null);
-        const ev = { minute, type: "owngoal", team: team.name, side: ownGoalSide, scorerId: victim.id, text: `${minute}' — Catastrophe ! But contre son camp de ${victim.name} (${team.name}) !${tag}` };
+        const ev = { minute, type: "owngoal", team: team.name, side: ownGoalSide, scorerId: victim.id, score: scoreSnapshot(), text: `${minute}' — Catastrophe ! But contre son camp de ${victim.name} (${team.name}) !${tag}` };
         minuteEvents.push(ev);
+        restartAfterShot(ownGoalSide === "home" ? "away" : "home", true,
+          { x: goalX, y: ownGoalY });
+        possessionState.positions = contactPositions;
         if (withSequence) {
-          const anchors = ownGoalSide === "home" ? phase.homeAtkAnchors : phase.awayAtkAnchors;
-          const pos = (anchors && anchors[victim.id]) || { x: 50, y: ownGoalSide === "home" ? 30 : 70 };
-          const ownGoalY = ownGoalSide === "home" ? 0 : PITCH_H; // csc : le tir part vers SON PROPRE but
-          const goalX = clamp(GOAL_X_MIN + Math.random() * (GOAL_X_MAX - GOAL_X_MIN), GOAL_X_MIN, GOAL_X_MAX);
-          sequence.push({ type: "owngoal", side: ownGoalSide, playerId: victim.id, from: pos, to: { x: goalX, y: ownGoalY }, duration: 0.8, event: ev });
+          sequence.push({ type: "recovery", side: ownGoalSide, playerId: victim.id, from: ownGoalFrom, to: ownGoalFrom,
+            duration: 0.3, positionsBefore: before, positionsAfter: contactPositions, event: null });
+          sequence.push({ type: "owngoal", side: ownGoalSide, playerId: victim.id, from: ownGoalFrom,
+            to: { x: goalX, y: ownGoalY }, duration: 0.8,
+            positionsBefore: contactPositions, positionsAfter: copyPositions(contactPositions), event: ev });
         }
       }
     }
@@ -1038,13 +1384,24 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
     const ctx = withSequence ? { sequence } : null;
 
     let homeActions = 0, awayActions = 0;
-    const homeChains = isMatchDecided() ? 0 : planChainCount(homeSetup.attackPlan, earlyPhase);
-    for (let i = 0; i < homeChains && !isMatchDecided(); i++) {
-      homeActions += attemptRealAttack(minute, minuteEvents, "home", homeTeam.name, homeAttackers, awayAttackers, awayGK, phase.homeAtkAnchors, phase.awayDefAnchors, homeSetup.attackPlan, awaySetup.defensePlan, homeAttackMod, homeDefenseMod, earlyPhaseBoost, ctx) || 0;
-    }
-    const awayChains = isMatchDecided() ? 0 : planChainCount(awaySetup.attackPlan, earlyPhase);
-    for (let i = 0; i < awayChains && !isMatchDecided(); i++) {
-      awayActions += attemptRealAttack(minute, minuteEvents, "away", awayTeam.name, awayAttackers, homeAttackers, homeGK, phase.awayAtkAnchors, phase.homeDefAnchors, awaySetup.attackPlan, homeSetup.defensePlan, awayAttackMod, awayDefenseMod, earlyPhaseBoost, ctx) || 0;
+    let slices = isMatchDecided() ? 0 : planChainCount(homeSetup.attackPlan, earlyPhase) + planChainCount(awaySetup.attackPlan, earlyPhase);
+    const tempoBias = homeMentality.extraTempo + awayMentality.extraTempo;
+    if (tempoBias > 0 && Math.random() < tempoBias) slices++;
+    else if (tempoBias < 0 && Math.random() < -tempoBias) slices = Math.max(1, slices - 1);
+    for (let i = 0; i < slices && !isMatchDecided(); i++) {
+      refreshPhaseLineups(phase, minute);
+      const side = preparePossession(phase, minute, minuteEvents, sequence);
+      const opp = side === "home" ? "away" : "home";
+      const setup = side === "home" ? homeSetup : awaySetup;
+      const oppSetup = side === "home" ? awaySetup : homeSetup;
+      const actions = attemptRealAttack(minute, minuteEvents, side,
+        side === "home" ? homeTeam.name : awayTeam.name,
+        phase[side + "Attackers"], phase[opp + "Attackers"], phase[opp + "GK"],
+        phase[side + "AtkAnchors"], phase[opp + "DefAnchors"], setup.attackPlan, oppSetup.defensePlan,
+        side === "home" ? homeAttackMod : awayAttackMod, side === "home" ? homeDefenseMod : awayDefenseMod,
+        earlyPhaseBoost, ctx) || 0;
+      possessionActions[side] += actions;
+      if (side === "home") homeActions += actions; else awayActions += actions;
     }
 
     // Possession dérivée des actions RÉELLEMENT jouées cette minute (nombre de passes/dribbles/
@@ -1067,7 +1424,8 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
   function finalize(shootoutResult) {
     const ratings = {};
     function rateLineup(team, setup, won, draw) {
-      setup.lineup.forEach(id => {
+      const side = team === homeTeam ? "home" : "away";
+      Array.from(participants[side]).forEach(id => {
         const p = team.players.find(pl => pl.id === id);
         if (!p) return;
         let base = 5.5 + (p.form - 75) / 25 + (Math.random() * 1.2 - 0.6);
@@ -1092,7 +1450,7 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
     rateLineup(homeTeam, homeSetup, won, draw);
     rateLineup(awayTeam, awaySetup, lost, draw);
 
-    const homePossession = possessionCount ? Math.round(possessionSum / possessionCount) : 50;
+    const homePossession = getLiveStats().possessionHome;
 
     return {
       homeGoals, awayGoals,
@@ -1101,6 +1459,9 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
       events,
       playerStats,
       ratings,
+      participants: { home: Array.from(participants.home), away: Array.from(participants.away) },
+      minutesPlayed: Object.assign({}, minutesPlayed),
+      homeTeamId: homeTeam.id, awayTeamId: awayTeam.id,
       penaltyWinner,
       shootout: shootoutResult || null,
       // Statistiques détaillées, dérivées des actions réellement simulées (voir
@@ -1122,6 +1483,9 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
     finalize,
     getScore: () => ({ homeGoals, awayGoals }),
     getPlayerStats: () => playerStats,
+    getLiveStats,
+    getPossessionState,
+    getStamina: (side, id) => staminaValue(side, id),
     setCard,
     getCards,
     isCardUsed,
@@ -1150,12 +1514,13 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
     getAvailableOutfieldIds: (side, minute) => {
       const team = side === "home" ? homeTeam : awayTeam;
       const setup = side === "home" ? homeSetup : awaySetup;
+      const keeper = getGK(team, setup);
       const suspended = new Set(
         cardSanctions[side].yellow.filter(y => minute <= y.until).map(y => y.playerId)
       );
       return setup.lineup
         .map(id => team.players.find(p => p.id === id))
-        .filter(p => p && p.pos !== "GK" && !suspended.has(p.id))
+        .filter(p => p && p.pos !== "GK" && (!keeper || p.id !== keeper.id) && !p.injured && !suspended.has(p.id))
         .map(p => p.id);
     },
     triggerPresidentPenalty,
@@ -1208,7 +1573,8 @@ function simulateMatch(homeTeam, homeSetup, awayTeam, awaySetup) {
 // dessous), pour que les classements individuels de saison (voir computeTopScorers/
 // computeTopAssists/computeTopRatings) reflètent aussi bien les joueurs adverses.
 function applyMatchPlayerStats(team, setup, result) {
-  setup.lineup.forEach(id => {
+  const participantIds = result.ratings ? Object.keys(result.ratings).filter(id => team.players.some(p => p.id === id)) : setup.lineup;
+  participantIds.forEach(id => {
     const p = team.players.find(pl => pl.id === id);
     if (!p) return;
     const stat = result.playerStats[id];
@@ -1225,12 +1591,12 @@ function applyMatchPlayerStats(team, setup, result) {
 // --- Mise à jour de la forme après un match ---
 function updateFormAfterMatch(team, setup, goalsFor, goalsAgainst, ratings) {
   team.players.forEach(p => {
-    const inLineup = setup.lineup.includes(p.id);
+    const inLineup = ratings ? Object.prototype.hasOwnProperty.call(ratings, p.id) : setup.lineup.includes(p.id);
     if (inLineup) {
       p.matches++;
       p.careerMatches = (p.careerMatches || 0) + 1;
       let delta = 0;
-      const r = ratings[p.id] || 6;
+    const r = (ratings && ratings[p.id]) || 6;
       if (r >= 7) delta += 3;
       else if (r >= 6) delta += 1;
       else if (r < 5) delta -= 2;
@@ -1428,12 +1794,14 @@ function chooseAiFormation(team) {
     const used = new Set();
     let score = 0;
     const assignments = FORMATION_SLOTS[key].map(slot => {
-      const candidates = team.players
-        .filter(p => p.pos === slot.pos && !used.has(p.id))
+      const eligible = team.players.filter(p => !used.has(p.id) && !p.injured && !p.suspended
+        && (slot.pos === "GK" ? p.pos === "GK" : p.pos !== "GK"));
+      const native = eligible.filter(p => p.pos === slot.pos);
+      const candidates = (native.length ? native : eligible)
         .sort((a, b) => (b.speed + b.technique + b.physical + b.mental + b.form) - (a.speed + a.technique + a.physical + a.mental + a.form));
       if (candidates.length === 0) return null;
       used.add(candidates[0].id);
-      score += candidates[0].overall;
+      score += candidates[0].overall * (candidates[0].pos === slot.pos ? 1 : 0.85);
       return candidates[0].id;
     });
     if (assignments.some(id => id === null)) return; // effectif insuffisant pour cette formation
@@ -1443,7 +1811,14 @@ function chooseAiFormation(team) {
       bestAssignments = assignments;
     }
   });
-  return { formation: bestKey, assignments: bestAssignments || team.players.slice(0, 7).map(p => p.id) };
+  if (!bestAssignments) {
+    const available = team.players.filter(p => !p.injured && !p.suspended);
+    const keeper = available.find(p => p.pos === "GK");
+    const field = available.filter(p => p.pos !== "GK").sort((a, b) => b.overall - a.overall).slice(0, 6);
+    bestAssignments = [keeper ? keeper.id : null].concat(field.map(p => p.id));
+    while (bestAssignments.length < 7) bestAssignments.push(null);
+  }
+  return { formation: bestKey, assignments: bestAssignments };
 }
 
 // --- IA: choix des plans tactiques selon le rapport de force avec l'adversaire ---
@@ -1488,8 +1863,8 @@ function simulateAIMatch(homeTeam, awayTeam) {
   // positionner les joueurs en formation complète plutôt que de retomber sur la disposition de
   // secours "effectif réduit" (confinée à sa propre moitié de terrain, voir anchorToY) — sans lui,
   // le moteur d'actions ne pouvait jamais faire progresser une équipe IA jusqu'au tiers offensif.
-  const homeSetup = { lineup: homeLineup, assignments: homeChoice.assignments, formation: homeChoice.formation, attackPlan: homePlans.attackPlan, defensePlan: homePlans.defensePlan };
-  const awaySetup = { lineup: awayLineup, assignments: awayChoice.assignments, formation: awayChoice.formation, attackPlan: awayPlans.attackPlan, defensePlan: awayPlans.defensePlan };
+  const homeSetup = { lineup: homeLineup, assignments: homeChoice.assignments, formation: homeChoice.formation, attackPlan: homePlans.attackPlan, defensePlan: homePlans.defensePlan, mentality: "balanced", autoCoach: true };
+  const awaySetup = { lineup: awayLineup, assignments: awayChoice.assignments, formation: awayChoice.formation, attackPlan: awayPlans.attackPlan, defensePlan: awayPlans.defensePlan, mentality: "balanced", autoCoach: true };
   const result = simulateMatch(homeTeam, homeSetup, awayTeam, awaySetup);
   applyMatchPlayerStats(homeTeam, homeSetup, result);
   applyMatchPlayerStats(awayTeam, awaySetup, result);

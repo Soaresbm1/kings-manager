@@ -167,6 +167,10 @@
             <div class="tactics-chip-group" id="tactics-defense-plan-choice"></div>
           </div>
           <div class="tactics-toolbar-group">
+            <span class="tactics-toolbar-label" id="tactics-mentality-label">Intention</span>
+            <div class="mentality-choices" id="tactics-mentality-choice" role="group" aria-labelledby="tactics-mentality-label"></div>
+          </div>
+          <div class="tactics-toolbar-group">
             <span class="tactics-toolbar-label">Vue</span>
             <div class="tactics-chip-group" id="tactics-view-mode-choice"></div>
           </div>
@@ -392,6 +396,10 @@
           <div class="tactics-chip-group" id="defense-plan-choice"></div>
         </div>
         <div class="tactics-toolbar-group">
+          <span class="tactics-toolbar-label" id="lineup-mentality-label">Intention</span>
+          <div class="mentality-choices" id="mentality-choice" role="group" aria-labelledby="lineup-mentality-label"></div>
+        </div>
+        <div class="tactics-toolbar-group">
           <span class="tactics-toolbar-label">🃏 Arme Secrète</span>
           <div class="card-grid card-grid-compact" id="secret-card-choice"></div>
         </div>
@@ -440,6 +448,15 @@
                  conserver leurs proportions quand le terrain logique est affiché en paysage. -->
             <canvas id="match-pitch-canvas"></canvas>
           </div>
+          <aside class="touchline-panel" aria-label="Banc de touche">
+            <div class="touchline-heading">
+              <h3 id="live-mentality-label">Banc de touche</h3>
+              <span class="match-live-energy" id="match-live-energy">Énergie : —</span>
+            </div>
+            <div class="mentality-choices live-mentality-choices" id="live-mentality-choice" role="group" aria-labelledby="live-mentality-label"></div>
+            <p class="mentality-description" id="match-mentality-description">Alterner conservation et progression.</p>
+            <p class="match-tactical-insight" id="match-tactical-insight">Observe les premiers échanges avant d'ajuster ton équipe.</p>
+          </aside>
         </div>
 
         <div class="panel match-center">
@@ -452,7 +469,18 @@
             <div class="team-name" id="match-away-name"></div>
           </div>
 
-          <div id="commentary"></div>
+          <div class="match-live-context">
+            <div class="match-live-phase-line"><span id="match-live-format">7 contre 7</span><span id="match-live-phase">Coup d'envoi</span></div>
+            <p id="match-live-carrier">Les deux équipes se mettent en place.</p>
+          </div>
+
+          <dl class="match-live-stats" aria-label="Statistiques des séquences terminées, domicile puis extérieur">
+            <div><dt>Possession</dt><dd id="match-live-possession">50% — 50%</dd></div>
+            <div><dt>Tirs</dt><dd id="match-live-shots">0 — 0</dd></div>
+            <div title="Qualité cumulée des occasions : plus la valeur est élevée, plus les occasions sont dangereuses."><dt>xG</dt><dd id="match-live-xg">0.00 — 0.00</dd></div>
+          </dl>
+
+          <div id="commentary" role="log" aria-label="Commentaires du match" aria-live="off"></div>
 
           <div class="match-controls">
             <button class="secondary" id="btn-pause-match">⏸ Pause</button>
@@ -462,6 +490,7 @@
             <button class="secondary" id="btn-match-speed">▶ x1</button>
             <button class="primary" id="btn-skip-match">Avancer rapidement</button>
           </div>
+          <p class="match-special-status" id="match-special-status" role="status" hidden></p>
         </div>
       </div>
 
@@ -506,6 +535,10 @@
             <div class="tactics-toolbar-group">
               <span class="tactics-toolbar-label">Défense</span>
               <div class="tactics-chip-group" id="match-defense-plan-choice"></div>
+            </div>
+            <div class="tactics-toolbar-group">
+              <span class="tactics-toolbar-label" id="match-mentality-label">Intention</span>
+              <div class="mentality-choices" id="match-mentality-choice" role="group" aria-labelledby="match-mentality-label"></div>
             </div>
             <div class="tactics-toolbar-group">
               <span class="tactics-toolbar-label">Vue</span>
