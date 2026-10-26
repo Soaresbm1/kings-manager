@@ -62,10 +62,21 @@ statique.
 Dossiers `images/players/<dossier-ligue>/<club-slug>/<joueur-slug>.png` (photos, fallback
 initiales si absentes ; le nom du dossier de ligue peut différer de la clé interne — voir
 `app.js:LEAGUE_IMAGE_FOLDER`, ex. clé `brazil` → dossier `bresil`) et `joueurs/` (fichiers
-`.txt` sources pour construire `data.js` à la main — pas chargés par le jeu). France/Brésil :
-vraies données saisies à la main. Espagne/Italie/Allemagne/Mexique : vraies équipes/joueurs,
-mais âges et attributs générés proceduralement (aucune source officielle de ratings pour la
-Kings League) ; pas de photos/blasons pour ces 4 ligues pour l'instant.
+`.txt` historiques, pas chargés par le jeu). Les effectifs sont désormais générés hors ligne
+par `scripts/sync-rosters.cjs` à partir de `research/mercato-*.json` et d'une base historique
+conservant les attributs du jeu. Les sources, dates, alias et incertitudes sont documentés
+dans `research/README.md`. `ROSTER_REVISION` / `LEAGUES[key].rosterRevision` indiquent la
+couverture complète ou partielle ; ne jamais transformer une inscription wildcard en départ
+sans preuve. Les nouveaux profils portent leurs champs estimés, les anciens conservent leurs
+notes du jeu (aucune note officielle Kings League). Les photos utilisent aussi `photoName`
+pour conserver le fichier d'origine quand un joueur est renommé ou transféré.
+
+La base vérifiée le 26/10/2026 concerne les nouvelles carrières. Le Mexique compte désormais
+10 clubs actifs ; les sauvegardes existantes conservent leurs clubs, effectifs et transferts.
+Ne jamais réappliquer le mercato réel sur une carrière déjà commencée.
+Lorsqu'une très ancienne sauvegarde n'a aucune ligue secondaire, les ligues reconstruites
+excluent les copies des joueurs déjà présents dans sa carrière (identité officielle ou alias
+publié non ambigu). Les ligues déjà sauvegardées conservent leurs transferts simulés.
 
 ## Mécaniques de jeu (règles Kings League encodées dans `engine.js`)
 

@@ -1,0 +1,1274 @@
+{
+  "leagueKey": "brazil",
+  "identityAudit": [{"teamId":"flx","name":"Gabriel Felipe Ribas Acosta","officialPlayerId":90012,"url":"https://www.kingsleague.pro/pt/jogadores/90012-gabriel-felipe-ribas-acosta","note":"Profile URL exposed by current official club link. Distinct from old Furia Gabriel Felipe id87589; do not infer alias from shared given names."},{"teamId":"fur","name":"Jefferson 'Gegeu'","officialPlayerId":79955,"birthDate":"1995-03-22","url":"https://kingsleague.pro/pt/jogadores/79955-jefferson-gegeu"},{"teamId":"flx","name":"Luiz Felipe","officialPlayerId":78049,"birthDate":"1994-03-12","url":"https://kingsleague.pro/pt/jogadores/78049-luiz-felipe","note":"No identity evidence linking him to old Furia Luiz Camilo."},{"teamId":"den","name":"Gui Carvalho","officialPlayerId":71567,"url":"https://kingsleague.pro/pt/jogadores/71567-gui-carvalho","note":"Distinct official profile from FC Silmi Guilherme Carvalho id79554."},{"teamId":"cap","name":"Álex Guti","officialPlayerId":94,"url":"https://www.kingsleague.pro/pt/jogadores/94-alex-guti","note":"Same cross-league player as Spain baseline Álex Gutiérrez (Porcinos); official February mercato Porcinos→Capim plus October Cup roster. Preserve identity when moving."}],
+  "checkedAt": "2026-10-26",
+  "competition": "Kings Cup Brazil",
+  "season": "2026/27",
+  "sources": [
+    {
+      "id": "brazil-g3x-squad",
+      "url": "https://www.kingsleague.pro/pt/times/49-g3x-fc",
+      "title": "G3X FC — official 2026/27 season squad",
+      "official": true
+    },
+    {
+      "id": "brazil-fur-squad",
+      "url": "https://www.kingsleague.pro/pt/times/50-furia-fc",
+      "title": "Furia FC — official 2026/27 season squad",
+      "official": true
+    },
+    {
+      "id": "brazil-flx-squad",
+      "url": "https://www.kingsleague.pro/pt/times/160-fluxo-fc",
+      "title": "Fluxo FC — official 2026/27 season squad",
+      "official": true
+    },
+    {
+      "id": "brazil-den-squad",
+      "url": "https://www.kingsleague.pro/pt/times/161-dendele-fc",
+      "title": "Dendele FC — official 2026/27 season squad",
+      "official": true
+    },
+    {
+      "id": "brazil-lou-squad",
+      "url": "https://www.kingsleague.pro/pt/times/162-loud-sc",
+      "title": "LOUD SC — official 2026/27 season squad",
+      "official": true
+    },
+    {
+      "id": "brazil-nyv-squad",
+      "url": "https://www.kingsleague.pro/pt/times/163-nyvelados-fc",
+      "title": "Nyvelados FC — official 2026/27 season squad",
+      "official": true
+    },
+    {
+      "id": "brazil-pod-squad",
+      "url": "https://www.kingsleague.pro/pt/times/164-podpah-funkbol-clube",
+      "title": "Podpah Funkbol Clube — official 2026/27 season squad",
+      "official": true
+    },
+    {
+      "id": "brazil-cap-squad",
+      "url": "https://www.kingsleague.pro/pt/times/167-capim-fc",
+      "title": "Capim FC — official 2026/27 season squad",
+      "official": true
+    },
+    {
+      "id": "brazil-dpn-squad",
+      "url": "https://www.kingsleague.pro/pt/times/168-desimpain",
+      "title": "DesimpaiN — official 2026/27 season squad",
+      "official": true
+    },
+    {
+      "id": "brazil-dib-squad",
+      "url": "https://www.kingsleague.pro/pt/times/220-dibrados-fc",
+      "title": "Dibrados FC — official 2026/27 season squad",
+      "official": true
+    },
+    {
+      "id": "brazil-draft-2026-10-05",
+      "url": "https://www.kingsleague.pro/pt/brazil/noticias/elencos-kings-cup-brazil-draft-gutinho-aleix-marti",
+      "title": "Gutinho, Pick 1 do Draft, já tem time: veja os 10 elencos da Kings Cup Brazil",
+      "publishedAt": "2026-10-05",
+      "official": true
+    },
+    {
+      "id": "brazil-injury-kelvin",
+      "url": "https://www.kingsleague.pro/es/brazil/actualidad/que-le-ha-pasado-a-kelvin-oliveira-k9-operacion-kings-cup-brazil",
+      "title": "Kelvin Oliveira se opera y se pierde la Kings Cup Brazil",
+      "official": true
+    },
+    {
+      "id": "brazil-teams-current",
+      "url": "https://www.kingsleague.pro/pt/brazil/times",
+      "title": "Kings Cup Brazil — official current teams",
+      "official": true
+    }
+  ],
+  "teams": [
+    {
+      "id": "g3x",
+      "name": "G3X FC",
+      "officialTeamId": 49,
+      "rosterStatus": "complete",
+      "sourceIds": [
+        "brazil-g3x-squad"
+      ],
+      "players": [
+        {
+          "name": "Gabriel Braga",
+          "pos": "GK",
+          "shirtNumber": 1,
+          "sourceIds": [
+            "brazil-g3x-squad"
+          ]
+        },
+        {
+          "name": "Wembley Luiz",
+          "pos": "DEF",
+          "shirtNumber": 3,
+          "sourceIds": [
+            "brazil-g3x-squad"
+          ]
+        },
+        {
+          "name": "Gabriel Messias",
+          "pos": "DEF",
+          "shirtNumber": 5,
+          "sourceIds": [
+            "brazil-g3x-squad"
+          ]
+        },
+        {
+          "name": "Marcelo Vilella",
+          "pos": "DEF",
+          "shirtNumber": 6,
+          "sourceIds": [
+            "brazil-g3x-squad"
+          ]
+        },
+        {
+          "name": "Dudu Barbosa",
+          "pos": "MID",
+          "shirtNumber": 8,
+          "sourceIds": [
+            "brazil-g3x-squad"
+          ]
+        },
+        {
+          "name": "Kelvin Oliveira",
+          "pos": "ATT",
+          "shirtNumber": 9,
+          "sourceIds": [
+            "brazil-g3x-squad"
+          ],
+          "availability": "injured - officially ruled out of Kings Cup Brazil"
+        },
+        {
+          "name": "Andreas Vaz",
+          "pos": "MID",
+          "shirtNumber": 10,
+          "sourceIds": [
+            "brazil-g3x-squad"
+          ]
+        },
+        {
+          "name": "Marcos 'Niniu'",
+          "pos": "ATT",
+          "shirtNumber": 11,
+          "sourceIds": [
+            "brazil-g3x-squad"
+          ]
+        },
+        {
+          "name": "Marquinhos Samora",
+          "pos": "MID",
+          "shirtNumber": 12,
+          "sourceIds": [
+            "brazil-g3x-squad"
+          ]
+        },
+        {
+          "name": "Thiago 'TH'",
+          "pos": "MID",
+          "shirtNumber": 33,
+          "sourceIds": [
+            "brazil-g3x-squad"
+          ]
+        },
+        {
+          "name": "Aleix Martí",
+          "pos": "ATT",
+          "shirtNumber": 92,
+          "sourceIds": [
+            "brazil-g3x-squad"
+          ]
+        },
+        {
+          "name": "Josildo Barata",
+          "pos": "GK",
+          "shirtNumber": 98,
+          "sourceIds": [
+            "brazil-g3x-squad"
+          ]
+        },
+        {
+          "name": "Danilo Silva",
+          "pos": "ATT",
+          "shirtNumber": 99,
+          "sourceIds": [
+            "brazil-g3x-squad"
+          ]
+        }
+      ],
+      "rosterScope": "Official current season squad page; registration type left unspecified unless directly verified."
+    },
+    {
+      "id": "fur",
+      "name": "Furia FC",
+      "officialTeamId": 50,
+      "rosterStatus": "complete",
+      "sourceIds": [
+        "brazil-fur-squad"
+      ],
+      "players": [
+        {
+          "name": "Clebinho Silva",
+          "pos": "GK",
+          "shirtNumber": 1,
+          "sourceIds": [
+            "brazil-fur-squad"
+          ]
+        },
+        {
+          "name": "Ruan Major",
+          "pos": "MID",
+          "shirtNumber": 3,
+          "sourceIds": [
+            "brazil-fur-squad"
+          ]
+        },
+        {
+          "name": "Rafael 'Tambinha'",
+          "pos": "MID",
+          "shirtNumber": 5,
+          "sourceIds": [
+            "brazil-fur-squad"
+          ]
+        },
+        {
+          "name": "Drope Oliveira",
+          "pos": "ATT",
+          "shirtNumber": 7,
+          "sourceIds": [
+            "brazil-fur-squad"
+          ]
+        },
+        {
+          "name": "Ruan Silvestre",
+          "pos": "ATT",
+          "shirtNumber": 9,
+          "sourceIds": [
+            "brazil-fur-squad"
+          ]
+        },
+        {
+          "name": "Lipão Pinheiro",
+          "pos": "ATT",
+          "shirtNumber": 10,
+          "sourceIds": [
+            "brazil-fur-squad"
+          ]
+        },
+        {
+          "name": "Leleti Garcia",
+          "pos": "ATT",
+          "shirtNumber": 11,
+          "sourceIds": [
+            "brazil-fur-squad"
+          ]
+        },
+        {
+          "name": "Jeffinho Honorato",
+          "pos": "MID",
+          "shirtNumber": 12,
+          "sourceIds": [
+            "brazil-fur-squad"
+          ]
+        },
+        {
+          "name": "Kenu Leandro",
+          "pos": "MID",
+          "shirtNumber": 13,
+          "sourceIds": [
+            "brazil-fur-squad"
+          ]
+        },
+        {
+          "name": "Matheus 'Dedo'",
+          "pos": "DEF",
+          "shirtNumber": 14,
+          "sourceIds": [
+            "brazil-fur-squad"
+          ]
+        },
+        {
+          "name": "Jefferson 'Gegeu'",
+          "pos": "DEF",
+          "shirtNumber": 19,
+          "sourceIds": [
+            "brazil-fur-squad"
+          ]
+        },
+        {
+          "name": "Victor Hugo",
+          "pos": "GK",
+          "shirtNumber": 33,
+          "sourceIds": [
+            "brazil-fur-squad"
+          ]
+        }
+      ],
+      "rosterScope": "Official current season squad page; registration type left unspecified unless directly verified."
+    },
+    {
+      "id": "flx",
+      "name": "Fluxo FC",
+      "officialTeamId": 160,
+      "rosterStatus": "complete",
+      "sourceIds": [
+        "brazil-flx-squad"
+      ],
+      "players": [
+        {
+          "name": "Murillo Pulino",
+          "pos": "DEF",
+          "shirtNumber": 3,
+          "sourceIds": [
+            "brazil-flx-squad"
+          ],
+          "registrationNote": "Listed on current team page, omitted from October 5 final twelve; unused as of Matchday 1. Do not assume departure or active registration."
+        },
+        {
+          "name": "Paulo 'Pinguinho'",
+          "pos": "MID",
+          "shirtNumber": 5,
+          "sourceIds": [
+            "brazil-flx-squad"
+          ]
+        },
+        {
+          "name": "Cleiton Chupeta",
+          "pos": "MID",
+          "shirtNumber": 7,
+          "sourceIds": [
+            "brazil-flx-squad"
+          ]
+        },
+        {
+          "name": "Matheus 'Chaveirinho'",
+          "pos": "MID",
+          "shirtNumber": 10,
+          "sourceIds": [
+            "brazil-flx-squad"
+          ]
+        },
+        {
+          "name": "Gustavinho Henrique",
+          "pos": "ATT",
+          "shirtNumber": 11,
+          "sourceIds": [
+            "brazil-flx-squad"
+          ]
+        },
+        {
+          "name": "Lucas Samurai",
+          "pos": "MID",
+          "shirtNumber": 12,
+          "sourceIds": [
+            "brazil-flx-squad"
+          ]
+        },
+        {
+          "name": "Gabriel Felipe Ribas Acosta",
+          "pos": "ATT",
+          "shirtNumber": 19,
+          "sourceIds": [
+            "brazil-flx-squad"
+          ]
+        },
+        {
+          "name": "Murilinho Oliveira",
+          "pos": "MID",
+          "shirtNumber": 20,
+          "sourceIds": [
+            "brazil-flx-squad"
+          ]
+        },
+        {
+          "name": "João Pedro",
+          "pos": "GK",
+          "shirtNumber": 22,
+          "sourceIds": [
+            "brazil-flx-squad"
+          ]
+        },
+        {
+          "name": "Luiz Felipe",
+          "pos": "MID",
+          "shirtNumber": 45,
+          "sourceIds": [
+            "brazil-flx-squad"
+          ]
+        },
+        {
+          "name": "Pedro Medina",
+          "pos": "DEF",
+          "shirtNumber": 80,
+          "sourceIds": [
+            "brazil-flx-squad"
+          ]
+        },
+        {
+          "name": "Vinicyus Chacon",
+          "pos": "GK",
+          "shirtNumber": 82,
+          "sourceIds": [
+            "brazil-flx-squad"
+          ]
+        },
+        {
+          "name": "Patrick Habibi",
+          "pos": "ATT",
+          "shirtNumber": 99,
+          "sourceIds": [
+            "brazil-flx-squad"
+          ]
+        }
+      ],
+      "rosterScope": "Official current season squad page; registration type left unspecified unless directly verified."
+    },
+    {
+      "id": "den",
+      "name": "Dendele FC",
+      "officialTeamId": 161,
+      "rosterStatus": "complete",
+      "sourceIds": [
+        "brazil-den-squad"
+      ],
+      "players": [
+        {
+          "name": "Gustavo Húngaro",
+          "pos": "GK",
+          "shirtNumber": 1,
+          "sourceIds": [
+            "brazil-den-squad"
+          ]
+        },
+        {
+          "name": "Lyncoln Oliveira",
+          "pos": "DEF",
+          "shirtNumber": 2,
+          "sourceIds": [
+            "brazil-den-squad"
+          ]
+        },
+        {
+          "name": "Cristhian 'Canhoto'",
+          "pos": "MID",
+          "shirtNumber": 6,
+          "sourceIds": [
+            "brazil-den-squad"
+          ]
+        },
+        {
+          "name": "Lucas 'L7'",
+          "pos": "ATT",
+          "shirtNumber": 7,
+          "sourceIds": [
+            "brazil-den-squad"
+          ]
+        },
+        {
+          "name": "Christian Santos",
+          "pos": "MID",
+          "shirtNumber": 10,
+          "sourceIds": [
+            "brazil-den-squad"
+          ]
+        },
+        {
+          "name": "Ryan Soares",
+          "pos": "ATT",
+          "shirtNumber": 11,
+          "sourceIds": [
+            "brazil-den-squad"
+          ]
+        },
+        {
+          "name": "Nicollas Nascimento",
+          "pos": "ATT",
+          "shirtNumber": 12,
+          "sourceIds": [
+            "brazil-den-squad"
+          ]
+        },
+        {
+          "name": "Gui Carvalho",
+          "pos": "DEF",
+          "shirtNumber": 14,
+          "sourceIds": [
+            "brazil-den-squad"
+          ]
+        },
+        {
+          "name": "Gabriel Repulho",
+          "pos": "ATT",
+          "shirtNumber": 16,
+          "sourceIds": [
+            "brazil-den-squad"
+          ]
+        },
+        {
+          "name": "Júlio Carvalho",
+          "pos": "GK",
+          "shirtNumber": 21,
+          "sourceIds": [
+            "brazil-den-squad"
+          ]
+        },
+        {
+          "name": "Vinicius 'Melequinha' Almeida",
+          "pos": "DEF",
+          "shirtNumber": 30,
+          "sourceIds": [
+            "brazil-den-squad"
+          ]
+        },
+        {
+          "name": "Rubens Tuco",
+          "pos": "ATT",
+          "shirtNumber": 92,
+          "sourceIds": [
+            "brazil-den-squad"
+          ]
+        }
+      ],
+      "rosterScope": "Official current season squad page; registration type left unspecified unless directly verified."
+    },
+    {
+      "id": "lou",
+      "name": "LOUD SC",
+      "officialTeamId": 162,
+      "rosterStatus": "complete",
+      "sourceIds": [
+        "brazil-lou-squad"
+      ],
+      "players": [
+        {
+          "name": "Esaú Nascimento",
+          "pos": "GK",
+          "shirtNumber": 1,
+          "sourceIds": [
+            "brazil-lou-squad"
+          ]
+        },
+        {
+          "name": "Rafinha Cunha",
+          "pos": "ATT",
+          "shirtNumber": 7,
+          "sourceIds": [
+            "brazil-lou-squad"
+          ]
+        },
+        {
+          "name": "Luís Fernando",
+          "pos": "DEF",
+          "shirtNumber": 8,
+          "sourceIds": [
+            "brazil-lou-squad"
+          ]
+        },
+        {
+          "name": "Daniel Shiraishi",
+          "pos": "MID",
+          "shirtNumber": 10,
+          "sourceIds": [
+            "brazil-lou-squad"
+          ]
+        },
+        {
+          "name": "Andson 'Romarinho'",
+          "pos": "ATT",
+          "shirtNumber": 11,
+          "sourceIds": [
+            "brazil-lou-squad"
+          ]
+        },
+        {
+          "name": "Caio Felipe",
+          "pos": "MID",
+          "shirtNumber": 12,
+          "sourceIds": [
+            "brazil-lou-squad"
+          ]
+        },
+        {
+          "name": "Arthur Facas",
+          "pos": "GK",
+          "shirtNumber": 14,
+          "sourceIds": [
+            "brazil-lou-squad"
+          ]
+        },
+        {
+          "name": "Gui Marques",
+          "pos": "MID",
+          "shirtNumber": 20,
+          "sourceIds": [
+            "brazil-lou-squad"
+          ]
+        },
+        {
+          "name": "Matheus 'Biro'",
+          "pos": "DEF",
+          "shirtNumber": 25,
+          "sourceIds": [
+            "brazil-lou-squad"
+          ]
+        },
+        {
+          "name": "Felipe Viana",
+          "pos": "ATT",
+          "shirtNumber": 27,
+          "sourceIds": [
+            "brazil-lou-squad"
+          ]
+        },
+        {
+          "name": "Matheusinho Santos",
+          "pos": "MID",
+          "shirtNumber": 77,
+          "sourceIds": [
+            "brazil-lou-squad"
+          ]
+        },
+        {
+          "name": "Helber Júnior",
+          "pos": "ATT",
+          "shirtNumber": 96,
+          "sourceIds": [
+            "brazil-lou-squad"
+          ]
+        }
+      ],
+      "rosterScope": "Official current season squad page; registration type left unspecified unless directly verified."
+    },
+    {
+      "id": "nyv",
+      "name": "Nyvelados FC",
+      "officialTeamId": 163,
+      "rosterStatus": "complete",
+      "sourceIds": [
+        "brazil-nyv-squad"
+      ],
+      "players": [
+        {
+          "name": "Ivo Alves",
+          "pos": "GK",
+          "shirtNumber": 1,
+          "sourceIds": [
+            "brazil-nyv-squad"
+          ]
+        },
+        {
+          "name": "Luisinho Barreiros",
+          "pos": "MID",
+          "shirtNumber": 5,
+          "sourceIds": [
+            "brazil-nyv-squad"
+          ]
+        },
+        {
+          "name": "Marcos 'MV'",
+          "pos": "MID",
+          "shirtNumber": 6,
+          "sourceIds": [
+            "brazil-nyv-squad"
+          ]
+        },
+        {
+          "name": "Edipo Felipinho",
+          "pos": "ATT",
+          "shirtNumber": 7,
+          "sourceIds": [
+            "brazil-nyv-squad"
+          ]
+        },
+        {
+          "name": "GB Medeiros",
+          "pos": "DEF",
+          "shirtNumber": 8,
+          "sourceIds": [
+            "brazil-nyv-squad"
+          ]
+        },
+        {
+          "name": "Johnny Gomes",
+          "pos": "ATT",
+          "shirtNumber": 9,
+          "sourceIds": [
+            "brazil-nyv-squad"
+          ]
+        },
+        {
+          "name": "Léo 'Gol'",
+          "pos": "MID",
+          "shirtNumber": 10,
+          "sourceIds": [
+            "brazil-nyv-squad"
+          ]
+        },
+        {
+          "name": "Luizinho Silva",
+          "pos": "GK",
+          "shirtNumber": 12,
+          "sourceIds": [
+            "brazil-nyv-squad"
+          ]
+        },
+        {
+          "name": "Matheus Scooby",
+          "pos": "MID",
+          "shirtNumber": 14,
+          "sourceIds": [
+            "brazil-nyv-squad"
+          ]
+        },
+        {
+          "name": "Erick 'Kaká'",
+          "pos": "ATT",
+          "shirtNumber": 18,
+          "sourceIds": [
+            "brazil-nyv-squad"
+          ]
+        },
+        {
+          "name": "Maicon Macabeu",
+          "pos": "DEF",
+          "shirtNumber": 94,
+          "sourceIds": [
+            "brazil-nyv-squad"
+          ]
+        },
+        {
+          "name": "Matheus Klynsmann",
+          "pos": "ATT",
+          "shirtNumber": 95,
+          "sourceIds": [
+            "brazil-nyv-squad"
+          ]
+        }
+      ],
+      "rosterScope": "Official current season squad page; registration type left unspecified unless directly verified."
+    },
+    {
+      "id": "pod",
+      "name": "Podpah Funkbol Clube",
+      "officialTeamId": 164,
+      "rosterStatus": "complete",
+      "sourceIds": [
+        "brazil-pod-squad"
+      ],
+      "players": [
+        {
+          "name": "LC Paredão",
+          "pos": "GK",
+          "shirtNumber": 1,
+          "sourceIds": [
+            "brazil-pod-squad"
+          ]
+        },
+        {
+          "name": "William Jesus",
+          "pos": "DEF",
+          "shirtNumber": 3,
+          "sourceIds": [
+            "brazil-pod-squad"
+          ]
+        },
+        {
+          "name": "Thiago Magalhães",
+          "pos": "DEF",
+          "shirtNumber": 5,
+          "sourceIds": [
+            "brazil-pod-squad"
+          ]
+        },
+        {
+          "name": "Juninho Antunes",
+          "pos": "ATT",
+          "shirtNumber": 7,
+          "sourceIds": [
+            "brazil-pod-squad"
+          ]
+        },
+        {
+          "name": "João 'Choco'",
+          "pos": "ATT",
+          "shirtNumber": 9,
+          "sourceIds": [
+            "brazil-pod-squad"
+          ]
+        },
+        {
+          "name": "Juninho Maestro",
+          "pos": "MID",
+          "shirtNumber": 10,
+          "sourceIds": [
+            "brazil-pod-squad"
+          ]
+        },
+        {
+          "name": "Caio Miranda",
+          "pos": "MID",
+          "shirtNumber": 11,
+          "sourceIds": [
+            "brazil-pod-squad"
+          ]
+        },
+        {
+          "name": "Gustavo Albino",
+          "pos": "GK",
+          "shirtNumber": 12,
+          "sourceIds": [
+            "brazil-pod-squad"
+          ]
+        },
+        {
+          "name": "Yan 'Coringa'",
+          "pos": "ATT",
+          "shirtNumber": 14,
+          "sourceIds": [
+            "brazil-pod-squad"
+          ]
+        },
+        {
+          "name": "Teteu Luiz",
+          "pos": "MID",
+          "shirtNumber": 19,
+          "sourceIds": [
+            "brazil-pod-squad"
+          ]
+        },
+        {
+          "name": "Murilo Tudisco",
+          "pos": "ATT",
+          "shirtNumber": 33,
+          "sourceIds": [
+            "brazil-pod-squad"
+          ]
+        },
+        {
+          "name": "Vini Alexandre",
+          "pos": "MID",
+          "shirtNumber": 77,
+          "sourceIds": [
+            "brazil-pod-squad"
+          ]
+        }
+      ],
+      "rosterScope": "Official current season squad page; registration type left unspecified unless directly verified."
+    },
+    {
+      "id": "cap",
+      "name": "Capim FC",
+      "officialTeamId": 167,
+      "rosterStatus": "complete",
+      "sourceIds": [
+        "brazil-cap-squad"
+      ],
+      "players": [
+        {
+          "name": "Guilherme Alves",
+          "pos": "GK",
+          "shirtNumber": 1,
+          "sourceIds": [
+            "brazil-cap-squad"
+          ]
+        },
+        {
+          "name": "Welitim Gomes",
+          "pos": "ATT",
+          "shirtNumber": 3,
+          "sourceIds": [
+            "brazil-cap-squad"
+          ]
+        },
+        {
+          "name": "Jader Vozinha",
+          "pos": "MID",
+          "shirtNumber": 6,
+          "sourceIds": [
+            "brazil-cap-squad"
+          ]
+        },
+        {
+          "name": "Lucas 'Caroço'",
+          "pos": "DEF",
+          "shirtNumber": 7,
+          "sourceIds": [
+            "brazil-cap-squad"
+          ]
+        },
+        {
+          "name": "Caio Henrique",
+          "pos": "MID",
+          "shirtNumber": 8,
+          "sourceIds": [
+            "brazil-cap-squad"
+          ]
+        },
+        {
+          "name": "Lucas Hector",
+          "pos": "ATT",
+          "shirtNumber": 10,
+          "sourceIds": [
+            "brazil-cap-squad"
+          ]
+        },
+        {
+          "name": "Matheus Gomes",
+          "pos": "ATT",
+          "shirtNumber": 11,
+          "sourceIds": [
+            "brazil-cap-squad"
+          ]
+        },
+        {
+          "name": "Marcos 'Bolivia'",
+          "pos": "GK",
+          "shirtNumber": 12,
+          "sourceIds": [
+            "brazil-cap-squad"
+          ]
+        },
+        {
+          "name": "Álex Guti",
+          "pos": "DEF",
+          "shirtNumber": 16,
+          "sourceIds": [
+            "brazil-cap-squad"
+          ]
+        },
+        {
+          "name": "Breno Arantes",
+          "pos": "DEF",
+          "shirtNumber": 47,
+          "sourceIds": [
+            "brazil-cap-squad"
+          ]
+        },
+        {
+          "name": "Biel Moreira",
+          "pos": "MID",
+          "shirtNumber": 80,
+          "sourceIds": [
+            "brazil-cap-squad"
+          ]
+        },
+        {
+          "name": "Heltinho Lima",
+          "pos": "ATT",
+          "shirtNumber": 99,
+          "sourceIds": [
+            "brazil-cap-squad"
+          ]
+        }
+      ],
+      "rosterScope": "Official current season squad page; registration type left unspecified unless directly verified."
+    },
+    {
+      "id": "dpn",
+      "name": "DesimpaiN",
+      "officialTeamId": 168,
+      "rosterStatus": "complete",
+      "sourceIds": [
+        "brazil-dpn-squad"
+      ],
+      "players": [
+        {
+          "name": "Kaiky Souza",
+          "pos": "GK",
+          "shirtNumber": 1,
+          "sourceIds": [
+            "brazil-dpn-squad"
+          ]
+        },
+        {
+          "name": "Victor 'Bolt'",
+          "pos": "DEF",
+          "shirtNumber": 5,
+          "sourceIds": [
+            "brazil-dpn-squad"
+          ]
+        },
+        {
+          "name": "Luisinho Alves",
+          "pos": "ATT",
+          "shirtNumber": 7,
+          "sourceIds": [
+            "brazil-dpn-squad"
+          ]
+        },
+        {
+          "name": "Matheus Bueno",
+          "pos": "MID",
+          "shirtNumber": 8,
+          "sourceIds": [
+            "brazil-dpn-squad"
+          ]
+        },
+        {
+          "name": "Douglinhas Melo",
+          "pos": "ATT",
+          "shirtNumber": 9,
+          "sourceIds": [
+            "brazil-dpn-squad"
+          ]
+        },
+        {
+          "name": "Lucas 'Lukinhas' Henrique",
+          "pos": "MID",
+          "shirtNumber": 11,
+          "sourceIds": [
+            "brazil-dpn-squad"
+          ]
+        },
+        {
+          "name": "Gustavo Luiz",
+          "pos": "GK",
+          "shirtNumber": 12,
+          "sourceIds": [
+            "brazil-dpn-squad"
+          ]
+        },
+        {
+          "name": "Danilo Alemão",
+          "pos": "DEF",
+          "shirtNumber": 14,
+          "sourceIds": [
+            "brazil-dpn-squad"
+          ]
+        },
+        {
+          "name": "Wellinton 'Gigante'",
+          "pos": "DEF",
+          "shirtNumber": 16,
+          "sourceIds": [
+            "brazil-dpn-squad"
+          ]
+        },
+        {
+          "name": "David 'Brinquinho'",
+          "pos": "MID",
+          "shirtNumber": 20,
+          "sourceIds": [
+            "brazil-dpn-squad"
+          ]
+        },
+        {
+          "name": "Nikxik Ribeiro",
+          "pos": "ATT",
+          "shirtNumber": 33,
+          "sourceIds": [
+            "brazil-dpn-squad"
+          ]
+        },
+        {
+          "name": "Ryan Lima",
+          "pos": "ATT",
+          "shirtNumber": 77,
+          "sourceIds": [
+            "brazil-dpn-squad"
+          ]
+        }
+      ],
+      "rosterScope": "Official current season squad page; registration type left unspecified unless directly verified."
+    },
+    {
+      "id": "dib",
+      "name": "Dibrados FC",
+      "officialTeamId": 220,
+      "rosterStatus": "complete",
+      "sourceIds": [
+        "brazil-dib-squad"
+      ],
+      "players": [
+        {
+          "name": "Luan Teles",
+          "pos": "GK",
+          "shirtNumber": 1,
+          "sourceIds": [
+            "brazil-dib-squad"
+          ]
+        },
+        {
+          "name": "Filipinho Maia",
+          "pos": "GK",
+          "shirtNumber": 2,
+          "sourceIds": [
+            "brazil-dib-squad"
+          ]
+        },
+        {
+          "name": "Sidão Pages",
+          "pos": "DEF",
+          "shirtNumber": 6,
+          "sourceIds": [
+            "brazil-dib-squad"
+          ]
+        },
+        {
+          "name": "Raphael Augusto",
+          "pos": "MID",
+          "shirtNumber": 7,
+          "sourceIds": [
+            "brazil-dib-squad"
+          ]
+        },
+        {
+          "name": "Well Andrade",
+          "pos": "MID",
+          "shirtNumber": 8,
+          "sourceIds": [
+            "brazil-dib-squad"
+          ]
+        },
+        {
+          "name": "Gutinho Penha",
+          "pos": "ATT",
+          "shirtNumber": 9,
+          "sourceIds": [
+            "brazil-dib-squad"
+          ]
+        },
+        {
+          "name": "Luan 'Mestre'",
+          "pos": "MID",
+          "shirtNumber": 10,
+          "sourceIds": [
+            "brazil-dib-squad"
+          ]
+        },
+        {
+          "name": "Gabriel Costa",
+          "pos": "ATT",
+          "shirtNumber": 11,
+          "sourceIds": [
+            "brazil-dib-squad"
+          ]
+        },
+        {
+          "name": "Ton 'Spider'",
+          "pos": "ATT",
+          "shirtNumber": 12,
+          "sourceIds": [
+            "brazil-dib-squad"
+          ]
+        },
+        {
+          "name": "Rodrigo Sheik",
+          "pos": "MID",
+          "shirtNumber": 19,
+          "sourceIds": [
+            "brazil-dib-squad"
+          ]
+        },
+        {
+          "name": "Daniel Ram",
+          "pos": "DEF",
+          "shirtNumber": 26,
+          "sourceIds": [
+            "brazil-dib-squad"
+          ]
+        },
+        {
+          "name": "Matheus Rufino",
+          "pos": "MID",
+          "shirtNumber": 30,
+          "sourceIds": [
+            "brazil-dib-squad"
+          ]
+        }
+      ],
+      "rosterScope": "Official current season squad page; registration type left unspecified unless directly verified."
+    }
+  ],
+  "confirmedTransfers": [
+    {
+      "name": "Aleix Martí",
+      "fromTeamId": "umo",
+      "toTeamId": "g3x",
+      "date": "2026-10-05",
+      "sourceIds": [
+        "brazil-draft-2026-10-05",
+        "brazil-g3x-squad"
+      ]
+    },
+    {
+      "name": "Matheus Rufino",
+      "fromTeamId": "g3x",
+      "toTeamId": "dib",
+      "date": "2026-10-05",
+      "sourceIds": [
+        "brazil-draft-2026-10-05",
+        "brazil-dib-squad"
+      ]
+    },
+    {
+      "name": "Well Andrade",
+      "toTeamId": "dib",
+      "date": "2026-10-05",
+      "sourceIds": [
+        "brazil-draft-2026-10-05",
+        "brazil-dib-squad"
+      ],
+      "note": "Official article says G3X World Cup squad; game baseline had him at Fluxo. Avoid assuming a direct permanent G3X→Dibrados transfer from a tournament guest spell."
+    },
+    {
+      "name": "Ryan Lima",
+      "fromTeamId": "g3x",
+      "toTeamId": "dpn",
+      "date": "2026-10-05",
+      "sourceIds": [
+        "brazil-draft-2026-10-05",
+        "brazil-dpn-squad"
+      ]
+    },
+    {
+      "name": "Gutinho Penha",
+      "toTeamId": "dib",
+      "date": "2026-10-03",
+      "sourceIds": [
+        "brazil-draft-2026-10-05",
+        "brazil-dib-squad"
+      ]
+    },
+    {
+      "name": "Nikxik Ribeiro",
+      "toTeamId": "dpn",
+      "date": "2026-10-03",
+      "sourceIds": [
+        "brazil-draft-2026-10-05",
+        "brazil-dpn-squad"
+      ]
+    },
+    {
+      "name": "Danilo Silva",
+      "toTeamId": "g3x",
+      "date": "2026-10-03",
+      "sourceIds": [
+        "brazil-draft-2026-10-05",
+        "brazil-g3x-squad"
+      ]
+    },
+    {
+      "name": "Teteu Luiz",
+      "toTeamId": "pod",
+      "date": "2026-10-03",
+      "sourceIds": [
+        "brazil-draft-2026-10-05",
+        "brazil-pod-squad"
+      ]
+    }
+  ],
+  "uncertainties": [
+    "Current official team pages take precedence for displayed names and positions over the October 5 news roundup, which contains aliases and position inconsistencies: Daniel Ram DEF, Jader Vozinha MID, Cristhian Canhoto MID, GB Medeiros DEF, Erick Kaká ATT, João Choco ATT.",
+    "Kelvin Oliveira remains on G3X official team page but the league explicitly confirms he will miss the entire Kings Cup after hip surgery. Preserve club identity and mark unavailable; do not treat his absence from the 12-player draft list as a transfer.",
+    "Fluxo page lists 13 players, including unused Murillo Pulino; October 5 final draft roundup lists 12 and omits him. Registration remains uncertain for Murillo Pulino; no departure is asserted.",
+    "Names differing between article and current official page include Guilherme Ramos/Guilherme Alves, Wellington Gomes/Welitim Gomes, Sidney Pages/Sidão Pages, Rodriguinho Rocha/Rodrigo Sheik, Lukinhas Santos/Lucas Lukinhas Henrique, Luis LF8/Luís Fernando, Romarinho/Andson Romarinho, Edipo Brito/Edipo Felipinho and Thiago Chupeta/Thiago Magalhães. Do not create duplicate identities from the article aliases without a profile identifier.",
+    "The global /mercato table is the February 2026 window (kickoff February 5; windows February 9–12), superseded for Brazil by October draft and current Kings Cup registrations."
+  ],
+  "rosterScope": "Official 2026/27 Kings Cup Brazil team-page squads. Includes injured/unused page entries; no permanent-contract status inferred."
+}

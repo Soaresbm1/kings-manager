@@ -3,6 +3,8 @@ import { readFile } from 'node:fs/promises';
 
 // État global lexical du jeu, accessible dans le contexte navigateur des tests.
 declare const STATE: any;
+declare function generateSchedule(ids: string[]): Array<Array<{ home: string; away: string }>>;
+declare function saveGame(): void;
 
 // Le jeu utilise le hasard pour ses données et ses matchs. Les assertions portent
 // sur les parcours et les invariants ; une graine fixe rend un échec rejouable.
@@ -95,6 +97,10 @@ test('export et import d’une ancienne carrière sans nouvelle consigne tactiqu
 
 test('un effectif sans formation naturelle conserve sept titulaires et un seul gardien', async ({ page }) => {
   await startCareer(page, 'Brésil', 'Fluxo FC');
+  await page.evaluate(() => {
+    const team = STATE.league.teams.find((item: any) => item.id === STATE.userTeamId);
+    team.players.forEach((player: any) => { if (player.pos !== 'GK') player.pos = 'MID'; });
+  });
   await page.locator('#btn-prepare-match').click();
   await expect(page.locator('#lineup-count')).toHaveText('7');
   await expect(page.locator('#btn-play-match')).toBeEnabled();
@@ -131,5 +137,27 @@ test('le résumé brésilien reste accessible avec une note absente et un joueur
   await page.reload();
   await expect(page.locator('#saves-list .transfer-row').filter({ hasText: 'G3X FC' })).toContainText('Journée 2');
   expect(pageErrors).toEqual([]);
+});
+
+test('la nouvelle base mexicaine conserve les anciennes carrières à douze clubs', async ({ page }) => {
+  await startCareer(page, 'Mexique', 'Persas FC');
+  const baseline = JSON.parse(await readFile('research/rosters-baseline.json', 'utf8'));
+  await page.evaluate((oldTeams: any[]) => {
+    STATE.league.teams = oldTeams.map(team => ({ ...team, players: team.players.map((player: any, index: number) => ({ ...player, id: `${team.id}-legacy-${index}`, form: 80 })) }));
+    STATE.userTeamId = 'lal';
+    STATE.schedule = generateSchedule(STATE.league.teams.map((team: any) => team.id));
+    STATE.league.results = STATE.schedule.flatMap((matches: any[], round: number) => matches.map(match => ({ ...match, round, played: false, homeGoals: 0, awayGoals: 0 })));
+    saveGame();
+  }, baseline.leagues.mexico.teams);
+  await page.reload();
+  await page.locator('#league-sidebar').getByText('Mexique', { exact: false }).click();
+  await expect(page.locator('#team-choice .team-card')).toHaveCount(10);
+  await expect(page.locator('#team-choice')).not.toContainText('Los Aliens');
+  await expect(page.locator('#roster-revision-note')).toContainText('26/10/2026');
+  await expect(page.locator('#roster-revision-note')).toContainText('Nouvelles carrières');
+  const oldCareer = page.locator('#saves-list .transfer-row').filter({ hasText: 'Los Aliens FC' });
+  await oldCareer.getByRole('button', { name: 'Continuer', exact: true }).click();
+  await expect(page.locator('#topbar-team')).toHaveText('Los Aliens FC');
+  expect(await page.evaluate(() => STATE.league.teams.length)).toBe(12);
 });
 

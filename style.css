@@ -120,6 +120,8 @@ h3 { color: #cfe8ff; }
   padding-bottom: 12px; margin-bottom: 14px; border-bottom: 1px solid var(--panel-border);
 }
 .team-select-header h3 { margin: 0; font-size: 1.3em; }
+.roster-revision-note { margin: 0 0 12px; color: #b7c4ce; font-size: .85em; line-height: 1.5; }
+.roster-revision-note a { color: #ffe057; text-underline-offset: 3px; }
 .team-select-header .league-flag-lg { font-size: 1.7em; line-height: 1; }
 .team-select-hint { color: #8391a8; font-size: 0.95em; }
 

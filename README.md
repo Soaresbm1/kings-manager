@@ -11,6 +11,21 @@ Jeu de gestion de football en solo inspiré du format 7v7 de la Kings League : F
 - **Effectifs et statistiques fiables** : compositions de secours hors poste, blessures prises en compte, remplacements sans doublon et notes pour tous les joueurs ayant participé.
 - **Contrôles automatiques** : simulations reproductibles et vrais parcours du jeu sur Chromium, Firefox et WebKit ; vérification quotidienne du moteur sur GitHub Actions.
 
+## Effectifs vérifiés le 26 octobre 2026
+
+Les six ligues ont été contrôlées à partir des publications officielles. Les effectifs publiés
+des Kings Cup 2026/27 du Brésil, d'Italie et du Mexique remplacent l'ancienne base ; le Mexique
+compte dix clubs actifs. En France, Espagne et Allemagne, les corrections et mouvements
+confirmés sont intégrés avec une couverture partielle signalée sur l'accueil. Les inscriptions
+temporaires et les sources historiques sont distinguées dans le [dossier de recherche](research/README.md).
+
+Ces effectifs s'appliquent aux **nouvelles carrières**. Les parties existantes conservent leurs
+équipes et leur mercato. Les notes sont celles du jeu ; les nouveaux attributs et âges non
+vérifiés restent des estimations identifiées dans les données.
+
+Pour reconstruire la base après une correction documentée : `node scripts/sync-rosters.cjs`.
+Pour contrôler sa cohérence sans la modifier : `node scripts/sync-rosters.cjs --check`.
+
 ## Lancer le jeu
 
 Aucune installation requise. Ouvre simplement `index.html` dans ton navigateur (Chrome, Firefox, Edge...).

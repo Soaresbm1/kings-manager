@@ -1,0 +1,2676 @@
+{
+  "leagueKey": "germany",
+  "checkedAt": "2026-10-26",
+  "competition": "Kings League Germany",
+  "season": "Latest domestic official squad lists: 2025/26 Split 1; current player-profile affiliations checked through 2026/27 MENA Split 1",
+  "sources": [
+    {
+      "id": "de-teams",
+      "url": "https://kingsleague.pro/en/germany/teams",
+      "title": "Kings League Germany teams – 2025/26 Split 1",
+      "official": true
+    },
+    {
+      "id": "mercato-2026",
+      "url": "https://www.kingsleague.pro/en/mercato",
+      "title": "Kings League Mercato 2026 – official player market and completed transactions",
+      "official": true
+    },
+    {
+      "id": "de-mercato-announcement",
+      "url": "https://kingsleague.pro/de/germany/aktuelles/mercato-2026-transfers-geruechte-und-bewegungen-hier",
+      "title": "Mercato 2026: Transfers, Gerüchte und Bewegungen – hier",
+      "publishedAt": "2026-02-05",
+      "official": true
+    },
+    {
+      "id": "de-awards-2026",
+      "url": "https://kingsleague.pro/en/germany/news/kings-league-golden-crown-2026-nominees-kings-league-germany",
+      "title": "Mehmet-Can Senocak and three No Rules FC players, Kings League Golden Crown 2026 nominees",
+      "publishedAt": "2026-10-24",
+      "official": true
+    },
+    {
+      "id": "de-draft-1",
+      "url": "https://kingsleague.pro/en/germany/draft-players",
+      "title": "Germany official draft players – 2025/26 Split 1, page 1",
+      "official": true
+    },
+    {
+      "id": "de-draft-2",
+      "url": "https://kingsleague.pro/en/germany/draft-players?page=2",
+      "title": "Germany official draft players – 2025/26 Split 1, page 2",
+      "official": true
+    },
+    {
+      "id": "de-wild-1",
+      "url": "https://kingsleague.pro/en/germany/wildcard-players",
+      "title": "Germany official wildcard players – 2025/26 Split 1, page 1",
+      "official": true
+    },
+    {
+      "id": "de-wild-2",
+      "url": "https://kingsleague.pro/en/germany/wildcard-players?page=2",
+      "title": "Germany official wildcard players – 2025/26 Split 1, page 2",
+      "official": true
+    },
+    {
+      "id": "mena-quarterfinals-2026",
+      "url": "https://www.kingsleague.pro/en/mena/news/kings-league-mena-quarter-finals-schedule-split-1",
+      "title": "Red Zone and RA2 FC open the Kings League MENA Quarter-Finals with a rematch: Monday 26 October schedule",
+      "publishedAt": "2026-10-24",
+      "official": true
+    },
+    {
+      "id": "de-team-erc",
+      "url": "https://kingsleague.pro/en/teams/186-era-colonia",
+      "title": "ERA Colonia official squad – 2025/26 Split 1",
+      "official": true
+    },
+    {
+      "id": "de-team-g2f",
+      "url": "https://kingsleague.pro/en/teams/188-g2-fc",
+      "title": "G2 FC official squad – 2025/26 Split 1",
+      "official": true
+    },
+    {
+      "id": "de-team-ist",
+      "url": "https://kingsleague.pro/en/teams/229-istanbul-united",
+      "title": "Istanbul United official squad – 2025/26 Split 1",
+      "official": true
+    },
+    {
+      "id": "de-team-kak",
+      "url": "https://kingsleague.pro/en/teams/184-kaktus-kickers",
+      "title": "Kaktus Kickers official squad – 2025/26 Split 1",
+      "official": true
+    },
+    {
+      "id": "de-team-nrf",
+      "url": "https://kingsleague.pro/en/teams/187-no-rules-fc",
+      "title": "No Rules FC official squad – 2025/26 KWC Clubs",
+      "official": true
+    },
+    {
+      "id": "de-team-ttf",
+      "url": "https://kingsleague.pro/en/teams/183-tiki-tacker-ff",
+      "title": "Tiki Tacker FF official squad – 2025/26 Split 1",
+      "official": true
+    },
+    {
+      "id": "de-team-vvf",
+      "url": "https://kingsleague.pro/en/teams/185-vice-versa-fc",
+      "title": "Vice Versa FC official squad – 2025/26 Split 1",
+      "official": true
+    },
+    {
+      "id": "de-team-you",
+      "url": "https://kingsleague.pro/en/teams/51-youniors-fc",
+      "title": "Youniors F.C. official squad – 2025/26 Split 1",
+      "official": true
+    },
+    {
+      "id": "de-player-71129",
+      "url": "https://kingsleague.pro/en/players/71129-nick-salihamidzic",
+      "title": "Nick Salihamidžić official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-38499",
+      "url": "https://kingsleague.pro/en/players/38499-amar-cekic",
+      "title": "Amar Cekic official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-31",
+      "url": "https://kingsleague.pro/en/players/31-gilles-vidal",
+      "title": "Gilles Vidal official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-79910",
+      "url": "https://kingsleague.pro/en/players/79910-zinedine-hukporti",
+      "title": "Zinedine Hukporti official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-67838",
+      "url": "https://kingsleague.pro/en/players/67838-jhon-palacios",
+      "title": "Jhon Palacios official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-34075",
+      "url": "https://kingsleague.pro/en/players/34075-maicon-silva",
+      "title": "Maicon Silva official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-69196",
+      "url": "https://kingsleague.pro/en/players/69196-david-brinquinho",
+      "title": "David 'Brinquinho' official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-68399",
+      "url": "https://kingsleague.pro/en/players/68399-luiz-pepinho-souza",
+      "title": "Luiz 'Pepinho' Souza official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-84669",
+      "url": "https://kingsleague.pro/en/players/84669-dylan-bos",
+      "title": "Dylan Bos official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-80040",
+      "url": "https://kingsleague.pro/en/players/80040-nico-czichi",
+      "title": "Nico Czichi official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-87043",
+      "url": "https://kingsleague.pro/en/players/87043-yoel-yilma",
+      "title": "Yoel Yilma official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-79636",
+      "url": "https://kingsleague.pro/en/players/79636-abdelaziz-slimi",
+      "title": "Abdelaziz Slimi official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-84670",
+      "url": "https://kingsleague.pro/en/players/84670-ahmed-azirar",
+      "title": "Ahmed Azirar official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-87394",
+      "url": "https://kingsleague.pro/en/players/87394-dennis-de-sousa",
+      "title": "Dennis de Sousa official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-87045",
+      "url": "https://kingsleague.pro/en/players/87045-elias-romers",
+      "title": "Elias Römers official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-87042",
+      "url": "https://kingsleague.pro/en/players/87042-erkan-kurucam",
+      "title": "Erkan Kurucam official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-84966",
+      "url": "https://kingsleague.pro/en/players/84966-etienne-reck",
+      "title": "Etienne Reck official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-85942",
+      "url": "https://kingsleague.pro/en/players/85942-mounir-bouziane",
+      "title": "Mounir Bouziane official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-79888",
+      "url": "https://kingsleague.pro/en/players/79888-daniel-maus",
+      "title": "Daniel Maus official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-79600",
+      "url": "https://kingsleague.pro/en/players/79600-moritz-leitner",
+      "title": "Moritz Leitner official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-84686",
+      "url": "https://kingsleague.pro/en/players/84686-philipp-klement",
+      "title": "Philipp Klement official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-79640",
+      "url": "https://kingsleague.pro/en/players/79640-ahmed-omairat",
+      "title": "Ahmed Omairat official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-79646",
+      "url": "https://kingsleague.pro/en/players/79646-cihan-ucar",
+      "title": "Cihan Ucar official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-84668",
+      "url": "https://kingsleague.pro/en/players/84668-mehmet-can-senocak",
+      "title": "Mehmet-Can Senocak official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-79643",
+      "url": "https://kingsleague.pro/en/players/79643-tarik-hadziavdic",
+      "title": "Tarik Hadziavdic official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-79562",
+      "url": "https://kingsleague.pro/en/players/79562-dennis-ozturk",
+      "title": "Dennis Öztürk official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-87572",
+      "url": "https://kingsleague.pro/en/players/87572-smajo-jakupovic",
+      "title": "Smajo Jakupovic official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-84667",
+      "url": "https://kingsleague.pro/en/players/84667-artin-zardoshtian",
+      "title": "Artin Zardoshtian official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-84664",
+      "url": "https://kingsleague.pro/en/players/84664-mohammed-izal",
+      "title": "Mohammed Izal official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-87189",
+      "url": "https://kingsleague.pro/en/players/87189-niklas-reichel",
+      "title": "Niklas Reichel official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-87191",
+      "url": "https://kingsleague.pro/en/players/87191-burak-mus",
+      "title": "Burak Mus official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-87190",
+      "url": "https://kingsleague.pro/en/players/87190-kerem-sengun",
+      "title": "Kerem Sengün official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-87196",
+      "url": "https://kingsleague.pro/en/players/87196-mardochee-tchakoumi",
+      "title": "Mardochee Tchakoumi official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-87202",
+      "url": "https://kingsleague.pro/en/players/87202-murat-saglam",
+      "title": "Murat Saglam official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-87193",
+      "url": "https://kingsleague.pro/en/players/87193-oliver-lanwer",
+      "title": "Oliver Lanwer official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-87195",
+      "url": "https://kingsleague.pro/en/players/87195-max-wilschrey",
+      "title": "Max Wilschrey official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-87199",
+      "url": "https://kingsleague.pro/en/players/87199-burak-ozmen",
+      "title": "Burak Özmen official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-87261",
+      "url": "https://kingsleague.pro/en/players/87261-ilias-arssi",
+      "title": "Ilias Arssi official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-87345",
+      "url": "https://kingsleague.pro/en/players/87345-ali-hassan-hammoud",
+      "title": "Ali Hassan Hammoud official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-87198",
+      "url": "https://kingsleague.pro/en/players/87198-amir-ahmadi",
+      "title": "Amir Ahmadi official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-71716",
+      "url": "https://kingsleague.pro/en/players/71716-jama-telli",
+      "title": "Jama Telli official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-87197",
+      "url": "https://kingsleague.pro/en/players/87197-sangar-aziz",
+      "title": "Sangar Aziz official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-84678",
+      "url": "https://kingsleague.pro/en/players/84678-taner-yalcin",
+      "title": "Taner Yalcin official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-85147",
+      "url": "https://kingsleague.pro/en/players/85147-bilal-abdallah",
+      "title": "Bilal Abdallah official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-86959",
+      "url": "https://kingsleague.pro/en/players/86959-gaspard-fehlinger",
+      "title": "Gaspard Fehlinger official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-86950",
+      "url": "https://kingsleague.pro/en/players/86950-mohamed-dahas",
+      "title": "Mohamed Dahas official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-80042",
+      "url": "https://kingsleague.pro/en/players/80042-noah-can",
+      "title": "Noah Can official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-85146",
+      "url": "https://kingsleague.pro/en/players/85146-yazid-tambo",
+      "title": "Yazid Tambo official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-87329",
+      "url": "https://kingsleague.pro/en/players/87329-mohamed-rabia",
+      "title": "Mohamed Rabia official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-87536",
+      "url": "https://kingsleague.pro/en/players/87536-bilal-akguvercin",
+      "title": "Bilal Akgüvercin official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-87462",
+      "url": "https://kingsleague.pro/en/players/87462-jacob-goker",
+      "title": "Jacob Göker official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-86956",
+      "url": "https://kingsleague.pro/en/players/86956-elias-beck",
+      "title": "Elias Beck official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-71127",
+      "url": "https://kingsleague.pro/en/players/71127-fabio-rasic",
+      "title": "Fabio Rasic official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-79494",
+      "url": "https://kingsleague.pro/en/players/79494-daniel-jelisic",
+      "title": "Daniel Jelisic official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-178",
+      "url": "https://kingsleague.pro/en/players/178-diego-de-la-mata",
+      "title": "Diego de la Mata official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-79485",
+      "url": "https://kingsleague.pro/en/players/79485-ensar-skrijelj",
+      "title": "Ensar Skrijelj official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-71132",
+      "url": "https://kingsleague.pro/en/players/71132-anthony-manuba",
+      "title": "Anthony Manuba official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-79739",
+      "url": "https://kingsleague.pro/en/players/79739-nam-nguyen",
+      "title": "Nam Nguyen official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-79484",
+      "url": "https://kingsleague.pro/en/players/79484-serhat-imsak",
+      "title": "Serhat Imsak official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-80036",
+      "url": "https://kingsleague.pro/en/players/80036-aboubakar-fofana",
+      "title": "Aboubakar Fofana official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-79545",
+      "url": "https://kingsleague.pro/en/players/79545-finn-hanke",
+      "title": "Finn Hanke official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-84676",
+      "url": "https://kingsleague.pro/en/players/84676-nikola-stankovic",
+      "title": "Nikola Stankovic official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-86967",
+      "url": "https://kingsleague.pro/en/players/86967-noah-dahaba",
+      "title": "Noah Dahaba official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-86969",
+      "url": "https://kingsleague.pro/en/players/86969-philip-koch",
+      "title": "Philip Koch official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-84973",
+      "url": "https://kingsleague.pro/en/players/84973-diego-larralde",
+      "title": "Diego Larralde official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-87263",
+      "url": "https://kingsleague.pro/en/players/87263-fabio-lopes",
+      "title": "Fabio Lopes official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-86966",
+      "url": "https://kingsleague.pro/en/players/86966-marko-tadic",
+      "title": "Marko Tadic official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-79553",
+      "url": "https://kingsleague.pro/en/players/79553-bennett-schauer",
+      "title": "Bennett Schauer official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-86965",
+      "url": "https://kingsleague.pro/en/players/86965-jean-atohoun",
+      "title": "Jean Atohoun official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-87264",
+      "url": "https://kingsleague.pro/en/players/87264-ephrahim-asante",
+      "title": "Ephrahim Asante official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-87396",
+      "url": "https://kingsleague.pro/en/players/87396-farukhan-bulut",
+      "title": "Farukhan Bulut official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-87041",
+      "url": "https://kingsleague.pro/en/players/87041-lionel-lingani",
+      "title": "Lionel Lingani official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-86963",
+      "url": "https://kingsleague.pro/en/players/86963-luca-freese",
+      "title": "Luca Freese official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-84675",
+      "url": "https://kingsleague.pro/en/players/84675-mustafa-zazai",
+      "title": "Mustafa Zazai official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-84687",
+      "url": "https://kingsleague.pro/en/players/84687-marvin-gomoluch",
+      "title": "Marvin Gomoluch official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-84691",
+      "url": "https://kingsleague.pro/en/players/84691-ali-alawie",
+      "title": "Ali Alawie official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-84976",
+      "url": "https://kingsleague.pro/en/players/84976-constantin-pennartz",
+      "title": "Constantin Pennartz official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-84689",
+      "url": "https://kingsleague.pro/en/players/84689-hagen-blohm",
+      "title": "Hagen Blohm official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-79759",
+      "url": "https://kingsleague.pro/en/players/79759-jannis-becker",
+      "title": "Jannis Becker official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-86957",
+      "url": "https://kingsleague.pro/en/players/86957-saif-ayadi",
+      "title": "Saif-Ayadi official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-86961",
+      "url": "https://kingsleague.pro/en/players/86961-francisco-garcia",
+      "title": "Francisco Garcia official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-84692",
+      "url": "https://kingsleague.pro/en/players/84692-hussain-alawie",
+      "title": "Hussain Alawie official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-86962",
+      "url": "https://kingsleague.pro/en/players/86962-yassine-gnondi",
+      "title": "Yassine Gnondi official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-84688",
+      "url": "https://kingsleague.pro/en/players/84688-yannick-marko",
+      "title": "Yannick Marko official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-87271",
+      "url": "https://kingsleague.pro/en/players/87271-nils-schutte",
+      "title": "Nils Schütte official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-86958",
+      "url": "https://kingsleague.pro/en/players/86958-sven-wurm",
+      "title": "Sven Wurm official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-79803",
+      "url": "https://kingsleague.pro/en/players/79803-david-putz",
+      "title": "David Pütz official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-79827",
+      "url": "https://kingsleague.pro/en/players/79827-halil-dogan",
+      "title": "Halil Doğan official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-84694",
+      "url": "https://kingsleague.pro/en/players/84694-shpend-hasani",
+      "title": "Shpend Hasani official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-86948",
+      "url": "https://kingsleague.pro/en/players/86948-max-wismann",
+      "title": "Max Wißmann official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-79602",
+      "url": "https://kingsleague.pro/en/players/79602-maximilian-krapf",
+      "title": "Maximilian Krapf official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-53024",
+      "url": "https://kingsleague.pro/en/players/53024-ahmed-azaouagh",
+      "title": "Ahmed Azaouagh official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-79644",
+      "url": "https://kingsleague.pro/en/players/79644-emir-sejdovic",
+      "title": "Emir Sejdovic official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-79625",
+      "url": "https://kingsleague.pro/en/players/79625-henoc-agbessi",
+      "title": "Henoc Agbessi official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-79891",
+      "url": "https://kingsleague.pro/en/players/79891-sokratis-papastathopoulos",
+      "title": "Sokratis Papastathopoulos official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-86954",
+      "url": "https://kingsleague.pro/en/players/86954-christian-clemens",
+      "title": "Christian Clemens official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-53028",
+      "url": "https://kingsleague.pro/en/players/53028-julien-vercauteren",
+      "title": "Julien Vercauteren official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-86949",
+      "url": "https://kingsleague.pro/en/players/86949-naoufal-azzagari",
+      "title": "Naoufal Azzagari official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-79653",
+      "url": "https://kingsleague.pro/en/players/79653-lordan-handanovic",
+      "title": "Lordan Handanovic official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-80486",
+      "url": "https://kingsleague.pro/en/players/80486-marco-terrazzino",
+      "title": "Marco Terrazzino official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-79622",
+      "url": "https://kingsleague.pro/en/players/79622-danny-blum",
+      "title": "Danny Blum official profile and latest team",
+      "official": true
+    },
+    {
+      "id": "de-player-80492",
+      "url": "https://kingsleague.pro/en/players/80492-kevin-moreira",
+      "title": "Kevin Moreira official profile and latest team",
+      "official": true
+    }
+  ],
+  "teams": [
+    {
+      "id": "erc",
+      "name": "ERA Colonia",
+      "rosterStatus": "partial",
+      "sourceIds": [
+        "de-team-erc",
+        "mercato-2026"
+      ],
+      "players": [
+        {
+          "name": "Dylan Bos",
+          "pos": "GK",
+          "officialPlayerId": "84669",
+          "sourceIds": [
+            "de-team-erc",
+            "de-player-84669"
+          ],
+          "birthDate": "2004-02-21"
+        },
+        {
+          "name": "Jakov Suver",
+          "pos": "DEF",
+          "officialPlayerId": "87044",
+          "sourceIds": [
+            "de-team-erc"
+          ]
+        },
+        {
+          "name": "Nico Czichi",
+          "pos": "DEF",
+          "officialPlayerId": "80040",
+          "sourceIds": [
+            "de-team-erc",
+            "de-player-80040"
+          ],
+          "birthDate": "1995-02-08"
+        },
+        {
+          "name": "Joshua Holtby",
+          "pos": "MID",
+          "officialPlayerId": "87397",
+          "sourceIds": [
+            "de-team-erc"
+          ]
+        },
+        {
+          "name": "Yoel Yilma",
+          "pos": "MID",
+          "officialPlayerId": "87043",
+          "sourceIds": [
+            "de-team-erc",
+            "de-player-87043"
+          ],
+          "birthDate": "1999-03-29"
+        },
+        {
+          "name": "Abdelaziz Slimi",
+          "pos": "ATT",
+          "officialPlayerId": "79636",
+          "sourceIds": [
+            "de-team-erc",
+            "de-player-79636",
+            "de-draft-2"
+          ],
+          "birthDate": "1995-08-14",
+          "registrationType": "registered"
+        },
+        {
+          "name": "Ahmed Azirar",
+          "pos": "ATT",
+          "officialPlayerId": "84670",
+          "sourceIds": [
+            "de-team-erc",
+            "de-player-84670"
+          ],
+          "birthDate": "1999-05-13"
+        },
+        {
+          "name": "Dennis de Sousa",
+          "pos": "ATT",
+          "officialPlayerId": "87394",
+          "sourceIds": [
+            "de-team-erc",
+            "de-player-87394"
+          ],
+          "birthDate": "1996-06-26"
+        },
+        {
+          "name": "Elias Römers",
+          "pos": "ATT",
+          "officialPlayerId": "87045",
+          "sourceIds": [
+            "de-team-erc",
+            "de-player-87045"
+          ],
+          "birthDate": "2004-01-17"
+        },
+        {
+          "name": "Erkan Kurucam",
+          "pos": "ATT",
+          "officialPlayerId": "87042",
+          "sourceIds": [
+            "de-team-erc",
+            "de-player-87042"
+          ],
+          "birthDate": "1987-05-16"
+        },
+        {
+          "name": "Etienne Reck",
+          "pos": "ATT",
+          "officialPlayerId": "84966",
+          "sourceIds": [
+            "de-team-erc",
+            "de-player-84966"
+          ],
+          "birthDate": "2005-05-04"
+        },
+        {
+          "name": "Mounir Bouziane",
+          "pos": "ATT",
+          "officialPlayerId": "85942",
+          "sourceIds": [
+            "de-team-erc",
+            "de-player-85942"
+          ],
+          "birthDate": "1991-02-05"
+        },
+        {
+          "name": "Daniel Maus",
+          "pos": "GK",
+          "officialPlayerId": "79888",
+          "sourceIds": [
+            "de-team-erc",
+            "de-player-79888",
+            "de-wild-2"
+          ],
+          "birthDate": "1994-08-16",
+          "registrationType": "wildcard"
+        },
+        {
+          "name": "Moritz Leitner",
+          "pos": "MID",
+          "officialPlayerId": "79600",
+          "sourceIds": [
+            "de-team-erc",
+            "de-player-79600",
+            "de-wild-1"
+          ],
+          "birthDate": "1992-12-08",
+          "registrationType": "wildcard"
+        },
+        {
+          "name": "Philipp Klement",
+          "pos": "MID",
+          "officialPlayerId": "84686",
+          "sourceIds": [
+            "de-team-erc",
+            "de-player-84686",
+            "de-wild-2"
+          ],
+          "birthDate": "1992-09-09",
+          "registrationType": "wildcard"
+        },
+        {
+          "name": "Fatjon Celani",
+          "pos": "ATT",
+          "officialPlayerId": "87488",
+          "sourceIds": [
+            "de-team-erc"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "g2f",
+      "name": "G2 FC",
+      "rosterStatus": "partial",
+      "sourceIds": [
+        "de-team-g2f",
+        "mercato-2026"
+      ],
+      "players": [
+        {
+          "name": "Ben Zöllner",
+          "pos": "GK",
+          "officialPlayerId": "86944",
+          "sourceIds": [
+            "de-team-g2f"
+          ]
+        },
+        {
+          "name": "Jack Krause",
+          "pos": "GK",
+          "officialPlayerId": "86946",
+          "sourceIds": [
+            "de-team-g2f"
+          ]
+        },
+        {
+          "name": "Ahmed Omairat",
+          "pos": "DEF",
+          "officialPlayerId": "79640",
+          "sourceIds": [
+            "de-team-g2f",
+            "de-player-79640",
+            "de-draft-2"
+          ],
+          "birthDate": "2002-03-21",
+          "registrationType": "registered"
+        },
+        {
+          "name": "Cihan Ucar",
+          "pos": "DEF",
+          "officialPlayerId": "79646",
+          "sourceIds": [
+            "de-team-g2f",
+            "de-player-79646",
+            "de-draft-2"
+          ],
+          "birthDate": "1994-07-06",
+          "registrationType": "registered"
+        },
+        {
+          "name": "Mehmet-Can Senocak",
+          "pos": "MID",
+          "officialPlayerId": "84668",
+          "sourceIds": [
+            "de-team-g2f",
+            "de-player-84668"
+          ],
+          "birthDate": "2002-11-02"
+        },
+        {
+          "name": "Staas Mitko",
+          "pos": "MID",
+          "officialPlayerId": "84666",
+          "sourceIds": [
+            "de-team-g2f"
+          ]
+        },
+        {
+          "name": "Tarik Hadziavdic",
+          "pos": "MID",
+          "officialPlayerId": "79643",
+          "sourceIds": [
+            "de-team-g2f",
+            "de-player-79643",
+            "de-draft-2"
+          ],
+          "birthDate": "2000-10-17",
+          "registrationType": "registered"
+        },
+        {
+          "name": "Dennis Öztürk",
+          "pos": "ATT",
+          "officialPlayerId": "79562",
+          "sourceIds": [
+            "de-team-g2f",
+            "de-player-79562",
+            "de-draft-2"
+          ],
+          "birthDate": "2001-04-24",
+          "registrationType": "registered"
+        },
+        {
+          "name": "Halit Bacak",
+          "pos": "ATT",
+          "officialPlayerId": "86945",
+          "sourceIds": [
+            "de-team-g2f"
+          ]
+        },
+        {
+          "name": "Smajo Jakupovic",
+          "pos": "MID",
+          "officialPlayerId": "87572",
+          "sourceIds": [
+            "de-team-g2f",
+            "de-player-87572"
+          ],
+          "birthDate": "1995-08-26"
+        },
+        {
+          "name": "Artin Zardoshtian",
+          "pos": "ATT",
+          "officialPlayerId": "84667",
+          "sourceIds": [
+            "de-team-g2f",
+            "de-player-84667",
+            "de-wild-2"
+          ],
+          "birthDate": "2004-06-27",
+          "registrationType": "wildcard"
+        },
+        {
+          "name": "Kenan Smajlovic",
+          "pos": "ATT",
+          "officialPlayerId": "86943",
+          "sourceIds": [
+            "de-team-g2f"
+          ]
+        },
+        {
+          "name": "Mohammed Izal",
+          "pos": "ATT",
+          "officialPlayerId": "84664",
+          "sourceIds": [
+            "de-team-g2f",
+            "de-player-84664",
+            "de-wild-2"
+          ],
+          "birthDate": "2000-02-26",
+          "registrationType": "wildcard"
+        }
+      ]
+    },
+    {
+      "id": "ist",
+      "name": "Istanbul United",
+      "rosterStatus": "partial",
+      "sourceIds": [
+        "de-team-ist",
+        "mercato-2026"
+      ],
+      "players": [
+        {
+          "name": "Niklas Reichel",
+          "pos": "GK",
+          "officialPlayerId": "87189",
+          "sourceIds": [
+            "de-team-ist",
+            "de-player-87189"
+          ],
+          "birthDate": "1995-10-14"
+        },
+        {
+          "name": "Burak Mus",
+          "pos": "DEF",
+          "officialPlayerId": "87191",
+          "sourceIds": [
+            "de-team-ist",
+            "de-player-87191"
+          ],
+          "birthDate": "1996-12-24"
+        },
+        {
+          "name": "Kerem Sengün",
+          "pos": "DEF",
+          "officialPlayerId": "87190",
+          "sourceIds": [
+            "de-team-ist",
+            "de-player-87190"
+          ],
+          "birthDate": "2000-01-25"
+        },
+        {
+          "name": "Mardochee Tchakoumi",
+          "pos": "DEF",
+          "officialPlayerId": "87196",
+          "sourceIds": [
+            "de-team-ist",
+            "de-player-87196"
+          ],
+          "birthDate": "1998-08-16"
+        },
+        {
+          "name": "Murat Saglam",
+          "pos": "MID",
+          "officialPlayerId": "87202",
+          "sourceIds": [
+            "de-team-ist",
+            "de-player-87202"
+          ],
+          "birthDate": "1998-04-10"
+        },
+        {
+          "name": "Oliver Lanwer",
+          "pos": "MID",
+          "officialPlayerId": "87193",
+          "sourceIds": [
+            "de-team-ist",
+            "de-player-87193"
+          ],
+          "birthDate": "1991-03-09"
+        },
+        {
+          "name": "Yousef Keshta",
+          "pos": "MID",
+          "officialPlayerId": "87194",
+          "sourceIds": [
+            "de-team-ist"
+          ]
+        },
+        {
+          "name": "Max Wilschrey",
+          "pos": "ATT",
+          "officialPlayerId": "87195",
+          "sourceIds": [
+            "de-team-ist",
+            "de-player-87195"
+          ],
+          "birthDate": "1995-12-30"
+        },
+        {
+          "name": "Umut Yildiz",
+          "pos": "ATT",
+          "officialPlayerId": "87192",
+          "sourceIds": [
+            "de-team-ist"
+          ]
+        },
+        {
+          "name": "Eric Ulrich",
+          "pos": "GK",
+          "officialPlayerId": "87555",
+          "sourceIds": [
+            "de-team-ist"
+          ]
+        },
+        {
+          "name": "Burak Özmen",
+          "pos": "DEF",
+          "officialPlayerId": "87199",
+          "sourceIds": [
+            "de-team-ist",
+            "de-player-87199"
+          ],
+          "birthDate": "1997-08-23"
+        },
+        {
+          "name": "Ilias Arssi",
+          "pos": "MID",
+          "officialPlayerId": "87261",
+          "sourceIds": [
+            "de-team-ist",
+            "de-player-87261"
+          ],
+          "birthDate": "1996-10-27"
+        },
+        {
+          "name": "Ali Hassan Hammoud",
+          "pos": "ATT",
+          "officialPlayerId": "87345",
+          "sourceIds": [
+            "de-team-ist",
+            "de-player-87345"
+          ],
+          "birthDate": "1999-08-03"
+        },
+        {
+          "name": "Amir Ahmadi",
+          "pos": "ATT",
+          "officialPlayerId": "87198",
+          "sourceIds": [
+            "de-team-ist",
+            "de-player-87198"
+          ],
+          "birthDate": "2002-02-18"
+        },
+        {
+          "name": "Jama Telli",
+          "pos": "ATT",
+          "officialPlayerId": "71716",
+          "sourceIds": [
+            "de-team-ist",
+            "de-player-71716",
+            "de-wild-1"
+          ],
+          "birthDate": "1996-03-26",
+          "registrationType": "wildcard"
+        },
+        {
+          "name": "Sangar Aziz",
+          "pos": "ATT",
+          "officialPlayerId": "87197",
+          "sourceIds": [
+            "de-team-ist",
+            "de-player-87197"
+          ],
+          "birthDate": "1998-09-27"
+        }
+      ]
+    },
+    {
+      "id": "kak",
+      "name": "Kaktus Kickers",
+      "rosterStatus": "partial",
+      "sourceIds": [
+        "de-team-kak",
+        "mercato-2026"
+      ],
+      "players": [
+        {
+          "name": "Kaan Gökcesin",
+          "pos": "GK",
+          "officialPlayerId": "87339",
+          "sourceIds": [
+            "de-team-kak"
+          ]
+        },
+        {
+          "name": "Lennard Hövel",
+          "pos": "GK",
+          "officialPlayerId": "86952",
+          "sourceIds": [
+            "de-team-kak"
+          ]
+        },
+        {
+          "name": "Daniel Bleja",
+          "pos": "DEF",
+          "officialPlayerId": "86951",
+          "sourceIds": [
+            "de-team-kak"
+          ]
+        },
+        {
+          "name": "Dario Bezerra",
+          "pos": "DEF",
+          "officialPlayerId": "86955",
+          "sourceIds": [
+            "de-team-kak"
+          ]
+        },
+        {
+          "name": "Taner Yalcin",
+          "pos": "DEF",
+          "officialPlayerId": "84678",
+          "sourceIds": [
+            "de-team-kak",
+            "de-player-84678"
+          ],
+          "birthDate": "1990-02-18"
+        },
+        {
+          "name": "Bilal Abdallah",
+          "pos": "ATT",
+          "officialPlayerId": "85147",
+          "sourceIds": [
+            "de-team-kak",
+            "de-player-85147"
+          ],
+          "birthDate": "1995-12-06"
+        },
+        {
+          "name": "Gaspard Fehlinger",
+          "pos": "ATT",
+          "officialPlayerId": "86959",
+          "sourceIds": [
+            "de-team-kak",
+            "de-player-86959"
+          ],
+          "birthDate": "1998-05-11"
+        },
+        {
+          "name": "Mohamed Dahas",
+          "pos": "ATT",
+          "officialPlayerId": "86950",
+          "sourceIds": [
+            "de-team-kak",
+            "de-player-86950"
+          ],
+          "birthDate": "1995-07-02"
+        },
+        {
+          "name": "Noah Can",
+          "pos": "ATT",
+          "officialPlayerId": "80042",
+          "sourceIds": [
+            "de-team-kak",
+            "de-player-80042"
+          ],
+          "birthDate": "2002-04-16"
+        },
+        {
+          "name": "Yazid Tambo",
+          "pos": "ATT",
+          "officialPlayerId": "85146",
+          "sourceIds": [
+            "de-team-kak",
+            "de-player-85146"
+          ],
+          "birthDate": "2003-02-24"
+        },
+        {
+          "name": "Fabian Djemail",
+          "pos": "DEF",
+          "officialPlayerId": "86953",
+          "sourceIds": [
+            "de-team-kak"
+          ]
+        },
+        {
+          "name": "Mohamed Rabia",
+          "pos": "DEF",
+          "officialPlayerId": "87329",
+          "sourceIds": [
+            "de-team-kak",
+            "de-player-87329"
+          ],
+          "birthDate": "2000-08-29"
+        },
+        {
+          "name": "Thomas Haas",
+          "pos": "DEF",
+          "officialPlayerId": "86947",
+          "sourceIds": [
+            "de-team-kak"
+          ]
+        },
+        {
+          "name": "Bilal Akgüvercin",
+          "pos": "MID",
+          "officialPlayerId": "87536",
+          "sourceIds": [
+            "de-team-kak",
+            "de-player-87536"
+          ],
+          "birthDate": "1992-07-12"
+        },
+        {
+          "name": "Jacob Göker",
+          "pos": "MID",
+          "officialPlayerId": "87462",
+          "sourceIds": [
+            "de-team-kak",
+            "de-player-87462"
+          ],
+          "birthDate": "2000-01-22"
+        },
+        {
+          "name": "Nick Mwaura Hirschfeld",
+          "pos": "MID",
+          "officialPlayerId": "87463",
+          "sourceIds": [
+            "de-team-kak"
+          ]
+        },
+        {
+          "name": "Bernad Gllogjani",
+          "pos": "ATT",
+          "officialPlayerId": "87522",
+          "sourceIds": [
+            "de-team-kak"
+          ]
+        },
+        {
+          "name": "Elias Beck",
+          "pos": "ATT",
+          "officialPlayerId": "86956",
+          "sourceIds": [
+            "de-team-kak",
+            "de-player-86956"
+          ],
+          "birthDate": "2001-09-23"
+        }
+      ]
+    },
+    {
+      "id": "nrf",
+      "name": "No Rules FC",
+      "rosterStatus": "partial",
+      "sourceIds": [
+        "de-team-nrf",
+        "mercato-2026"
+      ],
+      "players": [
+        {
+          "name": "Fabio Rasic",
+          "pos": "GK",
+          "officialPlayerId": "71127",
+          "sourceIds": [
+            "de-team-nrf",
+            "de-player-71127",
+            "de-draft-1"
+          ],
+          "birthDate": "2002-09-06",
+          "registrationType": "registered"
+        },
+        {
+          "name": "Daniel Jelisic",
+          "pos": "DEF",
+          "officialPlayerId": "79494",
+          "sourceIds": [
+            "de-team-nrf",
+            "de-player-79494",
+            "de-draft-1"
+          ],
+          "birthDate": "2000-02-18",
+          "registrationType": "registered"
+        },
+        {
+          "name": "Diego de la Mata",
+          "pos": "DEF",
+          "officialPlayerId": "178",
+          "sourceIds": [
+            "de-team-nrf",
+            "de-player-178",
+            "de-wild-1"
+          ],
+          "birthDate": "1993-03-03",
+          "registrationType": "wildcard"
+        },
+        {
+          "name": "Diren Günay",
+          "pos": "DEF",
+          "officialPlayerId": "87689",
+          "sourceIds": [
+            "de-team-nrf"
+          ]
+        },
+        {
+          "name": "Ensar Skrijelj",
+          "pos": "DEF",
+          "officialPlayerId": "79485",
+          "sourceIds": [
+            "de-team-nrf",
+            "de-player-79485",
+            "de-draft-1"
+          ],
+          "birthDate": "1999-12-16",
+          "registrationType": "registered"
+        },
+        {
+          "name": "Albin Zekiri",
+          "pos": "MID",
+          "officialPlayerId": "84968",
+          "sourceIds": [
+            "de-team-nrf"
+          ]
+        },
+        {
+          "name": "Anthony Manuba",
+          "pos": "ATT",
+          "officialPlayerId": "71132",
+          "sourceIds": [
+            "de-team-nrf",
+            "de-player-71132",
+            "de-draft-1"
+          ],
+          "birthDate": "2003-07-12",
+          "registrationType": "registered"
+        },
+        {
+          "name": "Nam Nguyen",
+          "pos": "ATT",
+          "officialPlayerId": "79739",
+          "sourceIds": [
+            "de-team-nrf",
+            "de-player-79739",
+            "de-draft-2"
+          ],
+          "birthDate": "2002-06-17",
+          "registrationType": "registered"
+        },
+        {
+          "name": "Serhat Imsak",
+          "pos": "ATT",
+          "officialPlayerId": "79484",
+          "sourceIds": [
+            "de-team-nrf",
+            "de-player-79484",
+            "de-draft-1"
+          ],
+          "birthDate": "1999-07-20",
+          "registrationType": "registered"
+        }
+      ]
+    },
+    {
+      "id": "ttf",
+      "name": "Tiki Tacker FF",
+      "rosterStatus": "partial",
+      "sourceIds": [
+        "de-team-ttf",
+        "mercato-2026"
+      ],
+      "players": [
+        {
+          "name": "Aboubakar Fofana",
+          "pos": "GK",
+          "officialPlayerId": "80036",
+          "sourceIds": [
+            "de-team-ttf",
+            "de-player-80036"
+          ],
+          "birthDate": "1997-03-07"
+        },
+        {
+          "name": "Finn Hanke",
+          "pos": "DEF",
+          "officialPlayerId": "79545",
+          "sourceIds": [
+            "de-team-ttf",
+            "de-player-79545",
+            "de-draft-1"
+          ],
+          "birthDate": "1994-04-22",
+          "registrationType": "registered"
+        },
+        {
+          "name": "Nikola Stankovic",
+          "pos": "DEF",
+          "officialPlayerId": "84676",
+          "sourceIds": [
+            "de-team-ttf",
+            "de-player-84676"
+          ],
+          "birthDate": "1992-08-20"
+        },
+        {
+          "name": "Noah Dahaba",
+          "pos": "DEF",
+          "officialPlayerId": "86967",
+          "sourceIds": [
+            "de-team-ttf",
+            "de-player-86967"
+          ],
+          "birthDate": "2003-05-25"
+        },
+        {
+          "name": "Philip Koch",
+          "pos": "DEF",
+          "officialPlayerId": "86969",
+          "sourceIds": [
+            "de-team-ttf",
+            "de-player-86969"
+          ],
+          "birthDate": "1990-11-24"
+        },
+        {
+          "name": "Diego Larralde",
+          "pos": "MID",
+          "officialPlayerId": "84973",
+          "sourceIds": [
+            "de-team-ttf",
+            "de-player-84973"
+          ],
+          "birthDate": "2002-03-27"
+        },
+        {
+          "name": "Fabio Lopes",
+          "pos": "MID",
+          "officialPlayerId": "87263",
+          "sourceIds": [
+            "de-team-ttf",
+            "de-player-87263"
+          ],
+          "birthDate": "1998-12-12"
+        },
+        {
+          "name": "Marko Tadic",
+          "pos": "ATT",
+          "officialPlayerId": "86966",
+          "sourceIds": [
+            "de-team-ttf",
+            "de-player-86966"
+          ],
+          "birthDate": "2000-09-03"
+        },
+        {
+          "name": "Bennett Schauer",
+          "pos": "GK",
+          "officialPlayerId": "79553",
+          "sourceIds": [
+            "de-team-ttf",
+            "de-player-79553",
+            "de-wild-1"
+          ],
+          "birthDate": "1999-04-25",
+          "registrationType": "wildcard"
+        },
+        {
+          "name": "Jean Atohoun",
+          "pos": "GK",
+          "officialPlayerId": "86965",
+          "sourceIds": [
+            "de-team-ttf",
+            "de-player-86965"
+          ],
+          "birthDate": "2001-08-27"
+        },
+        {
+          "name": "Ephrahim Asante",
+          "pos": "DEF",
+          "officialPlayerId": "87264",
+          "sourceIds": [
+            "de-team-ttf",
+            "de-player-87264"
+          ],
+          "birthDate": "1998-05-29"
+        },
+        {
+          "name": "Farukhan Bulut",
+          "pos": "DEF",
+          "officialPlayerId": "87396",
+          "sourceIds": [
+            "de-team-ttf",
+            "de-player-87396"
+          ],
+          "birthDate": "2003-07-24"
+        },
+        {
+          "name": "Lionel Lingani",
+          "pos": "DEF",
+          "officialPlayerId": "87041",
+          "sourceIds": [
+            "de-team-ttf",
+            "de-player-87041"
+          ],
+          "birthDate": "2001-10-17"
+        },
+        {
+          "name": "Luca Freese",
+          "pos": "DEF",
+          "officialPlayerId": "86963",
+          "sourceIds": [
+            "de-team-ttf",
+            "de-player-86963"
+          ],
+          "birthDate": "2005-01-06"
+        },
+        {
+          "name": "Mustafa Zazai",
+          "pos": "ATT",
+          "officialPlayerId": "84675",
+          "sourceIds": [
+            "de-team-ttf",
+            "de-player-84675",
+            "de-wild-2"
+          ],
+          "birthDate": "1993-05-09",
+          "registrationType": "wildcard"
+        }
+      ]
+    },
+    {
+      "id": "vvf",
+      "name": "Vice Versa FC",
+      "rosterStatus": "partial",
+      "sourceIds": [
+        "de-team-vvf",
+        "mercato-2026"
+      ],
+      "players": [
+        {
+          "name": "Marvin Gomoluch",
+          "pos": "GK",
+          "officialPlayerId": "84687",
+          "sourceIds": [
+            "de-team-vvf",
+            "de-player-84687"
+          ],
+          "birthDate": "2000-01-04"
+        },
+        {
+          "name": "Ali Alawie",
+          "pos": "DEF",
+          "officialPlayerId": "84691",
+          "sourceIds": [
+            "de-team-vvf",
+            "de-player-84691"
+          ],
+          "birthDate": "2003-01-13"
+        },
+        {
+          "name": "Constantin Pennartz",
+          "pos": "DEF",
+          "officialPlayerId": "84976",
+          "sourceIds": [
+            "de-team-vvf",
+            "de-player-84976"
+          ],
+          "birthDate": "1999-01-21"
+        },
+        {
+          "name": "Hagen Blohm",
+          "pos": "DEF",
+          "officialPlayerId": "84689",
+          "sourceIds": [
+            "de-team-vvf",
+            "de-player-84689"
+          ],
+          "birthDate": "2002-10-05"
+        },
+        {
+          "name": "Jannis Becker",
+          "pos": "DEF",
+          "officialPlayerId": "79759",
+          "sourceIds": [
+            "de-team-vvf",
+            "de-player-79759"
+          ],
+          "birthDate": "1994-07-09"
+        },
+        {
+          "name": "Maurice Pluntke",
+          "pos": "DEF",
+          "officialPlayerId": "84690",
+          "sourceIds": [
+            "de-team-vvf"
+          ]
+        },
+        {
+          "name": "Saif-Ayadi",
+          "pos": "DEF",
+          "officialPlayerId": "86957",
+          "sourceIds": [
+            "de-team-vvf",
+            "de-player-86957"
+          ],
+          "birthDate": "1994-11-04"
+        },
+        {
+          "name": "Francisco Garcia",
+          "pos": "ATT",
+          "officialPlayerId": "86961",
+          "sourceIds": [
+            "de-team-vvf",
+            "de-player-86961"
+          ],
+          "birthDate": "1991-05-29"
+        },
+        {
+          "name": "Hussain Alawie",
+          "pos": "ATT",
+          "officialPlayerId": "84692",
+          "sourceIds": [
+            "de-team-vvf",
+            "de-player-84692"
+          ],
+          "birthDate": "1990-09-10"
+        },
+        {
+          "name": "Nuredin Ali Khan",
+          "pos": "ATT",
+          "officialPlayerId": "79819",
+          "sourceIds": [
+            "de-team-vvf"
+          ]
+        },
+        {
+          "name": "Yassine Gnondi",
+          "pos": "ATT",
+          "officialPlayerId": "86962",
+          "sourceIds": [
+            "de-team-vvf",
+            "de-player-86962"
+          ],
+          "birthDate": "1998-02-12"
+        },
+        {
+          "name": "Yannick Marko",
+          "pos": "GK",
+          "officialPlayerId": "84688",
+          "sourceIds": [
+            "de-team-vvf",
+            "de-player-84688",
+            "de-wild-2"
+          ],
+          "birthDate": "2002-06-15",
+          "registrationType": "wildcard"
+        },
+        {
+          "name": "Bo Lasse Henrichs",
+          "pos": "DEF",
+          "officialPlayerId": "87262",
+          "sourceIds": [
+            "de-team-vvf"
+          ]
+        },
+        {
+          "name": "Nils Schütte",
+          "pos": "DEF",
+          "officialPlayerId": "87271",
+          "sourceIds": [
+            "de-team-vvf",
+            "de-player-87271"
+          ],
+          "birthDate": "2000-02-04"
+        },
+        {
+          "name": "Phil Spillmann",
+          "pos": "DEF",
+          "officialPlayerId": "87268",
+          "sourceIds": [
+            "de-team-vvf"
+          ]
+        },
+        {
+          "name": "Sven Wurm",
+          "pos": "DEF",
+          "officialPlayerId": "86958",
+          "sourceIds": [
+            "de-team-vvf",
+            "de-player-86958"
+          ],
+          "birthDate": "1995-04-11"
+        },
+        {
+          "name": "David Pütz",
+          "pos": "MID",
+          "officialPlayerId": "79803",
+          "sourceIds": [
+            "de-team-vvf",
+            "de-player-79803",
+            "de-wild-2"
+          ],
+          "birthDate": "1997-01-26",
+          "registrationType": "wildcard"
+        },
+        {
+          "name": "Halil Doğan",
+          "pos": "MID",
+          "officialPlayerId": "79827",
+          "sourceIds": [
+            "de-team-vvf",
+            "de-player-79827",
+            "de-wild-2"
+          ],
+          "birthDate": "1999-11-19",
+          "registrationType": "wildcard"
+        },
+        {
+          "name": "Thomas Idel",
+          "pos": "MID",
+          "officialPlayerId": "87395",
+          "sourceIds": [
+            "de-team-vvf"
+          ]
+        },
+        {
+          "name": "Cem Sabanci",
+          "pos": "ATT",
+          "officialPlayerId": "87461",
+          "sourceIds": [
+            "de-team-vvf"
+          ]
+        },
+        {
+          "name": "Marvin Iskra",
+          "pos": "ATT",
+          "officialPlayerId": "87487",
+          "sourceIds": [
+            "de-team-vvf"
+          ]
+        },
+        {
+          "name": "Shpend Hasani",
+          "pos": "ATT",
+          "officialPlayerId": "84694",
+          "sourceIds": [
+            "de-team-vvf",
+            "de-player-84694"
+          ],
+          "birthDate": "1996-03-24"
+        }
+      ]
+    },
+    {
+      "id": "you",
+      "name": "Youniors F.C.",
+      "rosterStatus": "partial",
+      "sourceIds": [
+        "de-team-you",
+        "mercato-2026"
+      ],
+      "players": [
+        {
+          "name": "Max Wißmann",
+          "pos": "GK",
+          "officialPlayerId": "86948",
+          "sourceIds": [
+            "de-team-you",
+            "de-player-86948"
+          ],
+          "birthDate": "2005-01-16"
+        },
+        {
+          "name": "Maximilian Krapf",
+          "pos": "GK",
+          "officialPlayerId": "79602",
+          "sourceIds": [
+            "de-team-you",
+            "de-player-79602",
+            "de-draft-2"
+          ],
+          "birthDate": "2003-05-12",
+          "registrationType": "registered"
+        },
+        {
+          "name": "Ahmed Azaouagh",
+          "pos": "DEF",
+          "officialPlayerId": "53024",
+          "sourceIds": [
+            "de-team-you",
+            "de-player-53024",
+            "de-draft-1"
+          ],
+          "birthDate": "1994-06-20",
+          "registrationType": "registered"
+        },
+        {
+          "name": "Emir Sejdovic",
+          "pos": "DEF",
+          "officialPlayerId": "79644",
+          "sourceIds": [
+            "de-team-you",
+            "de-player-79644",
+            "de-draft-2"
+          ],
+          "birthDate": "2000-04-25",
+          "registrationType": "registered"
+        },
+        {
+          "name": "Henoc Agbessi",
+          "pos": "DEF",
+          "officialPlayerId": "79625",
+          "sourceIds": [
+            "de-team-you",
+            "de-player-79625",
+            "de-draft-2"
+          ],
+          "birthDate": "2001-07-24",
+          "registrationType": "registered"
+        },
+        {
+          "name": "Sokratis Papastathopoulos",
+          "pos": "DEF",
+          "officialPlayerId": "79891",
+          "sourceIds": [
+            "de-team-you",
+            "de-player-79891"
+          ],
+          "birthDate": "1988-06-09"
+        },
+        {
+          "name": "Christian Clemens",
+          "pos": "MID",
+          "officialPlayerId": "86954",
+          "sourceIds": [
+            "de-team-you",
+            "de-player-86954"
+          ],
+          "birthDate": "1991-08-04"
+        },
+        {
+          "name": "Julien Vercauteren",
+          "pos": "MID",
+          "officialPlayerId": "53028",
+          "sourceIds": [
+            "de-team-you",
+            "de-player-53028",
+            "de-draft-1"
+          ],
+          "birthDate": "1993-01-12",
+          "registrationType": "registered"
+        },
+        {
+          "name": "Naoufal Azzagari",
+          "pos": "MID",
+          "officialPlayerId": "86949",
+          "sourceIds": [
+            "de-team-you",
+            "de-player-86949"
+          ],
+          "birthDate": "2001-01-15"
+        },
+        {
+          "name": "Lordan Handanovic",
+          "pos": "ATT",
+          "officialPlayerId": "79653",
+          "sourceIds": [
+            "de-team-you",
+            "de-player-79653",
+            "de-draft-2"
+          ],
+          "birthDate": "2001-11-10",
+          "registrationType": "registered"
+        },
+        {
+          "name": "Marco Terrazzino",
+          "pos": "ATT",
+          "officialPlayerId": "80486",
+          "sourceIds": [
+            "de-team-you",
+            "de-player-80486"
+          ],
+          "birthDate": "1991-04-15"
+        },
+        {
+          "name": "Danny Blum",
+          "pos": "DEF",
+          "officialPlayerId": "79622",
+          "sourceIds": [
+            "de-team-you",
+            "de-player-79622",
+            "de-wild-1"
+          ],
+          "birthDate": "1991-01-07",
+          "registrationType": "wildcard"
+        },
+        {
+          "name": "Kevin Moreira",
+          "pos": "ATT",
+          "officialPlayerId": "80492",
+          "sourceIds": [
+            "de-team-you",
+            "de-player-80492",
+            "de-wild-2"
+          ],
+          "birthDate": "1999-04-20",
+          "registrationType": "wildcard"
+        }
+      ]
+    }
+  ],
+  "confirmedTransfers": [
+    {
+      "name": "Kenan Smajlovic",
+      "toTeamId": "g2f",
+      "date": "2026-02-12",
+      "window": 4,
+      "originLabel": "New Acquisition",
+      "dateBasis": "Official Mercato calendar: window 1 February 9; window 2 February 10; window 3 February 11; window 4 February 12.",
+      "sourceIds": [
+        "mercato-2026"
+      ]
+    },
+    {
+      "name": "Gaspard Fehlinger",
+      "toTeamId": "kak",
+      "date": "2026-02-12",
+      "window": 4,
+      "originLabel": "New Acquisition",
+      "dateBasis": "Official Mercato calendar: window 1 February 9; window 2 February 10; window 3 February 11; window 4 February 12.",
+      "sourceIds": [
+        "mercato-2026"
+      ]
+    },
+    {
+      "name": "Thomas Haas",
+      "toTeamId": "kak",
+      "date": "2026-02-12",
+      "window": 4,
+      "originLabel": "New Acquisition",
+      "dateBasis": "Official Mercato calendar: window 1 February 9; window 2 February 10; window 3 February 11; window 4 February 12.",
+      "sourceIds": [
+        "mercato-2026"
+      ]
+    },
+    {
+      "name": "Luca Freese",
+      "toTeamId": "ttf",
+      "date": "2026-02-12",
+      "window": 4,
+      "originLabel": "New Acquisition",
+      "dateBasis": "Official Mercato calendar: window 1 February 9; window 2 February 10; window 3 February 11; window 4 February 12.",
+      "sourceIds": [
+        "mercato-2026"
+      ]
+    },
+    {
+      "name": "Mustafa Zazai",
+      "toTeamId": "ttf",
+      "date": "2026-02-12",
+      "window": 4,
+      "originLabel": "New Acquisition",
+      "dateBasis": "Official Mercato calendar: window 1 February 9; window 2 February 10; window 3 February 11; window 4 February 12.",
+      "sourceIds": [
+        "mercato-2026"
+      ]
+    },
+    {
+      "name": "Nikola Stankovic",
+      "toTeamId": "ttf",
+      "date": "2026-02-12",
+      "window": 4,
+      "originLabel": "New Acquisition",
+      "dateBasis": "Official Mercato calendar: window 1 February 9; window 2 February 10; window 3 February 11; window 4 February 12.",
+      "sourceIds": [
+        "mercato-2026"
+      ]
+    },
+    {
+      "name": "Saif Ayadi",
+      "toTeamId": "vvf",
+      "date": "2026-02-12",
+      "window": 4,
+      "originLabel": "New Acquisition",
+      "dateBasis": "Official Mercato calendar: window 1 February 9; window 2 February 10; window 3 February 11; window 4 February 12.",
+      "sourceIds": [
+        "mercato-2026"
+      ]
+    },
+    {
+      "name": "Sven Wurm",
+      "toTeamId": "vvf",
+      "date": "2026-02-12",
+      "window": 4,
+      "originLabel": "New Acquisition",
+      "dateBasis": "Official Mercato calendar: window 1 February 9; window 2 February 10; window 3 February 11; window 4 February 12.",
+      "sourceIds": [
+        "mercato-2026"
+      ]
+    },
+    {
+      "name": "Francisco Garcia",
+      "toTeamId": "vvf",
+      "date": "2026-02-12",
+      "window": 4,
+      "originLabel": "New Acquisition",
+      "dateBasis": "Official Mercato calendar: window 1 February 9; window 2 February 10; window 3 February 11; window 4 February 12.",
+      "sourceIds": [
+        "mercato-2026"
+      ]
+    },
+    {
+      "name": "Nuredin Ali Khan",
+      "toTeamId": "vvf",
+      "date": "2026-02-12",
+      "window": 4,
+      "originLabel": "New Acquisition",
+      "dateBasis": "Official Mercato calendar: window 1 February 9; window 2 February 10; window 3 February 11; window 4 February 12.",
+      "sourceIds": [
+        "mercato-2026"
+      ]
+    },
+    {
+      "name": "Yassine Ali Gnondi",
+      "toTeamId": "vvf",
+      "date": "2026-02-12",
+      "window": 4,
+      "originLabel": "New Acquisition",
+      "dateBasis": "Official Mercato calendar: window 1 February 9; window 2 February 10; window 3 February 11; window 4 February 12.",
+      "sourceIds": [
+        "mercato-2026"
+      ]
+    },
+    {
+      "name": "Jack Krause",
+      "toTeamId": "g2f",
+      "date": "2026-02-12",
+      "window": 4,
+      "originLabel": "New Acquisition",
+      "dateBasis": "Official Mercato calendar: window 1 February 9; window 2 February 10; window 3 February 11; window 4 February 12.",
+      "sourceIds": [
+        "mercato-2026"
+      ]
+    },
+    {
+      "name": "Halit Bacak",
+      "toTeamId": "g2f",
+      "date": "2026-02-12",
+      "window": 4,
+      "originLabel": "New Acquisition",
+      "dateBasis": "Official Mercato calendar: window 1 February 9; window 2 February 10; window 3 February 11; window 4 February 12.",
+      "sourceIds": [
+        "mercato-2026"
+      ]
+    },
+    {
+      "name": "Mohamed Aladin Dahas",
+      "toTeamId": "kak",
+      "date": "2026-02-12",
+      "window": 4,
+      "originLabel": "New Acquisition",
+      "dateBasis": "Official Mercato calendar: window 1 February 9; window 2 February 10; window 3 February 11; window 4 February 12.",
+      "sourceIds": [
+        "mercato-2026"
+      ]
+    },
+    {
+      "name": "Naoufal Azzagari",
+      "toTeamId": "you",
+      "date": "2026-02-12",
+      "window": 4,
+      "originLabel": "New Acquisition",
+      "dateBasis": "Official Mercato calendar: window 1 February 9; window 2 February 10; window 3 February 11; window 4 February 12.",
+      "sourceIds": [
+        "mercato-2026"
+      ]
+    },
+    {
+      "name": "Max Wißmann",
+      "toTeamId": "you",
+      "date": "2026-02-12",
+      "window": 4,
+      "originLabel": "New Acquisition",
+      "dateBasis": "Official Mercato calendar: window 1 February 9; window 2 February 10; window 3 February 11; window 4 February 12.",
+      "sourceIds": [
+        "mercato-2026"
+      ]
+    },
+    {
+      "name": "Christian Clemens",
+      "toTeamId": "you",
+      "date": "2026-02-12",
+      "window": 4,
+      "originLabel": "New Acquisition",
+      "dateBasis": "Official Mercato calendar: window 1 February 9; window 2 February 10; window 3 February 11; window 4 February 12.",
+      "sourceIds": [
+        "mercato-2026"
+      ]
+    },
+    {
+      "name": "Maicon Silva",
+      "toTeamId": "you",
+      "date": "2026-02-10",
+      "window": 2,
+      "originLabel": "Free Agent",
+      "dateBasis": "Official Mercato calendar: window 1 February 9; window 2 February 10; window 3 February 11; window 4 February 12.",
+      "sourceIds": [
+        "mercato-2026"
+      ]
+    },
+    {
+      "name": "Jhon Eduar Palacios Mosquera",
+      "fromTeamId": "per",
+      "toTeamId": "you",
+      "date": "2026-02-10",
+      "window": 2,
+      "originLabel": "Persas FC",
+      "dateBasis": "Official Mercato calendar: window 1 February 9; window 2 February 10; window 3 February 11; window 4 February 12.",
+      "sourceIds": [
+        "mercato-2026"
+      ]
+    },
+    {
+      "name": "Yoel Yilma",
+      "toTeamId": "erc",
+      "date": "2026-02-12",
+      "window": 4,
+      "originLabel": "New Acquisition",
+      "dateBasis": "Official Mercato calendar: window 1 February 9; window 2 February 10; window 3 February 11; window 4 February 12.",
+      "sourceIds": [
+        "mercato-2026"
+      ]
+    },
+    {
+      "name": "Ben Zöllner",
+      "toTeamId": "g2f",
+      "date": "2026-02-12",
+      "window": 4,
+      "originLabel": "New Acquisition",
+      "dateBasis": "Official Mercato calendar: window 1 February 9; window 2 February 10; window 3 February 11; window 4 February 12.",
+      "sourceIds": [
+        "mercato-2026"
+      ]
+    },
+    {
+      "name": "Philip Koch",
+      "toTeamId": "ttf",
+      "date": "2026-02-12",
+      "window": 4,
+      "originLabel": "New Acquisition",
+      "dateBasis": "Official Mercato calendar: window 1 February 9; window 2 February 10; window 3 February 11; window 4 February 12.",
+      "sourceIds": [
+        "mercato-2026"
+      ]
+    },
+    {
+      "name": "Noah Dahaba",
+      "toTeamId": "ttf",
+      "date": "2026-02-12",
+      "window": 4,
+      "originLabel": "New Acquisition",
+      "dateBasis": "Official Mercato calendar: window 1 February 9; window 2 February 10; window 3 February 11; window 4 February 12.",
+      "sourceIds": [
+        "mercato-2026"
+      ]
+    },
+    {
+      "name": "Marko Tadic",
+      "toTeamId": "ttf",
+      "date": "2026-02-12",
+      "window": 4,
+      "originLabel": "New Acquisition",
+      "dateBasis": "Official Mercato calendar: window 1 February 9; window 2 February 10; window 3 February 11; window 4 February 12.",
+      "sourceIds": [
+        "mercato-2026"
+      ]
+    },
+    {
+      "name": "Jean Daniel Atohoun",
+      "toTeamId": "ttf",
+      "date": "2026-02-12",
+      "window": 4,
+      "originLabel": "New Acquisition",
+      "dateBasis": "Official Mercato calendar: window 1 February 9; window 2 February 10; window 3 February 11; window 4 February 12.",
+      "sourceIds": [
+        "mercato-2026"
+      ]
+    },
+    {
+      "name": "Lionel Lingani",
+      "toTeamId": "ttf",
+      "date": "2026-02-12",
+      "window": 4,
+      "originLabel": "New Acquisition",
+      "dateBasis": "Official Mercato calendar: window 1 February 9; window 2 February 10; window 3 February 11; window 4 February 12.",
+      "sourceIds": [
+        "mercato-2026"
+      ]
+    },
+    {
+      "name": "Marco Terrazzino",
+      "toTeamId": "you",
+      "date": "2026-02-12",
+      "window": 4,
+      "originLabel": "Free Agent",
+      "dateBasis": "Official Mercato calendar: window 1 February 9; window 2 February 10; window 3 February 11; window 4 February 12.",
+      "sourceIds": [
+        "mercato-2026"
+      ]
+    },
+    {
+      "name": "Gilles Vidal Tusell",
+      "toTeamId": "nrf",
+      "date": "2026-02-09",
+      "window": 1,
+      "originLabel": "Free Agent",
+      "dateBasis": "Official Mercato calendar: window 1 February 9; window 2 February 10; window 3 February 11; window 4 February 12.",
+      "sourceIds": [
+        "mercato-2026"
+      ]
+    },
+    {
+      "name": "Lennard Hövel",
+      "toTeamId": "kak",
+      "date": "2026-02-12",
+      "window": 4,
+      "originLabel": "New Acquisition",
+      "dateBasis": "Official Mercato calendar: window 1 February 9; window 2 February 10; window 3 February 11; window 4 February 12.",
+      "sourceIds": [
+        "mercato-2026"
+      ]
+    },
+    {
+      "name": "Daniel Bleja",
+      "toTeamId": "kak",
+      "date": "2026-02-12",
+      "window": 4,
+      "originLabel": "New Acquisition",
+      "dateBasis": "Official Mercato calendar: window 1 February 9; window 2 February 10; window 3 February 11; window 4 February 12.",
+      "sourceIds": [
+        "mercato-2026"
+      ]
+    },
+    {
+      "name": "Noah Kurmali",
+      "toTeamId": "kak",
+      "date": "2026-02-12",
+      "window": 4,
+      "originLabel": "Free Agent",
+      "dateBasis": "Official Mercato calendar: window 1 February 9; window 2 February 10; window 3 February 11; window 4 February 12.",
+      "sourceIds": [
+        "mercato-2026"
+      ]
+    },
+    {
+      "name": "Fabian Rached Djemail",
+      "toTeamId": "kak",
+      "date": "2026-02-12",
+      "window": 4,
+      "originLabel": "New Acquisition",
+      "dateBasis": "Official Mercato calendar: window 1 February 9; window 2 February 10; window 3 February 11; window 4 February 12.",
+      "sourceIds": [
+        "mercato-2026"
+      ]
+    },
+    {
+      "name": "Dario Bezerra Ehret",
+      "toTeamId": "kak",
+      "date": "2026-02-12",
+      "window": 4,
+      "originLabel": "New Acquisition",
+      "dateBasis": "Official Mercato calendar: window 1 February 9; window 2 February 10; window 3 February 11; window 4 February 12.",
+      "sourceIds": [
+        "mercato-2026"
+      ]
+    },
+    {
+      "name": "Elias Beck",
+      "toTeamId": "kak",
+      "date": "2026-02-12",
+      "window": 4,
+      "originLabel": "New Acquisition",
+      "dateBasis": "Official Mercato calendar: window 1 February 9; window 2 February 10; window 3 February 11; window 4 February 12.",
+      "sourceIds": [
+        "mercato-2026"
+      ]
+    },
+    {
+      "name": "Diego De la Mata Royo",
+      "fromTeamId": "pio",
+      "toTeamId": "nrf",
+      "date": "2026-02-11",
+      "window": 3,
+      "originLabel": "PIO FC",
+      "dateBasis": "Official Mercato calendar: window 1 February 9; window 2 February 10; window 3 February 11; window 4 February 12.",
+      "sourceIds": [
+        "mercato-2026"
+      ]
+    },
+    {
+      "name": "Daniel Rampertshammer",
+      "toTeamId": "nrf",
+      "date": "2026-02-12",
+      "window": 4,
+      "originLabel": "New Acquisition",
+      "dateBasis": "Official Mercato calendar: window 1 February 9; window 2 February 10; window 3 February 11; window 4 February 12.",
+      "sourceIds": [
+        "mercato-2026"
+      ]
+    },
+    {
+      "name": "Dennis Öztürk",
+      "toTeamId": "g2f",
+      "date": "2026-02-09",
+      "window": 1,
+      "originLabel": "Free Agent",
+      "dateBasis": "Official Mercato calendar: window 1 February 9; window 2 February 10; window 3 February 11; window 4 February 12.",
+      "sourceIds": [
+        "mercato-2026"
+      ]
+    },
+    {
+      "name": "Abdelaziz Slimi",
+      "toTeamId": "erc",
+      "date": "2026-02-12",
+      "window": 4,
+      "originLabel": "New Acquisition",
+      "dateBasis": "Official Mercato calendar: window 1 February 9; window 2 February 10; window 3 February 11; window 4 February 12.",
+      "sourceIds": [
+        "mercato-2026"
+      ]
+    },
+    {
+      "name": "Ahmed Azirar",
+      "toTeamId": "erc",
+      "date": "2026-02-12",
+      "window": 4,
+      "originLabel": "New Acquisition",
+      "dateBasis": "Official Mercato calendar: window 1 February 9; window 2 February 10; window 3 February 11; window 4 February 12.",
+      "sourceIds": [
+        "mercato-2026"
+      ]
+    },
+    {
+      "name": "Dylan Bos",
+      "toTeamId": "erc",
+      "date": "2026-02-12",
+      "window": 4,
+      "originLabel": "New Acquisition",
+      "dateBasis": "Official Mercato calendar: window 1 February 9; window 2 February 10; window 3 February 11; window 4 February 12.",
+      "sourceIds": [
+        "mercato-2026"
+      ]
+    },
+    {
+      "name": "Elias Römers",
+      "toTeamId": "erc",
+      "date": "2026-02-12",
+      "window": 4,
+      "originLabel": "New Acquisition",
+      "dateBasis": "Official Mercato calendar: window 1 February 9; window 2 February 10; window 3 February 11; window 4 February 12.",
+      "sourceIds": [
+        "mercato-2026"
+      ]
+    },
+    {
+      "name": "Erkan Kurucam",
+      "toTeamId": "erc",
+      "date": "2026-02-12",
+      "window": 4,
+      "originLabel": "New Acquisition",
+      "dateBasis": "Official Mercato calendar: window 1 February 9; window 2 February 10; window 3 February 11; window 4 February 12.",
+      "sourceIds": [
+        "mercato-2026"
+      ]
+    },
+    {
+      "name": "Etienne Reck",
+      "toTeamId": "erc",
+      "date": "2026-02-12",
+      "window": 4,
+      "originLabel": "New Acquisition",
+      "dateBasis": "Official Mercato calendar: window 1 February 9; window 2 February 10; window 3 February 11; window 4 February 12.",
+      "sourceIds": [
+        "mercato-2026"
+      ]
+    },
+    {
+      "name": "Jakov Suver",
+      "toTeamId": "erc",
+      "date": "2026-02-12",
+      "window": 4,
+      "originLabel": "New Acquisition",
+      "dateBasis": "Official Mercato calendar: window 1 February 9; window 2 February 10; window 3 February 11; window 4 February 12.",
+      "sourceIds": [
+        "mercato-2026"
+      ]
+    },
+    {
+      "name": "Nico Czichi",
+      "toTeamId": "erc",
+      "date": "2026-02-12",
+      "window": 4,
+      "originLabel": "New Acquisition",
+      "dateBasis": "Official Mercato calendar: window 1 February 9; window 2 February 10; window 3 February 11; window 4 February 12.",
+      "sourceIds": [
+        "mercato-2026"
+      ]
+    }
+  ],
+  "observedOutsideAffiliations": [
+    {
+      "name": "Nick Salihamidžić",
+      "pos": "MID",
+      "officialPlayerId": "71129",
+      "sourceIds": [
+        "de-team-nrf",
+        "de-player-71129",
+        "de-draft-1"
+      ],
+      "birthDate": "2003-02-08",
+      "registrationType": "registered",
+      "fromTeamId": "nrf",
+      "currentOfficialTeam": "Bakhira F.C.",
+      "evidenceType": "latest official player profile; exclusivity/contract termination unconfirmed"
+    },
+    {
+      "name": "Amar Cekic",
+      "pos": "ATT",
+      "officialPlayerId": "38499",
+      "sourceIds": [
+        "de-team-nrf",
+        "de-player-38499",
+        "de-wild-1"
+      ],
+      "birthDate": "1992-12-21",
+      "registrationType": "wildcard",
+      "fromTeamId": "nrf",
+      "currentOfficialTeam": "Bakhira F.C.",
+      "evidenceType": "latest official player profile; exclusivity/contract termination unconfirmed"
+    },
+    {
+      "name": "Gilles Vidal",
+      "pos": "ATT",
+      "officialPlayerId": "31",
+      "sourceIds": [
+        "de-team-nrf",
+        "de-player-31",
+        "de-wild-1"
+      ],
+      "birthDate": "2002-10-26",
+      "registrationType": "wildcard",
+      "fromTeamId": "nrf",
+      "currentOfficialTeam": "Red Zone",
+      "evidenceType": "latest official player profile; exclusivity/contract termination unconfirmed"
+    },
+    {
+      "name": "Zinedine Hukporti",
+      "pos": "DEF",
+      "officialPlayerId": "79910",
+      "sourceIds": [
+        "de-team-ttf",
+        "de-player-79910"
+      ],
+      "birthDate": "2003-04-30",
+      "fromTeamId": "ttf",
+      "currentOfficialTeam": "Bakhira F.C.",
+      "evidenceType": "latest official player profile; exclusivity/contract termination unconfirmed"
+    },
+    {
+      "name": "Jhon Palacios",
+      "pos": "ATT",
+      "officialPlayerId": "67838",
+      "sourceIds": [
+        "de-team-you",
+        "de-player-67838",
+        "de-draft-1"
+      ],
+      "birthDate": "2001-07-03",
+      "registrationType": "registered",
+      "fromTeamId": "you",
+      "currentOfficialTeam": "DR7",
+      "evidenceType": "latest official player profile; exclusivity/contract termination unconfirmed"
+    },
+    {
+      "name": "Maicon Silva",
+      "pos": "DEF",
+      "officialPlayerId": "34075",
+      "sourceIds": [
+        "de-team-you",
+        "de-player-34075",
+        "de-wild-1"
+      ],
+      "birthDate": "1998-04-02",
+      "registrationType": "wildcard",
+      "fromTeamId": "you",
+      "currentOfficialTeam": "Bakhira F.C.",
+      "evidenceType": "latest official player profile; exclusivity/contract termination unconfirmed"
+    },
+    {
+      "name": "David 'Brinquinho'",
+      "pos": "MID",
+      "officialPlayerId": "69196",
+      "sourceIds": [
+        "de-team-you",
+        "de-player-69196",
+        "de-wild-1"
+      ],
+      "birthDate": "1995-02-24",
+      "registrationType": "wildcard",
+      "fromTeamId": "you",
+      "currentOfficialTeam": "DR7",
+      "evidenceType": "latest official player profile; exclusivity/contract termination unconfirmed"
+    },
+    {
+      "name": "Luiz 'Pepinho' Souza",
+      "pos": "ATT",
+      "officialPlayerId": "68399",
+      "sourceIds": [
+        "de-team-you",
+        "de-player-68399",
+        "de-wild-1"
+      ],
+      "birthDate": "1996-04-14",
+      "registrationType": "wildcard",
+      "fromTeamId": "you",
+      "currentOfficialTeam": "Bakhira F.C.",
+      "evidenceType": "latest official player profile; exclusivity/contract termination unconfirmed"
+    }
+  ],
+  "uncertainties": [
+    "All eight teams are partial for CURRENT registration. The domestic club pages show the complete 2025/26 Split 1 season squad history, including multiple wildcard replacements. They are not authoritative twelve-player registrations as of October 26.",
+    "The official February 2026 Mercato page is a completed February market snapshot. Its complete current-club table could not be extracted; web search exposed its completed transaction log. No twelve-player roster was inferred or invented.",
+    "Eight players in the old German season squads now have MENA clubs on their latest official player profiles. They are separated into observedOutsideAffiliations and omitted from the proposed current German list. These profile changes alone do not prove an exclusive permanent transfer, a contract termination, or a precise effective date. The official October 24 MENA preview independently confirms Gilles Vidal at Red Zone.",
+    "The October 24 German Golden Crown article uses award-season affiliations (No Rules FC for Salihamidžić/Cekic/Vidal); these should not override later active MENA player profiles.",
+    "Gabriel Costa appears for No Rules FC only in the KWC Clubs squad and his latest profile is Dibrados FC. He was not added as a permanent German player.",
+    "Daniel Rampertshammer is recorded as a completed Window 4 acquisition for No Rules FC but no verified position, date of birth or current profile was retrieved; no player entry was invented.",
+    "Noah Kurmali in the Mercato is likely an alias of existing Kaktus player Noah Can, but official identity equivalence was not established. Do not create a duplicate.",
+    "Mercato transaction dates are mapped from the official numbered-window calendar, rather than separate per-transfer timestamps; 'New Acquisition' is retained as an origin label and is not treated as an identifiable former club.",
+    "Player dates of birth come only from successfully fetched official English profiles; their format is MM/DD/YYYY and has been converted to ISO. Missing dates/ages/ratings were not guessed.",
+    "28 linked player profiles returned cache misses/timeouts. Their official IDs and listed positions were still verified from the season club-page links, but their latest team and birth date remain unverified.",
+    "German wildcard directory pages beyond page 2 could not be reliably retrieved in the current season. registrationType is omitted when the classification was not verified.",
+    "Coaching information verified from current official season club pages: Istanbul United Ali Amir Mostowfi; Kaktus Kickers Dominic Reinold and David Strack."
+  ]
+}

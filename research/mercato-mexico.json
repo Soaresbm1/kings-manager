@@ -1,0 +1,1643 @@
+{
+  "leagueKey": "mexico",
+  "checkedAt": "2026-10-26",
+  "competition": "Kings Cup Openbank Mexico",
+  "season": "2026/27",
+  "sources": [
+    {
+      "id": "mexico-anq-squad",
+      "url": "https://www.kingsleague.pro/es/equipos/11-aniquiladores-fc",
+      "title": "Aniquiladores FC — official 2026/27 season squad",
+      "official": true
+    },
+    {
+      "id": "mexico-atp-squad",
+      "url": "https://www.kingsleague.pro/es/equipos/37-atletico-parceros-fc",
+      "title": "Atlético Parceros FC — official 2026/27 season squad",
+      "official": true
+    },
+    {
+      "id": "mexico-cdc-squad",
+      "url": "https://www.kingsleague.pro/es/equipos/38-club-de-cuervos",
+      "title": "Club de Cuervos — official 2026/27 season squad",
+      "official": true
+    },
+    {
+      "id": "mexico-gdc-squad",
+      "url": "https://www.kingsleague.pro/es/equipos/39-galacticos-del-caribe",
+      "title": "Galácticos del Caribe — official 2026/27 season squad",
+      "official": true
+    },
+    {
+      "id": "mexico-lch-squad",
+      "url": "https://www.kingsleague.pro/es/equipos/41-los-chamos-fc",
+      "title": "Los Chamos FC — official 2026/27 season squad",
+      "official": true
+    },
+    {
+      "id": "mexico-pca-squad",
+      "url": "https://www.kingsleague.pro/es/equipos/44-peluche-caligari",
+      "title": "Peluche Caligari — official 2026/27 season squad",
+      "official": true
+    },
+    {
+      "id": "mexico-per-squad",
+      "url": "https://www.kingsleague.pro/es/equipos/45-persas-fc",
+      "title": "Persas FC — official 2026/27 season squad",
+      "official": true
+    },
+    {
+      "id": "mexico-rnz-squad",
+      "url": "https://www.kingsleague.pro/es/equipos/46-raniza-fc",
+      "title": "Raniza FC — official 2026/27 season squad",
+      "official": true
+    },
+    {
+      "id": "mexico-kru-squad",
+      "url": "https://www.kingsleague.pro/es/equipos/198-kru-fc",
+      "title": "KRÜ FC — official 2026/27 season squad",
+      "official": true
+    },
+    {
+      "id": "mexico-guf-squad",
+      "url": "https://www.kingsleague.pro/es/equipos/213-guerrilla-fc",
+      "title": "Guerrilla FC — official 2026/27 season squad",
+      "official": true
+    },
+    {
+      "id": "mexico-teams-current",
+      "url": "https://www.kingsleague.pro/es/americas/equipos",
+      "title": "Kings Cup Mexico — official current teams (10 clubs)",
+      "official": true
+    },
+    {
+      "id": "mexico-final-2026-10-25",
+      "url": "https://www.kingsleague.pro/es/americas/actualidad/atletico-parceros-campeon-kings-cup-mexico-2026",
+      "title": "Atlético Parceros FC gana la Kings Cup Mexico con un 6-4",
+      "publishedAt": "2026-10-25",
+      "official": true
+    },
+    {
+      "id": "mexico-withdrawals-2026-08-20",
+      "url": "https://hola.mx/24980/%C2%A1Regreso%20con%20cambios%21%20Kings%20y%20Queens%20League%20M%C3%A9xico%20anuncian%20copa%20con%20menos%20equipos",
+      "title": "¡Regreso con cambios! Kings y Queens League México anuncian copa con menos equipos",
+      "publishedAt": "2026-08-20",
+      "official": false
+    },
+    {
+      "id": "mexico-marco-legend-2026-09-13",
+      "url": "https://www.tvazteca.com/aztecadeportes/marco-fabian-anunciado-nuevo-fichaje-equipo-ciudad-de-mexico/?_amp=true",
+      "title": "Marco Fabián anunciado como Jugador Leyenda de Peluche Caligari",
+      "publishedAt": "2026-09-13",
+      "official": false
+    },
+    {
+      "id": "mexico-chaco-legend-official",
+      "url": "https://www.kingsleague.pro/es/americas/actualidad/horarios-jornada-1-kings-league-openbank-mexico-split-4",
+      "title": "Horarios Jornada 1 Split 4 — Christian Chaco Giménez como Jugador Leyenda",
+      "official": true
+    },
+    {
+      "id": "mexico-legend-card-rules-2026",
+      "url": "https://cms-es.kingsleague.pro/wp-content/uploads/2025/02/reglamento-20260313-es.pdf.pdf",
+      "title": "Reglamento 2026, apartado 3.2: Carta jugador leyenda para el partido de la jornada",
+      "publishedAt": "2026-03-13",
+      "official": true
+    }
+  ],
+  "teams": [
+    {
+      "id": "anq",
+      "name": "Aniquiladores FC",
+      "officialTeamId": 11,
+      "rosterStatus": "complete",
+      "sourceIds": [
+        "mexico-anq-squad"
+      ],
+      "players": [
+        {
+          "name": "Martín 'Cani' Rodríguez",
+          "pos": "DEF",
+          "shirtNumber": 5,
+          "sourceIds": [
+            "mexico-anq-squad"
+          ]
+        },
+        {
+          "name": "Donovan Martínez",
+          "pos": "MID",
+          "shirtNumber": 9,
+          "sourceIds": [
+            "mexico-anq-squad"
+          ]
+        },
+        {
+          "name": "Daviz Junco",
+          "pos": "MID",
+          "shirtNumber": 10,
+          "sourceIds": [
+            "mexico-anq-squad"
+          ]
+        },
+        {
+          "name": "Brihan Gutiérrez",
+          "pos": "MID",
+          "shirtNumber": 11,
+          "sourceIds": [
+            "mexico-anq-squad"
+          ]
+        },
+        {
+          "name": "Roberto Pérez",
+          "pos": "ATT",
+          "shirtNumber": 14,
+          "sourceIds": [
+            "mexico-anq-squad"
+          ]
+        },
+        {
+          "name": "Ronal Quintero",
+          "pos": "MID",
+          "shirtNumber": 17,
+          "sourceIds": [
+            "mexico-anq-squad"
+          ]
+        },
+        {
+          "name": "Jacob 'Lobo' Morales",
+          "pos": "ATT",
+          "shirtNumber": 19,
+          "sourceIds": [
+            "mexico-anq-squad"
+          ]
+        },
+        {
+          "name": "Patricio 'Pato' Arias",
+          "pos": "DEF",
+          "shirtNumber": 21,
+          "sourceIds": [
+            "mexico-anq-squad"
+          ]
+        },
+        {
+          "name": "Luis Robles",
+          "pos": "GK",
+          "shirtNumber": 30,
+          "sourceIds": [
+            "mexico-anq-squad"
+          ]
+        },
+        {
+          "name": "Andres Valiente",
+          "pos": "MID",
+          "shirtNumber": 32,
+          "sourceIds": [
+            "mexico-anq-squad"
+          ]
+        },
+        {
+          "name": "Erik Fraire",
+          "pos": "GK",
+          "shirtNumber": 58,
+          "sourceIds": [
+            "mexico-anq-squad"
+          ]
+        },
+        {
+          "name": "Diego Martínez",
+          "pos": "ATT",
+          "shirtNumber": 77,
+          "sourceIds": [
+            "mexico-anq-squad"
+          ]
+        },
+        {
+          "name": "José Hernández",
+          "pos": "MID",
+          "shirtNumber": 88,
+          "sourceIds": [
+            "mexico-anq-squad"
+          ]
+        }
+      ],
+      "rosterScope": "Official current season squad page; registration type left unspecified unless directly verified."
+    },
+    {
+      "id": "atp",
+      "name": "Atlético Parceros FC",
+      "officialTeamId": 37,
+      "rosterStatus": "complete",
+      "sourceIds": [
+        "mexico-atp-squad"
+      ],
+      "players": [
+        {
+          "name": "Felipe Urán",
+          "pos": "GK",
+          "shirtNumber": 1,
+          "sourceIds": [
+            "mexico-atp-squad"
+          ]
+        },
+        {
+          "name": "Andrés Osorno",
+          "pos": "DEF",
+          "shirtNumber": 8,
+          "sourceIds": [
+            "mexico-atp-squad"
+          ]
+        },
+        {
+          "name": "Angellot Caro",
+          "pos": "ATT",
+          "shirtNumber": 10,
+          "sourceIds": [
+            "mexico-atp-squad"
+          ]
+        },
+        {
+          "name": "Santiago Muñoz",
+          "pos": "ATT",
+          "shirtNumber": 11,
+          "sourceIds": [
+            "mexico-atp-squad"
+          ]
+        },
+        {
+          "name": "Simón Duque",
+          "pos": "GK",
+          "shirtNumber": 12,
+          "sourceIds": [
+            "mexico-atp-squad"
+          ]
+        },
+        {
+          "name": "Brayan Mejía",
+          "pos": "DEF",
+          "shirtNumber": 17,
+          "sourceIds": [
+            "mexico-atp-squad"
+          ]
+        },
+        {
+          "name": "Juan Tilano",
+          "pos": "DEF",
+          "shirtNumber": 18,
+          "sourceIds": [
+            "mexico-atp-squad"
+          ]
+        },
+        {
+          "name": "Marlon Ramírez",
+          "pos": "DEF",
+          "shirtNumber": 20,
+          "sourceIds": [
+            "mexico-atp-squad"
+          ]
+        },
+        {
+          "name": "Jaaziel Mosquera",
+          "pos": "MID",
+          "shirtNumber": 21,
+          "sourceIds": [
+            "mexico-atp-squad"
+          ]
+        },
+        {
+          "name": "Duván González",
+          "pos": "DEF",
+          "shirtNumber": 24,
+          "sourceIds": [
+            "mexico-atp-squad"
+          ]
+        },
+        {
+          "name": "Alex Mosquera",
+          "pos": "MID",
+          "shirtNumber": 80,
+          "sourceIds": [
+            "mexico-atp-squad"
+          ]
+        },
+        {
+          "name": "Alexis Gómez",
+          "pos": "ATT",
+          "shirtNumber": 99,
+          "sourceIds": [
+            "mexico-atp-squad"
+          ]
+        }
+      ],
+      "rosterScope": "Official current season squad page; registration type left unspecified unless directly verified."
+    },
+    {
+      "id": "cdc",
+      "name": "Club de Cuervos",
+      "officialTeamId": 38,
+      "rosterStatus": "complete",
+      "sourceIds": [
+        "mexico-cdc-squad"
+      ],
+      "players": [
+        {
+          "name": "Juan Martos",
+          "pos": "GK",
+          "shirtNumber": 1,
+          "sourceIds": [
+            "mexico-cdc-squad"
+          ]
+        },
+        {
+          "name": "Gustavo 'Furby' Guillén",
+          "pos": "MID",
+          "shirtNumber": 7,
+          "sourceIds": [
+            "mexico-cdc-squad"
+          ]
+        },
+        {
+          "name": "Jorge Olvera",
+          "pos": "MID",
+          "shirtNumber": 8,
+          "sourceIds": [
+            "mexico-cdc-squad"
+          ]
+        },
+        {
+          "name": "Gerardo Ramírez",
+          "pos": "MID",
+          "shirtNumber": 9,
+          "sourceIds": [
+            "mexico-cdc-squad"
+          ]
+        },
+        {
+          "name": "Jonathan Ponce",
+          "pos": "MID",
+          "shirtNumber": 10,
+          "sourceIds": [
+            "mexico-cdc-squad"
+          ]
+        },
+        {
+          "name": "José Campa",
+          "pos": "MID",
+          "shirtNumber": 13,
+          "sourceIds": [
+            "mexico-cdc-squad"
+          ]
+        },
+        {
+          "name": "Brandon Magaña",
+          "pos": "MID",
+          "shirtNumber": 15,
+          "sourceIds": [
+            "mexico-cdc-squad"
+          ]
+        },
+        {
+          "name": "Jovany Santana",
+          "pos": "ATT",
+          "shirtNumber": 19,
+          "sourceIds": [
+            "mexico-cdc-squad"
+          ]
+        },
+        {
+          "name": "Brayan González",
+          "pos": "MID",
+          "shirtNumber": 20,
+          "sourceIds": [
+            "mexico-cdc-squad"
+          ]
+        },
+        {
+          "name": "Edson González",
+          "pos": "DEF",
+          "shirtNumber": 21,
+          "sourceIds": [
+            "mexico-cdc-squad"
+          ]
+        },
+        {
+          "name": "Edu Maldonado",
+          "pos": "DEF",
+          "shirtNumber": 37,
+          "sourceIds": [
+            "mexico-cdc-squad"
+          ]
+        },
+        {
+          "name": "Luis Carbajal",
+          "pos": "DEF",
+          "shirtNumber": 46,
+          "sourceIds": [
+            "mexico-cdc-squad"
+          ]
+        },
+        {
+          "name": "José Gómez",
+          "pos": "DEF",
+          "shirtNumber": 99,
+          "sourceIds": [
+            "mexico-cdc-squad"
+          ]
+        }
+      ],
+      "rosterScope": "Official current season squad page; registration type left unspecified unless directly verified."
+    },
+    {
+      "id": "gdc",
+      "name": "Galácticos del Caribe",
+      "officialTeamId": 39,
+      "rosterStatus": "complete",
+      "sourceIds": [
+        "mexico-gdc-squad"
+      ],
+      "players": [
+        {
+          "name": "Brian Orozco",
+          "pos": "GK",
+          "shirtNumber": 1,
+          "sourceIds": [
+            "mexico-gdc-squad"
+          ]
+        },
+        {
+          "name": "Pablo Gómez",
+          "pos": "MID",
+          "shirtNumber": 9,
+          "sourceIds": [
+            "mexico-gdc-squad"
+          ]
+        },
+        {
+          "name": "Diego Franco",
+          "pos": "MID",
+          "shirtNumber": 10,
+          "sourceIds": [
+            "mexico-gdc-squad"
+          ]
+        },
+        {
+          "name": "Daniel Ramos",
+          "pos": "MID",
+          "shirtNumber": 14,
+          "sourceIds": [
+            "mexico-gdc-squad"
+          ]
+        },
+        {
+          "name": "Erik Vera",
+          "pos": "DEF",
+          "shirtNumber": 17,
+          "sourceIds": [
+            "mexico-gdc-squad"
+          ]
+        },
+        {
+          "name": "Brayam Nazarit",
+          "pos": "MID",
+          "shirtNumber": 19,
+          "sourceIds": [
+            "mexico-gdc-squad"
+          ]
+        },
+        {
+          "name": "Jorge Meléndez",
+          "pos": "MID",
+          "shirtNumber": 20,
+          "sourceIds": [
+            "mexico-gdc-squad"
+          ]
+        },
+        {
+          "name": "Orel Ponce",
+          "pos": "DEF",
+          "shirtNumber": 21,
+          "sourceIds": [
+            "mexico-gdc-squad"
+          ]
+        },
+        {
+          "name": "Daniel Mendoza",
+          "pos": "DEF",
+          "shirtNumber": 26,
+          "sourceIds": [
+            "mexico-gdc-squad"
+          ]
+        },
+        {
+          "name": "Genaro Castillo",
+          "pos": "ATT",
+          "shirtNumber": 34,
+          "sourceIds": [
+            "mexico-gdc-squad"
+          ]
+        },
+        {
+          "name": "Jesús Carbajal",
+          "pos": "GK",
+          "shirtNumber": 46,
+          "sourceIds": [
+            "mexico-gdc-squad"
+          ]
+        },
+        {
+          "name": "Julio Torres",
+          "pos": "GK",
+          "shirtNumber": 88,
+          "sourceIds": [
+            "mexico-gdc-squad"
+          ]
+        },
+        {
+          "name": "Alexis Silva",
+          "pos": "ATT",
+          "shirtNumber": 90,
+          "sourceIds": [
+            "mexico-gdc-squad"
+          ]
+        },
+        {
+          "name": "Pabel Montes",
+          "pos": "MID",
+          "shirtNumber": 96,
+          "sourceIds": [
+            "mexico-gdc-squad"
+          ]
+        }
+      ],
+      "rosterScope": "Official current season squad page; registration type left unspecified unless directly verified."
+    },
+    {
+      "id": "lch",
+      "name": "Los Chamos FC",
+      "officialTeamId": 41,
+      "rosterStatus": "complete",
+      "sourceIds": [
+        "mexico-lch-squad"
+      ],
+      "players": [
+        {
+          "name": "Antonio Monterde",
+          "pos": "GK",
+          "shirtNumber": 1,
+          "sourceIds": [
+            "mexico-lch-squad"
+          ]
+        },
+        {
+          "name": "Hatzel Roque",
+          "pos": "MID",
+          "shirtNumber": 5,
+          "sourceIds": [
+            "mexico-lch-squad"
+          ]
+        },
+        {
+          "name": "Christian Lagunas",
+          "pos": "MID",
+          "shirtNumber": 6,
+          "sourceIds": [
+            "mexico-lch-squad"
+          ]
+        },
+        {
+          "name": "Luis Amador",
+          "pos": "MID",
+          "shirtNumber": 8,
+          "sourceIds": [
+            "mexico-lch-squad"
+          ]
+        },
+        {
+          "name": "Yair Arias",
+          "pos": "MID",
+          "shirtNumber": 10,
+          "sourceIds": [
+            "mexico-lch-squad"
+          ]
+        },
+        {
+          "name": "Román Ramírez",
+          "pos": "MID",
+          "shirtNumber": 11,
+          "sourceIds": [
+            "mexico-lch-squad"
+          ]
+        },
+        {
+          "name": "Paul Cruz",
+          "pos": "GK",
+          "shirtNumber": 13,
+          "sourceIds": [
+            "mexico-lch-squad"
+          ]
+        },
+        {
+          "name": "Alexis López",
+          "pos": "DEF",
+          "shirtNumber": 14,
+          "sourceIds": [
+            "mexico-lch-squad"
+          ]
+        },
+        {
+          "name": "Gustavo Gutiérrez",
+          "pos": "ATT",
+          "shirtNumber": 16,
+          "sourceIds": [
+            "mexico-lch-squad"
+          ]
+        },
+        {
+          "name": "Luis Gutiérrez",
+          "pos": "ATT",
+          "shirtNumber": 17,
+          "sourceIds": [
+            "mexico-lch-squad"
+          ]
+        },
+        {
+          "name": "Tona Mejía",
+          "pos": "DEF",
+          "shirtNumber": 19,
+          "sourceIds": [
+            "mexico-lch-squad"
+          ]
+        },
+        {
+          "name": "Obed Martínez",
+          "pos": "MID",
+          "shirtNumber": 20,
+          "sourceIds": [
+            "mexico-lch-squad"
+          ]
+        },
+        {
+          "name": "Juan Cisneros",
+          "pos": "MID",
+          "shirtNumber": 22,
+          "sourceIds": [
+            "mexico-lch-squad"
+          ]
+        },
+        {
+          "name": "Pablo Medina",
+          "pos": "DEF",
+          "shirtNumber": 23,
+          "sourceIds": [
+            "mexico-lch-squad"
+          ]
+        }
+      ],
+      "rosterScope": "Official current season squad page; registration type left unspecified unless directly verified."
+    },
+    {
+      "id": "pca",
+      "name": "Peluche Caligari",
+      "officialTeamId": 44,
+      "rosterStatus": "complete",
+      "sourceIds": [
+        "mexico-pca-squad"
+      ],
+      "players": [
+        {
+          "name": "Moisés Dabbah",
+          "pos": "GK",
+          "shirtNumber": 1,
+          "sourceIds": [
+            "mexico-pca-squad"
+          ]
+        },
+        {
+          "name": "Roberto Escalante",
+          "pos": "DEF",
+          "shirtNumber": 4,
+          "sourceIds": [
+            "mexico-pca-squad"
+          ]
+        },
+        {
+          "name": "José Askenazi",
+          "pos": "MID",
+          "shirtNumber": 7,
+          "sourceIds": [
+            "mexico-pca-squad"
+          ]
+        },
+        {
+          "name": "Miguel Díaz",
+          "pos": "MID",
+          "shirtNumber": 8,
+          "sourceIds": [
+            "mexico-pca-squad"
+          ]
+        },
+        {
+          "name": "Hugo Puentes",
+          "pos": "ATT",
+          "shirtNumber": 9,
+          "sourceIds": [
+            "mexico-pca-squad"
+          ]
+        },
+        {
+          "name": "Santiago Lagarde",
+          "pos": "ATT",
+          "shirtNumber": 10,
+          "sourceIds": [
+            "mexico-pca-squad"
+          ]
+        },
+        {
+          "name": "Martín Lara",
+          "pos": "MID",
+          "shirtNumber": 11,
+          "sourceIds": [
+            "mexico-pca-squad"
+          ]
+        },
+        {
+          "name": "José López",
+          "pos": "ATT",
+          "shirtNumber": 14,
+          "sourceIds": [
+            "mexico-pca-squad"
+          ]
+        },
+        {
+          "name": "Erick Madrigal",
+          "pos": "DEF",
+          "shirtNumber": 23,
+          "sourceIds": [
+            "mexico-pca-squad"
+          ]
+        },
+        {
+          "name": "Cristian Hernández",
+          "pos": "GK",
+          "shirtNumber": 25,
+          "sourceIds": [
+            "mexico-pca-squad"
+          ]
+        },
+        {
+          "name": "Aarón Del Real",
+          "pos": "MID",
+          "shirtNumber": 31,
+          "sourceIds": [
+            "mexico-pca-squad"
+          ]
+        },
+        {
+          "name": "Iván Muñoz",
+          "pos": "GK",
+          "shirtNumber": 32,
+          "sourceIds": [
+            "mexico-pca-squad"
+          ]
+        },
+        {
+          "name": "Ricardo Cañez",
+          "pos": "MID",
+          "shirtNumber": 99,
+          "sourceIds": [
+            "mexico-pca-squad"
+          ]
+        }
+      ],
+      "rosterScope": "Official current season squad page; registration type left unspecified unless directly verified."
+    },
+    {
+      "id": "per",
+      "name": "Persas FC",
+      "officialTeamId": 45,
+      "rosterStatus": "complete",
+      "sourceIds": [
+        "mexico-per-squad"
+      ],
+      "players": [
+        {
+          "name": "James Hernández",
+          "pos": "GK",
+          "shirtNumber": 1,
+          "sourceIds": [
+            "mexico-per-squad"
+          ]
+        },
+        {
+          "name": "Jan Meléndez",
+          "pos": "DEF",
+          "shirtNumber": 2,
+          "sourceIds": [
+            "mexico-per-squad"
+          ]
+        },
+        {
+          "name": "George Corral",
+          "pos": "DEF",
+          "shirtNumber": 4,
+          "sourceIds": [
+            "mexico-per-squad"
+          ]
+        },
+        {
+          "name": "Jorge Escamilla",
+          "pos": "DEF",
+          "shirtNumber": 5,
+          "sourceIds": [
+            "mexico-per-squad"
+          ]
+        },
+        {
+          "name": "Juan Ramírez",
+          "pos": "MID",
+          "shirtNumber": 7,
+          "sourceIds": [
+            "mexico-per-squad"
+          ]
+        },
+        {
+          "name": "Jesús 'Chuy' Pérez",
+          "pos": "MID",
+          "shirtNumber": 8,
+          "sourceIds": [
+            "mexico-per-squad"
+          ]
+        },
+        {
+          "name": "Mathías Vidangossy",
+          "pos": "MID",
+          "shirtNumber": 10,
+          "sourceIds": [
+            "mexico-per-squad"
+          ]
+        },
+        {
+          "name": "Diego Abella",
+          "pos": "ATT",
+          "shirtNumber": 11,
+          "sourceIds": [
+            "mexico-per-squad"
+          ]
+        },
+        {
+          "name": "José 'Shaggy' Martínez",
+          "pos": "MID",
+          "shirtNumber": 12,
+          "sourceIds": [
+            "mexico-per-squad"
+          ]
+        },
+        {
+          "name": "Alexis Benítez",
+          "pos": "ATT",
+          "shirtNumber": 21,
+          "sourceIds": [
+            "mexico-per-squad"
+          ]
+        },
+        {
+          "name": "Leonardo Duque",
+          "pos": "MID",
+          "shirtNumber": 23,
+          "sourceIds": [
+            "mexico-per-squad"
+          ]
+        },
+        {
+          "name": "Victor Vivia",
+          "pos": "GK",
+          "shirtNumber": 61,
+          "sourceIds": [
+            "mexico-per-squad"
+          ]
+        }
+      ],
+      "rosterScope": "Official current season squad page; registration type left unspecified unless directly verified."
+    },
+    {
+      "id": "rnz",
+      "name": "Raniza FC",
+      "officialTeamId": 46,
+      "rosterStatus": "complete",
+      "sourceIds": [
+        "mexico-rnz-squad"
+      ],
+      "players": [
+        {
+          "name": "Bernaldino Valdovinos",
+          "pos": "GK",
+          "shirtNumber": 1,
+          "sourceIds": [
+            "mexico-rnz-squad"
+          ]
+        },
+        {
+          "name": "Carlos 'Camello' Valdez",
+          "pos": "DEF",
+          "shirtNumber": 6,
+          "sourceIds": [
+            "mexico-rnz-squad"
+          ]
+        },
+        {
+          "name": "César Romo",
+          "pos": "DEF",
+          "shirtNumber": 7,
+          "sourceIds": [
+            "mexico-rnz-squad"
+          ]
+        },
+        {
+          "name": "Roberto Uribe",
+          "pos": "MID",
+          "shirtNumber": 8,
+          "sourceIds": [
+            "mexico-rnz-squad"
+          ]
+        },
+        {
+          "name": "Cristopher Castillo",
+          "pos": "ATT",
+          "shirtNumber": 9,
+          "sourceIds": [
+            "mexico-rnz-squad"
+          ]
+        },
+        {
+          "name": "César Vallejo",
+          "pos": "ATT",
+          "shirtNumber": 10,
+          "sourceIds": [
+            "mexico-rnz-squad"
+          ]
+        },
+        {
+          "name": "Eddie Sánchez",
+          "pos": "ATT",
+          "shirtNumber": 13,
+          "sourceIds": [
+            "mexico-rnz-squad"
+          ]
+        },
+        {
+          "name": "Salvador Navarro",
+          "pos": "MID",
+          "shirtNumber": 17,
+          "sourceIds": [
+            "mexico-rnz-squad"
+          ]
+        },
+        {
+          "name": "Adriano Nunes",
+          "pos": "MID",
+          "shirtNumber": 19,
+          "sourceIds": [
+            "mexico-rnz-squad"
+          ]
+        },
+        {
+          "name": "Hugo Rodríguez",
+          "pos": "MID",
+          "shirtNumber": 21,
+          "sourceIds": [
+            "mexico-rnz-squad"
+          ]
+        },
+        {
+          "name": "Marlon Castillo",
+          "pos": "DEF",
+          "shirtNumber": 22,
+          "sourceIds": [
+            "mexico-rnz-squad"
+          ]
+        },
+        {
+          "name": "Ángel Ayala",
+          "pos": "MID",
+          "shirtNumber": 93,
+          "sourceIds": [
+            "mexico-rnz-squad"
+          ]
+        },
+        {
+          "name": "Luis Valdés",
+          "pos": "MID",
+          "shirtNumber": 98,
+          "sourceIds": [
+            "mexico-rnz-squad"
+          ]
+        },
+        {
+          "name": "Fausto Alemán",
+          "pos": "MID",
+          "shirtNumber": 99,
+          "sourceIds": [
+            "mexico-rnz-squad"
+          ]
+        }
+      ],
+      "rosterScope": "Official current season squad page; registration type left unspecified unless directly verified."
+    },
+    {
+      "id": "kru",
+      "name": "KRÜ FC",
+      "officialTeamId": 198,
+      "rosterStatus": "complete",
+      "sourceIds": [
+        "mexico-kru-squad"
+      ],
+      "players": [
+        {
+          "name": "Jeancob Ramírez",
+          "pos": "GK",
+          "shirtNumber": 1,
+          "sourceIds": [
+            "mexico-kru-squad"
+          ]
+        },
+        {
+          "name": "Dago Campari",
+          "pos": "DEF",
+          "shirtNumber": 5,
+          "sourceIds": [
+            "mexico-kru-squad"
+          ]
+        },
+        {
+          "name": "Santiago Rotemberg",
+          "pos": "MID",
+          "shirtNumber": 6,
+          "sourceIds": [
+            "mexico-kru-squad"
+          ]
+        },
+        {
+          "name": "Nicolás Vanderhoeven",
+          "pos": "ATT",
+          "shirtNumber": 7,
+          "sourceIds": [
+            "mexico-kru-squad"
+          ]
+        },
+        {
+          "name": "Fernando Pina",
+          "pos": "MID",
+          "shirtNumber": 8,
+          "sourceIds": [
+            "mexico-kru-squad"
+          ]
+        },
+        {
+          "name": "Edson Trejo",
+          "pos": "MID",
+          "shirtNumber": 11,
+          "sourceIds": [
+            "mexico-kru-squad"
+          ]
+        },
+        {
+          "name": "Christopher Pedraza",
+          "pos": "MID",
+          "shirtNumber": 13,
+          "sourceIds": [
+            "mexico-kru-squad"
+          ]
+        },
+        {
+          "name": "Donovan Hernández",
+          "pos": "GK",
+          "shirtNumber": 18,
+          "sourceIds": [
+            "mexico-kru-squad"
+          ]
+        },
+        {
+          "name": "Valentín Viola",
+          "pos": "ATT",
+          "shirtNumber": 20,
+          "sourceIds": [
+            "mexico-kru-squad"
+          ]
+        },
+        {
+          "name": "Ivan Bentivegna",
+          "pos": "ATT",
+          "shirtNumber": 22,
+          "sourceIds": [
+            "mexico-kru-squad"
+          ]
+        },
+        {
+          "name": "Hugo Murga",
+          "pos": "GK",
+          "shirtNumber": 23,
+          "sourceIds": [
+            "mexico-kru-squad"
+          ]
+        },
+        {
+          "name": "Gonzalo Lescano",
+          "pos": "MID",
+          "shirtNumber": 27,
+          "sourceIds": [
+            "mexico-kru-squad"
+          ]
+        },
+        {
+          "name": "Alberto García",
+          "pos": "ATT",
+          "shirtNumber": 28,
+          "sourceIds": [
+            "mexico-kru-squad"
+          ]
+        },
+        {
+          "name": "Mauricio Reyna",
+          "pos": "DEF",
+          "shirtNumber": 45,
+          "sourceIds": [
+            "mexico-kru-squad"
+          ]
+        }
+      ],
+      "rosterScope": "Official current season squad page; registration type left unspecified unless directly verified."
+    },
+    {
+      "id": "guf",
+      "name": "Guerrilla FC",
+      "officialTeamId": 213,
+      "rosterStatus": "complete",
+      "sourceIds": [
+        "mexico-guf-squad"
+      ],
+      "players": [
+        {
+          "name": "Óscar Medina",
+          "pos": "GK",
+          "shirtNumber": 1,
+          "sourceIds": [
+            "mexico-guf-squad"
+          ]
+        },
+        {
+          "name": "Eduardo Velarde",
+          "pos": "DEF",
+          "shirtNumber": 3,
+          "sourceIds": [
+            "mexico-guf-squad"
+          ]
+        },
+        {
+          "name": "Erick Guzmán",
+          "pos": "MID",
+          "shirtNumber": 6,
+          "sourceIds": [
+            "mexico-guf-squad"
+          ]
+        },
+        {
+          "name": "Ivan Pereira Da Silva",
+          "pos": "ATT",
+          "shirtNumber": 7,
+          "sourceIds": [
+            "mexico-guf-squad"
+          ]
+        },
+        {
+          "name": "Andrés Suárez",
+          "pos": "MID",
+          "shirtNumber": 10,
+          "sourceIds": [
+            "mexico-guf-squad"
+          ]
+        },
+        {
+          "name": "Patricio Zerecero",
+          "pos": "ATT",
+          "shirtNumber": 11,
+          "sourceIds": [
+            "mexico-guf-squad"
+          ]
+        },
+        {
+          "name": "Eduardo Evangelista",
+          "pos": "GK",
+          "shirtNumber": 12,
+          "sourceIds": [
+            "mexico-guf-squad"
+          ]
+        },
+        {
+          "name": "Leonardo Hernández",
+          "pos": "MID",
+          "shirtNumber": 15,
+          "sourceIds": [
+            "mexico-guf-squad"
+          ]
+        },
+        {
+          "name": "Adrián Mora",
+          "pos": "DEF",
+          "shirtNumber": 16,
+          "sourceIds": [
+            "mexico-guf-squad"
+          ]
+        },
+        {
+          "name": "Kevin Cardona",
+          "pos": "ATT",
+          "shirtNumber": 22,
+          "sourceIds": [
+            "mexico-guf-squad"
+          ]
+        },
+        {
+          "name": "Alejandro Chimal",
+          "pos": "DEF",
+          "shirtNumber": 25,
+          "sourceIds": [
+            "mexico-guf-squad"
+          ]
+        },
+        {
+          "name": "Miguel Rebollo",
+          "pos": "ATT",
+          "shirtNumber": 93,
+          "sourceIds": [
+            "mexico-guf-squad"
+          ]
+        }
+      ],
+      "rosterScope": "Official current season squad page; registration type left unspecified unless directly verified."
+    }
+  ],
+  "confirmedTransfers": [],
+  "uncertainties": [
+    "All ten active clubs have complete current official season-page squad listings. These pages include more than twelve players for some clubs, so their season appearance lists alone cannot prove permanent registration of every entry.",
+    "Do not promote Peluche Caligari guest legends Christian Gimenez and Marco Fabian into permanent transfers. They are preserved separately as wildcard appearances with supporting sources.",
+    "No primary Los Aliens/Simios departure announcement was found. Their departures are explicit in August 20 secondary reporting and corroborated by the official current ten-club list; preserve old rosters in archivedBaselineTeams for save compatibility rather than treating their players as current registrations.",
+    "Exact transfer dates and contract lengths for most Mexico roster changes were not available. Current official club membership is verified; source baseline comparisons should be treated as game-data reconciliation, not independently dated transfer announcements.",
+    "Ambiguous replacements/guests retained in official season-page lists include Cristian Hernández (Peluche), José Campa (Cuervos), Julio Torres and Daniel Ramos (Galácticos), Hatzel Roque, Román Ramírez and Gustavo Gutiérrez (Chamos), Hugo Rodríguez and Eddie Sánchez (Raniza), and Donovan Hernández/Valentín Viola (KRÜ). Do not infer permanence or release from number of appearances alone.",
+    "Official page spelling can vary by crawl (Jovany/Jovany Santana). Normalize to verified player identity when importing; no invented birthdates or ratings included.",
+    "The global /mercato table is February 2026 and should not overwrite these newer September/October Kings Cup squads."
+  ],
+  "rosterScope": "Official 2026/27 Kings Cup Mexico team-page squads. Historical guest/replacement appearances may remain on a season page; no permanent-contract status inferred.",
+  "withdrawnTeams": [
+    {
+      "id": "lal",
+      "name": "Los Aliens FC",
+      "status": "withdrawn",
+      "reportedAt": "2026-08-20",
+      "sourceIds": [
+        "mexico-withdrawals-2026-08-20",
+        "mexico-teams-current"
+      ],
+      "confidence": "Explicit secondary departure report corroborated by current official 10-team competition; primary departure statement not located."
+    },
+    {
+      "id": "sim",
+      "name": "Simios FC",
+      "status": "withdrawn",
+      "reportedAt": "2026-08-20",
+      "sourceIds": [
+        "mexico-withdrawals-2026-08-20",
+        "mexico-teams-current"
+      ],
+      "confidence": "Explicit secondary departure report corroborated by current official 10-team competition; primary departure statement not located."
+    }
+  ],
+  "temporaryAppearances": [
+    {
+      "name": "Marco Fabian",
+      "pos": "MID",
+      "shirtNumber": 33,
+      "sourceIds": [
+        "mexico-pca-squad",
+        "mexico-marco-legend-2026-09-13",
+        "mexico-legend-card-rules-2026"
+      ],
+      "teamId": "pca",
+      "registrationType": "wildcard",
+      "registrationNote": "Jugador Leyenda: special card activated for a match under 2026 section 3.2; not treated as permanent registered-twelve roster."
+    },
+    {
+      "name": "Christian Gimenez",
+      "pos": "MID",
+      "shirtNumber": 81,
+      "sourceIds": [
+        "mexico-pca-squad",
+        "mexico-chaco-legend-official",
+        "mexico-legend-card-rules-2026"
+      ],
+      "teamId": "pca",
+      "registrationType": "wildcard",
+      "registrationNote": "Jugador Leyenda: special card activated for a match under 2026 section 3.2; not treated as permanent registered-twelve roster."
+    }
+  ],
+  "archivedBaselineTeams": [
+    {
+      "id": "lal",
+      "name": "Los Aliens FC",
+      "coach": "David Cabrera",
+      "presidents": [
+        "Edwin Castro"
+      ],
+      "players": [
+        {
+          "name": "James Hernández",
+          "pos": "GK",
+          "age": 30,
+          "speed": 70,
+          "technique": 70,
+          "physical": 83,
+          "mental": 81,
+          "overall": 76
+        },
+        {
+          "name": "Julio Torres",
+          "pos": "GK",
+          "age": 22,
+          "speed": 81,
+          "technique": 85,
+          "physical": 85,
+          "mental": 92,
+          "overall": 86
+        },
+        {
+          "name": "Alan Mendoza",
+          "pos": "DEF",
+          "age": 30,
+          "speed": 73,
+          "technique": 76,
+          "physical": 87,
+          "mental": 77,
+          "overall": 78
+        },
+        {
+          "name": "Daniel Ríos",
+          "pos": "DEF",
+          "age": 20,
+          "speed": 84,
+          "technique": 88,
+          "physical": 92,
+          "mental": 92,
+          "overall": 89
+        },
+        {
+          "name": "Erik Vera",
+          "pos": "DEF",
+          "age": 22,
+          "speed": 75,
+          "technique": 74,
+          "physical": 87,
+          "mental": 77,
+          "overall": 78
+        },
+        {
+          "name": "Brayam Nazarit",
+          "pos": "MID",
+          "age": 34,
+          "speed": 82,
+          "technique": 84,
+          "physical": 82,
+          "mental": 82,
+          "overall": 83
+        },
+        {
+          "name": "David Ortiz",
+          "pos": "MID",
+          "age": 26,
+          "speed": 91,
+          "technique": 95,
+          "physical": 87,
+          "mental": 92,
+          "overall": 91
+        },
+        {
+          "name": "Jesús Chuy Pérez",
+          "pos": "MID",
+          "age": 22,
+          "speed": 78,
+          "technique": 82,
+          "physical": 77,
+          "mental": 74,
+          "overall": 78
+        },
+        {
+          "name": "Jorge Meléndez",
+          "pos": "MID",
+          "age": 28,
+          "speed": 65,
+          "technique": 69,
+          "physical": 67,
+          "mental": 72,
+          "overall": 68
+        },
+        {
+          "name": "Juan Ramírez",
+          "pos": "MID",
+          "age": 25,
+          "speed": 91,
+          "technique": 88,
+          "physical": 79,
+          "mental": 86,
+          "overall": 86
+        },
+        {
+          "name": "Ricardo Valencia",
+          "pos": "MID",
+          "age": 22,
+          "speed": 72,
+          "technique": 75,
+          "physical": 70,
+          "mental": 72,
+          "overall": 72
+        },
+        {
+          "name": "Alejandro Sanchez",
+          "pos": "MID",
+          "age": 24,
+          "speed": 84,
+          "technique": 86,
+          "physical": 73,
+          "mental": 77,
+          "overall": 80
+        },
+        {
+          "name": "Devin Vega",
+          "pos": "MID",
+          "age": 25,
+          "speed": 77,
+          "technique": 75,
+          "physical": 73,
+          "mental": 78,
+          "overall": 76
+        },
+        {
+          "name": "Diego Abella",
+          "pos": "ATT",
+          "age": 27,
+          "speed": 92,
+          "technique": 84,
+          "physical": 77,
+          "mental": 79,
+          "overall": 83
+        }
+      ]
+    },
+    {
+      "id": "sim",
+      "name": "Simios FC",
+      "coach": "Omar Flores",
+      "presidents": [
+        "Abraham Flores"
+      ],
+      "players": [
+        {
+          "name": "Óscar Medina",
+          "pos": "GK",
+          "age": 30,
+          "speed": 78,
+          "technique": 78,
+          "physical": 88,
+          "mental": 95,
+          "overall": 85
+        },
+        {
+          "name": "Jorge Lima",
+          "pos": "GK",
+          "age": 29,
+          "speed": 73,
+          "technique": 75,
+          "physical": 78,
+          "mental": 85,
+          "overall": 78
+        },
+        {
+          "name": "Luis Huerta",
+          "pos": "GK",
+          "age": 18,
+          "speed": 64,
+          "technique": 63,
+          "physical": 76,
+          "mental": 68,
+          "overall": 68
+        },
+        {
+          "name": "Erick Sámano",
+          "pos": "DEF",
+          "age": 25,
+          "speed": 70,
+          "technique": 68,
+          "physical": 71,
+          "mental": 68,
+          "overall": 69
+        },
+        {
+          "name": "George Corral",
+          "pos": "DEF",
+          "age": 25,
+          "speed": 76,
+          "technique": 73,
+          "physical": 85,
+          "mental": 83,
+          "overall": 79
+        },
+        {
+          "name": "Sebastián Sáez",
+          "pos": "DEF",
+          "age": 27,
+          "speed": 82,
+          "technique": 80,
+          "physical": 87,
+          "mental": 77,
+          "overall": 82
+        },
+        {
+          "name": "Andrés Suárez",
+          "pos": "MID",
+          "age": 27,
+          "speed": 88,
+          "technique": 84,
+          "physical": 81,
+          "mental": 88,
+          "overall": 85
+        },
+        {
+          "name": "Gerson García",
+          "pos": "MID",
+          "age": 23,
+          "speed": 93,
+          "technique": 94,
+          "physical": 83,
+          "mental": 89,
+          "overall": 90
+        },
+        {
+          "name": "Hatzel Roque",
+          "pos": "MID",
+          "age": 34,
+          "speed": 72,
+          "technique": 76,
+          "physical": 76,
+          "mental": 82,
+          "overall": 77
+        },
+        {
+          "name": "José Shaggy Martínez",
+          "pos": "MID",
+          "age": 27,
+          "speed": 70,
+          "technique": 82,
+          "physical": 72,
+          "mental": 74,
+          "overall": 75
+        },
+        {
+          "name": "Luis Olascoaga",
+          "pos": "MID",
+          "age": 26,
+          "speed": 66,
+          "technique": 70,
+          "physical": 68,
+          "mental": 74,
+          "overall": 70
+        },
+        {
+          "name": "Cristian González",
+          "pos": "ATT",
+          "age": 29,
+          "speed": 74,
+          "technique": 72,
+          "physical": 69,
+          "mental": 68,
+          "overall": 71
+        },
+        {
+          "name": "Miguel Rebollo",
+          "pos": "ATT",
+          "age": 27,
+          "speed": 80,
+          "technique": 87,
+          "physical": 81,
+          "mental": 72,
+          "overall": 80
+        },
+        {
+          "name": "Roberto Pérez",
+          "pos": "ATT",
+          "age": 22,
+          "speed": 79,
+          "technique": 72,
+          "physical": 67,
+          "mental": 68,
+          "overall": 72
+        }
+      ]
+    }
+  ]
+}

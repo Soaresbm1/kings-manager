@@ -118,14 +118,15 @@ function applySaveData(data) {
   STATE.tournamentMatchRef = null;
   // migration : sauvegardes créées avant les ligues en arrière-plan — démarre leur saison
   // maintenant plutôt que de laisser cette carrière sans classement pour le futur tournoi.
-  if (!STATE.otherLeagues) STATE.otherLeagues = buildOtherLeagues(STATE.leagueKey);
+  const rebuiltOtherLeagues = !STATE.otherLeagues;
+  if (rebuiltOtherLeagues) STATE.otherLeagues = buildOtherLeagues(STATE.leagueKey);
   // migration : corrige les sauvegardes touchées par un bug de startNewSeason() (avant ce
   // correctif) qui recréait entièrement les 5 ligues en arrière-plan depuis data.js à chaque
   // nouvelle saison — un joueur déjà acheté par l'utilisateur (ou transféré par l'IA au sein
   // d'une de ces ligues) réapparaissait dans son club d'origine, achetable une seconde fois avec
   // le même id (bug remonté par l'utilisateur : "j'ai 2 Kelvin Oliveira").
-  dedupePlayersById();
-  backfillPhotoClub();
+  const resolveRosterProfile = backfillPhotoClub();
+  dedupePlayersById(rebuiltOtherLeagues ? resolveRosterProfile : null);
   backfillSeasonStats();
   // migration : sauvegardes créées avant les objectifs de saison — en génère un pour la saison en
   // cours plutôt que de laisser le badge de la topbar vide jusqu'à la saison suivante.
@@ -140,17 +141,24 @@ function applySaveData(data) {
 // joueur est scannée en premier, donc en cas de collision c'est toujours la copie qui t'appartient
 // réellement qui est conservée. Idempotente (ne fait rien si tout est déjà propre), sûre à
 // ré-exécuter à chaque chargement de sauvegarde.
-function dedupePlayersById() {
+function dedupePlayersById(resolveRebuiltProfile = null) {
   const seen = new Set();
-  const dedupeTeams = teams => teams.forEach(t => {
+  const savedPeople = new Set();
+  const dedupeTeams = (teams, leagueKey, rebuilt) => teams.forEach(t => {
     t.players = t.players.filter(p => {
       if (seen.has(p.id)) return false;
+      const profile = resolveRebuiltProfile ? resolveRebuiltProfile(p, t, leagueKey) : null;
+      const person = profile && profile.player.rosterIdentity;
+      // Seules les ligues tout juste recréées suivent les effectifs réels actuels.
+      // Les joueurs déjà présents dans la carrière gardent leur club et leur id.
+      if (rebuilt && person && savedPeople.has(person)) return false;
       seen.add(p.id);
+      if (!rebuilt && person) savedPeople.add(person);
       return true;
     });
   });
-  dedupeTeams(STATE.league.teams);
-  (STATE.otherLeagues || []).forEach(ol => dedupeTeams(ol.league.teams));
+  dedupeTeams(STATE.league.teams, STATE.leagueKey, false);
+  (STATE.otherLeagues || []).forEach(ol => dedupeTeams(ol.league.teams, ol.key, !!resolveRebuiltProfile));
 }
 
 // Migration pour les sauvegardes créées avant l'ajout de photoClub/photoLeague (voir
@@ -160,19 +168,50 @@ function dedupePlayersById() {
 // pas être rattaché à tort à la ligue de l'équipe qui l'a acheté).
 function backfillPhotoClub() {
   if (!STATE.league) return;
-  const originByName = {};
+  // Alias exacts publiés dans les profils générés : nom affiché, ancien nom de
+  // photo et nom de référence. Aucune recherche floue sur les noms des carrières.
+  const normalize = value => String(value || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/ß/g, "ss").replace(/ł/g, "l").toLowerCase().replace(/[^a-z0-9]/g, "");
+  const profiles = [], aliases = new Map();
   Object.keys(LEAGUES).forEach(key => {
     LEAGUES[key].teams.forEach(t => t.players.forEach(p => {
-      if (!(p.name in originByName)) originByName[p.name] = { club: t.name, league: key };
+      const profile = { player: p, team: t, league: key };
+      profiles.push(profile);
+      for (const name of [p.name, p.photoName, p.baselineOrigin?.name]) {
+        const alias = normalize(name);
+        if (!alias) continue;
+        if (!aliases.has(alias)) aliases.set(alias, new Set());
+        aliases.get(alias).add(profile);
+      }
     }));
   });
+  const unique = matches => matches.length === 1 ? matches[0] : null;
+  const resolveProfile = (p, t, leagueKey) => {
+    const explicit = profiles.filter(profile => (p.rosterIdentity && p.rosterIdentity === profile.player.rosterIdentity)
+      || (p.officialPlayerId != null && profile.player.officialPlayerId != null && String(p.officialPlayerId) === String(profile.player.officialPlayerId))
+      || p.id === profile.player.id);
+    if (explicit.length) return unique(explicit);
+    const matches = [...new Set([p.photoName, p.name].flatMap(name => [...(aliases.get(normalize(name)) || [])]))];
+    if (matches.length <= 1) return unique(matches);
+    // Un homonyme reste distinct si l'ancien club de photo permet de l'identifier.
+    const photoMatches = matches.filter(profile => p.photoClub && p.photoClub === (profile.player.photoClub || profile.team.name)
+      && (!p.photoLeague || p.photoLeague === (profile.player.photoLeague || profile.league)));
+    if (photoMatches.length) return unique(photoMatches);
+    return unique(matches.filter(profile => (profile.player.baselineOrigin?.teamId === t.id && profile.player.baselineOrigin.league === leagueKey)
+      || (profile.team.id === t.id && profile.league === leagueKey)));
+  };
   const fillPlayer = (t, leagueKey) => p => {
-    const origin = originByName[p.name];
-    if (!p.photoClub) p.photoClub = origin ? origin.club : t.name;
-    if (!p.photoLeague) p.photoLeague = origin ? origin.league : leagueKey;
+    const profile = resolveProfile(p, t, leagueKey);
+    const origin = profile && profile.player;
+    const samePhotoOrigin = !p.photoClub || (p.photoClub === (origin?.photoClub || profile?.team.name)
+      && (!p.photoLeague || p.photoLeague === (origin?.photoLeague || profile?.league)));
+    if (!p.photoClub) p.photoClub = origin ? (origin.photoClub || profile.team.name) : t.name;
+    if (!p.photoLeague) p.photoLeague = origin && samePhotoOrigin ? (origin.photoLeague || profile.league) : leagueKey;
+    if (!p.photoName) p.photoName = origin && samePhotoOrigin ? (origin.photoName || origin.name) : p.name;
   };
   STATE.league.teams.forEach(t => t.players.forEach(fillPlayer(t, STATE.leagueKey)));
   (STATE.otherLeagues || []).forEach(ol => ol.league.teams.forEach(t => t.players.forEach(fillPlayer(t, ol.key))));
+  return resolveProfile;
 }
 
 // Migration pour les sauvegardes créées avant que startCareer() ne remette les stats de saison à
@@ -403,6 +442,24 @@ function selectLeague(key) {
   document.getElementById("team-select-header").innerHTML =
     `<span class="league-flag-lg">${LEAGUE_FLAGS[key] || "⚽"}</span><h3>${league.name}</h3>
      <span class="league-row-count">${league.teams.length} équipes</span>`;
+  const note = document.getElementById("roster-revision-note");
+  const revision = league.rosterRevision;
+  note.hidden = !revision;
+  note.textContent = "";
+  if (revision) {
+    const date = revision.checkedAt.split("-").reverse().join("/");
+    const coverage = revision.status === "complete" ? "effectifs publiés vérifiés" : "mise à jour partielle, certains effectifs restent à confirmer";
+    note.textContent = `${date} · ${coverage}. Nouvelles carrières uniquement. `;
+    const source = revision.sources.find(item => item.official);
+    if (source) {
+      const link = document.createElement("a");
+      link.href = source.url;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      link.textContent = "Source officielle";
+      note.appendChild(link);
+    }
+  }
   const teamChoice = document.getElementById("team-choice");
   teamChoice.innerHTML = "";
   const sortedTeams = [...league.teams].sort((a, b) => a.name.localeCompare(b.name, "fr"));
@@ -438,8 +495,8 @@ function startCareer() {
     // (images/players/<ligue>/<club>/...) ; on fige club ET ligue sur chaque joueur dès la
     // création de la carrière, pour que sa photo reste trouvable même après un transfert vers une
     // autre équipe — y compris une équipe d'une AUTRE ligue via le mercato (cf. playerPhotoUrl)
-    p.photoClub = t.name;
-    p.photoLeague = STATE.leagueKey;
+    p.photoClub = p.photoClub || t.name;
+    p.photoLeague = p.photoLeague || STATE.leagueKey;
     // data.js encode les vraies stats de la saison 2025/26 (via withStats) uniquement pour
     // calibrer la note de départ des joueurs connus — cette carrière doit repartir de zéro,
     // pas hériter des buts/passes/matchs déjà joués dans la vraie vie (cf. backfillSeasonStats
@@ -498,8 +555,8 @@ function buildOtherLeagues(userLeagueKey) {
     teams.forEach(t => {
       t.photoLeague = key;
       t.players.forEach(p => {
-        p.photoClub = t.name;
-        p.photoLeague = key;
+        p.photoClub = p.photoClub || t.name;
+        p.photoLeague = p.photoLeague || key;
         p.goals = 0; p.assists = 0; p.matches = 0; p.ratingSum = 0; p.rating = 0;
         p.careerGoals = 0; p.careerAssists = 0; p.careerMatches = 0; p.careerRatingSum = 0;
         p.statsBaselineCleared = true;
@@ -3383,7 +3440,7 @@ function playerPhotoUrl(player, team) {
   // photoClub = club d'origine du joueur (fixé à la création de la carrière) : un joueur recruté
   // depuis une autre équipe garde la photo de son club de départ, là où le fichier existe réellement.
   const clubName = player.photoClub || team.name;
-  return `images/players/${leagueFolder}/${slugifyName(clubName)}/${slugifyName(player.name)}.png`;
+  return `images/players/${leagueFolder}/${slugifyName(clubName)}/${slugifyName(player.photoName || player.name)}.png`;
 }
 
 function playerInitials(name) {
