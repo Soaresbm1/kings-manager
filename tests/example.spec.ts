@@ -1,6 +1,9 @@
 import { test, expect, type Page } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
 
+// État global lexical du jeu, accessible dans le contexte navigateur des tests.
+declare const STATE: any;
+
 // Le jeu utilise le hasard pour ses données et ses matchs. Les assertions portent
 // sur les parcours et les invariants ; une graine fixe rend un échec rejouable.
 test.beforeEach(async ({ page }) => {
@@ -97,5 +100,36 @@ test('un effectif sans formation naturelle conserve sept titulaires et un seul g
   await expect(page.locator('#btn-play-match')).toBeEnabled();
   await expect(page.locator('#pitch-field .pitch-slot.pos-GK.filled')).toHaveCount(1);
   expect(await page.locator('#pitch-field .slot-role-warning').count()).toBeGreaterThan(0);
+});
+
+test('le résumé brésilien reste accessible avec une note absente et un joueur sorti', async ({ page }) => {
+  const pageErrors: string[] = [];
+  page.on('pageerror', error => pageErrors.push(error.message));
+  await startCareer(page, 'Brésil', 'G3X FC');
+  await page.locator('#btn-prepare-match').click();
+  await page.locator('#btn-play-match').click();
+  await page.locator('#btn-phase-lineup-auto').click();
+  await page.locator('#btn-skip-match').click();
+  await expect(page.locator('#btn-skip-match')).toHaveText('Voir le résumé');
+  const expected = await page.evaluate(() => {
+    // Une composition peut changer sans que le joueur entrant ait eu le temps
+    // de participer ; les sortants restent présents dans le résultat du moteur.
+    const pending = STATE.pendingResult;
+    const { result, homeSetup } = pending;
+    const exitedId = result.participants.home[0];
+    homeSetup.lineup = homeSetup.lineup.filter((id: string) => id !== exitedId);
+    delete result.ratings[result.participants.home[1]];
+    return { count: result.participants.home.length, name: pending.homeTeam.players.find((p: any) => p.id === exitedId).name };
+  });
+  await page.locator('#btn-skip-match').click();
+  await expect(page.locator('#screen-summary')).toBeVisible();
+  await expect(page.locator('#summary-home-ratings tr')).toHaveCount(expected.count);
+  await expect(page.locator('#summary-home-ratings')).toContainText(expected.name);
+  await expect(page.locator('#summary-home-ratings')).toContainText('—');
+  await page.locator('#btn-continue').click();
+  await expect(page.locator('#screen-main')).toBeVisible();
+  await page.reload();
+  await expect(page.locator('#saves-list .transfer-row').filter({ hasText: 'G3X FC' })).toContainText('Journée 2');
+  expect(pageErrors).toEqual([]);
 });
 

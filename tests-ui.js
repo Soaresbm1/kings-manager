@@ -48,6 +48,45 @@ function test(name, body) {
   catch (error) { failed++; console.error("FAIL " + name + ": " + error.message); }
 }
 
+test("le résumé d'un match réduit ignore les titulaires qui ne sont jamais entrés", () => {
+  const { run, elements } = createUI();
+  run(`
+    const homeTeam = STATE.league.teams[0], awayTeam = STATE.league.teams[1];
+    const setup = team => ({formation:'1-2-3-1',attackPlan:'possession',defensePlan:'zone',lineup:sanitizeAssignments(team,FORMATION_SLOTS['1-2-3-1'],null)});
+    const homeSetup = setup(homeTeam), awaySetup = setup(awayTeam);
+    const summaryEngine = createMatchEngine(homeTeam,homeSetup,awayTeam,awaySetup);
+    summaryEngine.simulateMinute(1);
+    const result = summaryEngine.finalize();
+    STATE.pendingResult = {result,homeTeam,awayTeam,homeSetup,awaySetup};
+    let displayedScreen = null;
+    showScreen = id => {displayedScreen=id;};
+    showMatchSummary();
+  `);
+  assert.equal(run("displayedScreen"), "screen-summary");
+  assert.ok(run("result.participants.home.length < homeSetup.lineup.length"));
+  assert.equal(elements.get("summary-home-ratings").children.length, run("result.participants.home.length"));
+  assert.equal(elements.get("summary-away-ratings").children.length, run("result.participants.away.length"));
+});
+
+test("le résumé conserve un joueur sorti et tolère une ancienne note manquante", () => {
+  const { run, elements } = createUI();
+  run(`
+    const homeTeam = STATE.league.teams[0], awayTeam = STATE.league.teams[1];
+    const exited = homeTeam.players[0], active = homeTeam.players[1];
+    const homeSetup = {lineup:[active.id]}, awaySetup = {lineup:[]};
+    const result = {homeGoals:0,awayGoals:0,homeXG:0,awayXG:0,participants:{home:[exited.id,active.id],away:[]},playerStats:{},ratings:{[exited.id]:7.2}};
+    STATE.pendingResult = {result,homeTeam,awayTeam,homeSetup,awaySetup};
+    showScreen = () => {};
+    showMatchSummary();
+  `);
+  const rows = elements.get("summary-home-ratings").children;
+  assert.equal(rows.length, 2);
+  assert.ok(rows[0].innerHTML.includes(run("exited.name")));
+  assert.ok(rows[0].innerHTML.includes("7.2"));
+  assert.ok(rows[1].innerHTML.includes("—"));
+  run("delete result.participants; showMatchSummary();");
+});
+
 test("ancienne sauvegarde sans intention : une tactique équilibrée reste jouable", () => {
   const { run } = createUI();
   assert.equal(run("sanitizeTactic(null).mentality"), "balanced");
