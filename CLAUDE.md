@@ -182,6 +182,10 @@ mode de débogage visuel (touche **D** pendant un match, voir `app.js:PITCH_DEBU
 
 ## Autres systèmes notables (chercher le nom de fonction dans `app.js`/`engine.js` au besoin)
 
+- **Tableau tactique** : consignes, terrain vertical et effectif filtrable dans trois panneaux.
+  Les terrains avec/sans ballon sont éditables au clavier ; `selectedPhase` dirige le choix
+  d'un joueur, et `syncStartersAcrossPhases` conserve les mêmes titulaires. Les portraits
+  réutilisent l'identité officielle. Filtres et sélection restent transitoires, sans migration.
 - **5 ligues en arrière-plan** (`STATE.otherLeagues`) : IA vs IA en parallèle de la ligue du
   joueur, `buildOtherLeagues`/`advanceOtherLeagues`/`finalizeOtherLeagues`.
 - **Stats saison vs carrière** par joueur (`goals`/`careerGoals`, etc.) — saison remise à
