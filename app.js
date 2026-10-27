@@ -2636,20 +2636,26 @@ function renderFormationChoice(setup, ids) {
   const container = document.getElementById(ids.formation);
   container.innerHTML = "";
   Object.entries(FORMATIONS).forEach(([key, f]) => {
-    const div = document.createElement("div");
+    const div = document.createElement("button");
+    div.type = "button";
     div.className = "option-card" + (setup.formation === key ? " selected" : "");
+    div.setAttribute("aria-pressed", String(setup.formation === key));
+    div.setAttribute("aria-label", f.name);
     div.innerHTML = `<h4>${f.name}</h4><p>${f.gk} GK / ${f.def} DEF / ${f.mid} MID / ${f.att} ATT</p>`;
     div.onclick = () => {
       if (setup.formation === key) return;
       setup.assignments = remapAssignments(setup, key);
       setup.formation = key;
+      syncStartersAcrossPhases(setup, "in");
       setup.selectedSlot = null;
+      setup.selectedPhase = "in";
       renderFormationChoice(setup, ids);
       renderPitch(setup, ids);
       renderBench(setup, ids);
       renderOOPSection(setup, ids);
       if (ids.count) updateLineupCount(setup, ids);
       saveTactic(setup);
+      container.querySelector('[aria-pressed="true"]').focus();
     };
     container.appendChild(div);
   });
@@ -2673,37 +2679,73 @@ function slotRoleLabel(slot) {
   return `${SLOT_POS_NAME[slot.pos]} ${side === "D" ? "droit" : "gauche"}`;
 }
 
-// Affiche le terrain avec les 7 emplacements de la formation actuelle
+// Les portraits suivent la même identité officielle que l'effectif et la fiche joueur.
+function tacticText(value) {
+  return String(value == null ? "" : value).replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char]));
+}
+
+function renderTacticPortrait(player, team, className) {
+  const url = playerPhotoUrl(player, team);
+  return `<span class="${className}" aria-hidden="true"><span>${tacticText(playerInitials(player.name))}</span>${url
+    ? `<img src="${tacticText(url)}" alt="" width="64" height="72" decoding="async" style="display:none" onload="this.style.display='block';this.previousElementSibling.style.display='none';" onerror="this.style.display='none';this.previousElementSibling.style.display='';">` : ""}</span>`;
+}
+
+function buildTacticSlot(setup, ids, slot, index, phase, player) {
+  const button = document.createElement("button");
+  button.type = "button";
+  const selected = setup.selectedSlot === index && (setup.selectedPhase || "in") === phase;
+  button.className = "pitch-slot pos-" + slot.pos + (player ? " filled" : " empty") + (selected ? " selected" : "");
+  button.dataset.phase = phase;
+  button.dataset.slotIndex = String(index);
+  button.dataset.playerId = player ? player.id : "";
+  button.style.left = slot.x + "%";
+  button.style.top = slot.y + "%";
+  const phaseLabel = phase === "out" ? "Sans ballon" : "Avec ballon";
+  button.setAttribute("aria-label", `${phaseLabel} : ${slotRoleLabel(slot)}, ${player ? player.name : "Emplacement vide"}`);
+  button.setAttribute("aria-pressed", String(selected));
+  button.title = `${slotRoleLabel(slot)} — ${player ? player.name : "Choisir un joueur"}`;
+  const warning = player && player.pos !== slot.pos
+    ? `<span class="slot-role-warning" title="Poste habituel : ${player.pos}">↔ ${player.pos}</span>` : "";
+  button.innerHTML = `${player ? renderTacticPortrait(player, getUserTeam(), "slot-portrait") : '<span class="slot-portrait slot-placeholder" aria-hidden="true">+</span>'}
+    ${player ? `<span class="slot-overall ${overallClass(player.overall)}" aria-label="Niveau ${player.overall}">${player.overall}</span>` : ""}
+    <span class="slot-copy"><span class="slot-tag pos-${slot.pos}">${slotShortTag(slot)}</span>
+    <span class="${player ? "slot-name" : "slot-empty"}">${player ? tacticText(player.name) : "Choisir"}</span>${warning}</span>`;
+  button.onclick = () => selectSlot(setup, ids, index, phase);
+  return button;
+}
+
+function renderTacticPitchLines(container) {
+  container.innerHTML = '<span class="pitch-penalty-area top" aria-hidden="true"></span><span class="pitch-penalty-area bottom" aria-hidden="true"></span><span class="pitch-goal-area top" aria-hidden="true"></span><span class="pitch-goal-area bottom" aria-hidden="true"></span>';
+}
+
+function renderTacticSelectionHint(setup, ids) {
+  if (ids !== TACTICS_IDS) return;
+  const hint = document.getElementById("tactics-selection-hint");
+  if (!hint) return;
+  if (setup.selectedSlot == null) {
+    hint.textContent = "Sélectionne un poste sur le terrain, puis un joueur dans l’effectif.";
+  } else {
+    const phase = setup.selectedPhase || "in";
+    const formation = phase === "out" ? setup.formationOOP : setup.formation;
+    const slot = FORMATION_SLOTS[formation][setup.selectedSlot];
+    hint.textContent = `${slotRoleLabel(slot)} · ${phase === "out" ? "sans ballon" : "avec ballon"} : choisis son joueur dans l’effectif.`;
+  }
+}
+
+// Affiche le terrain avec les 7 emplacements de la formation actuelle.
 function renderPitch(setup, ids) {
   const team = getUserTeam();
   const slots = FORMATION_SLOTS[setup.formation];
   const container = document.getElementById(ids.pitch);
-  container.innerHTML = "";
+  renderTacticPitchLines(container);
 
   slots.forEach((slot, i) => {
     const playerId = setup.assignments[i];
     const player = playerId ? team.players.find(p => p.id === playerId) : null;
 
-    const div = document.createElement("div");
-    div.className = "pitch-slot pos-" + slot.pos + (player ? " filled" : " empty") + (setup.selectedSlot === i ? " selected" : "");
-    div.style.left = slot.x + "%";
-    div.style.top = slot.y + "%";
-
-    div.title = slotRoleLabel(slot) + (player && player.pos !== slot.pos ? ` — ${player.name} dépanne hors de son poste habituel (${player.pos}).` : "");
-    if (player) {
-      const outOfPosition = player.pos !== slot.pos ? `<span class="slot-role-warning" aria-label="Poste inhabituel" title="Poste habituel : ${player.pos}">↔ ${player.pos}</span>` : "";
-      div.innerHTML = `<span class="slot-tag pos-${slot.pos}">${slotShortTag(slot)}</span>
-        <span class="slot-name">${player.name}</span>
-        ${outOfPosition}
-        ${renderStarRating(player.overall)}`;
-    } else {
-      div.innerHTML = `<span class="slot-tag pos-${slot.pos}">${slotShortTag(slot)}</span>
-        <span class="slot-empty">Vide</span>`;
-    }
-
-    div.onclick = () => selectSlot(setup, ids, i);
-    container.appendChild(div);
+    container.appendChild(buildTacticSlot(setup, ids, slot, i, "in", player));
   });
+  renderTacticSelectionHint(setup, ids);
 }
 
 // Affiche le banc / effectif complet. Chaque joueur a deux carrés cliquables : un pour choisir
@@ -2711,10 +2753,17 @@ function renderPitch(setup, ids) {
 function renderBench(setup, ids) {
   const team = getUserTeam();
   const container = document.getElementById(ids.bench);
+  const scrollTop = container.scrollTop;
   container.innerHTML = "";
+
+  if (ids === TACTICS_IDS) renderTacticBenchFilters(setup, ids);
+  const phase = setup.selectedSlot != null ? (setup.selectedPhase || "in") : (setup.viewMode === "out" ? "out" : "in");
+  const selectedFormation = phase === "out" ? setup.formationOOP : setup.formation;
+  const selectedPosition = setup.selectedSlot != null ? FORMATION_SLOTS[selectedFormation][setup.selectedSlot].pos : null;
 
   const sorted = [...team.players].sort((a, b) => POS_ORDER[a.pos] - POS_ORDER[b.pos] || b.overall - a.overall);
   sorted.forEach(p => {
+    if (ids === TACTICS_IDS && setup.benchFilter && setup.benchFilter !== "all" && setup.benchFilter !== p.pos) return;
     const isStarter = setup.assignments.includes(p.id);
     const inIdx = setup.assignments.indexOf(p.id);
     const outIdx = setup.assignmentsOOP.indexOf(p.id);
@@ -2728,17 +2777,22 @@ function renderBench(setup, ids) {
     const blocked = p.injured && !isStarter;
 
     const row = document.createElement("div");
-    row.className = "player-row" + (isStarter ? " selected" : "") + (blocked ? " player-row-injured" : "");
+    const compatible = !selectedPosition || ELIGIBLE_POS[p.pos].includes(selectedPosition);
+    row.className = "player-row" + (isStarter ? " selected" : "") + (blocked ? " player-row-injured" : "") + (selectedPosition && !compatible ? " player-row-incompatible" : "");
+    row.dataset.playerId = p.id;
+    row.dataset.position = p.pos;
     const injuryBadge = p.injured
       ? `<span class="injury-badge" title="Blessure ${p.injurySeverity} — indisponible encore ${p.injuryDaysLeft} jour(s)">🩹 ${p.injuryDaysLeft}j</span>`
       : "";
-    row.innerHTML = `<div><span class="pos-tag pos-${p.pos}">${p.pos}</span>${renderOverallBadge(p.overall)} <b>${p.name}</b> ${injuryBadge}
-      <div class="stats">Vit ${p.speed} | Tec ${p.technique} | Phy ${p.physical} | Men ${p.mental} | Forme ${p.form}</div></div>
+    row.innerHTML = `<button type="button" class="tactic-player-main" aria-label="Choisir ${tacticText(p.name)}"${blocked || !compatible ? " disabled" : ""}>
+      ${renderTacticPortrait(p, team, "tactic-player-photo")}
+      <span class="tactic-player-copy"><span class="tactic-player-name">${tacticText(p.name)}</span>
+      <span class="tactic-player-meta"><span class="pos-tag pos-${p.pos}">${p.pos}</span>${renderOverallBadge(p.overall)}<span class="player-status">${isStarter ? "Titulaire" : "Banc"}</span>${injuryBadge}</span>
+      <span class="stats">Vit ${p.speed} · Tec ${p.technique} · Phy ${p.physical} · Men ${p.mental} <span class="player-form">Forme ${p.form}</span></span></span></button>
       <div class="player-row-right">
-        ${renderRatingChip(p)}
         <div class="player-phase-squares">
-          <button type="button" class="phase-square phase-in${inIdx >= 0 ? " filled" : ""}" title="Poste avec balle"${blocked ? " disabled" : ""}>${inTag}</button>
-          <button type="button" class="phase-square phase-out${outIdx >= 0 ? " filled" : ""}" title="Poste sans balle"${blocked ? " disabled" : ""}>${outTag}</button>
+          <button type="button" class="phase-square phase-in${inIdx >= 0 ? " filled" : ""}" aria-label="Poste avec ballon de ${tacticText(p.name)} : ${inTag}" title="Choisir le poste avec ballon"${blocked ? " disabled" : ""}><span class="phase-label">Avec</span><span class="phase-position">${inTag}</span></button>
+          <button type="button" class="phase-square phase-out${outIdx >= 0 ? " filled" : ""}" aria-label="Poste sans ballon de ${tacticText(p.name)} : ${outTag}" title="Choisir le poste sans ballon"${blocked ? " disabled" : ""}><span class="phase-label">Sans</span><span class="phase-position">${outTag}</span></button>
         </div>
       </div>`;
     if (blocked) {
@@ -2752,15 +2806,40 @@ function renderBench(setup, ids) {
         e.stopPropagation();
         showPositionPicker(setup, ids, p, row, "out");
       };
-      row.onclick = () => handlePlayerClick(setup, ids, p, row);
+      row.querySelector(".tactic-player-main").onclick = () => handlePlayerClick(setup, ids, p, row);
     }
     container.appendChild(row);
+  });
+  container.scrollTop = scrollTop;
+  if (ids === TACTICS_IDS) {
+    const status = document.getElementById("tactics-squad-status");
+    if (status) status.textContent = `${setup.assignments.filter(Boolean).length}/7 titulaires · ${team.players.filter(p => !p.injured).length} disponibles`;
+  }
+}
+
+function renderTacticBenchFilters(setup, ids) {
+  const container = document.getElementById("tactics-bench-filters");
+  if (!container) return;
+  container.innerHTML = "";
+  ["all", ...POSITIONS].forEach(pos => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "tactic-bench-filter";
+    button.textContent = pos === "all" ? "Tous" : pos;
+    button.setAttribute("aria-pressed", String((setup.benchFilter || "all") === pos));
+    button.onclick = () => {
+      setup.benchFilter = pos;
+      renderBench(setup, ids);
+      container.querySelector(`[data-position="${pos}"]`).focus();
+    };
+    button.dataset.position = pos;
+    container.appendChild(button);
   });
 }
 
 // Affiche un sélecteur de postes cliquable (GK, DEF (D), DEF (G), ...) pour le poste "avec
 // balle" (phase "in") ou "sans balle" (phase "out") d'un joueur, qu'ils soient libres ou déjà
-// occupés par un autre titulaire (choisir un poste occupé renvoie son titulaire au banc).
+// occupés par un autre titulaire (échange si les postes sont compatibles, sinon remplacement).
 function closePositionPicker() {
   const existing = document.getElementById("active-position-picker");
   if (existing) existing.remove();
@@ -2781,6 +2860,14 @@ function showPositionPicker(setup, ids, player, rowEl, phase) {
   const picker = document.createElement("div");
   picker.id = "active-position-picker";
   picker.className = "position-picker";
+  picker.setAttribute("role", "group");
+  picker.setAttribute("aria-label", `Poste ${phase === "out" ? "sans" : "avec"} ballon de ${player.name}`);
+  picker.onkeydown = event => {
+    if (event.key === "Escape") {
+      closePositionPicker();
+      rowEl.querySelector(phase === "out" ? ".phase-out" : ".phase-in").focus();
+    }
+  };
 
   slotIndices.forEach(i => {
     const occupantId = assignments[i];
@@ -2789,13 +2876,19 @@ function showPositionPicker(setup, ids, player, rowEl, phase) {
     btn.type = "button";
     btn.className = "position-picker-btn" + (occupantId === player.id ? " current" : "");
     btn.innerHTML = `<span class="position-picker-tag">${slotShortTag(slots[i])}</span>
-      <span class="position-picker-occupant">${occupant ? occupant.name : "Vide"}</span>`;
+      <span class="position-picker-occupant">${occupant ? tacticText(occupant.name) : "Vide"}</span>`;
     btn.title = slotRoleLabel(slots[i]);
     btn.onclick = (e) => {
       e.stopPropagation();
+      const previousIndex = assignments.indexOf(player.id);
+      if (previousIndex >= 0 && previousIndex !== i) {
+        assignments[previousIndex] = occupant && ELIGIBLE_POS[occupant.pos].includes(slots[previousIndex].pos) ? occupant.id : null;
+      }
       assignments[i] = player.id;
+      setup.selectedSlot = null;
       closePositionPicker();
       applyAssignmentChange(setup, ids, phase);
+      focusTacticPlayerControl(ids, player.id, phase === "out" ? ".phase-out" : ".phase-in");
     };
     picker.appendChild(btn);
   });
@@ -2808,13 +2901,16 @@ function showPositionPicker(setup, ids, player, rowEl, phase) {
     removeBtn.onclick = (e) => {
       e.stopPropagation();
       assignments[assignments.indexOf(player.id)] = null;
+      setup.selectedSlot = null;
       closePositionPicker();
       applyAssignmentChange(setup, ids, phase);
+      focusTacticPlayerControl(ids, player.id, phase === "out" ? ".phase-out" : ".phase-in");
     };
     picker.appendChild(removeBtn);
   }
 
   rowEl.appendChild(picker);
+  picker.querySelector("button").focus();
   // attaché après la fin du clic courant pour ne pas se fermer immédiatement
   setTimeout(() => document.addEventListener("click", closePositionPicker, { once: true }), 0);
 }
@@ -2858,16 +2954,29 @@ function applyAssignmentChange(setup, ids, changedPhase) {
   saveTactic(setup);
 }
 
-function selectSlot(setup, ids, i) {
-  setup.selectedSlot = (setup.selectedSlot === i) ? null : i;
+function focusTacticPlayerControl(ids, playerId, selector) {
+  const row = Array.from(document.getElementById(ids.bench).querySelectorAll(".player-row"))
+    .find(element => element.dataset.playerId === playerId);
+  if (row) row.querySelector(selector).focus();
+}
+
+function selectSlot(setup, ids, i, phase = "in") {
+  setup.selectedSlot = (setup.selectedSlot === i && (setup.selectedPhase || "in") === phase) ? null : i;
+  setup.selectedPhase = phase;
+  setup.benchFilter = "all";
+  closePositionPicker();
   renderPitch(setup, ids);
+  renderOOPSection(setup, ids);
+  renderBench(setup, ids);
+  const pitch = document.getElementById(phase === "out" ? ids.oopPitch : ids.pitch);
+  pitch.querySelector(`[data-slot-index="${i}"]`).focus();
 }
 
 // Affiche le plateau tactique selon la vue choisie : "avec ballon", "sans ballon" ou "les deux"
 // en même temps. Chaque joueur a un poste indépendant pour chaque phase (choisi via les carrés
 // de l'effectif dans renderBench) ; par défaut la disposition "sans balle" reprend les mêmes
 // titulaires que "avec balle", mais peut être personnalisée librement.
-const VIEW_MODE_LABELS = { in: "⚽ Avec ballon", out: "🚫 Sans ballon", both: "🔀 Les deux" };
+const VIEW_MODE_LABELS = { in: "Avec ballon", out: "Sans ballon", both: "Comparer" };
 
 function renderOOPSection(setup, ids) {
   if (!ids.viewMode) return;
@@ -2881,13 +2990,20 @@ function renderOOPSection(setup, ids) {
 
   viewModeContainer.innerHTML = "";
   VIEW_MODES.forEach(mode => {
-    const div = document.createElement("div");
+    const div = document.createElement("button");
+    div.type = "button";
     div.className = "option-card" + (setup.viewMode === mode ? " selected" : "");
+    div.setAttribute("aria-pressed", String(setup.viewMode === mode));
     div.innerHTML = `<h4>${VIEW_MODE_LABELS[mode]}</h4>`;
     div.onclick = () => {
       setup.viewMode = mode;
+      setup.selectedSlot = null;
+      closePositionPicker();
       saveTactic(setup);
+      renderPitch(setup, ids);
       renderOOPSection(setup, ids);
+      renderBench(setup, ids);
+      viewModeContainer.querySelector('[aria-pressed="true"]').focus();
     };
     viewModeContainer.appendChild(div);
   });
@@ -2907,16 +3023,22 @@ function renderOOPSection(setup, ids) {
   const oopFormation = (setup.formationOOP && FORMATION_SLOTS[setup.formationOOP]) ? setup.formationOOP : setup.formation;
   formationContainer.innerHTML = "";
   Object.entries(FORMATIONS).forEach(([key, f]) => {
-    const div = document.createElement("div");
+    const div = document.createElement("button");
+    div.type = "button";
     div.className = "option-card" + (oopFormation === key ? " selected" : "");
+    div.setAttribute("aria-pressed", String(oopFormation === key));
     div.innerHTML = `<h4>${f.name}</h4>`;
     div.onclick = () => {
       if (setup.formationOOP === key) return;
       setup.assignmentsOOP = remapAssignmentsTo(getUserTeam(), setup.formationOOP, setup.assignmentsOOP, key);
       setup.formationOOP = key;
+      syncStartersAcrossPhases(setup, "out");
+      setup.selectedSlot = null;
       saveTactic(setup);
       renderBench(setup, ids);
+      renderPitch(setup, ids);
       renderOOPSection(setup, ids);
+      formationContainer.querySelector('[aria-pressed="true"]').focus();
     };
     formationContainer.appendChild(div);
   });
@@ -2926,30 +3048,23 @@ function renderOOPSection(setup, ids) {
   const slots = FORMATION_SLOTS[oopFormation];
   const oopAssignments = setup.assignmentsOOP;
   const oopPitchEl = document.getElementById(ids.oopPitch);
-  oopPitchEl.innerHTML = "";
+  renderTacticPitchLines(oopPitchEl);
   slots.forEach((slot, i) => {
     const playerId = oopAssignments[i];
     const player = playerId ? team.players.find(p => p.id === playerId) : null;
-    const div = document.createElement("div");
-    div.className = "pitch-slot pitch-slot-mini pos-" + slot.pos + (player ? " filled" : " empty");
-    div.style.left = slot.x + "%";
-    div.style.top = slot.y + "%";
-    div.title = slotRoleLabel(slot);
-    div.innerHTML = player
-      ? `<span class="slot-tag pos-${slot.pos}">${slotShortTag(slot)}</span><span class="slot-name">${player.name}</span>`
-      : `<span class="slot-tag pos-${slot.pos}">${slotShortTag(slot)}</span>`;
-    oopPitchEl.appendChild(div);
+    oopPitchEl.appendChild(buildTacticSlot(setup, ids, slot, i, "out", player));
   });
 }
 
 // Gère le clic sur un joueur du banc/effectif : assignation, échange ou retrait
 function handlePlayerClick(setup, ids, p, rowEl) {
-  const slots = FORMATION_SLOTS[setup.formation];
-  const assignments = setup.assignments;
+  const phase = setup.selectedSlot != null ? (setup.selectedPhase || "in") : (setup.viewMode === "out" ? "out" : "in");
+  const slots = FORMATION_SLOTS[phase === "out" ? setup.formationOOP : setup.formation];
+  const assignments = phase === "out" ? setup.assignmentsOOP : setup.assignments;
   const currentIdx = assignments.indexOf(p.id);
   closePositionPicker();
 
-  if (setup.selectedSlot !== null) {
+  if (setup.selectedSlot != null) {
     const slot = slots[setup.selectedSlot];
     if (!ELIGIBLE_POS[p.pos].includes(slot.pos)) {
       showAlert(`Ce poste nécessite un joueur "${slot.pos}" (${slotRoleLabel(slot)}).`);
@@ -2984,12 +3099,13 @@ function handlePlayerClick(setup, ids, p, rowEl) {
       assignments[sameIndices[0]] = p.id;
     } else {
       // plusieurs emplacements compatibles : affiche un sélecteur cliquable (GK, DEF (D), DEF (G)...)
-      showPositionPicker(setup, ids, p, rowEl, "in");
+      showPositionPicker(setup, ids, p, rowEl, phase);
       return;
     }
   }
 
-  applyAssignmentChange(setup, ids, "in");
+  applyAssignmentChange(setup, ids, phase);
+  focusTacticPlayerControl(ids, p.id, ".tactic-player-main");
 }
 
 function updateLineupCount(setup, ids) {
@@ -3004,23 +3120,37 @@ function renderPlanChoices(setup, ids) {
   const atkContainer = document.getElementById(ids.attack);
   atkContainer.innerHTML = "";
   Object.entries(ATTACK_PLANS).forEach(([key, plan]) => {
-    const div = document.createElement("div");
+    const div = document.createElement("button");
+    div.type = "button";
     div.className = "option-card" + (setup.attackPlan === key ? " selected" : "");
+    div.setAttribute("aria-pressed", String(setup.attackPlan === key));
+    div.setAttribute("aria-label", plan.name);
     div.innerHTML = `<h4>${plan.name}</h4><p>${plan.desc}</p>`;
-    div.onclick = () => { setup.attackPlan = key; renderPlanChoices(setup, ids); saveTactic(setup); };
+    div.onclick = () => { setup.attackPlan = key; renderPlanChoices(setup, ids); saveTactic(setup); atkContainer.querySelector('[aria-pressed="true"]').focus(); };
     atkContainer.appendChild(div);
   });
 
   const defContainer = document.getElementById(ids.defense);
   defContainer.innerHTML = "";
   Object.entries(DEFENSE_PLANS).forEach(([key, plan]) => {
-    const div = document.createElement("div");
+    const div = document.createElement("button");
+    div.type = "button";
     div.className = "option-card" + (setup.defensePlan === key ? " selected" : "");
+    div.setAttribute("aria-pressed", String(setup.defensePlan === key));
+    div.setAttribute("aria-label", plan.name);
     div.innerHTML = `<h4>${plan.name}</h4><p>${plan.desc}</p>`;
-    div.onclick = () => { setup.defensePlan = key; renderPlanChoices(setup, ids); saveTactic(setup); };
+    div.onclick = () => { setup.defensePlan = key; renderPlanChoices(setup, ids); saveTactic(setup); defContainer.querySelector('[aria-pressed="true"]').focus(); };
     defContainer.appendChild(div);
   });
   renderMentalityChoices(setup, ids.mentality);
+  if (ids === TACTICS_IDS) {
+    const descriptions = {
+      attack: { direct: "Chercher rapidement la profondeur avec des passes plus longues.", possession: "Conserver le ballon et progresser par des passes courtes.", transition: "Accélérer vers l’avant et exploiter les espaces à la récupération." },
+      defense: { low: "Protéger son but avec un bloc plus bas.", high: "Presser plus haut pour récupérer, avec une dépense d’énergie accrue.", zone: "Conserver une structure équilibrée autour du ballon." }
+    };
+    document.getElementById("tactics-attack-description").textContent = descriptions.attack[setup.attackPlan];
+    document.getElementById("tactics-defense-description").textContent = descriptions.defense[setup.defensePlan];
+  }
 }
 
 // Une seule consigne d'intention complète les plans d'attaque/défense. Le moteur
@@ -3066,6 +3196,10 @@ function renderMentalityChoices(setup, containerId) {
       }
     };
   });
+  if (containerId === "tactics-mentality-choice") {
+    const description = document.getElementById("tactics-mentality-description");
+    if (description) description.textContent = MATCH_MENTALITIES[setup.mentality].description;
+  }
 }
 
 // IDs des éléments DOM pour chaque écran utilisant le plateau tactique
