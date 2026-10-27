@@ -161,3 +161,23 @@ test('la nouvelle base mexicaine conserve les anciennes carrières à douze club
   expect(await page.evaluate(() => STATE.league.teams.length)).toBe(12);
 });
 
+test('le portrait officiel italien apparaît dans l’effectif et la fiche du bon joueur', async ({ page }) => {
+  // Le réseau est simulé ici pour tester le rendu sans dépendre du CDN en CI.
+  // Les originaux sont contrôlés séparément par verify-player-photos.cjs.
+  await page.route('https://kingsleague-cdn.kama.football/**', route => route.fulfill({
+    status: 200, contentType: 'image/png',
+    body: Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+ip1sAAAAASUVORK5CYII=', 'base64'),
+  }));
+  await startCareer(page, 'Italie', 'Alpak FC');
+  await page.locator('.nav button[data-tab="squad"]').click();
+  const row = page.locator('#squad-table tbody tr').filter({ hasText: 'Luigi Castelli' });
+  const expected = 'https://kingsleague-cdn.kama.football/account/production/seasonTeamPlayer/67ccdb5f-4a56-43a6-89d7-3f9602582883/244541879.png';
+  await expect(row.locator('img.avatar-sm-img')).toHaveAttribute('src', expected);
+  await expect(row.locator('img.avatar-sm-img')).toBeVisible();
+  await row.locator('.player-cell-name').click();
+  await expect(page.locator('#player-info-modal')).toBeVisible();
+  await expect(page.locator('#player-info-body')).toContainText('Luigi Castelli');
+  await expect(page.locator('#player-info-body img.player-photo-lg')).toHaveAttribute('src', expected);
+  await expect(page.locator('#player-info-body img.player-photo-lg')).toBeVisible();
+});
+

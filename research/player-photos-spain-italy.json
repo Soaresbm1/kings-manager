@@ -1,0 +1,75 @@
+{
+  "checkedAt": "2026-10-27",
+  "scope": [
+    "spain",
+    "italy"
+  ],
+  "method": "Official player portrait link whose alt matches the displayed profile heading; profile IDs are explicit official URLs. Current team-card DOM extraction is centralized by parent and takes priority over historical default-season portraits.",
+  "records": [
+    {
+      "leagueKey": "spain",
+      "teamId": "jig",
+      "rosterIdentity": "paufer",
+      "name": "Pau Fer",
+      "officialPlayerId": "72",
+      "profileUrl": "https://kingsleague.pro/es/jugadores/72-Pau-Fern%C3%A1ndez",
+      "imageUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/kama/production/player/image/644644230.png",
+      "evidenceUrl": "https://kingsleague.pro/es/jugadores/72-Pau-Fern%C3%A1ndez",
+      "imageAlt": "Pau Fer",
+      "status": "official-profile-linked"
+    },
+    {
+      "leagueKey": "italy",
+      "teamId": "alp",
+      "rosterIdentity": "nicolacutrignelli",
+      "name": "Nicola Cutrignelli",
+      "officialPlayerId": "85979",
+      "profileUrl": "https://kingsleague.pro/it/giocatori/85979-nicola-cutrignelli",
+      "imageUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/kama/production/seasonTeamPlayer/3de202bb-7824-49a9-836d-75deb5fb03b6/395537790.png",
+      "evidenceUrl": "https://kingsleague.pro/it/giocatori/85979-nicola-cutrignelli",
+      "imageAlt": "Nicola Cutrignelli",
+      "status": "official-profile-linked"
+    }
+  ],
+  "gaps": [
+    {
+      "leagueKey": "spain",
+      "teamId": "skl",
+      "rosterIdentity": "manugarcia",
+      "name": "Manu García",
+      "status": "ambiguous-official-identity",
+      "reason": "Two distinct published players have this name in the same Skull squad; the retained game profile has no official ID/DOB that chooses between them.",
+      "candidates": [
+        {
+          "officialPlayerId": "87484",
+          "shirtNumber": 77,
+          "birthDate": "1984-11-16",
+          "heightCm": 184,
+          "profileUrl": "https://kingsleague.pro/en/players/87484-manu-garcia"
+        },
+        {
+          "officialPlayerId": "87592",
+          "shirtNumber": 70,
+          "birthDate": "1991-06-19",
+          "heightCm": 177,
+          "profileUrl": "https://kingsleague.pro/en/players/87592-manuel-garcia-ruano"
+        }
+      ],
+      "evidenceUrl": "https://kingsleague.pro/es/equipos/210-skull-fc"
+    },
+    {
+      "leagueKey": "spain",
+      "teamId": "1kf",
+      "rosterIdentity": "mjimenez",
+      "name": "M. Jiménez",
+      "status": "unverified-official-identity",
+      "reason": "The retained goalkeeper abbreviation is not corroborated on the official 1K squad or indexed profile search. Do not conflate with Eric Jiménez (1K forward, ID192) or Manel Jiménez (La Capital goalkeeper).",
+      "evidenceUrl": "https://kingsleague.pro/es/equipos/12-1k-fc"
+    }
+  ],
+  "notes": [
+    "All other target portraits are being collected centrally from the 24 official team DOMs listed in player-photo-team-sources-spain-italy.json.",
+    "No image has been assigned by fuzzy name or visual resemblance.",
+    "Pau Fer of Jijantes (ID72, DOB2001-05-25) is distinct from Pau Fernández of El Barrio despite the former's legacy URL slug."
+  ]
+}

@@ -1,0 +1,394 @@
+{
+  "checkedAt": "2026-10-27",
+  "scope": [
+    "germany",
+    "mexico"
+  ],
+  "method": "Official player profile: portrait image link whose alt equals profile heading; profile ID explicitly from documented official URL. Parent separately extracts complete team-card DOM images.",
+  "records": [
+    {
+      "leagueKey": "germany",
+      "teamId": "erc",
+      "rosterIdentity": "dylanbos",
+      "name": "Dylan Bos",
+      "officialPlayerId": "84669",
+      "profileUrl": "https://kingsleague.pro/en/players/84669-dylan-bos",
+      "sourceIds": [
+        "de-team-erc",
+        "de-player-84669"
+      ],
+      "observedOutsideAffiliation": null,
+      "imageUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/kama/production/player/3651448b-641b-41b1-9eb2-9dff345fc63b/380468861.png",
+      "evidenceUrl": "https://kingsleague.pro/en/players/84669-dylan-bos",
+      "imageAlt": "Dylan Bos",
+      "status": "official-profile-linked"
+    },
+    {
+      "leagueKey": "germany",
+      "teamId": "erc",
+      "rosterIdentity": "danielmaus",
+      "name": "Daniel Maus",
+      "officialPlayerId": "79888",
+      "profileUrl": "https://kingsleague.pro/en/players/79888-daniel-maus",
+      "sourceIds": [
+        "de-team-erc",
+        "de-player-79888",
+        "de-wild-2"
+      ],
+      "observedOutsideAffiliation": null,
+      "imageUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/kama/production/player/238b1aec-1717-4854-ac23-29764dd235ba/139906540.png",
+      "evidenceUrl": "https://kingsleague.pro/en/players/79888-daniel-maus",
+      "imageAlt": "Daniel Maus",
+      "status": "official-profile-linked"
+    },
+    {
+      "leagueKey": "germany",
+      "teamId": "erc",
+      "rosterIdentity": "yoelyilma",
+      "name": "Yoel Yilma",
+      "officialPlayerId": "87043",
+      "profileUrl": "https://kingsleague.pro/en/players/87043-yoel-yilma",
+      "sourceIds": [
+        "de-team-erc",
+        "de-player-87043"
+      ],
+      "observedOutsideAffiliation": null,
+      "imageUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/kama/production/player/7d6531b4-e4f7-4cbb-85a9-68aba3dcbe1e/977881370.png",
+      "evidenceUrl": "https://kingsleague.pro/en/players/87043-yoel-yilma",
+      "imageAlt": "Yoel Yilma",
+      "status": "official-profile-linked"
+    },
+    {
+      "leagueKey": "germany",
+      "teamId": "erc",
+      "rosterIdentity": "moritzleitner",
+      "name": "Moritz Leitner",
+      "officialPlayerId": "79600",
+      "profileUrl": "https://kingsleague.pro/en/players/79600-moritz-leitner",
+      "sourceIds": [
+        "de-team-erc",
+        "de-player-79600",
+        "de-wild-1"
+      ],
+      "observedOutsideAffiliation": null,
+      "imageUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/kama/production/player/a9b80d8c-d107-4aa1-8758-5f5ffda0695a/138418876.png",
+      "evidenceUrl": "https://kingsleague.pro/en/players/79600-moritz-leitner",
+      "imageAlt": "Moritz Leitner",
+      "status": "official-profile-linked"
+    },
+    {
+      "leagueKey": "germany",
+      "teamId": "erc",
+      "rosterIdentity": "philippklement",
+      "name": "Philipp Klement",
+      "officialPlayerId": "84686",
+      "profileUrl": "https://kingsleague.pro/en/players/84686-philipp-klement",
+      "sourceIds": [
+        "de-team-erc",
+        "de-player-84686",
+        "de-wild-2"
+      ],
+      "observedOutsideAffiliation": null,
+      "imageUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/kama/production/player/2332a533-557c-4088-ab4d-8b196400c9f5/911698761.png",
+      "evidenceUrl": "https://kingsleague.pro/en/players/84686-philipp-klement",
+      "imageAlt": "Philipp Klement",
+      "status": "official-profile-linked"
+    },
+    {
+      "leagueKey": "germany",
+      "teamId": "erc",
+      "rosterIdentity": "abdelazizslimi",
+      "name": "Abdelaziz Slimi",
+      "officialPlayerId": "79636",
+      "profileUrl": "https://kingsleague.pro/en/players/79636-abdelaziz-slimi",
+      "sourceIds": [
+        "de-team-erc",
+        "de-player-79636",
+        "de-draft-2"
+      ],
+      "observedOutsideAffiliation": null,
+      "imageUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/kama/production/player/f8cfb64e-86bd-4009-b4e2-f05f7f64c1f2/193019143.png",
+      "evidenceUrl": "https://kingsleague.pro/en/players/79636-abdelaziz-slimi",
+      "imageAlt": "Abdelaziz Slimi",
+      "status": "official-profile-linked"
+    },
+    {
+      "leagueKey": "germany",
+      "teamId": "erc",
+      "rosterIdentity": "ahmedazirar",
+      "name": "Ahmed Azirar",
+      "officialPlayerId": "84670",
+      "profileUrl": "https://kingsleague.pro/en/players/84670-ahmed-azirar",
+      "sourceIds": [
+        "de-team-erc",
+        "de-player-84670"
+      ],
+      "observedOutsideAffiliation": null,
+      "imageUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/kama/production/player/9198d7ce-2806-4a48-8261-0cdf1e2dd33c/512720773.png",
+      "evidenceUrl": "https://kingsleague.pro/en/players/84670-ahmed-azirar",
+      "imageAlt": "Ahmed Azirar",
+      "status": "official-profile-linked"
+    },
+    {
+      "leagueKey": "germany",
+      "teamId": "erc",
+      "rosterIdentity": "dennisdesousa",
+      "name": "Dennis de Sousa",
+      "officialPlayerId": "87394",
+      "profileUrl": "https://kingsleague.pro/en/players/87394-dennis-de-sousa",
+      "sourceIds": [
+        "de-team-erc",
+        "de-player-87394"
+      ],
+      "observedOutsideAffiliation": null,
+      "imageUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/kama/production/player/702a696b-59aa-4a53-9e85-edd84529f638/309521333.png",
+      "evidenceUrl": "https://kingsleague.pro/en/players/87394-dennis-de-sousa",
+      "imageAlt": "Dennis de Sousa",
+      "status": "official-profile-linked"
+    },
+    {
+      "leagueKey": "germany",
+      "teamId": "erc",
+      "rosterIdentity": "erkankurucam",
+      "name": "Erkan Kurucam",
+      "officialPlayerId": "87042",
+      "profileUrl": "https://kingsleague.pro/en/players/87042-erkan-kurucam",
+      "sourceIds": [
+        "de-team-erc",
+        "de-player-87042"
+      ],
+      "observedOutsideAffiliation": null,
+      "imageUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/kama/production/player/85fd5fe6-5d1c-421a-857a-d30d15112ad4/387307104.png",
+      "evidenceUrl": "https://kingsleague.pro/en/players/87042-erkan-kurucam",
+      "imageAlt": "Erkan Kurucam",
+      "status": "official-profile-linked"
+    },
+    {
+      "leagueKey": "germany",
+      "teamId": "erc",
+      "rosterIdentity": "etiennereck",
+      "name": "Etienne Reck",
+      "officialPlayerId": "84966",
+      "profileUrl": "https://kingsleague.pro/en/players/84966-etienne-reck",
+      "sourceIds": [
+        "de-team-erc",
+        "de-player-84966"
+      ],
+      "observedOutsideAffiliation": null,
+      "imageUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/kama/production/player/82dcc5d3-663e-4e1b-87f3-12b918c7cb8e/28772600.png",
+      "evidenceUrl": "https://kingsleague.pro/en/players/84966-etienne-reck",
+      "imageAlt": "Etienne Reck",
+      "status": "official-profile-linked"
+    },
+    {
+      "leagueKey": "germany",
+      "teamId": "erc",
+      "rosterIdentity": "mounirbouziane",
+      "name": "Mounir Bouziane",
+      "officialPlayerId": "85942",
+      "profileUrl": "https://kingsleague.pro/en/players/85942-mounir-bouziane",
+      "sourceIds": [
+        "de-team-erc",
+        "de-player-85942"
+      ],
+      "observedOutsideAffiliation": null,
+      "imageUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/kama/production/player/76108ad4-9ba9-4b9c-8baa-e7b07fe7e180/532039403.png",
+      "evidenceUrl": "https://kingsleague.pro/en/players/85942-mounir-bouziane",
+      "imageAlt": "Mounir Bouziane",
+      "status": "official-profile-linked"
+    },
+    {
+      "leagueKey": "germany",
+      "teamId": "g2f",
+      "rosterIdentity": "ahmedomairat",
+      "name": "Ahmed Omairat",
+      "officialPlayerId": "79640",
+      "profileUrl": "https://kingsleague.pro/en/players/79640-ahmed-omairat",
+      "sourceIds": [
+        "de-team-g2f",
+        "de-player-79640",
+        "de-draft-2"
+      ],
+      "observedOutsideAffiliation": null,
+      "imageUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/kama/production/player/e7042782-a3e4-40d4-abfb-baf9b46c5f8e/44326820.png",
+      "evidenceUrl": "https://kingsleague.pro/en/players/79640-ahmed-omairat",
+      "imageAlt": "Ahmed Omairat",
+      "status": "official-profile-linked"
+    },
+    {
+      "leagueKey": "germany",
+      "teamId": "g2f",
+      "rosterIdentity": "cihanucar",
+      "name": "Cihan Ucar",
+      "officialPlayerId": "79646",
+      "profileUrl": "https://kingsleague.pro/en/players/79646-cihan-ucar",
+      "sourceIds": [
+        "de-team-g2f",
+        "de-player-79646",
+        "de-draft-2"
+      ],
+      "observedOutsideAffiliation": null,
+      "imageUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/kama/production/player/60ad0c8f-f6e7-450f-8c54-22f06e5d4ef3/653626755.png",
+      "evidenceUrl": "https://kingsleague.pro/en/players/79646-cihan-ucar",
+      "imageAlt": "Cihan Ucar",
+      "status": "official-profile-linked"
+    },
+    {
+      "leagueKey": "germany",
+      "teamId": "g2f",
+      "rosterIdentity": "mehmetcansenocak",
+      "name": "Mehmet-Can Senocak",
+      "officialPlayerId": "84668",
+      "profileUrl": "https://kingsleague.pro/en/players/84668-mehmet-can-senocak",
+      "sourceIds": [
+        "de-team-g2f",
+        "de-player-84668"
+      ],
+      "observedOutsideAffiliation": null,
+      "imageUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/kama/production/player/fb7952d9-811d-4f93-986f-da23c6030435/131447898.png",
+      "evidenceUrl": "https://kingsleague.pro/en/players/84668-mehmet-can-senocak",
+      "imageAlt": "Mehmet-Can Senocak",
+      "status": "official-profile-linked"
+    },
+    {
+      "leagueKey": "germany",
+      "teamId": "g2f",
+      "rosterIdentity": "tarikhadziavdic",
+      "name": "Tarik Hadziavdic",
+      "officialPlayerId": "79643",
+      "profileUrl": "https://kingsleague.pro/en/players/79643-tarik-hadziavdic",
+      "sourceIds": [
+        "de-team-g2f",
+        "de-player-79643",
+        "de-draft-2"
+      ],
+      "observedOutsideAffiliation": null,
+      "imageUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/kama/production/player/4334be0d-1a0d-4f3a-94ea-a0df310fb19f/441601413.png",
+      "evidenceUrl": "https://kingsleague.pro/en/players/79643-tarik-hadziavdic",
+      "imageAlt": "Tarik Hadziavdic",
+      "status": "official-profile-linked"
+    },
+    {
+      "leagueKey": "germany",
+      "teamId": "nrf",
+      "rosterIdentity": "amarcekic",
+      "name": "Amar Cekic",
+      "officialPlayerId": "38499",
+      "profileUrl": "https://kingsleague.pro/en/players/38499-amar-cekic",
+      "sourceIds": [],
+      "observedOutsideAffiliation": "Bakhira F.C.",
+      "imageUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/kama/production/player/5d8c322d-8f16-4a48-a483-0a45d01bedbd/619922925.png",
+      "evidenceUrl": "https://kingsleague.pro/en/players/38499-amar-cekic",
+      "imageAlt": "Amar Cekic",
+      "status": "official-profile-linked"
+    },
+    {
+      "leagueKey": "germany",
+      "teamId": "nrf",
+      "rosterIdentity": "gillesvidal",
+      "name": "Gilles Vidal",
+      "officialPlayerId": "31",
+      "profileUrl": "https://kingsleague.pro/en/players/31-gilles-vidal",
+      "sourceIds": [],
+      "observedOutsideAffiliation": "Red Zone",
+      "imageUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/kama/production/player/46337760-0556-48f3-a9a1-778563be6ab2/151490506.png",
+      "evidenceUrl": "https://kingsleague.pro/en/players/31-gilles-vidal",
+      "imageAlt": "Gilles Vidal",
+      "status": "official-profile-linked"
+    },
+    {
+      "leagueKey": "germany",
+      "teamId": "ttf",
+      "rosterIdentity": "zinedinehukporti",
+      "name": "Zinedine Hukporti",
+      "officialPlayerId": "79910",
+      "profileUrl": "https://kingsleague.pro/en/players/79910-zinedine-hukporti",
+      "sourceIds": [],
+      "observedOutsideAffiliation": "Bakhira F.C.",
+      "imageUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/kama/production/player/d48f9b34-61c4-45bf-8d58-25e425ad2f79/217373224.png",
+      "evidenceUrl": "https://kingsleague.pro/en/players/79910-zinedine-hukporti",
+      "imageAlt": "Zinedine Hukporti",
+      "status": "official-profile-linked"
+    },
+    {
+      "leagueKey": "germany",
+      "teamId": "you",
+      "rosterIdentity": "luizpepinhosouza",
+      "name": "Luiz 'Pepinho' Souza",
+      "officialPlayerId": "68399",
+      "profileUrl": "https://kingsleague.pro/en/players/68399-luiz-pepinho-souza",
+      "sourceIds": [],
+      "observedOutsideAffiliation": "Bakhira F.C.",
+      "imageUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/kama/production/player/e622abab-0faf-4c74-96ea-44a4c9e39e59/233910666.png",
+      "evidenceUrl": "https://kingsleague.pro/en/players/68399-luiz-pepinho-souza",
+      "imageAlt": "Luiz 'Pepinho' Souza",
+      "status": "official-profile-linked"
+    },
+    {
+      "leagueKey": "germany",
+      "teamId": "you",
+      "rosterIdentity": "maiconsilva",
+      "name": "Maicon Silva",
+      "officialPlayerId": "34075",
+      "profileUrl": "https://kingsleague.pro/en/players/34075-maicon-silva",
+      "sourceIds": [],
+      "observedOutsideAffiliation": "Bakhira F.C.",
+      "imageUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/kama/production/player/87be0aed-ae37-44f7-8d64-7368d6ffab68/313315268.png",
+      "evidenceUrl": "https://kingsleague.pro/en/players/34075-maicon-silva",
+      "imageAlt": "Maicon Silva",
+      "status": "official-profile-linked"
+    },
+    {
+      "leagueKey": "germany",
+      "teamId": "nrf",
+      "rosterIdentity": "nicksalihamidzic",
+      "name": "Nick Salihamidžić",
+      "officialPlayerId": "71129",
+      "profileUrl": "https://kingsleague.pro/en/players/71129-nick-salihamidzic",
+      "sourceIds": [],
+      "observedOutsideAffiliation": "Bakhira F.C.",
+      "imageUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/kama/production/player/bec076f7-ab39-4320-8dde-2dc1618f5a05/284511790.png",
+      "evidenceUrl": "https://kingsleague.pro/en/players/71129-nick-salihamidzic",
+      "imageAlt": "Nick Salihamidžić",
+      "status": "official-profile-linked"
+    },
+    {
+      "leagueKey": "germany",
+      "teamId": "you",
+      "rosterIdentity": "jhonpalacios",
+      "name": "Jhon Palacios",
+      "officialPlayerId": "67838",
+      "profileUrl": "https://kingsleague.pro/en/players/67838-jhon-palacios",
+      "sourceIds": [],
+      "observedOutsideAffiliation": "DR7",
+      "imageUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/kama/production/player/75df8e66-ba11-4103-8118-e8020859aac4/75020070.png",
+      "evidenceUrl": "https://kingsleague.pro/en/players/67838-jhon-palacios",
+      "imageAlt": "Jhon Palacios",
+      "status": "official-profile-linked"
+    }
+  ],
+  "gaps": [
+    {
+      "leagueKey": "germany",
+      "teamId": "g2f",
+      "rosterIdentity": "smajojakupovic",
+      "name": "Smajo Jakupovic",
+      "officialPlayerId": "87572",
+      "profileUrl": "https://kingsleague.pro/en/players/87572-smajo-jakupovic",
+      "sourceIds": [
+        "de-team-g2f",
+        "de-player-87572"
+      ],
+      "observedOutsideAffiliation": null,
+      "reason": "official-placeholder",
+      "imageUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/img/placeholder/kl-player-placeholder.png",
+      "status": "unavailable"
+    }
+  ],
+  "notes": [
+    "Profile affiliation can now be MENA; portrait identity does not change saved domestic club.",
+    "These profile-linked portraits are fallbacks for parent team-card bulk extraction.",
+    "No assets downloaded here.",
+    "An official generic player placeholder is rejected, not assigned as a portrait."
+  ]
+}

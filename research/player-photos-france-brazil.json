@@ -1,0 +1,578 @@
+{
+  "checkedAt": "2026-10-27",
+  "scope": "Supplemental verified official profile portraits; root bulk team-card harvest covers ordinary squads. Status verified means the named official profile or a documented exact-ID alias explicitly links that exact image URL; root validates downloaded bytes separately.",
+  "records": [
+    {
+      "leagueKey": "france",
+      "teamId": "kar",
+      "rosterIdentity": "ilyeskallouche",
+      "name": "Ilyes Kallouche",
+      "officialPlayerId": 87472,
+      "profileUrl": "https://kingsleague.pro/fr/joueurs/87472-ilyes-kallouche",
+      "imageUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/kama/production/player/f0f1ef42-8b01-432f-a25f-ad29dcb1cf92/581562573.png",
+      "evidenceUrl": "https://kingsleague.pro/fr/joueurs/87472-ilyes-kallouche",
+      "status": "verified"
+    },
+    {
+      "leagueKey": "france",
+      "teamId": "kar",
+      "rosterIdentity": "aliouarti",
+      "name": "Ali Ouarti",
+      "officialPlayerId": 87358,
+      "profileUrl": "https://kingsleague.pro/fr/joueurs/87358-ali-ouarti",
+      "imageUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/kama/production/player/1b61bf7d-7096-48f4-88c7-385aafd8e2fc/711811263.png",
+      "evidenceUrl": "https://kingsleague.pro/fr/joueurs/87358-ali-ouarti",
+      "status": "verified"
+    },
+    {
+      "leagueKey": "france",
+      "teamId": "tsn",
+      "rosterIdentity": "jmk",
+      "name": "JMK",
+      "officialPlayerId": 85068,
+      "profileUrl": "https://kingsleague.pro/fr/joueurs/85068-jmk",
+      "imageUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/kama/production/player/95e2273f-1124-4d82-9b21-f116fe3e6e7a/875566024.png",
+      "evidenceUrl": "https://kingsleague.pro/fr/joueurs/85068-jmk",
+      "status": "verified"
+    },
+    {
+      "leagueKey": "brazil",
+      "teamId": "g3x",
+      "rosterIdentity": "kelvinoliveira",
+      "name": "Kelvin Oliveira",
+      "officialPlayerId": 53010,
+      "profileUrl": "https://kingsleague.pro/pt/jogadores/53010-kelvin-oliveira",
+      "imageUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/kama/production/seasonTeamPlayer/cdcafa96-7d73-44c8-b067-bffc82586239/547874379.png",
+      "evidenceUrl": "https://kingsleague.pro/pt/jogadores/53010-kelvin-oliveira",
+      "status": "verified"
+    },
+    {
+      "leagueKey": "france",
+      "teamId": "kar",
+      "rosterIdentity": "sashabernard",
+      "name": "Sasha Bernard",
+      "officialPlayerId": 87355,
+      "profileUrl": "https://kingsleague.pro/fr/joueurs/87355-sasha-bernard",
+      "imageUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/kama/production/player/1d988a31-f18c-4d19-8c03-121b8127dba4/948308565.png",
+      "evidenceUrl": "https://kingsleague.pro/fr/joueurs/87355-sasha-bernard",
+      "status": "verified"
+    },
+    {
+      "leagueKey": "france",
+      "teamId": "kar",
+      "rosterIdentity": "samymahour",
+      "name": "Samy Mahour",
+      "officialPlayerId": 75078,
+      "profileUrl": "https://kingsleague.pro/fr/joueurs/75078-samy-mahour",
+      "imageUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/kama/production/player/ff3e1bb6-7455-45c9-ba13-3ae6d5c2abaf/43332449.png",
+      "evidenceUrl": "https://kingsleague.pro/fr/joueurs/75078-samy-mahour",
+      "status": "verified"
+    },
+    {
+      "leagueKey": "france",
+      "teamId": "kar",
+      "rosterIdentity": "josephevens",
+      "name": "Joseph Evens",
+      "officialPlayerId": 87356,
+      "profileUrl": "https://kingsleague.pro/fr/joueurs/87356-joseph-evens",
+      "imageUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/kama/production/player/fa55aedb-3c83-4bc2-950c-011c22ba5f42/956975901.png",
+      "evidenceUrl": "https://kingsleague.pro/fr/joueurs/87356-joseph-evens",
+      "status": "verified"
+    },
+    {
+      "leagueKey": "france",
+      "teamId": "kar",
+      "rosterIdentity": "simonpontdeme",
+      "name": "Simon Pontdeme",
+      "officialPlayerId": 87359,
+      "profileUrl": "https://kingsleague.pro/fr/joueurs/87359-simon-pontdeme",
+      "imageUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/kama/production/player/image/981212295.png",
+      "evidenceUrl": "https://kingsleague.pro/fr/joueurs/87359-simon-pontdeme",
+      "status": "verified"
+    },
+    {
+      "leagueKey": "france",
+      "teamId": "kar",
+      "rosterIdentity": "lyeshocine",
+      "name": "Lyes Hocine",
+      "officialPlayerId": 87473,
+      "profileUrl": "https://kingsleague.pro/fr/joueurs/87473-lyes-hocine",
+      "imageUrl": null,
+      "evidenceUrl": "https://kingsleague.pro/fr/joueurs/87473-lyes-hocine",
+      "status": "official-placeholder",
+      "placeholderUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/img/placeholder/kl-player-placeholder.png"
+    },
+    {
+      "leagueKey": "france",
+      "teamId": "kar",
+      "rosterIdentity": "lucasvaleri",
+      "name": "Lucas Valeri",
+      "officialPlayerId": 41632,
+      "profileUrl": "https://kingsleague.pro/en/players/41632-lucas-valeri",
+      "imageUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/kama/production/player/6bac6215-debe-48b3-9cd7-247587e0c066/161301054.png",
+      "evidenceUrl": "https://kingsleague.pro/en/players/41632-lucas-valeri",
+      "status": "verified"
+    },
+    {
+      "leagueKey": "france",
+      "teamId": "tsn",
+      "rosterIdentity": "gregoryayem",
+      "name": "Gregory Ayem",
+      "officialPlayerId": 87604,
+      "profileUrl": "https://kingsleague.pro/fr/joueurs/87604-gregory-ayem",
+      "imageUrl": null,
+      "evidenceUrl": "https://kingsleague.pro/fr/joueurs/87604-gregory-ayem",
+      "status": "official-placeholder",
+      "placeholderUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/img/placeholder/kl-player-placeholder.png"
+    },
+    {
+      "leagueKey": "france",
+      "teamId": "adb",
+      "rosterIdentity": "tarekbaich",
+      "name": "Tarek Baïch",
+      "officialPlayerId": 87468,
+      "profileUrl": "https://kingsleague.pro/fr/joueurs/87468-tarek-baich",
+      "imageUrl": null,
+      "evidenceUrl": "https://kingsleague.pro/fr/joueurs/87468-tarek-baich",
+      "status": "official-placeholder",
+      "placeholderUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/img/placeholder/kl-player-placeholder.png"
+    },
+    {
+      "leagueKey": "france",
+      "teamId": "fcs",
+      "rosterIdentity": "mohamedsanou",
+      "name": "Mohamed Sanou",
+      "officialPlayerId": 87552,
+      "profileUrl": "https://kingsleague.pro/fr/joueurs/87552-mohamed-sanou",
+      "imageUrl": null,
+      "evidenceUrl": "https://kingsleague.pro/fr/joueurs/87552-mohamed-sanou",
+      "status": "official-placeholder",
+      "placeholderUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/img/placeholder/kl-player-placeholder.png"
+    },
+    {
+      "leagueKey": "france",
+      "teamId": "pas",
+      "rosterIdentity": "souleymaneouattara",
+      "name": "Souleymane Ouattara",
+      "officialPlayerId": 87582,
+      "profileUrl": "https://kingsleague.pro/fr/joueurs/87582-souleymane-ouattara",
+      "imageUrl": null,
+      "evidenceUrl": "https://kingsleague.pro/fr/joueurs/87582-souleymane-ouattara",
+      "status": "official-placeholder",
+      "placeholderUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/img/placeholder/kl-player-placeholder.png"
+    },
+    {
+      "leagueKey": "france",
+      "teamId": "pas",
+      "rosterIdentity": "jordygaspar",
+      "name": "Jordy Gaspar",
+      "officialPlayerId": 87551,
+      "profileUrl": "https://kingsleague.pro/fr/joueurs/87551-jordy-gaspar",
+      "imageUrl": null,
+      "evidenceUrl": "https://kingsleague.pro/fr/joueurs/87551-jordy-gaspar",
+      "status": "official-placeholder",
+      "placeholderUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/img/placeholder/kl-player-placeholder.png"
+    },
+    {
+      "leagueKey": "france",
+      "teamId": "pas",
+      "rosterIdentity": "alaixysromao",
+      "name": "Alaixys Romao",
+      "officialPlayerId": 87583,
+      "profileUrl": "https://kingsleague.pro/fr/joueurs/87583-alaixys-romao",
+      "imageUrl": null,
+      "evidenceUrl": "https://kingsleague.pro/fr/joueurs/87583-alaixys-romao",
+      "status": "official-placeholder",
+      "placeholderUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/img/placeholder/kl-player-placeholder.png"
+    },
+    {
+      "leagueKey": "france",
+      "teamId": "pas",
+      "rosterIdentity": "florentsinamapongolle",
+      "name": "Florent Sinama-Pongolle",
+      "officialPlayerId": 87493,
+      "profileUrl": "https://kingsleague.pro/fr/joueurs/87493-florent-sinama-pongolle",
+      "imageUrl": null,
+      "evidenceUrl": "https://kingsleague.pro/fr/joueurs/87493-florent-sinama-pongolle",
+      "status": "official-placeholder",
+      "placeholderUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/img/placeholder/kl-player-placeholder.png"
+    },
+    {
+      "leagueKey": "france",
+      "teamId": "u3d",
+      "rosterIdentity": "maximecorain",
+      "name": "Maxime Corain",
+      "officialPlayerId": 87640,
+      "profileUrl": "https://kingsleague.pro/fr/joueurs/87640-maxime-corain",
+      "imageUrl": null,
+      "evidenceUrl": "https://kingsleague.pro/fr/joueurs/87640-maxime-corain",
+      "status": "official-placeholder",
+      "placeholderUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/img/placeholder/kl-player-placeholder.png"
+    },
+    {
+      "leagueKey": "france",
+      "teamId": "wpf",
+      "rosterIdentity": "francknoel",
+      "name": "Franck Noel",
+      "officialPlayerId": 87581,
+      "profileUrl": "https://kingsleague.pro/fr/joueurs/87581-franck-noel",
+      "imageUrl": null,
+      "evidenceUrl": "https://kingsleague.pro/fr/joueurs/87581-franck-noel",
+      "status": "official-placeholder",
+      "placeholderUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/img/placeholder/kl-player-placeholder.png"
+    },
+    {
+      "leagueKey": "france",
+      "teamId": "wpf",
+      "rosterIdentity": "enzoferrara",
+      "name": "Enzo Ferrara",
+      "officialPlayerId": 87553,
+      "profileUrl": "https://kingsleague.pro/fr/joueurs/87553-enzo-ferrara",
+      "imageUrl": null,
+      "evidenceUrl": "https://kingsleague.pro/fr/joueurs/87553-enzo-ferrara",
+      "status": "official-placeholder",
+      "placeholderUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/img/placeholder/kl-player-placeholder.png"
+    },
+    {
+      "leagueKey": "france",
+      "teamId": "wpf",
+      "rosterIdentity": "sabrytolgui",
+      "name": "Sabry Tolgui",
+      "officialPlayerId": 87491,
+      "profileUrl": "https://kingsleague.pro/fr/joueurs/87491-sabry-tolgui",
+      "imageUrl": null,
+      "evidenceUrl": "https://kingsleague.pro/fr/joueurs/87491-sabry-tolgui",
+      "status": "official-placeholder",
+      "placeholderUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/img/placeholder/kl-player-placeholder.png"
+    },
+    {
+      "leagueKey": "france",
+      "teamId": "pas",
+      "rosterIdentity": "harrisonmanzala",
+      "name": "Harrison Manzala",
+      "officialPlayerId": 79550,
+      "profileUrl": "https://kingsleague.pro/en/players/79550-harrison-manzala",
+      "imageUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/kama/production/seasonTeamPlayer/c69b9890-bd6e-4569-bbda-461e945c5166/708132171.png",
+      "evidenceUrl": "https://kingsleague.pro/en/players/79550-harrison-manzala",
+      "status": "verified"
+    },
+    {
+      "leagueKey": "brazil",
+      "teamId": "flx",
+      "rosterIdentity": "gabrielfeliperibasacosta",
+      "name": "Gabriel Felipe Ribas Acosta",
+      "officialName": "Gabriel Ribas",
+      "officialPlayerId": 90012,
+      "profileUrl": "https://www.kingsleague.pro/pt/jogadores/90012-gabriel-ribas",
+      "imageUrl": "https://kingsleague-cdn.kama.football/account/production/player/74830f04-a23c-47ac-9f57-95bbe0799196/730439977.png",
+      "evidenceUrl": "https://www.kingsleague.pro/pt/times/160-fluxo-fc",
+      "status": "verified",
+      "aliasEvidenceUrls": [
+        "https://www.kingsleague.pro/pt/jogadores/90012-gabriel-felipe-ribas-acosta",
+        "https://www.kingsleague.pro/pt/jogadores/90012-gabriel-ribas"
+      ],
+      "identityNote": "The roster identity audit already verifies full name Gabriel Felipe Ribas Acosta at official ID90012; current linked card abbreviates it to Gabriel Ribas. Not the different former Furia Gabriel Felipe."
+    },
+    {
+      "leagueKey": "brazil",
+      "teamId": "dpn",
+      "rosterIdentity": "lucaslukinhashenrique",
+      "name": "Lucas 'Lukinhas' Henrique",
+      "officialName": "'Lukinhas' Henrique",
+      "officialPlayerId": 71724,
+      "profileUrl": "https://www.kingsleague.pro/pt/jogadores/71724-lukinhas-henrique",
+      "imageUrl": "https://kingsleague-cdn.kama.football/account/production/player/5378a32b-ddaf-4e73-a69c-1698bcbca988/938442825.png",
+      "evidenceUrl": "https://www.kingsleague.pro/pt/times/168-desimpain",
+      "status": "verified",
+      "aliasEvidenceUrls": [
+        "https://www.kingsleague.pro/pt/jogadores/71724-lucas-lukinhas-henrique",
+        "https://www.kingsleague.pro/pt/jogadores/71724-lukinhas-henrique"
+      ],
+      "identityNote": "Both published official profile names use ID71724, same 170cm player, birthDate2001-05-05."
+    },
+    {
+      "leagueKey": "brazil",
+      "teamId": "lou",
+      "rosterIdentity": "esaunascimento",
+      "name": "Esaú Nascimento",
+      "officialName": "Esaú Assunção",
+      "officialPlayerId": 78056,
+      "profileUrl": "https://www.kingsleague.pro/pt/jogadores/78056-esau-assuncao",
+      "imageUrl": "https://kingsleague-cdn.kama.football/account/production/player/ca99c79b-a909-475e-bb92-2589c7f24595/754811713.png",
+      "evidenceUrl": "https://www.kingsleague.pro/pt/times/162-loud-sc",
+      "status": "verified",
+      "aliasEvidenceUrls": [
+        "https://www.kingsleague.pro/pt/jogadores/78056-esau-nascimento",
+        "https://kingsleague.pro/pt/jogadores/78056-esau-assuncao"
+      ],
+      "identityNote": "Both published official profile names use ID78056, same LOUD goalkeeper, 181cm, birthDate1999-01-11."
+    },
+    {
+      "leagueKey": "france",
+      "teamId": "pas",
+      "rosterIdentity": "rayanforsa",
+      "name": "Rayan Forsa",
+      "officialPlayerId": 87426,
+      "profileUrl": "https://kingsleague.pro/en/players/87426-rayan-forsa",
+      "imageUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/kama/production/player/4dd05ea6-7bbf-4771-897a-860c9e3160d9/262828215.png",
+      "evidenceUrl": "https://kingsleague.pro/en/players/87426-rayan-forsa",
+      "status": "verified"
+    }
+  ],
+  "gaps": [
+    {
+      "leagueKey": "france",
+      "teamId": "kar",
+      "rosterIdentity": "viviencedille",
+      "name": "Vivien Cedille",
+      "officialPlayerId": 87653,
+      "profileUrl": "https://kingsleague.pro/fr/joueurs/87653-vivien-cedille",
+      "evidenceUrl": "https://kingsleague.pro/fr/france/joueurs-draft?page=10",
+      "status": "profile-image-unresolved"
+    },
+    {
+      "leagueKey": "france",
+      "teamId": "kar",
+      "rosterIdentity": "mehdigacem",
+      "name": "Mehdi Gacem",
+      "status": "pending-root-bulk"
+    },
+    {
+      "leagueKey": "france",
+      "teamId": "kar",
+      "rosterIdentity": "sahirboumhand",
+      "name": "Sahir Boumhand",
+      "status": "pending-root-bulk"
+    },
+    {
+      "leagueKey": "france",
+      "teamId": "kar",
+      "rosterIdentity": "christopherbaptista",
+      "name": "Christopher Baptista",
+      "status": "pending-root-bulk"
+    },
+    {
+      "leagueKey": "france",
+      "teamId": "kar",
+      "rosterIdentity": "guillaumeyenoussi",
+      "name": "Guillaume Yenoussi",
+      "officialPlayerId": 87652,
+      "profileUrl": "https://kingsleague.pro/fr/joueurs/87652-guillaume-yenoussi",
+      "evidenceUrl": "https://kingsleague.pro/fr/france/joueurs-draft?page=10",
+      "status": "profile-image-unresolved"
+    },
+    {
+      "leagueKey": "france",
+      "teamId": "kar",
+      "rosterIdentity": "drisskhalid",
+      "name": "Driss Khalid",
+      "status": "pending-root-bulk"
+    },
+    {
+      "leagueKey": "france",
+      "teamId": "kar",
+      "rosterIdentity": "youssefhidasse",
+      "name": "Youssef Hidasse",
+      "officialPlayerId": 87474,
+      "profileUrl": "https://www.kingsleague.pro/pt/jogadores/87474-youssef-hidasse",
+      "evidenceUrl": "https://www.kingsleague.pro/pt/jogadores/87474-youssef-hidasse",
+      "status": "profile-image-unresolved"
+    },
+    {
+      "leagueKey": "france",
+      "teamId": "kar",
+      "rosterIdentity": "dramanekone",
+      "name": "Dramane Kone",
+      "status": "pending-root-bulk"
+    },
+    {
+      "leagueKey": "france",
+      "teamId": "kar",
+      "rosterIdentity": "sitadiarra",
+      "name": "Sita Diarra",
+      "status": "pending-root-bulk"
+    },
+    {
+      "leagueKey": "france",
+      "teamId": "kar",
+      "rosterIdentity": "marvingakpa",
+      "name": "Marvin Gakpa",
+      "officialPlayerId": 87580,
+      "profileUrl": "https://kingsleague.pro/en/players/87580-marvin-gakpa",
+      "evidenceUrl": "https://kingsleague.pro/en/players/87580-marvin-gakpa",
+      "status": "profile-image-unresolved"
+    },
+    {
+      "leagueKey": "france",
+      "teamId": "kar",
+      "rosterIdentity": "matissehenry",
+      "name": "Matisse Henry",
+      "status": "pending-root-bulk"
+    }
+  ],
+  "profileChecks": [
+    {
+      "name": "Charly Dosso",
+      "officialPlayerId": 87603,
+      "profileUrl": "https://kingsleague.pro/fr/joueurs/87603-charly-dosso",
+      "status": "web-profile-unavailable"
+    },
+    {
+      "name": "Mohamed Sangare",
+      "officialPlayerId": 87637,
+      "profileUrl": "https://kingsleague.pro/fr/joueurs/87637-mohamed-sangare",
+      "status": "web-profile-unavailable"
+    },
+    {
+      "name": "Gregory Ayem",
+      "officialPlayerId": 87604,
+      "profileUrl": "https://kingsleague.pro/fr/joueurs/87604-gregory-ayem",
+      "status": "official-placeholder"
+    },
+    {
+      "name": "Adama Doucouré",
+      "officialPlayerId": 87635,
+      "profileUrl": "https://kingsleague.pro/fr/joueurs/87635-adama-doucoure",
+      "status": "web-profile-unavailable"
+    },
+    {
+      "name": "Anthony Adel",
+      "officialPlayerId": 87602,
+      "profileUrl": "https://kingsleague.pro/fr/joueurs/87602-anthony-adel",
+      "status": "web-profile-unavailable"
+    },
+    {
+      "name": "Tarek Baïch",
+      "officialPlayerId": 87468,
+      "profileUrl": "https://kingsleague.pro/fr/joueurs/87468-tarek-baich",
+      "status": "official-placeholder"
+    },
+    {
+      "name": "Sandy Mbala",
+      "officialPlayerId": 87636,
+      "profileUrl": "https://kingsleague.pro/fr/joueurs/87636-sandy-mbala",
+      "status": "web-profile-unavailable"
+    },
+    {
+      "name": "Aimen Belaid",
+      "officialPlayerId": 87601,
+      "profileUrl": "https://kingsleague.pro/fr/joueurs/87601-aimen-belaid",
+      "status": "web-profile-unavailable"
+    },
+    {
+      "name": "Mohamed Sanou",
+      "officialPlayerId": 87552,
+      "profileUrl": "https://kingsleague.pro/fr/joueurs/87552-mohamed-sanou",
+      "status": "official-placeholder"
+    },
+    {
+      "name": "Jimmy Briand",
+      "officialPlayerId": 87510,
+      "profileUrl": "https://kingsleague.pro/fr/joueurs/87510-jimmy-briand",
+      "status": "web-profile-unavailable"
+    },
+    {
+      "name": "Vivien Cedille",
+      "officialPlayerId": 87653,
+      "profileUrl": "https://kingsleague.pro/fr/joueurs/87653-vivien-cedille",
+      "status": "web-profile-unavailable"
+    },
+    {
+      "name": "Guillaume Yenoussi",
+      "officialPlayerId": 87652,
+      "profileUrl": "https://kingsleague.pro/fr/joueurs/87652-guillaume-yenoussi",
+      "status": "web-profile-unavailable"
+    },
+    {
+      "name": "Youssef Hidasse",
+      "officialPlayerId": 87474,
+      "profileUrl": "https://www.kingsleague.pro/pt/jogadores/87474-youssef-hidasse",
+      "status": "web-profile-unavailable"
+    },
+    {
+      "name": "Marvin Gakpa",
+      "officialPlayerId": 87580,
+      "profileUrl": "https://kingsleague.pro/en/players/87580-marvin-gakpa",
+      "status": "web-profile-unavailable"
+    },
+    {
+      "name": "Souleymane Ouattara",
+      "officialPlayerId": 87582,
+      "profileUrl": "https://kingsleague.pro/fr/joueurs/87582-souleymane-ouattara",
+      "status": "official-placeholder"
+    },
+    {
+      "name": "Jordy Gaspar",
+      "officialPlayerId": 87551,
+      "profileUrl": "https://kingsleague.pro/fr/joueurs/87551-jordy-gaspar",
+      "status": "official-placeholder"
+    },
+    {
+      "name": "Alaixys Romao",
+      "officialPlayerId": 87583,
+      "profileUrl": "https://kingsleague.pro/fr/joueurs/87583-alaixys-romao",
+      "status": "official-placeholder"
+    },
+    {
+      "name": "Emmanuel Louisir",
+      "officialPlayerId": 87651,
+      "profileUrl": "https://kingsleague.pro/fr/joueurs/87651-emmanuel-louisir",
+      "status": "web-profile-unavailable"
+    },
+    {
+      "name": "Florent Sinama-Pongolle",
+      "officialPlayerId": 87493,
+      "profileUrl": "https://kingsleague.pro/fr/joueurs/87493-florent-sinama-pongolle",
+      "status": "official-placeholder"
+    },
+    {
+      "name": "Maxime Corain",
+      "officialPlayerId": 87640,
+      "profileUrl": "https://kingsleague.pro/fr/joueurs/87640-maxime-corain",
+      "status": "official-placeholder"
+    },
+    {
+      "name": "Franck Noel",
+      "officialPlayerId": 87581,
+      "profileUrl": "https://kingsleague.pro/fr/joueurs/87581-franck-noel",
+      "status": "official-placeholder"
+    },
+    {
+      "name": "Noé Clerge",
+      "officialPlayerId": 87638,
+      "profileUrl": "https://kingsleague.pro/fr/joueurs/87638-noe-clerge",
+      "status": "web-profile-unavailable"
+    },
+    {
+      "name": "Enzo Ferrara",
+      "officialPlayerId": 87553,
+      "profileUrl": "https://kingsleague.pro/fr/joueurs/87553-enzo-ferrara",
+      "status": "official-placeholder"
+    },
+    {
+      "name": "Souleymane Karamoko",
+      "officialPlayerId": 87639,
+      "profileUrl": "https://kingsleague.pro/fr/joueurs/87639-souleymane-karamoko",
+      "status": "web-profile-unavailable"
+    },
+    {
+      "name": "Sabry Tolgui",
+      "officialPlayerId": 87491,
+      "profileUrl": "https://kingsleague.pro/fr/joueurs/87491-sabry-tolgui",
+      "status": "official-placeholder"
+    },
+    {
+      "name": "Wanis Aïssa",
+      "officialPlayerId": 87605,
+      "profileUrl": "https://kingsleague.pro/fr/joueurs/87605-wanis-aissa",
+      "status": "web-profile-unavailable"
+    }
+  ],
+  "notes": [
+    "Official generic placeholders are not real portraits and must never be counted as portrait coverage.",
+    "A web-profile-unavailable check alone does not establish that no portrait exists; the parent bulk DOM observation remains authoritative.",
+    "Profile portraits can reflect another current competition shirt, while identity remains the same official player ID. Prefer same-team source card portraits where root has them.",
+    "No player or staff face was inferred by filename proximity or fuzzy name matching."
+  ]
+}
+
