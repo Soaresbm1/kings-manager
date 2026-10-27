@@ -666,17 +666,23 @@ button.secondary.selected { border-color: var(--accent2); background: rgba(255,1
 .phase-dot { width: 6px; height: 6px; border-radius: 50%; flex: 0 0 6px; }
 .phase-dot-in { background: #e7ca64; }
 .phase-dot-out { background: #9fcee3; }
-#tab-tactics .pitch-field { flex: 0 0 auto; width: min(calc((100cqh - 30px) * 0.75), calc(100cqw - 8px)); max-width: 100%; aspect-ratio: 3 / 4; height: auto; min-height: 0; border: 1px solid #839579; border-radius: 6px; background: repeating-linear-gradient(180deg, #2c5736 0 12.5%, #284f32 12.5% 25%); box-shadow: inset 0 0 60px #0a251a77; container-type: inline-size; }
-#tab-tactics .pitch-field::before { inset: 3.5%; border: 1px solid #b8d1a966; background: linear-gradient(#b8d1a966, #b8d1a966) center / 100% 1px no-repeat; pointer-events: none; }
-#tab-tactics .pitch-field::after { width: 27%; border-width: 1px; border-color: #b8d1a966; pointer-events: none; }
+#tab-tactics .pitch-field { flex: 0 0 auto; width: min(calc((100cqh - 30px) * 1.6), calc(100cqw - 8px)); max-width: 100%; aspect-ratio: 8 / 5; height: auto; min-height: 0; border: 1px solid #839579; border-radius: 6px; background: repeating-linear-gradient(90deg, #2c5736 0 12.5%, #284f32 12.5% 25%); box-shadow: inset 0 0 60px #0a251a77; container-type: inline-size; }
+#tab-tactics .pitch-field::before { inset: 3.5%; border: 1px solid #b8d1a966; background: linear-gradient(#b8d1a966, #b8d1a966) center / 1px 100% no-repeat; pointer-events: none; }
+#tab-tactics .pitch-field::after { height: 27%; width: auto; border-width: 1px; border-color: #b8d1a966; pointer-events: none; }
 .pitch-goal-area, .pitch-penalty-area { position: absolute; left: 50%; transform: translateX(-50%); border: 1px solid #b8d1a966; pointer-events: none; }
 .pitch-penalty-area { width: 54%; height: 14%; }
 .pitch-goal-area { width: 24%; height: 5.5%; }
 .pitch-penalty-area.top, .pitch-goal-area.top { top: 3.5%; border-top: 0; }
 .pitch-penalty-area.bottom, .pitch-goal-area.bottom { bottom: 3.5%; border-bottom: 0; }
-#tab-tactics .tactics-pitch-row.view-both { flex-direction: row; gap: 14px; }
-#tab-tactics .tactics-pitch-row.view-both > div { flex: 1 1 0; }
-#tab-tactics .tactics-pitch-row.view-both .pitch-field { width: min(calc((100cqh - 30px) * 0.75), calc((100cqw - 16px) / 2)); }
+#tab-tactics .pitch-penalty-area, #tab-tactics .pitch-goal-area { top: 50%; bottom: auto; left: auto; transform: translateY(-50%); border: 1px solid #b8d1a966; }
+#tab-tactics .pitch-penalty-area { width: 14%; height: 54%; }
+#tab-tactics .pitch-goal-area { width: 5.5%; height: 24%; }
+#tab-tactics .pitch-penalty-area.top, #tab-tactics .pitch-goal-area.top { left: 3.5%; border-left: 0; }
+#tab-tactics .pitch-penalty-area.bottom, #tab-tactics .pitch-goal-area.bottom { right: 3.5%; border-right: 0; }
+#tab-tactics .pitch-slot.pos-GK { transform: translate(-50%, -50%); }
+#tab-tactics .pitch-slot { width: clamp(76px, 17cqw, 118px); }
+#tab-tactics .tactics-pitch-row.view-both { flex-direction: column; overflow-y: auto; gap: 20px; }
+#tab-tactics .tactics-pitch-row.view-both > div { flex: 0 0 auto; }
 #tab-tactics .tactics-pitch-row.view-both h4 > span:last-child { display: none; }
 .tactics-selection-hint { flex-shrink: 0; color: #bec8b9; border-top: 1px solid #333e31; font-size: 0.69rem; line-height: 1.55; padding-top: 11px; margin-top: 10px; }
 .tactics-workspace > .tactics-bench-panel { max-width: none; display: flex; flex-direction: column; min-height: 0; padding: 16px 12px 12px; }
@@ -780,7 +786,7 @@ button.option-card { appearance: none; color: inherit; font-family: inherit; tex
   .tactic-plan-description { font-size: 0.61rem; line-height: 1.5; min-height: 0; }
   .tactics-control-panel .mentality-button { font-size: 0.58rem; padding: 7px 2px; }
   .tactics-selection-hint { margin-top: 8px; padding-top: 8px; font-size: 0.62rem; }
-  #tab-tactics .pitch-slot { width: clamp(57px, 26cqw, 84px); padding: 3px 3px 4px; gap: 1px; }
+  #tab-tactics .pitch-slot { width: clamp(57px, 17cqw, 84px); padding: 3px 3px 4px; gap: 1px; }
   #tab-tactics .pitch-slot .slot-portrait { width: clamp(23px, 10cqw, 31px); height: clamp(25px, 10.7cqw, 33px); }
   #tab-tactics .pitch-slot .slot-copy { gap: 1px; }
   #tab-tactics .pitch-slot .slot-tag { font-size: 0.44rem; padding: 1px 4px; }
@@ -805,8 +811,8 @@ button.option-card { appearance: none; color: inherit; font-family: inherit; tex
   .tactics-phase-tabs .option-card h4 { font-size: 0.61rem; }
   .tactics-board-heading { flex-direction: column; align-items: stretch; gap: 12px; }
   .tactics-board-heading .tactics-phase-tabs { flex: 0 0 auto; }
-  #tab-tactics .tactics-pitch-row .pitch-field,
-  #tab-tactics .tactics-pitch-row.view-both .pitch-field { width: min(100%, 330px); height: auto; aspect-ratio: 3 / 4; }
+  #tab-tactics .iop-wrap, #tab-tactics .oop-preview { width: 100%; align-items: flex-start; overflow-x: auto; }
+  #tab-tactics .tactics-pitch-row .pitch-field { width: 600px; max-width: none; height: auto; aspect-ratio: 8 / 5; }
   #tab-tactics .tactics-pitch-row.view-both { flex-direction: column; overflow-y: auto; gap: 20px; }
   #tab-tactics .tactics-pitch-row.view-both > div { flex: 0 0 auto; }
   .tactics-selection-hint { font-size: 0.66rem; }
