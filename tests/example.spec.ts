@@ -166,7 +166,7 @@ test('le portrait officiel italien apparaît dans l’effectif et la fiche du bo
   // Les originaux sont contrôlés séparément par verify-player-photos.cjs.
   await page.route('https://kingsleague-cdn.kama.football/**', route => route.fulfill({
     status: 200, contentType: 'image/png',
-    body: Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+a0WQAAAAASUVORK5CYII=', 'base64'),
+    body: Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+ip1sAAAAASUVORK5CYII=', 'base64'),
   }));
   await startCareer(page, 'Italie', 'Alpak FC');
   await page.locator('.nav button[data-tab="squad"]').click();
