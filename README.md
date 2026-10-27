@@ -28,6 +28,15 @@ Pour contrôler sa cohérence sans la modifier : `node scripts/sync-rosters.cjs 
 
 ## Lancer le jeu
 
+Les portraits sont associés aux joueurs par les identifiants des fiches officielles Kings League,
+avec des alias vérifiés pour les anciennes carrières et les joueurs transférés. Ils se chargent
+depuis le CDN officiel ; une connexion est nécessaire pour les nouveaux portraits. Les cas sans
+portrait publié ou avec une identité ambiguë gardent leurs initiales, sans photo inventée.
+Les correspondances et limites sont détaillées dans [le rapport des portraits](research/player-photos-report.json).
+
+Contrôle hors ligne des correspondances : `node scripts/sync-player-photos.cjs --check`.
+Récupération et contrôle des fichiers originaux dans un cache local : `node scripts/verify-player-photos.cjs`.
+
 Aucune installation requise. Ouvre simplement `index.html` dans ton navigateur (Chrome, Firefox, Edge...).
 
 Pour éviter d'éventuels soucis de chargement de fichiers locaux, tu peux aussi lancer un petit serveur local :

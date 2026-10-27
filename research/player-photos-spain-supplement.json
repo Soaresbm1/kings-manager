@@ -1,0 +1,309 @@
+{
+  "checkedAt": "2026-10-27",
+  "scope": [
+    "spain"
+  ],
+  "method": "Exact named official individual profile and its portrait image link; no current transfer inference.",
+  "records": [
+    {
+      "leagueKey": "spain",
+      "teamId": "1kf",
+      "rosterIdentity": "jordiros",
+      "name": "Jordi Ros",
+      "officialPlayerId": "38",
+      "profileUrl": "https://kingsleague.pro/es/jugadores/38-jordi-ros",
+      "imageUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/kama/production/player/image/279659032.png",
+      "evidenceUrl": "https://kingsleague.pro/es/jugadores/38-jordi-ros",
+      "imageAlt": "Jordi Ros",
+      "status": "official-profile-linked"
+    },
+    {
+      "leagueKey": "spain",
+      "teamId": "ebr",
+      "rosterIdentity": "martinmantovani",
+      "name": "Martín Mantovani",
+      "officialPlayerId": "171",
+      "profileUrl": "https://kingsleague.pro/es/jugadores/171-martin-mantovani",
+      "imageUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/kama/production/seasonTeamPlayer/8a6cae16-892e-4321-8365-867a7c5f0e79/358054642.png",
+      "evidenceUrl": "https://kingsleague.pro/es/jugadores/171-martin-mantovani",
+      "imageAlt": "Martín Mantovani",
+      "status": "official-profile-linked"
+    },
+    {
+      "leagueKey": "spain",
+      "teamId": "jig",
+      "rosterIdentity": "tonalcover",
+      "name": "Ton Alcover",
+      "officialPlayerId": "84624",
+      "profileUrl": "https://kingsleague.pro/pt/jogadores/84624-ton-alcover",
+      "imageUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/kama/production/player/47cb13f4-7693-49d8-840e-441760a30fd2/770602185.png",
+      "evidenceUrl": "https://kingsleague.pro/pt/jogadores/84624-ton-alcover",
+      "imageAlt": "Ton Alcover",
+      "status": "official-profile-linked"
+    },
+    {
+      "leagueKey": "spain",
+      "teamId": "ltf",
+      "rosterIdentity": "danieltamayo",
+      "name": "Daniel Tamayo",
+      "officialPlayerId": "87154",
+      "profileUrl": "https://kingsleague.pro/es/jugadores/87154-daniel-tamayo",
+      "imageUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/kama/production/player/image/765180582.png",
+      "evidenceUrl": "https://kingsleague.pro/es/jugadores/87154-daniel-tamayo",
+      "imageAlt": "Daniel Tamayo",
+      "status": "official-profile-linked"
+    },
+    {
+      "leagueKey": "spain",
+      "teamId": "ltf",
+      "rosterIdentity": "victororibe",
+      "name": "Víctor Oribe",
+      "officialPlayerId": "239",
+      "profileUrl": "https://kingsleague.pro/en/players/239-victor-oribe",
+      "imageUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/kama/production/player/image/743506119.png",
+      "evidenceUrl": "https://kingsleague.pro/en/players/239-victor-oribe",
+      "imageAlt": "Víctor Oribe",
+      "status": "official-profile-linked"
+    },
+    {
+      "leagueKey": "spain",
+      "teamId": "pio",
+      "rosterIdentity": "aaronropero",
+      "name": "Aarón Ropero",
+      "officialPlayerId": "78",
+      "profileUrl": "https://kingsleague.pro/es/jugadores/78-aaron-ropero",
+      "imageUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/kama/production/player/9ed05983-501d-4287-a4f4-48c3fe236ea3/913032296.png",
+      "evidenceUrl": "https://kingsleague.pro/es/jugadores/78-aaron-ropero",
+      "imageAlt": "Aarón Ropero",
+      "status": "official-profile-linked"
+    },
+    {
+      "leagueKey": "spain",
+      "teamId": "por",
+      "rosterIdentity": "aitorvives",
+      "name": "Aitor Vives",
+      "officialPlayerId": "226",
+      "profileUrl": "https://kingsleague.pro/es/jugadores/226-aitor-vives",
+      "imageUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/kama/production/player/image/175783040.png",
+      "evidenceUrl": "https://kingsleague.pro/es/jugadores/226-aitor-vives",
+      "imageAlt": "Aitor Vives",
+      "status": "official-profile-linked"
+    },
+    {
+      "leagueKey": "spain",
+      "teamId": "umo",
+      "rosterIdentity": "albertodelabella",
+      "name": "Alberto de la Bella",
+      "officialPlayerId": "33128",
+      "profileUrl": "https://kingsleague.pro/es/jugadores/33128-alberto-de-la-bella",
+      "imageUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/kama/production/player/cb33651c-3453-4206-843e-1c9e6dd7cc51/77163120.png",
+      "evidenceUrl": "https://kingsleague.pro/es/jugadores/33128-alberto-de-la-bella",
+      "imageAlt": "Alberto de la Bella",
+      "status": "official-profile-linked"
+    },
+    {
+      "leagueKey": "spain",
+      "teamId": "umo",
+      "rosterIdentity": "ferrancorominas",
+      "name": "Ferrán Corominas",
+      "officialPlayerId": "124",
+      "profileUrl": "https://kingsleague.pro/en/players/124-ferran-corominas",
+      "imageUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/kama/production/player/image/863367816.png",
+      "evidenceUrl": "https://kingsleague.pro/en/players/124-ferran-corominas",
+      "imageAlt": "Ferrán Corominas",
+      "status": "official-profile-linked"
+    },
+    {
+      "leagueKey": "spain",
+      "teamId": "xby",
+      "rosterIdentity": "hectorrodriguez",
+      "name": "Héctor Rodríguez",
+      "officialPlayerId": "84638",
+      "profileUrl": "https://kingsleague.pro/es/jugadores/84638-hector-rodriguez",
+      "imageUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/kama/production/player/image/209319430.png",
+      "evidenceUrl": "https://kingsleague.pro/es/jugadores/84638-hector-rodriguez",
+      "imageAlt": "Héctor Rodríguez",
+      "status": "official-profile-linked"
+    },
+    {
+      "leagueKey": "spain",
+      "teamId": "xby",
+      "rosterIdentity": "poltolra",
+      "name": "Pol Tolrà",
+      "officialPlayerId": "84640",
+      "profileUrl": "https://kingsleague.pro/pt/jogadores/84640-pol-tolra",
+      "imageUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/kama/production/player/image/628970140.png",
+      "evidenceUrl": "https://kingsleague.pro/pt/jogadores/84640-pol-tolra",
+      "imageAlt": "Pol Tolrà",
+      "status": "official-profile-linked"
+    },
+    {
+      "leagueKey": "spain",
+      "teamId": "xby",
+      "rosterIdentity": "steliosorgianos",
+      "name": "Stelios Orgianos",
+      "officialPlayerId": "58284",
+      "profileUrl": "https://kingsleague.pro/en/players/58284-stelios-orgianos",
+      "imageUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/kama/production/player/image/362800418.png",
+      "evidenceUrl": "https://kingsleague.pro/en/players/58284-stelios-orgianos",
+      "imageAlt": "Stelios Orgianos",
+      "status": "official-profile-linked"
+    }
+  ],
+  "profileTargets": [
+    {
+      "leagueKey": "spain",
+      "teamId": "1kf",
+      "rosterIdentity": "jordiros",
+      "name": "Jordi Ros",
+      "officialPlayerId": "38",
+      "profileUrl": "https://kingsleague.pro/es/jugadores/38-jordi-ros",
+      "imageUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/kama/production/player/image/279659032.png",
+      "evidenceUrl": "https://kingsleague.pro/es/jugadores/38-jordi-ros",
+      "imageAlt": "Jordi Ros",
+      "status": "official-profile-linked"
+    },
+    {
+      "leagueKey": "spain",
+      "teamId": "ebr",
+      "rosterIdentity": "martinmantovani",
+      "name": "Martín Mantovani",
+      "officialPlayerId": "171",
+      "profileUrl": "https://kingsleague.pro/es/jugadores/171-martin-mantovani",
+      "imageUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/kama/production/seasonTeamPlayer/8a6cae16-892e-4321-8365-867a7c5f0e79/358054642.png",
+      "evidenceUrl": "https://kingsleague.pro/es/jugadores/171-martin-mantovani",
+      "imageAlt": "Martín Mantovani",
+      "status": "official-profile-linked"
+    },
+    {
+      "leagueKey": "spain",
+      "teamId": "jig",
+      "rosterIdentity": "tonalcover",
+      "name": "Ton Alcover",
+      "officialPlayerId": "84624",
+      "profileUrl": "https://kingsleague.pro/pt/jogadores/84624-ton-alcover",
+      "imageUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/kama/production/player/47cb13f4-7693-49d8-840e-441760a30fd2/770602185.png",
+      "evidenceUrl": "https://kingsleague.pro/pt/jogadores/84624-ton-alcover",
+      "imageAlt": "Ton Alcover",
+      "status": "official-profile-linked"
+    },
+    {
+      "leagueKey": "spain",
+      "teamId": "ltf",
+      "rosterIdentity": "danieltamayo",
+      "name": "Daniel Tamayo",
+      "officialPlayerId": "87154",
+      "profileUrl": "https://kingsleague.pro/es/jugadores/87154-daniel-tamayo",
+      "imageUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/kama/production/player/image/765180582.png",
+      "evidenceUrl": "https://kingsleague.pro/es/jugadores/87154-daniel-tamayo",
+      "imageAlt": "Daniel Tamayo",
+      "status": "official-profile-linked"
+    },
+    {
+      "leagueKey": "spain",
+      "teamId": "ltf",
+      "rosterIdentity": "victororibe",
+      "name": "Víctor Oribe",
+      "officialPlayerId": "239",
+      "profileUrl": "https://kingsleague.pro/en/players/239-victor-oribe",
+      "imageUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/kama/production/player/image/743506119.png",
+      "evidenceUrl": "https://kingsleague.pro/en/players/239-victor-oribe",
+      "imageAlt": "Víctor Oribe",
+      "status": "official-profile-linked"
+    },
+    {
+      "leagueKey": "spain",
+      "teamId": "pio",
+      "rosterIdentity": "aaronropero",
+      "name": "Aarón Ropero",
+      "officialPlayerId": "78",
+      "profileUrl": "https://kingsleague.pro/es/jugadores/78-aaron-ropero",
+      "imageUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/kama/production/player/9ed05983-501d-4287-a4f4-48c3fe236ea3/913032296.png",
+      "evidenceUrl": "https://kingsleague.pro/es/jugadores/78-aaron-ropero",
+      "imageAlt": "Aarón Ropero",
+      "status": "official-profile-linked"
+    },
+    {
+      "leagueKey": "spain",
+      "teamId": "por",
+      "rosterIdentity": "aitorvives",
+      "name": "Aitor Vives",
+      "officialPlayerId": "226",
+      "profileUrl": "https://kingsleague.pro/es/jugadores/226-aitor-vives",
+      "imageUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/kama/production/player/image/175783040.png",
+      "evidenceUrl": "https://kingsleague.pro/es/jugadores/226-aitor-vives",
+      "imageAlt": "Aitor Vives",
+      "status": "official-profile-linked"
+    },
+    {
+      "leagueKey": "spain",
+      "teamId": "umo",
+      "rosterIdentity": "albertodelabella",
+      "name": "Alberto de la Bella",
+      "officialPlayerId": "33128",
+      "profileUrl": "https://kingsleague.pro/es/jugadores/33128-alberto-de-la-bella",
+      "imageUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/kama/production/player/cb33651c-3453-4206-843e-1c9e6dd7cc51/77163120.png",
+      "evidenceUrl": "https://kingsleague.pro/es/jugadores/33128-alberto-de-la-bella",
+      "imageAlt": "Alberto de la Bella",
+      "status": "official-profile-linked"
+    },
+    {
+      "leagueKey": "spain",
+      "teamId": "umo",
+      "rosterIdentity": "ferrancorominas",
+      "name": "Ferrán Corominas",
+      "officialPlayerId": "124",
+      "profileUrl": "https://kingsleague.pro/en/players/124-ferran-corominas",
+      "imageUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/kama/production/player/image/863367816.png",
+      "evidenceUrl": "https://kingsleague.pro/en/players/124-ferran-corominas",
+      "imageAlt": "Ferrán Corominas",
+      "status": "official-profile-linked"
+    },
+    {
+      "leagueKey": "spain",
+      "teamId": "xby",
+      "rosterIdentity": "hectorrodriguez",
+      "name": "Héctor Rodríguez",
+      "officialPlayerId": "84638",
+      "profileUrl": "https://kingsleague.pro/es/jugadores/84638-hector-rodriguez",
+      "imageUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/kama/production/player/image/209319430.png",
+      "evidenceUrl": "https://kingsleague.pro/es/jugadores/84638-hector-rodriguez",
+      "imageAlt": "Héctor Rodríguez",
+      "status": "official-profile-linked"
+    },
+    {
+      "leagueKey": "spain",
+      "teamId": "xby",
+      "rosterIdentity": "poltolra",
+      "name": "Pol Tolrà",
+      "officialPlayerId": "84640",
+      "profileUrl": "https://kingsleague.pro/pt/jogadores/84640-pol-tolra",
+      "imageUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/kama/production/player/image/628970140.png",
+      "evidenceUrl": "https://kingsleague.pro/pt/jogadores/84640-pol-tolra",
+      "imageAlt": "Pol Tolrà",
+      "status": "official-profile-linked"
+    },
+    {
+      "leagueKey": "spain",
+      "teamId": "xby",
+      "rosterIdentity": "steliosorgianos",
+      "name": "Stelios Orgianos",
+      "officialPlayerId": "58284",
+      "profileUrl": "https://kingsleague.pro/en/players/58284-stelios-orgianos",
+      "imageUrl": "https://kingsleague.pro/_ipx/fit_outside%26s_600x844/kama/production/player/image/362800418.png",
+      "evidenceUrl": "https://kingsleague.pro/en/players/58284-stelios-orgianos",
+      "imageAlt": "Stelios Orgianos",
+      "status": "official-profile-linked"
+    }
+  ],
+  "gaps": [
+    {
+      "leagueKey": "spain",
+      "teamId": "ebr",
+      "rosterIdentity": "valentinmerchan",
+      "name": "Valentín Merchán",
+      "status": "unverified-official-identity",
+      "reason": "No exact official profile found in scoped primary-source searches; no photo assigned."
+    }
+  ]
+}

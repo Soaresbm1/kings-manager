@@ -34,7 +34,7 @@ function createUI() {
     createElement() { return new TestElement(); }
   };
   const context = vm.createContext({ document });
-  for (const file of ["data.js", "matchengine-actions.js", "engine.js", "matchchoreo.js", "app.js"]) {
+  for (const file of ["data.js", "player-photos.js", "matchengine-actions.js", "engine.js", "matchchoreo.js", "app.js"]) {
     vm.runInContext(fs.readFileSync(path.join(__dirname, file), "utf8"), context, { filename: file });
   }
   const run = code => vm.runInContext(code, context);
@@ -96,10 +96,50 @@ test("ancienne sauvegarde sans intention : une tactique équilibrée reste jouab
 
 test("un joueur renommé et transféré conserve le chemin de sa photo d'origine", () => {
   const { run } = createUI();
-  assert.equal(run(`playerPhotoUrl({name:'Álex Guti',photoName:'Álex Gutiérrez',photoClub:'Porcinos FC',photoLeague:'spain'},{name:'Capim FC',photoLeague:'brazil'})`),
+  assert.equal(run(`legacyPlayerPhotoUrl({name:'Álex Guti',photoName:'Álex Gutiérrez',photoClub:'Porcinos FC',photoLeague:'spain'},{name:'Capim FC',photoLeague:'brazil'})`),
     "images/players/espagne/porcinos-fc/alex-gutierrez.png");
-  assert.equal(run(`playerPhotoUrl({name:'Kelvin Oliveira'},{name:'G3X FC',photoLeague:'brazil'})`),
+  assert.equal(run(`legacyPlayerPhotoUrl({name:'Kelvin Oliveira'},{name:'G3X FC',photoLeague:'brazil'})`),
     "images/players/bresil/g3x-fc/kelvin-oliveira.png");
+});
+
+test("le portrait officiel reste lié à une recrue après transfert et renommage", () => {
+  const { run } = createUI();
+  assert.equal(run(`officialPlayerPhoto({name:'Nom modifié',officialPlayerId:53010},{name:'Nouveau club',photoLeague:'italy'}).officialPlayerId`), "53010");
+  assert.ok(run(`playerPhotoUrl({name:'Kelvin Oliveira',rosterIdentity:'kelvinoliveira'},{name:'G3X FC',photoLeague:'brazil'}).startsWith('https://kingsleague-cdn.kama.football/account/production/')`));
+});
+
+test("une ancienne carrière retrouve Sidney et distingue les deux Pau par leur origine", () => {
+  const { run } = createUI();
+  assert.equal(run(`officialPlayerPhoto({name:'Sidney Pages',photoClub:'Dibrados FC',photoLeague:'brazil'},{name:'Club acheteur'}).name`), "Sidão Pages");
+  assert.equal(run(`officialPlayerPhoto({name:'Pau Fernández',photoClub:'Jijantes FC',photoLeague:'spain'},{name:'Club acheteur'}).officialPlayerId`), "72");
+  assert.notEqual(run(`officialPlayerPhoto({name:'Pau Fernández',photoClub:'El Barrio',photoLeague:'spain'},{name:'Club acheteur'}).officialPlayerId`), "72");
+});
+
+test("une identité non vérifiée ou contradictoire ne reçoit pas le portrait d'un homonyme", () => {
+  const { run } = createUI();
+  assert.equal(run(`officialPlayerPhoto({name:'Manu García',rosterIdentity:'manugarcia'},{name:'Skull FC',photoLeague:'spain'})`), null);
+  assert.equal(run(`playerPhotoUrl({name:'Manu García',rosterIdentity:'manugarcia'},{name:'Skull FC',photoLeague:'spain'})`), "");
+  assert.equal(run(`playerPhotoUrl({name:'Charly Dosso',rosterIdentity:'charlydosso'},{name:'360 Nation',photoLeague:'france'})`), "");
+  assert.equal(run(`officialPlayerPhoto({name:'Kelvin Oliveira',officialPlayerId:'inconnu',rosterIdentity:'kelvinoliveira'},{name:'G3X FC'})`), null);
+  assert.ok(run(`playerPhotoUrl({name:'Joueur non documenté'},{name:'Club test',photoLeague:'france'}).startsWith('images/players/france/club-test/')`));
+});
+
+test("un ancien transfert sans origine ne devient pas le portrait d'un homonyme du club acheteur", () => {
+  const { run } = createUI();
+  run(`
+    const oldPau = {id:'pau-transfere-ancien',name:'Pau Fernández',goals:12};
+    const buyer = {id:'ebr',name:'El Barrio',players:[oldPau]};
+    STATE.leagueKey='spain'; STATE.league={teams:[buyer]}; STATE.otherLeagues=[];
+    backfillPhotoClub();
+  `);
+  assert.equal(run("oldPau.photoIdentityAmbiguous"), true);
+  assert.equal(run("officialPlayerPhoto(oldPau,buyer)"), null);
+  assert.equal(run("playerPhotoUrl(oldPau,buyer)"), "");
+  run("backfillPhotoClub();");
+  assert.equal(run("officialPlayerPhoto(oldPau,buyer)"), null, "l'origine de repli ne devient pas une preuve au deuxième chargement");
+  assert.equal(run("oldPau.goals"), 12);
+  assert.equal(run("oldPau.id"), "pau-transfere-ancien");
+  assert.equal(run("officialPlayerPhoto({name:'Pau Fernández'},buyer)"), null);
 });
 
 test("l'intention choisie est enregistrée avec la tactique par défaut", () => {

@@ -191,18 +191,21 @@ function backfillPhotoClub() {
       || (p.officialPlayerId != null && profile.player.officialPlayerId != null && String(p.officialPlayerId) === String(profile.player.officialPlayerId))
       || p.id === profile.player.id);
     if (explicit.length) return unique(explicit);
+    if (p.photoIdentityAmbiguous) return null;
     const matches = [...new Set([p.photoName, p.name].flatMap(name => [...(aliases.get(normalize(name)) || [])]))];
     if (matches.length <= 1) return unique(matches);
     // Un homonyme reste distinct si l'ancien club de photo permet de l'identifier.
     const photoMatches = matches.filter(profile => p.photoClub && p.photoClub === (profile.player.photoClub || profile.team.name)
       && (!p.photoLeague || p.photoLeague === (profile.player.photoLeague || profile.league)));
     if (photoMatches.length) return unique(photoMatches);
-    return unique(matches.filter(profile => (profile.player.baselineOrigin?.teamId === t.id && profile.player.baselineOrigin.league === leagueKey)
-      || (profile.team.id === t.id && profile.league === leagueKey)));
+    // Le club actuel ne prouve pas l'origine d'un joueur déjà transféré.
+    return null;
   };
   const fillPlayer = (t, leagueKey) => p => {
     const profile = resolveProfile(p, t, leagueKey);
     const origin = profile && profile.player;
+    const aliasMatches = new Set([p.photoName, p.name].flatMap(name => [...(aliases.get(normalize(name)) || [])]));
+    if (!profile && aliasMatches.size > 1) p.photoIdentityAmbiguous = true;
     const samePhotoOrigin = !p.photoClub || (p.photoClub === (origin?.photoClub || profile?.team.name)
       && (!p.photoLeague || p.photoLeague === (origin?.photoLeague || profile?.league)));
     if (!p.photoClub) p.photoClub = origin ? (origin.photoClub || profile.team.name) : t.name;
@@ -3428,7 +3431,46 @@ function slugifyName(str) {
     .replace(/^-+|-+$/g, "");
 }
 
+// Le portrait suit l'identité du joueur, même dans une ancienne sauvegarde ou
+// après un transfert. Un homonyme non départagé ne reçoit jamais une photo au hasard.
+function normalizePhotoName(value) {
+  return String(value || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/ß/g, "ss").replace(/ł/g, "l").toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+
+function officialPlayerPhoto(player, team) {
+  if (typeof PLAYER_PHOTOS === "undefined") return null;
+  const photos = PLAYER_PHOTOS;
+  if (player.officialPlayerId != null) {
+    const identity = photos.byOfficialId[String(player.officialPlayerId)];
+    return identity ? photos.byIdentity[identity] : null;
+  }
+  if (player.rosterIdentity) return photos.byIdentity[player.rosterIdentity] || null;
+  if (player.photoIdentityAmbiguous) return null;
+  const normalize = normalizePhotoName;
+  let identities = photos.byName[normalize(player.photoName || player.name)] || [];
+  if (!identities.length && player.photoName) identities = photos.byName[normalize(player.name)] || [];
+  if (identities.length === 1) return photos.byIdentity[identities[0]];
+  if (!player.photoClub) return null;
+  const club = normalize(player.photoClub);
+  const league = player.photoLeague;
+  const matches = identities.map(id => photos.byIdentity[id]).filter(photo => photo.origins.some(origin =>
+    normalize(origin.teamName) === club && (!league || origin.leagueKey === league)));
+  return matches.length === 1 ? matches[0] : null;
+}
+
 function playerPhotoUrl(player, team) {
+  const official = officialPlayerPhoto(player, team);
+  if (official) return official.imageUrl;
+  if (player.photoIdentityAmbiguous) return "";
+  if (typeof PLAYER_PHOTOS !== "undefined" && [player.rosterIdentity, normalizePhotoName(player.photoName || player.name)]
+    .some(identity => identity && PLAYER_PHOTOS.unresolvedIdentities.includes(identity))) return "";
+  if (typeof PLAYER_PHOTOS !== "undefined" && !player.officialPlayerId && !player.rosterIdentity && !player.photoClub
+    && (PLAYER_PHOTOS.byName[normalizePhotoName(player.photoName || player.name)] || []).length > 1) return "";
+  return legacyPlayerPhotoUrl(player, team);
+}
+
+function legacyPlayerPhotoUrl(player, team) {
   // player.photoLeague : ligue d'origine du joueur, figée à la création de la carrière (voir
   // startCareer/buildOtherLeagues) — prioritaire sur team.photoLeague, car un joueur recruté sur
   // le mercato depuis une AUTRE ligue change d'équipe (donc de team.photoLeague) mais sa photo

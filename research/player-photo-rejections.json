@@ -1,0 +1,40 @@
+{
+  "checkedAt": "2026-10-27",
+  "method": "The downloaded files for these three SHA-256 groups were visually inspected and confirmed to be generic black player silhouettes. Reject by file hash or normalized original image URL, never by player name.",
+  "images": [
+    {
+      "sha256": "96c525458812b7654a6f6216e0fd9dbfeb4d0319588c71b47f99b53c47f70a3a",
+      "reason": "visually-confirmed-generic-silhouette",
+      "urls": [
+        "https://kingsleague-cdn.kama.football/account/production/player/2bbd65a3-ca02-4bb1-94b4-b4756c795a62/812756002.png",
+        "https://kingsleague-cdn.kama.football/account/production/player/40b34bd8-843c-4fa8-9ba4-1cbeb5ed21d4/643999798.png",
+        "https://kingsleague-cdn.kama.football/account/production/player/76108ad4-9ba9-4b9c-8baa-e7b07fe7e180/532039403.png",
+        "https://kingsleague-cdn.kama.football/account/production/player/c242467d-cd54-49cd-bd42-134aa6b3e03a/27372209.png",
+        "https://kingsleague-cdn.kama.football/account/production/player/d9154e25-7be2-4151-81ff-91dbe65a0789/544391352.png",
+        "https://kingsleague-cdn.kama.football/account/production/player/ff3e1bb6-7455-45c9-ba13-3ae6d5c2abaf/43332449.png",
+        "https://kingsleague-cdn.kama.football/account/production/seasonTeamPlayer/2c5daabe-0969-46ed-8aa4-92d919b19db1/626924512.png",
+        "https://kingsleague-cdn.kama.football/account/production/seasonTeamPlayer/9e2b57df-dad5-44bc-bece-78a43139d781/619697944.png"
+      ]
+    },
+    {
+      "sha256": "037287e46f9eeca3cd498df59f5fe633d259dccf7b51a7625224bd95428a6226",
+      "reason": "visually-confirmed-generic-silhouette",
+      "urls": [
+        "https://kingsleague-cdn.kama.football/account/production/player/image/33278294.png",
+        "https://kingsleague-cdn.kama.football/account/production/player/image/454725129.png"
+      ]
+    },
+    {
+      "sha256": "cb50c8152eadc5f5d3c42617ecab28e2893cf01dcee4e8ad710ceb01988e2b9c",
+      "reason": "visually-confirmed-generic-silhouette",
+      "urls": [
+        "https://kingsleague-cdn.kama.football/account/production/seasonTeamPlayer/14982f1b-2bf5-4ce7-9c33-5d5de12f86f4/840308053.png",
+        "https://kingsleague-cdn.kama.football/account/production/seasonTeamPlayer/678595a7-00a0-43e1-9b84-6f3acae256be/761440422.png",
+        "https://kingsleague-cdn.kama.football/account/production/seasonTeamPlayer/7502174b-a13e-4ded-9132-96000a6aa170/815445165.png",
+        "https://kingsleague-cdn.kama.football/account/production/seasonTeamPlayer/b70fe17e-df60-439c-b05b-755477b472fc/874317164.png",
+        "https://kingsleague-cdn.kama.football/account/production/seasonTeamPlayer/bbee4f3f-6bdb-4188-983c-e9e3e57a8da0/191644225.png",
+        "https://kingsleague-cdn.kama.football/account/production/seasonTeamPlayer/c69b9890-bd6e-4569-bbda-461e945c5166/708132171.png"
+      ]
+    }
+  ]
+}

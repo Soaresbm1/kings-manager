@@ -20,7 +20,10 @@ statique.
 1. **`data.js`** — données statiques : `LEAGUES` (les 6 ligues, chacune avec ses
    équipes/joueurs, ex. `FRANCE_TEAMS`, `SPAIN_TEAMS`...), `FORMATIONS` / `FORMATION_SLOTS`,
    `ATTACK_PLANS` / `DEFENSE_PLANS`, `SECRET_CARDS`.
-2. **`matchengine-actions.js`** — moteur d'actions pur (pas de DOM, pas de `STATE`) : décide et
+2. **`player-photos.js`** — portraits officiels et index d'identité, générés hors ligne depuis
+   `research/player-photo-observations.json` par `scripts/sync-player-photos.cjs`. Les images
+   originales restent sur le CDN officiel ; aucune attribution approximative d'un homonyme.
+3. **`matchengine-actions.js`** — moteur d'actions pur (pas de DOM, pas de `STATE`) : décide et
    résout, ACTION PAR ACTION, ce qui se passe pendant une possession (porteur → décision → passe/
    dribble/centre/tir → xG → issue), via `simulatePossessionChain()`. Contient aussi les constantes
    d'équilibrage centralisées (`MATCH_BALANCE`), les attributs dérivés (`computePassingRating`,
@@ -29,7 +32,7 @@ statique.
    `computeSideAnchors`...). Chargé avant `engine.js` : ordre technique arbitraire (ce sont des
    déclarations de fonctions/constantes globales, jamais exécutées au chargement), mais reflète la
    dépendance logique — `engine.js` appelle ce module, jamais l'inverse.
-3. **`engine.js`** — orchestration du match (pas de DOM) : calendrier (`generateSchedule`),
+4. **`engine.js`** — orchestration du match (pas de DOM) : calendrier (`generateSchedule`),
    bookkeeping minute par minute (`createMatchEngine`, règles Kings League, cartons, score,
    fatigue — voir plus bas), résolution instantanée (`simulateMatch`), classement
    (`computeStandings`), progression des joueurs (`developPlayer`), IA (voir plus bas). Délègue à
@@ -42,7 +45,7 @@ statique.
    Conserve `possessionState` (camp, porteur, ballon, positions, reprise) entre les
    séquences et les minutes. `getPossessionState`/`getLiveStats` renvoient des copies
    de lecture ; ne jamais appeler `finalize` pour rafraîchir une statistique en direct.
-4. **`matchchoreo.js`** — module d'interpolation pur (pas de DOM, aucun `Math.random()`)
+5. **`matchchoreo.js`** — module d'interpolation pur (pas de DOM, aucun `Math.random()`)
    qui anime la chorégraphie produite par `engine.js`/`matchengine-actions.js` (positions
    joueurs/ballon frame par frame), façon Football Manager Mobile : `createChoreographer()`,
    `setAnchors`, `loadSequence`, `step(dt)`, `insertNext` (pour intercaler Arme Secrète/Penalty en
@@ -55,9 +58,9 @@ statique.
    Les beats récents possèdent `positionsBefore`/`positionsAfter`, qui font autorité
    pour tous les joueurs. Le placement décoratif historique n'est utilisé que pour
    les anciens beats sans instantané. `restart` et `recovery` matérialisent les reprises.
-5. **`app.js`** — état du jeu (`STATE`), rendu des écrans, gestion des événements DOM,
+6. **`app.js`** — état du jeu (`STATE`), rendu des écrans, gestion des événements DOM,
    sauvegardes (`localStorage` + export/import JSON).
-6. **`index.html` / `style.css`** — structure des écrans et mise en forme.
+7. **`index.html` / `style.css`** — structure des écrans et mise en forme.
 
 Dossiers `images/players/<dossier-ligue>/<club-slug>/<joueur-slug>.png` (photos, fallback
 initiales si absentes ; le nom du dossier de ligue peut différer de la clé interne — voir
@@ -70,6 +73,16 @@ couverture complète ou partielle ; ne jamais transformer une inscription wildca
 sans preuve. Les nouveaux profils portent leurs champs estimés, les anciens conservent leurs
 notes du jeu (aucune note officielle Kings League). Les photos utilisent aussi `photoName`
 pour conserver le fichier d'origine quand un joueur est renommé ou transféré.
+
+`officialPlayerPhoto` privilégie l'identifiant officiel, puis l'identité du jeu ; une ancienne
+carrière peut être reconnue par un alias exact et son club d'origine. `playerPhotoUrl` utilise
+ce portrait confirmé ; les identités explicitement non résolues gardent leurs initiales. Le
+chemin historique de `legacyPlayerPhotoUrl` reste en repli pour les joueurs des anciennes
+carrières hors du catalogue actuel. Une origine ambiguë ne peut être déduite du club acheteur.
+Les images
+génériques officielles sont exclues du catalogue. `research/player-photos-report.json` détaille
+les absences et ambiguïtés. `node scripts/verify-player-photos.cjs` récupère et contrôle les
+originaux dans `.cache/player-photos/` (ignoré par Git) sans retouche ni modification des carrières.
 
 La base vérifiée le 26/10/2026 concerne les nouvelles carrières. Le Mexique compte désormais
 10 clubs actifs ; les sauvegardes existantes conservent leurs clubs, effectifs et transferts.
