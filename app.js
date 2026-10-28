@@ -2687,7 +2687,7 @@ function tacticText(value) {
 function renderTacticPortrait(player, team, className) {
   const url = playerPhotoUrl(player, team);
   return `<span class="${className}" aria-hidden="true"><span>${tacticText(playerInitials(player.name))}</span>${url
-    ? `<img src="${tacticText(url)}" alt="" width="64" height="72" decoding="async" style="display:none" onload="this.style.display='block';this.previousElementSibling.style.display='none';" onerror="this.style.display='none';this.previousElementSibling.style.display='';">` : ""}</span>`;
+    ? `<img src="${tacticText(url)}" alt="" draggable="false" width="64" height="72" decoding="async" style="display:none" onload="this.style.display='block';this.previousElementSibling.style.display='none';" onerror="this.style.display='none';this.previousElementSibling.style.display='';">` : ""}</span>`;
 }
 
 function buildTacticSlot(setup, ids, slot, index, phase, player) {
@@ -2712,7 +2712,8 @@ function buildTacticSlot(setup, ids, slot, index, phase, player) {
     ${player ? `<span class="slot-overall ${overallClass(player.overall)}" aria-label="Niveau ${player.overall}">${player.overall}</span>` : ""}
     <span class="slot-copy"><span class="slot-tag pos-${slot.pos}">${slotShortTag(slot)}</span>
     <span class="${player ? "slot-name" : "slot-empty"}">${player ? tacticText(player.name) : "Choisir"}</span>${warning}</span>`;
-  button.onclick = () => selectSlot(setup, ids, index, phase);
+  button.onclick = event => { if (!consumeTacticDragClick(event)) selectSlot(setup, ids, index, phase); };
+  if (ids === TACTICS_IDS && player) bindTacticDrag(button, setup, ids, player.id);
   return button;
 }
 
@@ -2725,12 +2726,12 @@ function renderTacticSelectionHint(setup, ids) {
   const hint = document.getElementById("tactics-selection-hint");
   if (!hint) return;
   if (setup.selectedSlot == null) {
-    hint.textContent = "Sélectionne un poste sur le terrain, puis un joueur dans l’effectif.";
+    hint.textContent = "Glisse un joueur sur un autre poste : les deux phases suivent. Sur écran tactile, maintiens la carte. Au clavier, sélectionne deux cartes.";
   } else {
     const phase = setup.selectedPhase || "in";
     const formation = phase === "out" ? setup.formationOOP : setup.formation;
     const slot = FORMATION_SLOTS[formation][setup.selectedSlot];
-    hint.textContent = `${slotRoleLabel(slot)} · ${phase === "out" ? "sans ballon" : "avec ballon"} : choisis son joueur dans l’effectif.`;
+    hint.textContent = `${slotRoleLabel(slot)} · ${phase === "out" ? "sans ballon" : "avec ballon"} : sélectionne une autre carte pour échanger, ou un joueur de l’effectif.`;
   }
 }
 
@@ -2779,7 +2780,9 @@ function renderBench(setup, ids) {
     const blocked = p.injured && !isStarter;
 
     const row = document.createElement("div");
-    const compatible = !selectedPosition || ELIGIBLE_POS[p.pos].includes(selectedPosition);
+    const compatible = !selectedPosition || (ids === TACTICS_IDS
+      ? (selectedPosition === "GK") === (p.pos === "GK")
+      : ELIGIBLE_POS[p.pos].includes(selectedPosition));
     row.className = "player-row" + (isStarter ? " selected" : "") + (blocked ? " player-row-injured" : "") + (selectedPosition && !compatible ? " player-row-incompatible" : "");
     row.dataset.playerId = p.id;
     row.dataset.position = p.pos;
@@ -2808,7 +2811,9 @@ function renderBench(setup, ids) {
         e.stopPropagation();
         showPositionPicker(setup, ids, p, row, "out");
       };
-      row.querySelector(".tactic-player-main").onclick = () => handlePlayerClick(setup, ids, p, row);
+      const main = row.querySelector(".tactic-player-main");
+      main.onclick = event => { if (!consumeTacticDragClick(event)) handlePlayerClick(setup, ids, p, row); };
+      if (ids === TACTICS_IDS && !main.disabled) bindTacticDrag(main, setup, ids, p.id);
     }
     container.appendChild(row);
   });
@@ -2962,7 +2967,211 @@ function focusTacticPlayerControl(ids, playerId, selector) {
   if (row) row.querySelector(selector).focus();
 }
 
+// Prépare les deux dispositions sans les modifier : un dépôt est atomique, même
+// lorsque les formations n'ont pas les mêmes indices de poste.
+function planTacticDrop(setup, playerId, targetIndex, phase) {
+  const team = getUserTeam();
+  const players = new Map(team.players.map(player => [player.id, player]));
+  const player = players.get(playerId);
+  const invalid = { valid: false, reason: "Déplacement impossible vers ce poste." };
+  if (!player || player.injured || !["in", "out"].includes(phase)) return invalid;
+  const draft = { ...setup, assignments: [...setup.assignments], assignmentsOOP: [...setup.assignmentsOOP] };
+  syncStartersAcrossPhases(draft, phase);
+  const slots = FORMATION_SLOTS[phase === "out" ? draft.formationOOP : draft.formation];
+  const otherSlots = FORMATION_SLOTS[phase === "out" ? draft.formation : draft.formationOOP];
+  const own = phase === "out" ? draft.assignmentsOOP : draft.assignments;
+  const other = phase === "out" ? draft.assignments : draft.assignmentsOOP;
+  const fits = (id, slot) => !!slot && !!players.get(id) && (slot.pos === "GK") === (players.get(id).pos === "GK");
+  if (!Number.isInteger(targetIndex) || !fits(playerId, slots[targetIndex])) return invalid;
+  const sourceIndex = own.indexOf(playerId);
+  const displacedId = own[targetIndex];
+  if (displacedId === playerId) return { valid: false, unchanged: true };
+  if (sourceIndex >= 0 && displacedId && !fits(displacedId, slots[sourceIndex])) return invalid;
+  own[targetIndex] = playerId;
+  if (sourceIndex >= 0) own[sourceIndex] = displacedId || null;
+
+  const otherSource = other.indexOf(playerId);
+  if (displacedId) {
+    const otherTarget = other.indexOf(displacedId);
+    if (otherTarget < 0 || !fits(playerId, otherSlots[otherTarget])) return invalid;
+    if (otherSource >= 0 && !fits(displacedId, otherSlots[otherSource])) return invalid;
+    other[otherTarget] = playerId;
+    if (otherSource >= 0) other[otherSource] = displacedId;
+  } else {
+    // Une case vide n'a pas d'identité à suivre : on choisit le poste le plus
+    // proche de même rôle dans l'autre formation, libre pour un remplaçant.
+    const target = slots[targetIndex];
+    const candidates = otherSlots.map((slot, index) => ({ slot, index }))
+      .filter(({ slot, index }) => index !== otherSource && fits(playerId, slot)
+        && (otherSource >= 0 ? (!other[index] || fits(other[index], otherSlots[otherSource])) : !other[index]))
+      .sort((a, b) => (a.slot.pos !== target.pos) - (b.slot.pos !== target.pos)
+        || (Math.abs(a.slot.x - target.x) + Math.abs(a.slot.y - target.y))
+          - (Math.abs(b.slot.x - target.x) + Math.abs(b.slot.y - target.y)));
+    const destination = candidates[0];
+    if (destination) {
+      const previous = other[destination.index];
+      other[destination.index] = playerId;
+      if (otherSource >= 0) other[otherSource] = previous || null;
+    } else if (otherSource < 0) return invalid;
+  }
+  const validPhase = (assignments, phaseSlots) => assignments.length === phaseSlots.length
+    && new Set(assignments.filter(Boolean)).size === assignments.filter(Boolean).length
+    && assignments.every((id, i) => !id || (fits(id, phaseSlots[i]) && !players.get(id).injured));
+  const samePlayers = [...own].filter(Boolean).sort().join("|") === [...other].filter(Boolean).sort().join("|");
+  if (!samePlayers || !validPhase(own, slots) || !validPhase(other, otherSlots)) return invalid;
+  return { valid: true, assignments: draft.assignments, assignmentsOOP: draft.assignmentsOOP };
+}
+
+function moveTacticPlayer(setup, ids, playerId, index, phase) {
+  const plan = planTacticDrop(setup, playerId, index, phase);
+  if (!plan.valid) return false;
+  setup.assignments = plan.assignments;
+  setup.assignmentsOOP = plan.assignmentsOOP;
+  setup.selectedSlot = null;
+  closePositionPicker();
+  applyAssignmentChange(setup, ids, phase);
+  const pitch = document.getElementById(phase === "out" ? ids.oopPitch : ids.pitch);
+  pitch.querySelector(`[data-slot-index="${index}"]`)?.focus({ preventScroll: true });
+  const hint = document.getElementById("tactics-selection-hint");
+  if (hint) hint.textContent = "Placement mis à jour avec et sans ballon. Tactique enregistrée.";
+  return true;
+}
+
+let tacticDrag = null;
+let tacticDragClickUntil = 0;
+function consumeTacticDragClick(event) {
+  if (event.detail > 0 && Date.now() < tacticDragClickUntil) {
+    event.preventDefault();
+    return true;
+  }
+  return false;
+}
+
+function createTacticDragGhost(source) {
+  const ghost = source.cloneNode(true);
+  const originals = [source, ...source.querySelectorAll("*")];
+  const copies = [ghost, ...ghost.querySelectorAll("*")];
+  // Les styles de la carte dépendent du panneau et de ses unités de conteneur.
+  // Les figer avant l'insertion conserve le portrait et la taille dans le body.
+  const styles = originals.map(element => {
+    const computed = getComputedStyle(element);
+    return Array.from(computed, property => `${property}:${computed.getPropertyValue(property)};`).join("");
+  });
+  copies.forEach((element, i) => { element.style.cssText = styles[i]; element.removeAttribute("id"); });
+  ghost.classList.remove("selected", "tactic-drag-source", "tactic-drop-valid", "tactic-drop-target", "tactic-drop-invalid");
+  ghost.classList.add("tactic-drag-ghost");
+  ghost.setAttribute("aria-hidden", "true");
+  ghost.inert = true;
+  const rect = source.getBoundingClientRect();
+  ghost.style.width = rect.width + "px";
+  ghost.style.height = rect.height + "px";
+  document.body.appendChild(ghost);
+  return ghost;
+}
+
+function bindTacticDrag(source, setup, ids, playerId) {
+  source.ondragstart = event => event.preventDefault();
+  source.addEventListener("pointerdown", event => {
+    if (event.button !== 0 || !event.isPrimary || source.disabled) return;
+    if (tacticDrag) tacticDrag.cancel();
+    const startX = event.clientX, startY = event.clientY;
+    const rect = source.getBoundingClientRect();
+    const targets = Array.from(document.querySelectorAll(`#${ids.pitch} .pitch-slot, #${ids.oopPitch} .pitch-slot`));
+    let active = false, ghost = null, target = null, timer = null, finished = false, scrollFrame = null;
+    let pointerX = startX, pointerY = startY;
+    const planFor = element => planTacticDrop(setup, playerId, Number(element.dataset.slotIndex), element.dataset.phase);
+    const locate = (x, y) => {
+      pointerX = x; pointerY = y;
+      ghost.style.left = x - (startX - rect.left) + "px";
+      ghost.style.top = y - (startY - rect.top) + "px";
+      const hit = document.elementFromPoint(x, y)?.closest(".pitch-slot");
+      target = targets.includes(hit) ? hit : null;
+      targets.forEach(element => {
+        element.classList.toggle("tactic-drop-target", element === target && planFor(element).valid);
+        element.classList.toggle("tactic-drop-invalid", element === target && !planFor(element).valid && element.dataset.playerId !== playerId);
+      });
+    };
+    const scrollAtEdge = () => {
+      const hit = document.elementFromPoint(pointerX, pointerY);
+      const containers = [hit?.closest(".iop-wrap, .oop-preview"), hit?.closest(".tactics-bench-list"), document.getElementById("tab-tactics")];
+      const speed = (position, start, end) => position < start + 30 ? -12 : position > end - 30 ? 12 : 0;
+      let scrolled = false;
+      containers.filter(Boolean).forEach(container => {
+        const bounds = container.getBoundingClientRect();
+        if (pointerX < bounds.left || pointerX > bounds.right || pointerY < bounds.top || pointerY > bounds.bottom) return;
+        const beforeX = container.scrollLeft, beforeY = container.scrollTop;
+        if (container.scrollWidth > container.clientWidth) container.scrollLeft += speed(pointerX, bounds.left, bounds.right);
+        if (container.scrollHeight > container.clientHeight) container.scrollTop += speed(pointerY, bounds.top, bounds.bottom);
+        scrolled = scrolled || beforeX !== container.scrollLeft || beforeY !== container.scrollTop;
+      });
+      if (scrolled) locate(pointerX, pointerY);
+      scrollFrame = requestAnimationFrame(scrollAtEdge);
+    };
+    const activate = () => {
+      if (finished || !source.isConnected) return cleanup();
+      active = true;
+      closePositionPicker();
+      ghost = createTacticDragGhost(source);
+      source.classList.add("tactic-drag-source");
+      targets.forEach(element => element.classList.toggle("tactic-drop-valid", planFor(element).valid));
+      document.body.classList.add("tactic-is-dragging");
+      source.setPointerCapture?.(event.pointerId);
+      locate(startX, startY);
+      scrollFrame = requestAnimationFrame(scrollAtEdge);
+    };
+    const cleanup = () => {
+      finished = true;
+      clearTimeout(timer);
+      cancelAnimationFrame(scrollFrame);
+      document.removeEventListener("pointermove", move, true);
+      document.removeEventListener("pointerup", up, true);
+      document.removeEventListener("pointercancel", cancel, true);
+      document.removeEventListener("keydown", key, true);
+      window.removeEventListener("blur", cancel);
+      if (source.hasPointerCapture?.(event.pointerId)) source.releasePointerCapture(event.pointerId);
+      ghost?.remove();
+      source.classList.remove("tactic-drag-source");
+      targets.forEach(element => element.classList.remove("tactic-drop-valid", "tactic-drop-target", "tactic-drop-invalid"));
+      document.body.classList.remove("tactic-is-dragging");
+      if (active) tacticDragClickUntil = Date.now() + 500;
+      tacticDrag = null;
+    };
+    const move = pointer => {
+      if (pointer.pointerId !== event.pointerId) return;
+      if (!active && Math.hypot(pointer.clientX - startX, pointer.clientY - startY) > 6) {
+        if (event.pointerType === "touch") return cleanup();
+        activate();
+      }
+      if (active) { pointer.preventDefault(); locate(pointer.clientX, pointer.clientY); }
+    };
+    const up = pointer => {
+      if (pointer.pointerId !== event.pointerId) return;
+      if (active) locate(pointer.clientX, pointer.clientY);
+      const destination = active && target;
+      cleanup();
+      if (destination) moveTacticPlayer(setup, ids, playerId, Number(destination.dataset.slotIndex), destination.dataset.phase);
+    };
+    const cancel = () => cleanup();
+    const key = keyboard => { if (keyboard.key === "Escape") { keyboard.preventDefault(); cleanup(); source.focus({ preventScroll: true }); } };
+    tacticDrag = { cancel };
+    document.addEventListener("pointermove", move, { capture: true, passive: false });
+    document.addEventListener("pointerup", up, true);
+    document.addEventListener("pointercancel", cancel, true);
+    document.addEventListener("keydown", key, true);
+    window.addEventListener("blur", cancel);
+    if (event.pointerType === "touch") timer = setTimeout(activate, 280);
+  });
+}
+
 function selectSlot(setup, ids, i, phase = "in") {
+  if (ids === TACTICS_IDS && setup.selectedSlot != null && (setup.selectedSlot !== i || (setup.selectedPhase || "in") !== phase)) {
+    const selectedPhase = setup.selectedPhase || "in";
+    const selectedAssignments = selectedPhase === "out" ? setup.assignmentsOOP : setup.assignments;
+    const playerId = selectedAssignments[setup.selectedSlot];
+    const clickedPlayer = (phase === "out" ? setup.assignmentsOOP : setup.assignments)[i];
+    if (playerId ? moveTacticPlayer(setup, ids, playerId, i, phase)
+      : clickedPlayer && moveTacticPlayer(setup, ids, clickedPlayer, setup.selectedSlot, selectedPhase)) return;
+  }
   setup.selectedSlot = (setup.selectedSlot === i && (setup.selectedPhase || "in") === phase) ? null : i;
   setup.selectedPhase = phase;
   setup.benchFilter = "all";
@@ -3067,6 +3276,10 @@ function handlePlayerClick(setup, ids, p, rowEl) {
   closePositionPicker();
 
   if (setup.selectedSlot != null) {
+    if (ids === TACTICS_IDS) {
+      moveTacticPlayer(setup, ids, p.id, setup.selectedSlot, phase);
+      return;
+    }
     const slot = slots[setup.selectedSlot];
     if (!ELIGIBLE_POS[p.pos].includes(slot.pos)) {
       showAlert(`Ce poste nécessite un joueur "${slot.pos}" (${slotRoleLabel(slot)}).`);

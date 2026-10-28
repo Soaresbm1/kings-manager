@@ -185,6 +185,12 @@ mode de débogage visuel (touche **D** pendant un match, voir `app.js:PITCH_DEBU
 - **Tableau tactique** : consignes, terrain horizontal et effectif filtrable dans trois panneaux.
   Le gardien est à gauche, l'attaque à droite ; seule la projection d'affichage change.
   La comparaison empile les deux terrains et le mobile permet de les faire défiler horizontalement.
+  Le glisser-déposer de l'onglet Tactique échange les joueurs par identité dans les deux
+  phases, y compris avec deux formations différentes ; un remplaçant prend la place du
+  titulaire dans les deux plans. `planTacticDrop` valide les deux dispositions avant
+  toute mutation (gardien uniquement au but). Souris, appui tactile prolongé et sélection
+  successive de deux cartes au clavier partagent cette opération ; annulation par Échap
+  ou dépôt hors poste sans effet. Les cartes seules capturent le geste tactile.
   Les terrains avec/sans ballon sont éditables au clavier ; `selectedPhase` dirige le choix
   d'un joueur, et `syncStartersAcrossPhases` conserve les mêmes titulaires. Les portraits
   réutilisent l'identité officielle. Filtres et sélection restent transitoires, sans migration.
