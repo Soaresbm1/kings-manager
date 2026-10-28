@@ -99,12 +99,11 @@ test('le filtre permet de remplacer le gardien depuis le terrain sans ballon san
   expect(await rows.count()).toBeGreaterThan(7);
 });
 
-test('le tableau tactique et le dernier joueur restent accessibles sur ordinateur et mobile', async ({ page }) => {
-  await page.setViewportSize({ width: 1280, height: 720 });
-  await openTactics(page);
-  await page.locator('#tactics-view-mode-choice').getByRole('button', { name: /Comparer|Les deux/ }).click();
-  for (const size of [{ width: 1280, height: 720 }, { width: 390, height: 844 }]) {
+for (const size of [{ width: 1920, height: 1080 }, { width: 1280, height: 720 }, { width: 390, height: 844 }]) {
+  test(`les terrains horizontaux gardent leurs lignes et leurs joueurs accessibles à ${size.width} × ${size.height}`, async ({ page }) => {
     await page.setViewportSize(size);
+    await openTactics(page);
+    await page.locator('#tactics-view-mode-choice').getByRole('button', { name: /Comparer|Les deux/ }).click();
     const geometry = await page.locator('#tab-tactics').evaluate(element => {
       const rect = element.getBoundingClientRect();
       return { left: rect.left, right: rect.right, pageWidth: document.documentElement.scrollWidth, viewportWidth: innerWidth };
@@ -112,23 +111,52 @@ test('le tableau tactique et le dernier joueur restent accessibles sur ordinateu
     expect(geometry.pageWidth, `pas de débordement horizontal à ${size.width}px`).toBeLessThanOrEqual(geometry.viewportWidth + 1);
     expect(geometry.left).toBeGreaterThanOrEqual(-1);
     expect(geometry.right).toBeLessThanOrEqual(size.width + 1);
-    const overlappingPlayers = await page.locator('#tab-tactics .pitch-field').evaluateAll(pitches => pitches.flatMap(pitch => {
-      const players = Array.from(pitch.querySelectorAll('.pitch-slot'));
-      return players.flatMap((player, index) => players.slice(index + 1).filter(other => {
-        const a = player.getBoundingClientRect(), b = other.getBoundingClientRect();
-        return Math.min(a.right, b.right) - Math.max(a.left, b.left) > 2 && Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top) > 2;
-      }).map(other => `${player.getAttribute('aria-label')} / ${other.getAttribute('aria-label')}`));
-    }));
-    expect(overlappingPlayers, 'les cartes joueurs ne doivent pas se chevaucher').toEqual([]);
-    if (size.width >= 1100) {
-      const clippedSlots = await page.locator('#tab-tactics .tactics-pitch-row').evaluate(row => {
-        const bounds = row.getBoundingClientRect();
-        return Array.from(row.querySelectorAll('.pitch-slot')).filter(slot => {
-          const rect = slot.getBoundingClientRect();
+    for (const formation of ['2-2-2', '3-2-1', '2-3-1']) {
+      await page.locator('#tactics-formation-choice').getByRole('button', { name: formation, exact: true }).click();
+      await page.locator('#tactics-oop-formation-choice').getByRole('button', { name: formation, exact: true }).click();
+      const pitches = await page.locator('#tab-tactics .pitch-field').evaluateAll(fields => fields.map(pitch => {
+        const bounds = pitch.getBoundingClientRect();
+        const players = Array.from(pitch.querySelectorAll('.pitch-slot'));
+        const lines = ['GK', 'DEF', 'MID', 'ATT'].map(position => players
+          .filter(player => player.classList.contains(`pos-${position}`))
+          .map(player => { const rect = player.getBoundingClientRect(); return rect.left + rect.width / 2; }));
+        const clipped = players.filter(player => {
+          const rect = player.getBoundingClientRect();
           return rect.top < bounds.top - 1 || rect.bottom > bounds.bottom + 1 || rect.left < bounds.left - 1 || rect.right > bounds.right + 1;
-        }).map(slot => slot.getAttribute('aria-label'));
-      });
-      expect(clippedSlots, 'les deux équipes de sept doivent rester entièrement visibles').toEqual([]);
+        }).map(player => player.getAttribute('aria-label'));
+        const overlaps = players.flatMap((player, index) => players.slice(index + 1).filter(other => {
+          const a = player.getBoundingClientRect(), b = other.getBoundingClientRect();
+          return Math.min(a.right, b.right) - Math.max(a.left, b.left) > 2 && Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top) > 2;
+        }).map(other => `${player.getAttribute('aria-label')} / ${other.getAttribute('aria-label')}`));
+        return { id: pitch.id, width: bounds.width, height: bounds.height, count: players.length, lines, clipped, overlaps };
+      }));
+      expect(pitches).toHaveLength(2);
+      for (const pitch of pitches) {
+        const context = `${pitch.id}, ${formation}, ${size.width}px`;
+        expect(pitch.width, `terrain horizontal : ${context}`).toBeGreaterThan(pitch.height);
+        expect(pitch.count, context).toBe(7);
+        expect(pitch.clipped, `chaque carte reste dans son terrain : ${context}`).toEqual([]);
+        expect(pitch.overlaps, `aucun chevauchement de cartes : ${context}`).toEqual([]);
+        pitch.lines.forEach(line => expect(line.length, `chaque ligne est présente : ${context}`).toBeGreaterThan(0));
+        for (let line = 0; line < pitch.lines.length - 1; line++) {
+          expect(Math.max(...pitch.lines[line]), `gardien, défense, milieu puis attaque de gauche à droite : ${context}`).toBeLessThan(Math.min(...pitch.lines[line + 1]));
+        }
+      }
+    }
+    // Comparer peut défiler verticalement et le terrain mobile horizontalement.
+    // Les deux bords de chaque terrain doivent néanmoins rester atteignables.
+    for (const pitchId of ['tactics-pitch-field', 'tactics-oop-pitch-field']) {
+      for (const selector of ['.pitch-slot.pos-GK', '.pitch-slot.pos-ATT']) {
+        const edgePlayer = page.locator(`#${pitchId} ${selector}`).last();
+        await edgePlayer.scrollIntoViewIfNeeded();
+        await expect(edgePlayer).toBeInViewport({ ratio: 1 });
+        const rect = await edgePlayer.boundingBox();
+        expect(rect).not.toBeNull();
+        expect(rect!.x).toBeGreaterThanOrEqual(-1);
+        expect(rect!.x + rect!.width).toBeLessThanOrEqual(size.width + 1);
+        expect(rect!.y).toBeGreaterThanOrEqual(-1);
+        expect(rect!.y + rect!.height, `${pitchId} ${selector} à ${size.width}px`).toBeLessThanOrEqual(size.height + 1);
+      }
     }
 
     const lastAssignment = page.locator('#tactics-bench-list .player-row').last().locator('.phase-out');
@@ -143,5 +171,5 @@ test('le tableau tactique et le dernier joueur restent accessibles sur ordinateu
     await lastAssignment.click();
     await expect(page.locator('#active-position-picker')).toBeVisible();
     await page.keyboard.press('Escape');
-  }
-});
+  });
+}

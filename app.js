@@ -2698,8 +2698,10 @@ function buildTacticSlot(setup, ids, slot, index, phase, player) {
   button.dataset.phase = phase;
   button.dataset.slotIndex = String(index);
   button.dataset.playerId = player ? player.id : "";
-  button.style.left = slot.x + "%";
-  button.style.top = slot.y + "%";
+  // Le tableau se lit du gardien à gauche vers l'attaque à droite. Les coordonnées
+  // de formation restent intactes pour les rôles, les sauvegardes et le moteur.
+  button.style.left = (ids === TACTICS_IDS ? 100 - slot.y : slot.x) + "%";
+  button.style.top = (ids === TACTICS_IDS ? slot.x : slot.y) + "%";
   const phaseLabel = phase === "out" ? "Sans ballon" : "Avec ballon";
   button.setAttribute("aria-label", `${phaseLabel} : ${slotRoleLabel(slot)}, ${player ? player.name : "Emplacement vide"}`);
   button.setAttribute("aria-pressed", String(selected));

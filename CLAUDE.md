@@ -182,7 +182,9 @@ mode de débogage visuel (touche **D** pendant un match, voir `app.js:PITCH_DEBU
 
 ## Autres systèmes notables (chercher le nom de fonction dans `app.js`/`engine.js` au besoin)
 
-- **Tableau tactique** : consignes, terrain vertical et effectif filtrable dans trois panneaux.
+- **Tableau tactique** : consignes, terrain horizontal et effectif filtrable dans trois panneaux.
+  Le gardien est à gauche, l'attaque à droite ; seule la projection d'affichage change.
+  La comparaison empile les deux terrains et le mobile permet de les faire défiler horizontalement.
   Les terrains avec/sans ballon sont éditables au clavier ; `selectedPhase` dirige le choix
   d'un joueur, et `syncStartersAcrossPhases` conserve les mêmes titulaires. Les portraits
   réutilisent l'identité officielle. Filtres et sélection restent transitoires, sans migration.
