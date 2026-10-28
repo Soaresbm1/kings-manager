@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kings Manager 7v7</title>
   <link rel="icon" href="images/favicon.png">
-  <link rel="stylesheet" href="style.css?v=20261028-drag">
+  <link rel="stylesheet" href="style.css?v=20261028-single">
 </head>
 
 <body>
@@ -157,7 +157,7 @@
         <div class="tactics-page-heading">
           <div>
             <h2>Tableau tactique</h2>
-            <p>Prépare ton équipe, avec et sans ballon.</p>
+            <p>Une composition, ton plan de jeu.</p>
           </div>
           <span class="tactics-autosave"><span aria-hidden="true"></span>Enregistrement automatique</span>
         </div>
@@ -170,12 +170,8 @@
             </div>
             <div class="tactics-controls-scroll">
               <div class="tactics-toolbar-group">
-                <span class="tactics-toolbar-label" id="tactics-formation-label">Formation avec ballon</span>
+                <span class="tactics-toolbar-label" id="tactics-formation-label">Formation</span>
                 <div class="tactics-chip-group" id="tactics-formation-choice" role="group" aria-labelledby="tactics-formation-label"></div>
-              </div>
-              <div class="tactics-toolbar-group" id="tactics-oop-formation-wrap" style="display:none;">
-                <span class="tactics-toolbar-label" id="tactics-oop-formation-label">Formation sans ballon</span>
-                <div class="tactics-chip-group" id="tactics-oop-formation-choice" role="group" aria-labelledby="tactics-oop-formation-label"></div>
               </div>
               <div class="tactics-toolbar-group">
                 <span class="tactics-toolbar-label" id="tactics-attack-label">Construction offensive</span>
@@ -201,19 +197,14 @@
                 <span class="tactics-section-index" aria-hidden="true">02</span>
                 <h3 id="tactics-board-title">Disposition sur le terrain</h3>
               </div>
-              <div class="tactics-chip-group tactics-phase-tabs" id="tactics-view-mode-choice" role="group" aria-label="Phase de jeu affichée"></div>
             </div>
             <div class="tactics-pitch-row">
               <div class="iop-wrap">
-                <h4><span class="phase-dot phase-dot-in" aria-hidden="true"></span>Avec ballon <span>Animation offensive</span></h4>
+                <h4><span class="phase-dot phase-dot-in" aria-hidden="true"></span>Composition <span>Ton sept de départ</span></h4>
                 <div class="pitch-field" id="tactics-pitch-field"></div>
               </div>
-              <div class="oop-preview" id="tactics-oop-panel" style="display:none;">
-                <h4><span class="phase-dot phase-dot-out" aria-hidden="true"></span>Sans ballon <span>Bloc défensif</span></h4>
-                <div class="pitch-field oop-preview-field" id="tactics-oop-pitch-field"></div>
-              </div>
             </div>
-            <p class="tactics-selection-hint" id="tactics-selection-hint" aria-live="polite">Glisse un joueur sur un poste pour modifier les deux phases.</p>
+            <p class="tactics-selection-hint" id="tactics-selection-hint" aria-live="polite">Glisse un joueur sur un poste pour modifier ta composition.</p>
           </section>
 
           <aside class="panel tactics-bench-panel" aria-labelledby="tactics-squad-title">
@@ -227,7 +218,7 @@
               <div class="pos-overview" id="tactics-position-overview"></div>
             </details>
             <div class="tactics-bench-filters" id="tactics-bench-filters" role="group" aria-label="Filtrer l'effectif par poste"></div>
-            <div class="tactics-phase-legend" aria-hidden="true"><span>Joueur / forme</span><span>Avec / Sans ballon</span></div>
+            <div class="tactics-phase-legend" aria-hidden="true"><span>Joueur / forme</span><span>Poste</span></div>
             <div class="tactics-bench-list" id="tactics-bench-list"></div>
           </aside>
         </div>
@@ -433,14 +424,6 @@
           <span class="tactics-toolbar-label">🃏 Arme Secrète</span>
           <div class="card-grid card-grid-compact" id="secret-card-choice"></div>
         </div>
-        <div class="tactics-toolbar-group">
-          <span class="tactics-toolbar-label">Vue</span>
-          <div class="tactics-chip-group" id="lineup-view-mode-choice"></div>
-        </div>
-        <div class="tactics-toolbar-group" id="lineup-oop-formation-wrap" style="display:none;">
-          <span class="tactics-toolbar-label">Formation (sans balle)</span>
-          <div class="tactics-chip-group" id="lineup-oop-formation-choice"></div>
-        </div>
       </div>
 
       <div class="tactics-layout">
@@ -448,12 +431,7 @@
           <h3>Composition (<span id="lineup-count">0</span>/7)</h3>
           <div class="tactics-pitch-row">
             <div class="iop-wrap">
-              <h4>Avec balle</h4>
               <div class="pitch-field" id="pitch-field"></div>
-            </div>
-            <div class="oop-preview" id="lineup-oop-panel" style="display:none;">
-              <h4>Sans balle</h4>
-              <div class="pitch-field oop-preview-field" id="lineup-oop-pitch-field"></div>
             </div>
           </div>
         </div>
@@ -570,26 +548,13 @@
               <span class="tactics-toolbar-label" id="match-mentality-label">Intention</span>
               <div class="mentality-choices" id="match-mentality-choice" role="group" aria-labelledby="match-mentality-label"></div>
             </div>
-            <div class="tactics-toolbar-group">
-              <span class="tactics-toolbar-label">Vue</span>
-              <div class="tactics-chip-group" id="match-tactics-view-mode-choice"></div>
-            </div>
-            <div class="tactics-toolbar-group" id="match-tactics-oop-formation-wrap" style="display:none;">
-              <span class="tactics-toolbar-label">Formation (sans balle)</span>
-              <div class="tactics-chip-group" id="match-tactics-oop-formation-choice"></div>
-            </div>
           </div>
 
           <div class="tactics-layout modal-tactics-layout">
             <div class="panel tactics-pitch-panel">
               <div class="tactics-pitch-row">
                 <div class="iop-wrap">
-                  <h4>Avec balle</h4>
                   <div class="pitch-field" id="match-tactics-pitch-field"></div>
-                </div>
-                <div class="oop-preview" id="match-tactics-oop-panel" style="display:none;">
-                  <h4>Sans balle</h4>
-                  <div class="pitch-field oop-preview-field" id="match-tactics-oop-pitch-field"></div>
                 </div>
               </div>
             </div>
@@ -760,7 +725,7 @@
   <script src="matchengine-actions.js"></script>
   <script src="engine.js"></script>
   <script src="matchchoreo.js"></script>
-  <script src="app.js?v=20261028-drag"></script>
+  <script src="app.js?v=20261028-single"></script>
 </body>
 
 </html>

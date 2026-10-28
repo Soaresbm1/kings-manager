@@ -645,7 +645,7 @@ button.secondary.selected { border-color: var(--accent2); background: rgba(255,1
 #tactics-attack-plan-choice .option-card, #tactics-defense-plan-choice .option-card { text-align: left; padding: 9px 11px; }
 .tactics-control-panel .option-card:hover { background: #30362a; border-color: #9a956a; }
 .tactics-control-panel .option-card.selected { color: #f8e6a1; border-color: #c4ab50; background: #363421; box-shadow: inset 3px 0 #e7ca64; }
-#tactics-formation-choice .option-card.selected, #tactics-oop-formation-choice .option-card.selected { box-shadow: none; }
+#tactics-formation-choice .option-card.selected { box-shadow: none; }
 .tactic-plan-description { color: #aab4a7; font-size: 0.68rem; line-height: 1.65; min-height: 2.7em; }
 .tactics-control-panel .mentality-choices { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; }
 .tactics-control-panel .mentality-button { padding: 9px 3px; font-size: 0.61rem; border-radius: 6px; }
@@ -736,7 +736,6 @@ button.option-card { appearance: none; color: inherit; font-family: inherit; tex
 .phase-square .phase-label { font: 400 0.5rem "Poppins", sans-serif; color: inherit; }
 .phase-square .phase-position { font: 700 0.62rem "Rajdhani", sans-serif; white-space: nowrap; }
 .tactics-bench-list .phase-square.phase-in.filled { background: #48432a; border-color: #9b8b48; color: #f0dfa1; }
-.tactics-bench-list .phase-square.phase-out.filled { background: #293c3d; border-color: #617f80; color: #c5e1df; }
 .tactics-bench-list .position-picker { position: relative; top: auto; right: auto; flex: 0 0 100%; margin-top: 4px; width: 100%; max-width: 100%; }
 .tactics-bench-list .player-row:has(.position-picker) { flex-wrap: wrap; }
 .tactics-bench-list .position-picker-btn { padding: 7px; white-space: normal; }
