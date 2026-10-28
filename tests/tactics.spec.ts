@@ -99,12 +99,11 @@ test('le filtre permet de remplacer le gardien depuis le terrain sans ballon san
   expect(await rows.count()).toBeGreaterThan(7);
 });
 
-test('les terrains horizontaux gardent leurs lignes et leurs joueurs accessibles sur ordinateur et mobile', async ({ page }) => {
-  await page.setViewportSize({ width: 1920, height: 1080 });
-  await openTactics(page);
-  await page.locator('#tactics-view-mode-choice').getByRole('button', { name: /Comparer|Les deux/ }).click();
-  for (const size of [{ width: 1920, height: 1080 }, { width: 1280, height: 720 }, { width: 390, height: 844 }]) {
+for (const size of [{ width: 1920, height: 1080 }, { width: 1280, height: 720 }, { width: 390, height: 844 }]) {
+  test(`les terrains horizontaux gardent leurs lignes et leurs joueurs accessibles à ${size.width} × ${size.height}`, async ({ page }) => {
     await page.setViewportSize(size);
+    await openTactics(page);
+    await page.locator('#tactics-view-mode-choice').getByRole('button', { name: /Comparer|Les deux/ }).click();
     const geometry = await page.locator('#tab-tactics').evaluate(element => {
       const rect = element.getBoundingClientRect();
       return { left: rect.left, right: rect.right, pageWidth: document.documentElement.scrollWidth, viewportWidth: innerWidth };
@@ -150,12 +149,13 @@ test('les terrains horizontaux gardent leurs lignes et leurs joueurs accessibles
       for (const selector of ['.pitch-slot.pos-GK', '.pitch-slot.pos-ATT']) {
         const edgePlayer = page.locator(`#${pitchId} ${selector}`).last();
         await edgePlayer.scrollIntoViewIfNeeded();
+        await expect(edgePlayer).toBeInViewport({ ratio: 1 });
         const rect = await edgePlayer.boundingBox();
         expect(rect).not.toBeNull();
         expect(rect!.x).toBeGreaterThanOrEqual(-1);
         expect(rect!.x + rect!.width).toBeLessThanOrEqual(size.width + 1);
         expect(rect!.y).toBeGreaterThanOrEqual(-1);
-        expect(rect!.y + rect!.height).toBeLessThanOrEqual(size.height + 1);
+        expect(rect!.y + rect!.height, `${pitchId} ${selector} à ${size.width}px`).toBeLessThanOrEqual(size.height + 1);
       }
     }
 
@@ -171,5 +171,5 @@ test('les terrains horizontaux gardent leurs lignes et leurs joueurs accessibles
     await lastAssignment.click();
     await expect(page.locator('#active-position-picker')).toBeVisible();
     await page.keyboard.press('Escape');
-  }
-});
+  });
+}

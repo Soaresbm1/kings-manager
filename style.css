@@ -801,7 +801,7 @@ button.option-card { appearance: none; color: inherit; font-family: inherit; tex
   .tactics-autosave { font-size: 0.6rem; }
   .tactics-workspace { grid-template-columns: minmax(0, 1fr); gap: 12px; }
   .tactics-control-panel { grid-column: auto; order: 2; max-height: none; }
-  .tactics-workspace > .tactics-pitch-panel { order: 1; height: 640px; }
+  .tactics-workspace > .tactics-pitch-panel { order: 1; height: auto; }
   .tactics-workspace > .tactics-bench-panel { order: 3; height: 560px; }
   .tactics-controls-scroll { grid-template-columns: repeat(2, minmax(0, 1fr)); max-height: none; gap: 18px; overflow: visible; }
   .tactics-control-panel .option-card h4 { font-size: 0.68rem; }
@@ -811,9 +811,10 @@ button.option-card { appearance: none; color: inherit; font-family: inherit; tex
   .tactics-phase-tabs .option-card h4 { font-size: 0.61rem; }
   .tactics-board-heading { flex-direction: column; align-items: stretch; gap: 12px; }
   .tactics-board-heading .tactics-phase-tabs { flex: 0 0 auto; }
-  #tab-tactics .iop-wrap, #tab-tactics .oop-preview { width: 100%; align-items: flex-start; overflow-x: auto; }
+  #tab-tactics .iop-wrap, #tab-tactics .oop-preview { flex: 0 0 auto; width: 100%; align-items: flex-start; overflow-x: auto; overflow-y: hidden; }
   #tab-tactics .tactics-pitch-row .pitch-field { width: 600px; max-width: none; height: auto; aspect-ratio: 8 / 5; }
-  #tab-tactics .tactics-pitch-row.view-both { flex-direction: column; overflow-y: auto; gap: 20px; }
+  #tab-tactics .tactics-pitch-row.view-both { flex-direction: column; gap: 20px; }
+  #tab-tactics .tactics-pitch-row, #tab-tactics .tactics-pitch-row.view-both { flex: 0 0 auto; overflow: visible; container-type: inline-size; }
   #tab-tactics .tactics-pitch-row.view-both > div { flex: 0 0 auto; }
   .tactics-selection-hint { font-size: 0.66rem; }
 }
