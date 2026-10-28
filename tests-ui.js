@@ -154,6 +154,73 @@ test("un changement ponctuel en préparation n'écrase pas la tactique par défa
   assert.equal(run("STATE.savedTactic.mentality"), "cautious");
 });
 
+test("une ancienne tactique à deux plans conserve la composition principale avec un miroir indépendant", () => {
+  const { run } = createUI();
+  run(`
+    const primaryTactic = sanitizeTactic({formation:'1-3-2-1'});
+    const legacyTactic = {...primaryTactic,formationOOP:'1-2-3-1',
+      assignmentsOOP:[primaryTactic.assignments[0],...primaryTactic.assignments.slice(1).reverse()],viewMode:'out'};
+    const legacySnapshot = JSON.stringify(legacyTactic);
+    const migratedTactic = sanitizeTactic(legacyTactic);
+  `);
+  assert.equal(run("migratedTactic.formation"), "1-3-2-1");
+  assert.equal(run("migratedTactic.formationOOP"), "1-3-2-1");
+  assert.equal(run("JSON.stringify(migratedTactic.assignments)"), run("JSON.stringify(primaryTactic.assignments)"));
+  assert.equal(run("JSON.stringify(migratedTactic.assignmentsOOP)"), run("JSON.stringify(primaryTactic.assignments)"));
+  assert.equal(run("migratedTactic.viewMode"), "in");
+  assert.equal(run("migratedTactic.assignmentsOOP === migratedTactic.assignments"), false);
+  assert.equal(run("JSON.stringify(legacyTactic)"), run("legacySnapshot"));
+  run("migratedTactic.assignmentsOOP[1] = null;");
+  assert.equal(run("migratedTactic.assignments[1]"), run("primaryTactic.assignments[1]"));
+});
+
+test("la composition ponctuelle du match reste synchronisée sans enregistrer la tactique de carrière", () => {
+  const { run } = createUI();
+  run(`
+    STATE.savedTactic = {mentality:'cautious',formation:'1-2-2-2'};
+    const savedTacticSnapshot = JSON.stringify(STATE.savedTactic);
+    const matchTactic = sanitizeTactic({formation:'1-2-3-1'});
+    matchTactic.persist = false;
+    matchTactic.assignments[2] = null;
+    matchTactic.formationOOP = '1-3-2-1';
+    matchTactic.assignmentsOOP.reverse();
+    matchTactic.viewMode = 'both';
+    let tacticSaveCalls = 0;
+    saveGame = () => tacticSaveCalls++;
+    saveTactic(matchTactic);
+  `);
+  assert.equal(run("matchTactic.formationOOP"), run("matchTactic.formation"));
+  assert.equal(run("JSON.stringify(matchTactic.assignmentsOOP)"), run("JSON.stringify(matchTactic.assignments)"));
+  assert.equal(run("matchTactic.assignmentsOOP === matchTactic.assignments"), false);
+  assert.equal(run("matchTactic.viewMode"), "in");
+  assert.equal(run("JSON.stringify(STATE.savedTactic)"), run("savedTacticSnapshot"));
+  assert.equal(run("tacticSaveCalls"), 0);
+});
+
+test("la tactique enregistrée contient une seule composition et des copies de ses deux tableaux", () => {
+  const { run } = createUI();
+  run(`
+    const persistentTactic = sanitizeTactic({formation:'1-3-2-1'});
+    persistentTactic.persist = true;
+    [persistentTactic.assignments[1],persistentTactic.assignments[2]] = [persistentTactic.assignments[2],persistentTactic.assignments[1]];
+    persistentTactic.formationOOP = '1-2-3-1';
+    persistentTactic.assignmentsOOP.fill(null);
+    persistentTactic.viewMode = 'out';
+    let tacticSaveCalls = 0;
+    saveGame = () => tacticSaveCalls++;
+    saveTactic(persistentTactic);
+    const committedTacticSnapshot = JSON.stringify(STATE.savedTactic);
+  `);
+  assert.equal(run("STATE.savedTactic.formationOOP"), run("persistentTactic.formation"));
+  assert.equal(run("JSON.stringify(STATE.savedTactic.assignments)"), run("JSON.stringify(persistentTactic.assignments)"));
+  assert.equal(run("JSON.stringify(STATE.savedTactic.assignmentsOOP)"), run("JSON.stringify(persistentTactic.assignments)"));
+  assert.equal(run("STATE.savedTactic.viewMode"), "in");
+  assert.equal(run("STATE.savedTactic.assignments === STATE.savedTactic.assignmentsOOP"), false);
+  assert.equal(run("tacticSaveCalls"), 1);
+  run("persistentTactic.assignments[1] = null; persistentTactic.assignmentsOOP[2] = null;");
+  assert.equal(run("JSON.stringify(STATE.savedTactic)"), run("committedTacticSnapshot"));
+});
+
 test("les trois consignes restent sélectionnables sans dupliquer les commandes", () => {
   const { run, elements } = createUI();
   run("tacticsSetup = sanitizeTactic({mentality:'cautious'}); renderMentalityChoices(tacticsSetup,'test-choices'); renderMentalityChoices(tacticsSetup,'test-choices');");

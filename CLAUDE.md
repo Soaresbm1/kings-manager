@@ -184,16 +184,16 @@ mode de débogage visuel (touche **D** pendant un match, voir `app.js:PITCH_DEBU
 
 - **Tableau tactique** : consignes, terrain horizontal et effectif filtrable dans trois panneaux.
   Le gardien est à gauche, l'attaque à droite ; seule la projection d'affichage change.
-  La comparaison empile les deux terrains et le mobile permet de les faire défiler horizontalement.
-  Le glisser-déposer de l'onglet Tactique échange les joueurs par identité dans les deux
-  phases, y compris avec deux formations différentes ; un remplaçant prend la place du
-  titulaire dans les deux plans. `planTacticDrop` valide les deux dispositions avant
-  toute mutation (gardien uniquement au but). Souris, appui tactile prolongé et sélection
-  successive de deux cartes au clavier partagent cette opération ; annulation par Échap
-  ou dépôt hors poste sans effet. Les cartes seules capturent le geste tactile.
-  Les terrains avec/sans ballon sont éditables au clavier ; `selectedPhase` dirige le choix
-  d'un joueur, et `syncStartersAcrossPhases` conserve les mêmes titulaires. Les portraits
-  réutilisent l'identité officielle. Filtres et sélection restent transitoires, sans migration.
+  Une seule composition et un seul bouton de poste par joueur servent dans l'onglet,
+  en préparation et pendant le match. `sanitizeTactic` reprend la composition principale
+  des anciennes carrières ; `syncSingleComposition` maintient `formationOOP` et
+  `assignmentsOOP` comme miroirs exacts pour le moteur, même avec `persist:false`.
+  Le glisser-déposer de l'onglet Tactique échange les joueurs ou aligne un remplaçant.
+  `planTacticDrop` valide l'opération avant toute mutation (gardien uniquement au but).
+  Souris, appui tactile prolongé et sélection de deux cartes au clavier sont disponibles ;
+  Échap ou un dépôt hors poste annule le geste. Les cartes seules capturent le tactile,
+  avec défilement au bord ; le terrain défile horizontalement sur mobile. Les portraits
+  réutilisent l'identité officielle. Filtres et sélection restent transitoires.
 - **5 ligues en arrière-plan** (`STATE.otherLeagues`) : IA vs IA en parallèle de la ligue du
   joueur, `buildOtherLeagues`/`advanceOtherLeagues`/`finalizeOtherLeagues`.
 - **Stats saison vs carrière** par joueur (`goals`/`careerGoals`, etc.) — saison remise à

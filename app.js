@@ -2586,28 +2586,25 @@ function sanitizeTactic(tactic) {
   const slots = FORMATION_SLOTS[formation];
   const assignments = sanitizeAssignments(team, slots, tactic && tactic.assignments);
 
-  const formationOOP = (tactic && FORMATION_SLOTS[tactic.formationOOP]) ? tactic.formationOOP : formation;
-  const oopSlots = FORMATION_SLOTS[formationOOP];
-  // par défaut, la disposition "sans balle" reprend les mêmes titulaires que "avec balle" ;
-  // si elle a déjà été personnalisée (postes choisis via les carrés de l'effectif), on la conserve.
-  const assignmentsOOP = (tactic && Array.isArray(tactic.assignmentsOOP))
-    ? sanitizeAssignments(team, oopSlots, tactic.assignmentsOOP)
-    : remapAssignmentsTo(team, formation, assignments, formationOOP);
-
   return {
     formation,
     assignments,
     attackPlan: (tactic && ATTACK_PLANS[tactic.attackPlan]) ? tactic.attackPlan : "possession",
     defensePlan: (tactic && DEFENSE_PLANS[tactic.defensePlan]) ? tactic.defensePlan : "zone",
     mentality: normalizeMentality(tactic && tactic.mentality),
-    formationOOP,
-    assignmentsOOP,
-    // Vue du plateau tactique : "in" (avec balle), "out" (sans balle) ou "both" (les deux)
-    viewMode: (tactic && VIEW_MODES.includes(tactic.viewMode)) ? tactic.viewMode : "in"
+    // Les anciens plans défensifs deviennent le miroir de la composition principale.
+    formationOOP: formation,
+    assignmentsOOP: [...assignments],
+    viewMode: "in"
   };
 }
 
-const VIEW_MODES = ["in", "out", "both"];
+function syncSingleComposition(setup) {
+  setup.formationOOP = setup.formation;
+  setup.assignmentsOOP = [...setup.assignments];
+  setup.viewMode = "in";
+  setup.selectedPhase = "in";
+}
 
 function getSavedTacticOrDefault() {
   return sanitizeTactic(STATE.savedTactic);
@@ -2618,6 +2615,7 @@ function getSavedTacticOrDefault() {
 // changements faits en préparation d'avant-match ou en plein match (lineupSetup) ne valent
 // que pour le match en cours et ne doivent jamais écraser la tactique sauvegardée.
 function saveTactic(setup) {
+  syncSingleComposition(setup);
   if (!setup.persist) return;
   STATE.savedTactic = {
     formation: setup.formation,
@@ -2633,6 +2631,7 @@ function saveTactic(setup) {
 }
 
 function renderFormationChoice(setup, ids) {
+  syncSingleComposition(setup);
   const container = document.getElementById(ids.formation);
   container.innerHTML = "";
   Object.entries(FORMATIONS).forEach(([key, f]) => {
@@ -2646,13 +2645,12 @@ function renderFormationChoice(setup, ids) {
       if (setup.formation === key) return;
       setup.assignments = remapAssignments(setup, key);
       setup.formation = key;
-      syncStartersAcrossPhases(setup, "in");
+      syncSingleComposition(setup);
       setup.selectedSlot = null;
       setup.selectedPhase = "in";
       renderFormationChoice(setup, ids);
       renderPitch(setup, ids);
       renderBench(setup, ids);
-      renderOOPSection(setup, ids);
       if (ids.count) updateLineupCount(setup, ids);
       saveTactic(setup);
       container.querySelector('[aria-pressed="true"]').focus();
@@ -2702,8 +2700,7 @@ function buildTacticSlot(setup, ids, slot, index, phase, player) {
   // de formation restent intactes pour les rôles, les sauvegardes et le moteur.
   button.style.left = (ids === TACTICS_IDS ? 100 - slot.y : slot.x) + "%";
   button.style.top = (ids === TACTICS_IDS ? slot.x : slot.y) + "%";
-  const phaseLabel = phase === "out" ? "Sans ballon" : "Avec ballon";
-  button.setAttribute("aria-label", `${phaseLabel} : ${slotRoleLabel(slot)}, ${player ? player.name : "Emplacement vide"}`);
+  button.setAttribute("aria-label", `${slotRoleLabel(slot)}, ${player ? player.name : "Emplacement vide"}`);
   button.setAttribute("aria-pressed", String(selected));
   button.title = `${slotRoleLabel(slot)} — ${player ? player.name : "Choisir un joueur"}`;
   const warning = player && player.pos !== slot.pos
@@ -2726,12 +2723,12 @@ function renderTacticSelectionHint(setup, ids) {
   const hint = document.getElementById("tactics-selection-hint");
   if (!hint) return;
   if (setup.selectedSlot == null) {
-    hint.textContent = "Glisse un joueur sur un autre poste : les deux phases suivent. Sur écran tactile, maintiens la carte. Au clavier, sélectionne deux cartes.";
+    hint.textContent = "Glisse un joueur sur un poste pour modifier ta composition. Sur écran tactile, maintiens la carte. Au clavier, sélectionne deux cartes.";
   } else {
     const phase = setup.selectedPhase || "in";
     const formation = phase === "out" ? setup.formationOOP : setup.formation;
     const slot = FORMATION_SLOTS[formation][setup.selectedSlot];
-    hint.textContent = `${slotRoleLabel(slot)} · ${phase === "out" ? "sans ballon" : "avec ballon"} : sélectionne une autre carte pour échanger, ou un joueur de l’effectif.`;
+    hint.textContent = `${slotRoleLabel(slot)} : sélectionne une autre carte pour échanger, ou un joueur de l’effectif.`;
   }
 }
 
@@ -2751,8 +2748,7 @@ function renderPitch(setup, ids) {
   renderTacticSelectionHint(setup, ids);
 }
 
-// Affiche le banc / effectif complet. Chaque joueur a deux carrés cliquables : un pour choisir
-// son poste "avec balle" et un pour son poste "sans balle" (indépendants l'un de l'autre).
+// Affiche l'effectif avec un seul bouton de poste par joueur.
 function renderBench(setup, ids) {
   const team = getUserTeam();
   const container = document.getElementById(ids.bench);
@@ -2760,8 +2756,8 @@ function renderBench(setup, ids) {
   container.innerHTML = "";
 
   if (ids === TACTICS_IDS) renderTacticBenchFilters(setup, ids);
-  const phase = setup.selectedSlot != null ? (setup.selectedPhase || "in") : (setup.viewMode === "out" ? "out" : "in");
-  const selectedFormation = phase === "out" ? setup.formationOOP : setup.formation;
+  const phase = "in";
+  const selectedFormation = setup.formation;
   const selectedPosition = setup.selectedSlot != null ? FORMATION_SLOTS[selectedFormation][setup.selectedSlot].pos : null;
 
   const sorted = [...team.players].sort((a, b) => POS_ORDER[a.pos] - POS_ORDER[b.pos] || b.overall - a.overall);
@@ -2769,9 +2765,7 @@ function renderBench(setup, ids) {
     if (ids === TACTICS_IDS && setup.benchFilter && setup.benchFilter !== "all" && setup.benchFilter !== p.pos) return;
     const isStarter = setup.assignments.includes(p.id);
     const inIdx = setup.assignments.indexOf(p.id);
-    const outIdx = setup.assignmentsOOP.indexOf(p.id);
     const inTag = inIdx >= 0 ? slotShortTag(FORMATION_SLOTS[setup.formation][inIdx]) : "–";
-    const outTag = outIdx >= 0 ? slotShortTag(FORMATION_SLOTS[setup.formationOOP][outIdx]) : "–";
 
     // un joueur blessé ne peut pas être ajouté à la composition (mais reste retirable normalement
     // s'il y était déjà — cas rare où il se blesse en cours de saison alors qu'il était titulaire
@@ -2796,8 +2790,7 @@ function renderBench(setup, ids) {
       <span class="stats">Vit ${p.speed} · Tec ${p.technique} · Phy ${p.physical} · Men ${p.mental} <span class="player-form">Forme ${p.form}</span></span></span></button>
       <div class="player-row-right">
         <div class="player-phase-squares">
-          <button type="button" class="phase-square phase-in${inIdx >= 0 ? " filled" : ""}" aria-label="Poste avec ballon de ${tacticText(p.name)} : ${inTag}" title="Choisir le poste avec ballon"${blocked ? " disabled" : ""}><span class="phase-label">Avec</span><span class="phase-position">${inTag}</span></button>
-          <button type="button" class="phase-square phase-out${outIdx >= 0 ? " filled" : ""}" aria-label="Poste sans ballon de ${tacticText(p.name)} : ${outTag}" title="Choisir le poste sans ballon"${blocked ? " disabled" : ""}><span class="phase-label">Sans</span><span class="phase-position">${outTag}</span></button>
+          <button type="button" class="phase-square phase-in${inIdx >= 0 ? " filled" : ""}" aria-label="Poste de ${tacticText(p.name)} : ${inTag}" title="Modifier le poste"${blocked ? " disabled" : ""}><span class="phase-label">Poste</span><span class="phase-position">${inTag}</span></button>
         </div>
       </div>`;
     if (blocked) {
@@ -2806,10 +2799,6 @@ function renderBench(setup, ids) {
       row.querySelector(".phase-in").onclick = (e) => {
         e.stopPropagation();
         showPositionPicker(setup, ids, p, row, "in");
-      };
-      row.querySelector(".phase-out").onclick = (e) => {
-        e.stopPropagation();
-        showPositionPicker(setup, ids, p, row, "out");
       };
       const main = row.querySelector(".tactic-player-main");
       main.onclick = event => { if (!consumeTacticDragClick(event)) handlePlayerClick(setup, ids, p, row); };
@@ -2844,9 +2833,7 @@ function renderTacticBenchFilters(setup, ids) {
   });
 }
 
-// Affiche un sélecteur de postes cliquable (GK, DEF (D), DEF (G), ...) pour le poste "avec
-// balle" (phase "in") ou "sans balle" (phase "out") d'un joueur, qu'ils soient libres ou déjà
-// occupés par un autre titulaire (échange si les postes sont compatibles, sinon remplacement).
+// Choix du poste d'un joueur : échange, remplacement ou retour sur le banc.
 function closePositionPicker() {
   const existing = document.getElementById("active-position-picker");
   if (existing) existing.remove();
@@ -2868,11 +2855,11 @@ function showPositionPicker(setup, ids, player, rowEl, phase) {
   picker.id = "active-position-picker";
   picker.className = "position-picker";
   picker.setAttribute("role", "group");
-  picker.setAttribute("aria-label", `Poste ${phase === "out" ? "sans" : "avec"} ballon de ${player.name}`);
+  picker.setAttribute("aria-label", `Poste de ${player.name}`);
   picker.onkeydown = event => {
     if (event.key === "Escape") {
       closePositionPicker();
-      rowEl.querySelector(phase === "out" ? ".phase-out" : ".phase-in").focus();
+      rowEl.querySelector(".phase-in").focus();
     }
   };
 
@@ -2895,7 +2882,7 @@ function showPositionPicker(setup, ids, player, rowEl, phase) {
       setup.selectedSlot = null;
       closePositionPicker();
       applyAssignmentChange(setup, ids, phase);
-      focusTacticPlayerControl(ids, player.id, phase === "out" ? ".phase-out" : ".phase-in");
+      focusTacticPlayerControl(ids, player.id, ".phase-in");
     };
     picker.appendChild(btn);
   });
@@ -2911,7 +2898,7 @@ function showPositionPicker(setup, ids, player, rowEl, phase) {
       setup.selectedSlot = null;
       closePositionPicker();
       applyAssignmentChange(setup, ids, phase);
-      focusTacticPlayerControl(ids, player.id, phase === "out" ? ".phase-out" : ".phase-in");
+      focusTacticPlayerControl(ids, player.id, ".phase-in");
     };
     picker.appendChild(removeBtn);
   }
@@ -2953,10 +2940,9 @@ function syncStartersAcrossPhases(setup, changedPhase) {
 }
 
 function applyAssignmentChange(setup, ids, changedPhase) {
-  syncStartersAcrossPhases(setup, changedPhase || "in");
+  syncSingleComposition(setup);
   renderPitch(setup, ids);
   renderBench(setup, ids);
-  renderOOPSection(setup, ids);
   if (ids.count) updateLineupCount(setup, ids);
   saveTactic(setup);
 }
@@ -3030,10 +3016,10 @@ function moveTacticPlayer(setup, ids, playerId, index, phase) {
   setup.selectedSlot = null;
   closePositionPicker();
   applyAssignmentChange(setup, ids, phase);
-  const pitch = document.getElementById(phase === "out" ? ids.oopPitch : ids.pitch);
+  const pitch = document.getElementById(ids.pitch);
   pitch.querySelector(`[data-slot-index="${index}"]`)?.focus({ preventScroll: true });
   const hint = document.getElementById("tactics-selection-hint");
-  if (hint) hint.textContent = "Placement mis à jour avec et sans ballon. Tactique enregistrée.";
+  if (hint) hint.textContent = "Composition mise à jour. Tactique enregistrée.";
   return true;
 }
 
@@ -3076,7 +3062,7 @@ function bindTacticDrag(source, setup, ids, playerId) {
     if (tacticDrag) tacticDrag.cancel();
     const startX = event.clientX, startY = event.clientY;
     const rect = source.getBoundingClientRect();
-    const targets = Array.from(document.querySelectorAll(`#${ids.pitch} .pitch-slot, #${ids.oopPitch} .pitch-slot`));
+    const targets = Array.from(document.querySelectorAll(`#${ids.pitch} .pitch-slot`));
     let active = false, ghost = null, target = null, timer = null, finished = false, scrollFrame = null;
     let pointerX = startX, pointerY = startY;
     const planFor = element => planTacticDrop(setup, playerId, Number(element.dataset.slotIndex), element.dataset.phase);
@@ -3177,94 +3163,9 @@ function selectSlot(setup, ids, i, phase = "in") {
   setup.benchFilter = "all";
   closePositionPicker();
   renderPitch(setup, ids);
-  renderOOPSection(setup, ids);
   renderBench(setup, ids);
-  const pitch = document.getElementById(phase === "out" ? ids.oopPitch : ids.pitch);
+  const pitch = document.getElementById(ids.pitch);
   pitch.querySelector(`[data-slot-index="${i}"]`).focus();
-}
-
-// Affiche le plateau tactique selon la vue choisie : "avec ballon", "sans ballon" ou "les deux"
-// en même temps. Chaque joueur a un poste indépendant pour chaque phase (choisi via les carrés
-// de l'effectif dans renderBench) ; par défaut la disposition "sans balle" reprend les mêmes
-// titulaires que "avec balle", mais peut être personnalisée librement.
-const VIEW_MODE_LABELS = { in: "Avec ballon", out: "Sans ballon", both: "Comparer" };
-
-function renderOOPSection(setup, ids) {
-  if (!ids.viewMode) return;
-  const pitchEl = document.getElementById(ids.pitch);
-  const iopWrap = pitchEl.closest(".iop-wrap");
-  const pitchRow = pitchEl.closest(".tactics-pitch-row");
-  const panel = document.getElementById(ids.oopPanel);
-  const formationWrap = document.getElementById(ids.oopFormationWrap);
-  const formationContainer = document.getElementById(ids.oopFormation);
-  const viewModeContainer = document.getElementById(ids.viewMode);
-
-  viewModeContainer.innerHTML = "";
-  VIEW_MODES.forEach(mode => {
-    const div = document.createElement("button");
-    div.type = "button";
-    div.className = "option-card" + (setup.viewMode === mode ? " selected" : "");
-    div.setAttribute("aria-pressed", String(setup.viewMode === mode));
-    div.innerHTML = `<h4>${VIEW_MODE_LABELS[mode]}</h4>`;
-    div.onclick = () => {
-      setup.viewMode = mode;
-      setup.selectedSlot = null;
-      closePositionPicker();
-      saveTactic(setup);
-      renderPitch(setup, ids);
-      renderOOPSection(setup, ids);
-      renderBench(setup, ids);
-      viewModeContainer.querySelector('[aria-pressed="true"]').focus();
-    };
-    viewModeContainer.appendChild(div);
-  });
-
-  const showIn = setup.viewMode !== "out";
-  const showOut = setup.viewMode !== "in";
-  if (iopWrap) iopWrap.style.display = showIn ? "" : "none";
-  panel.style.display = showOut ? "flex" : "none";
-  formationWrap.style.display = showOut ? "flex" : "none";
-  if (pitchRow) {
-    pitchRow.classList.toggle("oop-only", showOut && !showIn);
-    pitchRow.classList.toggle("view-both", showIn && showOut);
-  }
-
-  if (!showOut) return;
-
-  const oopFormation = (setup.formationOOP && FORMATION_SLOTS[setup.formationOOP]) ? setup.formationOOP : setup.formation;
-  formationContainer.innerHTML = "";
-  Object.entries(FORMATIONS).forEach(([key, f]) => {
-    const div = document.createElement("button");
-    div.type = "button";
-    div.className = "option-card" + (oopFormation === key ? " selected" : "");
-    div.setAttribute("aria-pressed", String(oopFormation === key));
-    div.innerHTML = `<h4>${f.name}</h4>`;
-    div.onclick = () => {
-      if (setup.formationOOP === key) return;
-      setup.assignmentsOOP = remapAssignmentsTo(getUserTeam(), setup.formationOOP, setup.assignmentsOOP, key);
-      setup.formationOOP = key;
-      syncStartersAcrossPhases(setup, "out");
-      setup.selectedSlot = null;
-      saveTactic(setup);
-      renderBench(setup, ids);
-      renderPitch(setup, ids);
-      renderOOPSection(setup, ids);
-      formationContainer.querySelector('[aria-pressed="true"]').focus();
-    };
-    formationContainer.appendChild(div);
-  });
-
-  // aperçu : reflète les postes "sans balle" choisis pour chaque joueur (carrés de l'effectif)
-  const team = getUserTeam();
-  const slots = FORMATION_SLOTS[oopFormation];
-  const oopAssignments = setup.assignmentsOOP;
-  const oopPitchEl = document.getElementById(ids.oopPitch);
-  renderTacticPitchLines(oopPitchEl);
-  slots.forEach((slot, i) => {
-    const playerId = oopAssignments[i];
-    const player = playerId ? team.players.find(p => p.id === playerId) : null;
-    oopPitchEl.appendChild(buildTacticSlot(setup, ids, slot, i, "out", player));
-  });
 }
 
 // Gère le clic sur un joueur du banc/effectif : assignation, échange ou retrait
@@ -3418,8 +3319,8 @@ function renderMentalityChoices(setup, containerId) {
 }
 
 // IDs des éléments DOM pour chaque écran utilisant le plateau tactique
-const LINEUP_IDS = { formation: "formation-choice", pitch: "pitch-field", bench: "bench-list", attack: "attack-plan-choice", defense: "defense-plan-choice", mentality: "mentality-choice", count: "lineup-count", viewMode: "lineup-view-mode-choice", oopFormation: "lineup-oop-formation-choice", oopFormationWrap: "lineup-oop-formation-wrap", oopPanel: "lineup-oop-panel", oopPitch: "lineup-oop-pitch-field" };
-const TACTICS_IDS = { formation: "tactics-formation-choice", pitch: "tactics-pitch-field", bench: "tactics-bench-list", attack: "tactics-attack-plan-choice", defense: "tactics-defense-plan-choice", mentality: "tactics-mentality-choice", viewMode: "tactics-view-mode-choice", oopFormation: "tactics-oop-formation-choice", oopFormationWrap: "tactics-oop-formation-wrap", oopPanel: "tactics-oop-panel", oopPitch: "tactics-oop-pitch-field" };
+const LINEUP_IDS = { formation: "formation-choice", pitch: "pitch-field", bench: "bench-list", attack: "attack-plan-choice", defense: "defense-plan-choice", mentality: "mentality-choice", count: "lineup-count" };
+const TACTICS_IDS = { formation: "tactics-formation-choice", pitch: "tactics-pitch-field", bench: "tactics-bench-list", attack: "tactics-attack-plan-choice", defense: "tactics-defense-plan-choice", mentality: "tactics-mentality-choice" };
 
 // ===================== SÉLECTION DU XI (avant match) =====================
 function openLineupScreen() {
@@ -3444,7 +3345,6 @@ function openLineupScreen() {
   renderFormationChoice(lineupSetup, LINEUP_IDS);
   renderPitch(lineupSetup, LINEUP_IDS);
   renderBench(lineupSetup, LINEUP_IDS);
-  renderOOPSection(lineupSetup, LINEUP_IDS);
   renderPlanChoices(lineupSetup, LINEUP_IDS);
   updateLineupCount(lineupSetup, LINEUP_IDS);
   renderSecretCardChoice(lineupSetup);
@@ -3477,7 +3377,6 @@ function openTournamentLineupScreen(match) {
   renderFormationChoice(lineupSetup, LINEUP_IDS);
   renderPitch(lineupSetup, LINEUP_IDS);
   renderBench(lineupSetup, LINEUP_IDS);
-  renderOOPSection(lineupSetup, LINEUP_IDS);
   renderPlanChoices(lineupSetup, LINEUP_IDS);
   updateLineupCount(lineupSetup, LINEUP_IDS);
   renderSecretCardChoice(lineupSetup);
@@ -3524,7 +3423,6 @@ function renderTacticsTab() {
   renderFormationChoice(tacticsSetup, TACTICS_IDS);
   renderPitch(tacticsSetup, TACTICS_IDS);
   renderBench(tacticsSetup, TACTICS_IDS);
-  renderOOPSection(tacticsSetup, TACTICS_IDS);
   renderPlanChoices(tacticsSetup, TACTICS_IDS);
   renderPositionOverview();
 }
@@ -3554,7 +3452,7 @@ const SHOOTOUT_TICK_MS = 1300;
 // Au-delà du temps réglementaire, le Matchball joue en prolongation jusqu'au but décisif :
 // ce plafond n'est qu'un garde-fou pour éviter une boucle infinie en cas de scénario extrême.
 const MAX_MATCH_MINUTE = 200;
-const MATCH_TACTICS_IDS = { formation: "match-formation-choice", pitch: "match-tactics-pitch-field", bench: "match-tactics-bench-list", attack: "match-attack-plan-choice", defense: "match-defense-plan-choice", mentality: "match-mentality-choice", viewMode: "match-tactics-view-mode-choice", oopFormation: "match-tactics-oop-formation-choice", oopFormationWrap: "match-tactics-oop-formation-wrap", oopPanel: "match-tactics-oop-panel", oopPitch: "match-tactics-oop-pitch-field" };
+const MATCH_TACTICS_IDS = { formation: "match-formation-choice", pitch: "match-tactics-pitch-field", bench: "match-tactics-bench-list", attack: "match-attack-plan-choice", defense: "match-defense-plan-choice", mentality: "match-mentality-choice" };
 
 let matchEngine = null;
 let matchState = null;
@@ -4723,7 +4621,6 @@ function openMatchTactics() {
   renderFormationChoice(lineupSetup, MATCH_TACTICS_IDS);
   renderPitch(lineupSetup, MATCH_TACTICS_IDS);
   renderBench(lineupSetup, MATCH_TACTICS_IDS);
-  renderOOPSection(lineupSetup, MATCH_TACTICS_IDS);
   renderPlanChoices(lineupSetup, MATCH_TACTICS_IDS);
 
   document.getElementById("match-tactics-modal").classList.add("active");
