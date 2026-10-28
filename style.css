@@ -745,6 +745,43 @@ button.option-card { appearance: none; color: inherit; font-family: inherit; tex
 .tactics-pitch-panel button:focus-visible, .tactics-bench-list button:focus-visible,
 .tactics-toolbar button:focus-visible { outline: 2px solid #fff0b6; outline-offset: 3px; }
 
+/* Glisser-déposer : les cartes restent en place pendant que leur copie suit le pointeur.
+   Seules les cartes capturent le geste tactile ; le fond du terrain reste défilable. */
+#tab-tactics .pitch-slot.filled,
+#tab-tactics .tactic-player-main:not(:disabled) {
+  cursor: grab; touch-action: none;
+  user-select: none; -webkit-user-select: none; -webkit-touch-callout: none;
+}
+.pitch-slot.tactic-drag-source, .tactic-player-main.tactic-drag-source { opacity: 0.38; }
+.pitch-slot.tactic-drag-source { border-style: dashed; }
+.pitch-slot.tactic-drop-valid {
+  border-color: #8ebd8b; box-shadow: 0 0 0 1px #8ebd8b45;
+  transition: border-color 0.12s ease, box-shadow 0.12s ease, background-color 0.12s ease;
+}
+.pitch-slot.tactic-drop-target {
+  border-color: #ffe38a; background-color: #3a482bf2;
+  box-shadow: 0 0 0 3px #e3ce7170, 0 5px 16px #09140d66;
+}
+.pitch-slot.tactic-drop-invalid {
+  border-color: #ee9a91; box-shadow: 0 0 0 2px #e58a8059;
+}
+body.tactic-is-dragging, body.tactic-is-dragging * {
+  cursor: grabbing !important; user-select: none !important; -webkit-user-select: none !important;
+}
+body.tactic-is-dragging .pitch-slot.tactic-drop-invalid { cursor: not-allowed !important; }
+.tactic-drag-ghost {
+  position: fixed !important; z-index: 10000 !important; right: auto !important; bottom: auto !important;
+  margin: 0 !important; max-width: none; pointer-events: none !important;
+  transform: none !important; transition: none !important; animation: none !important;
+  opacity: 0.94 !important; box-shadow: 0 12px 28px #050b08a6, 0 0 0 2px #f0d775b3;
+}
+.tactic-drag-ghost.tactic-player-main {
+  flex: none; background: #252b24; border: 1px solid #a99d65; border-radius: 7px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .pitch-slot.tactic-drop-valid, .pitch-slot.tactic-drop-target, .pitch-slot.tactic-drop-invalid { transition: none; }
+}
+
 @media (max-width: 1400px) {
   .tactics-workspace { grid-template-columns: 220px minmax(0, 1fr) 320px; gap: 10px; }
   .tactics-workspace > .panel { padding: 12px; }
