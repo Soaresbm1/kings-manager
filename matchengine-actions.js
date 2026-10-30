@@ -46,6 +46,72 @@ function anchorToY(depth, side) {
 }
 function gkAnchorY(side) { return side === "home" ? 5 : 95; }
 
+// Les rôles changent les intentions, jamais les notes de technique ou les chances
+// de marquer un tir déjà donné. Sans consigne (anciens appels), le réglage reste neutre.
+const ROLE_ACTION_WEIGHTS = {
+  keeper: { short: 1.2 },
+  stay_back: { short: 1.35, progressive: 1.1, carry: 0.65, dribble: 0.6, shot: 0.4 },
+  overlap: { cross: 1.5, carry: 1.3, through: 1.1, short: 0.9 },
+  creator: { short: 1.3, progressive: 1.35, through: 1.4, shot: 0.65, dribble: 0.85 },
+  ball_winner: { short: 1.25, clear: 1.15, carry: 0.8, dribble: 0.7, shot: 0.6 },
+  box_to_box: { carry: 1.2, progressive: 1.1 },
+  runner: { carry: 1.3, dribble: 1.25, shot: 1.1, short: 0.85 },
+  target: { short: 1.4, carry: 0.65, dribble: 0.7, shot: 0.9 },
+  poacher: { shot: 1.5, carry: 0.75, dribble: 0.8, short: 0.7 }
+};
+
+function actionSlotPosition(setup, playerId, fallback) {
+  const slots = typeof FORMATION_SLOTS !== "undefined" && setup && FORMATION_SLOTS[setup.formation];
+  const index = setup && Array.isArray(setup.assignments) ? setup.assignments.indexOf(playerId) : -1;
+  return slots && slots[index] ? slots[index].pos : fallback || "MID";
+}
+
+function actionRoleKey(setup, playerId, slotPos) {
+  if (!setup || !setup.playerRoles) return null;
+  const key = typeof getPlayerRole === "function" ? getPlayerRole(setup, playerId, slotPos).key : setup.playerRoles[playerId];
+  return Object.prototype.hasOwnProperty.call(ROLE_ACTION_WEIGHTS, key) ? key : null;
+}
+
+function actionTeamStyle(setup) {
+  const style = typeof TEAM_STYLES !== "undefined" && setup
+    && Object.prototype.hasOwnProperty.call(TEAM_STYLES, setup.teamStyle) && TEAM_STYLES[setup.teamStyle];
+  return style || { key: "neutral", width: 1, depth: 1, pressing: 1, tempo: 1 };
+}
+
+function roleAnchorAdjustment(roleKey, attacking, x) {
+  const outward = x < 50 ? -1 : x > 50 ? 1 : 0;
+  if (!attacking) return { x: roleKey === "ball_winner" ? -outward * 2 : 0,
+    depth: roleKey === "stay_back" ? -2 : roleKey === "runner" || roleKey === "poacher" ? 2 : 0 };
+  const depth = { stay_back: -5, overlap: 5, creator: -2, ball_winner: -4, box_to_box: 1, runner: 5, target: -6, poacher: 4 };
+  return { x: roleKey === "overlap" ? outward * 4 : roleKey === "poacher" || roleKey === "target" ? -outward * 3 : 0,
+    depth: depth[roleKey] || 0 };
+}
+
+// Cible commune du moteur et du repli d'animation des anciens beats. La position
+// réellement atteinte est ensuite bornée par la vitesse et la durée de l'action.
+function tacticalOffBallTarget(base, ball, side, attacking, roleKey, style, mentality) {
+  const dir = side === "home" ? 1 : -1;
+  const wide = base.x < 50 ? -1 : base.x > 50 ? 1 : 0;
+  let pull = attacking ? 0.22 : 0.38;
+  if (roleKey === "overlap" && attacking) pull *= 0.55;
+  if (roleKey === "creator" && attacking) pull *= 1.4;
+  if (roleKey === "ball_winner" && !attacking) pull *= 1.35;
+  if (roleKey === "stay_back" && !attacking) pull *= 0.75;
+  if (style && style.key === "wide" && attacking) pull *= 0.7;
+  let lateral = clamp((ball.x - base.x) * pull, -14, 14);
+  let depth = attacking ? (ball.y - 50) * 0.18 : (ball.y - base.y) * 0.12;
+  if (attacking) {
+    if (roleKey === "stay_back" || roleKey === "ball_winner") depth = Math.min(depth * dir, 1) * dir;
+    else if (roleKey === "overlap") { depth += dir * 3; lateral += wide * 2; }
+    else if (roleKey === "creator") depth = clamp((ball.y - base.y) * 0.12, -5, 5) - dir * 2;
+    else if (roleKey === "runner") depth = Math.max(depth * dir, 3) * dir + dir * 2;
+    else if (roleKey === "target") depth = Math.min(depth * dir, 1) * dir - dir * 3;
+    else if (roleKey === "poacher") { depth += dir * 2; lateral -= wide * 2; }
+  } else if (roleKey === "stay_back") depth -= dir * 2;
+  const intent = mentality === "attacking" ? 4 : mentality === "cautious" ? -4 : 0;
+  return { x: clamp(base.x + lateral, 3, 97), y: clamp(base.y + depth + intent * dir, 3, 97) };
+}
+
 // Ancre x/y de chaque joueur de champ actif d'un côté donné, pour une minute du match : en
 // formation complète (7v7), reprend directement FORMATION_SLOTS (data.js) + setup.assignments —
 // la tactique choisie par le joueur/l'IA façonne donc littéralement les positions utilisées, aussi
@@ -101,6 +167,18 @@ function computeSideAnchors(setup, activeOutfieldIds, side, possessing) {
       anchors[id] = { x: a.x, y: a.y + (ownGoalY - a.y) * compaction };
     });
   }
+  const style = actionTeamStyle(setup);
+  activeOutfieldIds.forEach(id => {
+    const anchor = anchors[id];
+    const pos = actionSlotPosition(setup, id, "MID");
+    const roleKey = actionRoleKey(setup, id, pos);
+    const adjustment = roleAnchorAdjustment(roleKey, possessing, anchor.x);
+    anchor.x = clamp(50 + (anchor.x - 50) * style.width + adjustment.x, 3, 97);
+    anchor.y = clamp(50 + (anchor.y - 50) * style.depth + adjustment.depth * (side === "home" ? 1 : -1), 3, 97);
+    anchor.pos = pos;
+    if (roleKey) anchor.roleKey = roleKey;
+    if (style.key !== "neutral") anchor.teamStyle = style.key;
+  });
   return anchors;
 }
 
@@ -228,7 +306,7 @@ function fieldZone(pos, side) {
 // porteur et le nombre d'actions déjà jouées dans la possession (force une conclusion en fin de
 // chaîne plutôt que de tourner indéfiniment).
 function chooseActionType(ctx) {
-  const { carrier, zone, pressure, attackPlanKey, mentality, pos, side, actionsLeft, hasPassOptions } = ctx;
+  const { carrier, zone, pressure, attackPlanKey, mentality, pos, side, actionsLeft, hasPassOptions, roleKey, teamStyleKey } = ctx;
   const D = MATCH_BALANCE.decision;
   const isWide = pos.x < 25 || pos.x > 75;
   const goalDist = Math.abs(attackingGoalY(side) - pos.y);
@@ -264,9 +342,18 @@ function chooseActionType(ctx) {
     if (zone === "final") w.shot *= 1.6;
   }
 
-  if (carrier.pos === "ATT") { w.shot *= 1.3; w.dribble *= 1.15; }
-  else if (carrier.pos === "DEF") { w.shot *= 0.25; w.clear *= 1.4; w.short *= 1.2; }
-  else if (carrier.pos === "GK") { w.short *= 1.4; w.progressive *= 1.2; w.shot = 0; w.dribble *= 0.2; w.cross = 0; }
+  const position = ctx.slotPos || carrier.pos;
+  if (position === "ATT") { w.shot *= 1.3; w.dribble *= 1.15; }
+  else if (position === "DEF") { w.shot *= 0.25; w.clear *= 1.4; w.short *= 1.2; }
+  else if (position === "GK") { w.short *= 1.4; w.progressive *= 1.2; w.shot = 0; w.dribble *= 0.2; w.cross = 0; }
+
+  const roleWeights = ROLE_ACTION_WEIGHTS[roleKey] || {};
+  Object.keys(roleWeights).forEach(key => { w[key] *= roleWeights[key]; });
+  if (teamStyleKey === "control") { w.short *= 1.22; w.through *= 0.9; w.dribble *= 0.85; }
+  else if (teamStyleKey === "pressing") { w.progressive *= 1.12; w.carry *= 1.05; }
+  else if (teamStyleKey === "counter") { w.through *= 1.25; w.carry *= 1.15; w.short *= 0.8; }
+  else if (teamStyleKey === "compact") { w.short *= 1.12; w.clear *= 1.2; w.through *= 0.85; }
+  else if (teamStyleKey === "wide") { w.cross *= 1.35; w.progressive *= 1.1; w.short *= 0.85; }
 
   return weightedChoice(w);
 }
@@ -347,7 +434,7 @@ function resolveShotOutcome(xg, shooterFinishing, gkRating, pressure) {
 }
 
 // ===================== CIBLAGE (choix du coéquipier/point visé) =====================
-function pickPassTarget(kind, side, teammates, carrier, atkAnchors, pos, defenders, defAnchors) {
+function pickPassTarget(kind, side, teammates, carrier, atkAnchors, pos, defenders, defAnchors, setup) {
   const mates = teammates.filter(p => p.id !== carrier.id && p.pos !== "GK");
   if (!mates.length) return null;
   const scored = mates.map(p => {
@@ -356,20 +443,36 @@ function pickPassTarget(kind, side, teammates, carrier, atkAnchors, pos, defende
     const dist = Math.hypot(a.x - pos.x, a.y - pos.y);
     const nearest = defenders ? nearestDefenderInfo(a, defenders, defAnchors || {}).distance : 20;
     const openness = clamp(nearest, 0, 20);
-    const score = kind === "short" ? -dist + openness * 0.7
+    let score = kind === "short" ? -dist + openness * 0.7
       : forwardness * (kind === "through" ? 1.5 : 1.0) + openness * 0.9 - dist * 0.15;
+    const roleKey = actionRoleKey(setup, p.id, actionSlotPosition(setup, p.id, p.pos));
+    // Un appui vient au ballon ; un joueur de profondeur est une solution de
+    // passe verticale. L'espace libre et la distance restent prépondérants.
+    if (kind === "short") score += roleKey === "creator" || roleKey === "target" ? 7 : roleKey === "ball_winner" ? 3 : 0;
+    else if (kind === "through") score += roleKey === "runner" ? 9 : roleKey === "poacher" ? 7 : roleKey === "target" ? -6 : roleKey === "stay_back" ? -8 : 0;
+    else score += roleKey === "creator" || roleKey === "box_to_box" ? 4 : roleKey === "runner" ? 3 : 0;
     return { p, a, forwardness, dist, score };
   });
   scored.sort((x, y) => y.score - x.score);
   const pool = scored.slice(0, Math.min(2, scored.length));
+  if (setup && setup.playerRoles) {
+    const weights = pool.map(candidate => Math.exp((candidate.score - pool[0].score) / 14));
+    let draw = Math.random() * weights.reduce((sum, value) => sum + value, 0);
+    for (let i = 0; i < pool.length; i++) { draw -= weights[i]; if (draw <= 0) return pool[i].p; }
+    return pool[pool.length - 1].p;
+  }
   return pool[Math.floor(Math.random() * pool.length)].p;
 }
-function pickBoxTarget(teammates, carrier, atkAnchors, side) {
+function pickBoxTarget(teammates, carrier, atkAnchors, side, setup) {
   const goalY = attackingGoalY(side);
   const mates = teammates.filter(p => p.id !== carrier.id && p.pos !== "GK");
   if (!mates.length) return null;
   const scored = mates.map(p => ({ p, a: atkAnchors[p.id] || { x: 50, y: goalY } }));
-  scored.sort((x, y) => Math.abs(goalY - x.a.y) - Math.abs(goalY - y.a.y));
+  const arrival = candidate => {
+    const roleKey = actionRoleKey(setup, candidate.p.id, actionSlotPosition(setup, candidate.p.id, candidate.p.pos));
+    return Math.abs(goalY - candidate.a.y) - (roleKey === "poacher" ? 5 : roleKey === "runner" || roleKey === "target" ? 2 : 0);
+  };
+  scored.sort((x, y) => arrival(x) - arrival(y));
   return scored[0];
 }
 function advancedPoint(pos, side, distance) {
@@ -459,7 +562,7 @@ function buildRecoveryLine(carrier, pos, zone) {
 // ===================== ORCHESTRATION D'UNE POSSESSION =====================
 // params: {
 //   side, attackers, defenders, gk, ownGK?, atkAnchors, defAnchors,
-//   attackPlanKey, attackMod, defenseMod,
+//   attackPlanKey, attackMod, defenseMod, atkSetup?, defSetup?,
 //   earlyPhaseBoost, withSequence, staminaFactorFor(playerId) -> multiplicateur de fatigue (0.85-1),
 //   initialState?: {carrierId, ball, positions, isCounter, isHighRecovery, restartType}
 // }
@@ -480,6 +583,10 @@ function simulatePossessionChain(params) {
   const initial = params.initialState || null;
   const mentality = params.mentality || "balanced";
   const defenseMentality = params.defenseMentality || "balanced";
+  const atkSetup = params.atkSetup || null;
+  const defSetup = params.defSetup || null;
+  const attackStyle = actionTeamStyle(atkSetup);
+  const defenseStyle = actionTeamStyle(defSetup);
   const ownGK = params.ownGK || attackers.find(p => p.pos === "GK") || null;
   const oppSide = side === "home" ? "away" : "home";
   const beats = withSequence ? [] : null;
@@ -558,13 +665,12 @@ function simulatePossessionChain(params) {
           target = { x: clamp(50 + (ballAtEnd.x - 50) * 0.12, 42, 58),
             y: gkAnchorY(attacking ? side : oppSide) };
         } else {
-          const lateral = clamp((ballAtEnd.x - base.x) * (attacking ? 0.22 : 0.38), -14, 14);
-          const depth = attacking ? (ballAtEnd.y - 50) * 0.18 : (ballAtEnd.y - base.y) * 0.12;
           const teamMentality = attacking ? mentality : defenseMentality;
           const teamSide = attacking ? side : oppSide;
-          const depthIntent = teamMentality === "attacking" ? 4 : teamMentality === "cautious" ? -4 : 0;
-          const mentalityShift = depthIntent * (teamSide === "home" ? 1 : -1);
-          target = { x: clamp(base.x + lateral, 3, 97), y: clamp(base.y + depth + mentalityShift, 3, 97) };
+          const setup = attacking ? atkSetup : defSetup;
+          const roleKey = actionRoleKey(setup, player.id, actionSlotPosition(setup, player.id, player.pos));
+          target = tacticalOffBallTarget(base, ballAtEnd, teamSide, attacking, roleKey,
+            attacking ? attackStyle : defenseStyle, teamMentality);
         }
         const distance = Math.hypot(target.x - current.x, target.y - current.y);
         const step = Math.min(1, playerSpeed(player) * beat.duration / Math.max(0.001, distance));
@@ -632,9 +738,12 @@ function simulatePossessionChain(params) {
     const zone = fieldZone(pos, side);
     if (nearestDef) {
       const P = MATCH_BALANCE.pressing;
-      if (pressure > P.engageThreshold) {
+      const defensiveRole = actionRoleKey(defSetup, nearestDef.id, actionSlotPosition(defSetup, nearestDef.id, nearestDef.pos));
+      const rolePressing = defensiveRole === "ball_winner" ? 1.15 : defensiveRole === "stay_back" ? 0.85 : 1;
+      const pressingIntent = clamp(defenseStyle.pressing * rolePressing, 0.7, 1.35);
+      if (pressure > P.engageThreshold / pressingIntent) {
         const engaged = shadowPos(nearestDef);
-        const stepTarget = lerpPoint(engaged, pos, P.stepFraction);
+        const stepTarget = lerpPoint(engaged, pos, clamp(P.stepFraction * pressingIntent, 0.3, 0.75));
         if (Math.hypot(stepTarget.x - engaged.x, stepTarget.y - engaged.y) > P.minStepDistance) {
           emitBeat(makeBeat("press", oppSide, nearestDef.id, null, engaged, stepTarget, MATCH_BALANCE.beatDurations.press),
             { [nearestDef.id]: stepTarget });
@@ -643,7 +752,9 @@ function simulatePossessionChain(params) {
     }
 
     const hasPassOptions = fieldAttackers.some(p => p.id !== carrier.id);
-    const decision = chooseActionType({ carrier, zone, pressure, attackPlanKey, mentality, pos, side, actionsLeft, hasPassOptions });
+    const slotPos = actionSlotPosition(atkSetup, carrier.id, carrier.pos);
+    const decision = chooseActionType({ carrier, zone, pressure, attackPlanKey, mentality, pos, side, actionsLeft, hasPassOptions,
+      slotPos, roleKey: actionRoleKey(atkSetup, carrier.id, slotPos), teamStyleKey: attackStyle.key });
 
     if (decision === "shot") {
       attackStats.shots++;
@@ -706,7 +817,7 @@ function simulatePossessionChain(params) {
     }
 
     if (decision === "cross") {
-      const boxTarget = pickBoxTarget(fieldAttackers, carrier, positions, side);
+      const boxTarget = pickBoxTarget(fieldAttackers, carrier, positions, side, atkSetup);
       if (!boxTarget) break;
       attackStats.passesAttempted++;
       const chance = resolvePassChance("cross", carrier, pressure,
@@ -767,7 +878,7 @@ function simulatePossessionChain(params) {
       continue;
     }
 
-    const receiver = pickPassTarget(decision, side, fieldAttackers, carrier, positions, pos, defenders, positions);
+    const receiver = pickPassTarget(decision, side, fieldAttackers, carrier, positions, pos, defenders, positions, atkSetup);
     if (!receiver) break;
     attackStats.passesAttempted++;
     const targetPos = copyPoint(positions[receiver.id]);
@@ -799,10 +910,11 @@ function simulatePossessionChain(params) {
 }
 
 // ----- Nombre de possessions à jouer ce côté-ci cette minute (tempo/rythme du match) -----
-function planChainCount(attackPlanKey, earlyPhase) {
+function planChainCount(attackPlanKey, earlyPhase, teamStyleKey) {
   let n = 1;
   const extra = (MATCH_BALANCE.tempo.extraChainChance[attackPlanKey] != null) ? MATCH_BALANCE.tempo.extraChainChance[attackPlanKey] : 0.2;
-  if (Math.random() < extra) n++;
+  const tempo = actionTeamStyle({ teamStyle: teamStyleKey }).tempo;
+  if (Math.random() < clamp(extra * tempo, 0, 0.65)) n++;
   if (earlyPhase && Math.random() < MATCH_BALANCE.tempo.earlyPhaseExtraChance) n++;
   return n;
 }

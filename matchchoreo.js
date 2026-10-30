@@ -112,7 +112,7 @@ function createChoreographer() {
     // remplacement après carton rouge) apparaît directement sur sa position de départ.
     formations[side].slots = {};
     Object.entries(sideAnchors).forEach(([id, slot]) => {
-      formations[side].slots[id] = { x: slot.x, y: slot.y, pos: slot.pos || "MID" };
+      formations[side].slots[id] = { x: slot.x, y: slot.y, pos: slot.pos || "MID", roleKey: slot.roleKey || null, teamStyle: slot.teamStyle || null };
       if (!players.has(id)) {
         players.set(id, { id, side, x: slot.x, y: slot.y, vx: 0, vy: 0, role: "holdShape", targetX: slot.x, targetY: slot.y });
       }
@@ -365,6 +365,14 @@ function createChoreographer() {
     if (!slot) return { x: p.x, y: p.y };
     const possessing = ballSide === p.side;
     const tac = tactics[p.side] || {};
+
+    // Les nouveaux beats possèdent leurs instantanés et font autorité. Pour un
+    // ancien beat sans instantané, reprendre la même intention que le moteur.
+    if ((slot.roleKey || slot.teamStyle) && typeof tacticalOffBallTarget === "function") {
+      if (slot.pos === "GK") return { x: choreoClamp(50 + (ball.x - 50) * 0.12, 42, 58), y: slot.y };
+      const style = actionTeamStyle({ teamStyle: slot.teamStyle });
+      return tacticalOffBallTarget(slot, ball, p.side, possessing, slot.roleKey, style, tac.mentality || "balanced");
+    }
 
     const pull = possessing ? MOVE.lateralPullAttack : MOVE.lateralPullDefend;
     const lateral = choreoClamp((ball.x - slot.x) * pull, -MOVE.lateralPullMax, MOVE.lateralPullMax);

@@ -3029,3 +3029,83 @@ const FORMATION_SLOTS = {
   ]
 };
 
+// Rôles de jeu : ils orientent les choix et les courses, sans augmenter les notes.
+const PLAYER_ROLES = {
+  keeper: { key: "keeper", name: "Gardien", description: "Protège son but et relance vers un partenaire disponible.", positions: ["GK"], effort: 0.8 },
+  stay_back: { key: "stay_back", name: "Défenseur fixe", description: "Reste en couverture et privilégie une relance simple.", positions: ["DEF"], effort: 0.9 },
+  overlap: { key: "overlap", name: "Défenseur offensif", description: "Monte sur le côté pour offrir une solution, mais laisse de l'espace derrière lui.", positions: ["DEF"], effort: 1.15 },
+  creator: { key: "creator", name: "Créateur", description: "Se rend disponible entre les lignes et cherche la passe qui fait avancer le jeu.", positions: ["MID"], effort: 1.0 },
+  ball_winner: { key: "ball_winner", name: "Récupérateur", description: "Protège l'axe et se rapproche du porteur adverse pour contester le ballon.", positions: ["MID"], effort: 1.12 },
+  box_to_box: { key: "box_to_box", name: "Relayeur", description: "Accompagne l'attaque et revient défendre ; ses courses consomment davantage d'énergie.", positions: ["MID"], effort: 1.15 },
+  runner: { key: "runner", name: "Profondeur", description: "Appelle derrière la défense et cherche les espaces vers le but.", positions: ["ATT"], effort: 1.1 },
+  target: { key: "target", name: "Point d'appui", description: "Décroche pour recevoir, conserver et remettre le ballon à un partenaire.", positions: ["ATT"], effort: 0.98 },
+  poacher: { key: "poacher", name: "Finisseur", description: "Reste plus près du but et privilégie la frappe lorsqu'une occasion se présente.", positions: ["ATT"], effort: 0.95 }
+};
+const DEFAULT_PLAYER_ROLES = { GK: "keeper", DEF: "stay_back", MID: "box_to_box", ATT: "runner" };
+
+function resolvePlayerRoleKey(setup, playerId, slotPos) {
+  const position = DEFAULT_PLAYER_ROLES[slotPos] ? slotPos : "MID";
+  const key = setup && setup.playerRoles && setup.playerRoles[playerId];
+  return Object.prototype.hasOwnProperty.call(PLAYER_ROLES, key) && PLAYER_ROLES[key].positions.includes(position)
+    ? key : DEFAULT_PLAYER_ROLES[position];
+}
+
+function getPlayerRole(setup, playerId, slotPos) {
+  return PLAYER_ROLES[resolvePlayerRoleKey(setup, playerId, slotPos)];
+}
+
+function normalizePlayerRoles(team, setup) {
+  const slots = FORMATION_SLOTS[setup && setup.formation] || [];
+  const assignedPositions = new Map();
+  (setup && Array.isArray(setup.assignments) ? setup.assignments : []).forEach((id, i) => {
+    if (id && slots[i]) assignedPositions.set(id, slots[i].pos);
+  });
+  return Object.fromEntries((team && Array.isArray(team.players) ? team.players : []).map(player => [
+    player.id, resolvePlayerRoleKey(setup, player.id, assignedPositions.get(player.id) || player.pos)
+  ]));
+}
+
+// Profils générés pour la carrière : aucune prétention de décrire les clubs réels.
+// Les valeurs modifient le placement, la pression et le rythme, jamais les attributs.
+const TEAM_STYLES = {
+  control: { key: "control", name: "Maîtrise", description: "Construit avec des solutions courtes et fait circuler le ballon.", strength: "Offre des appuis et conserve le ballon.", weakness: "Peut manquer de profondeur face à un bloc compact.", attackPlan: "possession", defensePlan: "zone", formation: "1-2-3-1", mentality: "balanced", width: 1.03, depth: 0.98, pressing: 1.0, tempo: 0.94 },
+  pressing: { key: "pressing", name: "Pressing", description: "Cherche à récupérer haut et repart rapidement vers le but.", strength: "Conteste le ballon près du but adverse.", weakness: "Dépense plus d'énergie et expose l'espace dans son dos.", attackPlan: "transition", defensePlan: "high", formation: "1-2-2-2", mentality: "attacking", width: 0.97, depth: 1.06, pressing: 1.15, tempo: 1.1 },
+  counter: { key: "counter", name: "Contre-attaque", description: "Attend son occasion, puis cherche rapidement la profondeur.", strength: "Attaque les espaces laissés à la récupération.", weakness: "Offre moins de solutions pour une longue construction.", attackPlan: "direct", defensePlan: "low", formation: "1-3-2-1", mentality: "balanced", width: 0.96, depth: 1.04, pressing: 0.9, tempo: 1.06 },
+  compact: { key: "compact", name: "Bloc compact", description: "Protège l'axe avec un bloc resserré et des passes prudentes.", strength: "Réduit les espaces entre ses lignes.", weakness: "Laisse davantage de place sur les côtés et projette moins de joueurs.", attackPlan: "possession", defensePlan: "low", formation: "1-3-2-1", mentality: "cautious", width: 0.9, depth: 0.92, pressing: 0.88, tempo: 0.9 },
+  wide: { key: "wide", name: "Jeu sur les côtés", description: "Écarte le jeu et cherche des relais et des centres depuis les ailes.", strength: "Étire le bloc adverse en largeur.", weakness: "Doit couvrir des distances plus importantes pour protéger l'axe.", attackPlan: "transition", defensePlan: "zone", formation: "1-2-2-2", mentality: "balanced", width: 1.16, depth: 1.0, pressing: 1.0, tempo: 1.02 }
+};
+
+function getTeamStyle(team) {
+  if (team && Object.prototype.hasOwnProperty.call(TEAM_STYLES, team.playStyle)) return TEAM_STYLES[team.playStyle];
+  const identity = String(team && (team.id || team.name) || "club");
+  let hash = 2166136261;
+  for (let i = 0; i < identity.length; i++) hash = Math.imul(hash ^ identity.charCodeAt(i), 16777619) >>> 0;
+  const keys = Object.keys(TEAM_STYLES);
+  return TEAM_STYLES[keys[hash % keys.length]];
+}
+
+function createAiPlayerRoles(team, setup) {
+  const roles = normalizePlayerRoles(team, setup);
+  const style = Object.prototype.hasOwnProperty.call(TEAM_STYLES, setup.teamStyle) ? setup.teamStyle : getTeamStyle(team).key;
+  const slots = FORMATION_SLOTS[setup.formation] || [];
+  let defenders = 0, midfielders = 0, attackers = 0;
+  (setup.assignments || []).forEach((id, index) => {
+    if (!id || !slots[index]) return;
+    const pos = slots[index].pos;
+    if (pos === "DEF") {
+      const order = defenders++;
+      roles[id] = style === "wide" && order === 0 ? "overlap" : "stay_back";
+    } else if (pos === "MID") {
+      const order = midfielders++;
+      roles[id] = style === "control" ? (order === 0 ? "creator" : "box_to_box")
+        : style === "compact" || style === "counter" ? (order === 0 ? "ball_winner" : "creator")
+          : style === "pressing" ? "ball_winner" : "box_to_box";
+    } else if (pos === "ATT") {
+      const order = attackers++;
+      roles[id] = style === "control" ? (order === 0 ? "target" : "poacher")
+        : style === "compact" ? "target" : style === "wide" && order > 0 ? "poacher" : "runner";
+    }
+  });
+  return roles;
+}
+

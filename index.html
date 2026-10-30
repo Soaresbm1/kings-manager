@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kings Manager 7v7</title>
   <link rel="icon" href="images/favicon.png">
-  <link rel="stylesheet" href="style.css?v=20261028-single">
+  <link rel="stylesheet" href="style.css?v=20261028-roles">
 </head>
 
 <body>
@@ -169,6 +169,7 @@
               <h3 id="tactics-instructions-title">Consignes d'équipe</h3>
             </div>
             <div class="tactics-controls-scroll">
+              <div id="tactics-team-style"></div>
               <div class="tactics-toolbar-group">
                 <span class="tactics-toolbar-label" id="tactics-formation-label">Formation</span>
                 <div class="tactics-chip-group" id="tactics-formation-choice" role="group" aria-labelledby="tactics-formation-label"></div>
@@ -218,7 +219,7 @@
               <div class="pos-overview" id="tactics-position-overview"></div>
             </details>
             <div class="tactics-bench-filters" id="tactics-bench-filters" role="group" aria-label="Filtrer l'effectif par poste"></div>
-            <div class="tactics-phase-legend" aria-hidden="true"><span>Joueur / forme</span><span>Poste</span></div>
+            <div class="tactics-phase-legend" aria-hidden="true"><span>Joueur / forme / rôle</span><span>Poste</span></div>
             <div class="tactics-bench-list" id="tactics-bench-list"></div>
           </aside>
         </div>
@@ -426,6 +427,7 @@
         </div>
       </div>
 
+      <div id="opponent-style-preview" class="opponent-style-preview"></div>
       <div class="tactics-layout">
         <div class="panel tactics-pitch-panel">
           <h3>Composition (<span id="lineup-count">0</span>/7)</h3>
@@ -720,12 +722,12 @@
 
   </div>
 
-  <script src="data.js"></script>
+  <script src="data.js?v=20261028-roles"></script>
   <script src="player-photos.js"></script>
-  <script src="matchengine-actions.js"></script>
-  <script src="engine.js"></script>
-  <script src="matchchoreo.js"></script>
-  <script src="app.js?v=20261028-single"></script>
+  <script src="matchengine-actions.js?v=20261028-roles"></script>
+  <script src="engine.js?v=20261028-roles"></script>
+  <script src="matchchoreo.js?v=20261028-roles"></script>
+  <script src="app.js?v=20261028-roles"></script>
 </body>
 
 </html>

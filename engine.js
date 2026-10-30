@@ -112,12 +112,17 @@ function positionFitFactor(team, setup, playerId) {
 // simulateMinute(minute) sans option (utilisée par simulateMatch/simulateAIMatch, matchs IA en
 // arrière-plan) ne construit aucune séquence : comportement et coût strictement inchangés.
 function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
+  [[homeTeam, homeSetup], [awayTeam, awaySetup]].forEach(([team, setup]) => {
+    if (!Object.prototype.hasOwnProperty.call(TEAM_STYLES, setup.teamStyle)) setup.teamStyle = getTeamStyle(team).key;
+    setup.playerRoles = setup.autoCoach && !setup.playerRoles
+      ? createAiPlayerRoles(team, setup) : normalizePlayerRoles(team, setup);
+  });
   const TOTAL_MINUTES = 40;
   const HALF_TIME = 20;
   const homeBonus = 1.08;
   const initialAiPlans = {
-    home: { attackPlan: homeSetup.attackPlan, defensePlan: homeSetup.defensePlan },
-    away: { attackPlan: awaySetup.attackPlan, defensePlan: awaySetup.defensePlan }
+    home: { attackPlan: homeSetup.attackPlan, defensePlan: homeSetup.defensePlan, mentality: homeSetup.mentality || "balanced" },
+    away: { attackPlan: awaySetup.attackPlan, defensePlan: awaySetup.defensePlan, mentality: awaySetup.mentality || "balanced" }
   };
 
   // Début de match (effectifs réduits, 1 contre 1 jusqu'au 7v7) : plus d'occasions et de buts —
@@ -274,8 +279,17 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
   function drainStamina(side, ids, extra) {
     const B = MATCH_BALANCE.stamina;
     ids.forEach(id => {
-      staminaState[side][id] = clamp(staminaValue(side, id) - B.drainPerTouch - (extra || 0), B.min, B.max);
+      staminaState[side][id] = clamp(staminaValue(side, id) - (B.drainPerTouch + (extra || 0)) * roleEffort(side, id), B.min, B.max);
     });
+  }
+  function roleEffort(side, id) {
+    const team = side === "home" ? homeTeam : awayTeam;
+    const setup = side === "home" ? homeSetup : awaySetup;
+    const player = team.players.find(p => p.id === id);
+    if (!player) return 1;
+    const index = (setup.assignments || []).indexOf(id);
+    const slot = (FORMATION_SLOTS[setup.formation] || [])[index];
+    return getPlayerRole(setup, id, slot ? slot.pos : player.pos).effort;
   }
   function regenStamina(side, activeIds) {
     const B = MATCH_BALANCE.stamina;
@@ -940,6 +954,7 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
     const chain = simulatePossessionChain({
       side, attackers, defenders, gk, atkAnchors, defAnchors,
       ownGK: getGK(ownTeam, ownSetup), initialState: getPossessionState(),
+      atkSetup: ownSetup, defSetup: opposingSetup,
       mentality: ownSetup.mentality || "balanced", defenseMentality: opposingSetup.mentality || "balanced",
       attackPlanKey, attackMod, defenseMod, earlyPhaseBoost,
       withSequence: !!ctx,
@@ -1268,12 +1283,16 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
     if (minute >= 25 && minute % 5 === 0) {
       [["home", homeSetup, homeGoals - awayGoals], ["away", awaySetup, awayGoals - homeGoals]].forEach(([side, setup, difference]) => {
         if (!setup.autoCoach) return;
+        const initial = initialAiPlans[side];
         if (difference < 0) {
-          setup.mentality = "attacking"; setup.attackPlan = "transition"; setup.defensePlan = "high";
+          setup.mentality = "attacking";
+          setup.attackPlan = initial.attackPlan === "possession" && minute >= 35 ? "transition" : initial.attackPlan;
+          setup.defensePlan = initial.defensePlan === "low" ? "zone" : initial.defensePlan;
         } else if (difference > 0 && minute >= 30) {
-          setup.mentality = "cautious"; setup.attackPlan = "direct"; setup.defensePlan = "low";
+          setup.mentality = "cautious";
+          setup.attackPlan = initial.attackPlan;
+          setup.defensePlan = initial.defensePlan === "high" ? "zone" : initial.defensePlan;
         } else {
-          setup.mentality = "balanced";
           Object.assign(setup, initialAiPlans[side]);
         }
       });
@@ -1335,7 +1354,7 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
     [["home", homeTeam, homeSetup, homeActiveOutfield, homeMentality],
       ["away", awayTeam, awaySetup, awayActiveOutfield, awayMentality]].forEach(([side, team, setup, active, mentality]) => {
       const effort = mentality.energy + (setup.defensePlan === "high" ? 0.35 : 0.1);
-      active.forEach(id => { staminaState[side][id] = clamp(staminaValue(side, id) - effort, MATCH_BALANCE.stamina.min, 100); });
+      active.forEach(id => { staminaState[side][id] = clamp(staminaValue(side, id) - effort * roleEffort(side, id), MATCH_BALANCE.stamina.min, 100); });
       team.players.filter(p => !active.includes(p.id)).forEach(p => {
         staminaState[side][p.id] = clamp(staminaValue(side, p.id) + 1.2, MATCH_BALANCE.stamina.min, 100);
       });
@@ -1384,7 +1403,7 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
     const ctx = withSequence ? { sequence } : null;
 
     let homeActions = 0, awayActions = 0;
-    let slices = isMatchDecided() ? 0 : planChainCount(homeSetup.attackPlan, earlyPhase) + planChainCount(awaySetup.attackPlan, earlyPhase);
+    let slices = isMatchDecided() ? 0 : planChainCount(homeSetup.attackPlan, earlyPhase, homeSetup.teamStyle) + planChainCount(awaySetup.attackPlan, earlyPhase, awaySetup.teamStyle);
     const tempoBias = homeMentality.extraTempo + awayMentality.extraTempo;
     if (tempoBias > 0 && Math.random() < tempoBias) slices++;
     else if (tempoBias < 0 && Math.random() < -tempoBias) slices = Math.max(1, slices - 1);
@@ -1541,9 +1560,13 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
       const anchors = computeSideAnchors(setup, outfieldIds, side, true);
       outfieldIds.forEach(id => {
         const p = team.players.find(pl => pl.id === id);
-        if (anchors[id] && p) anchors[id].pos = p.pos;
+        if (anchors[id] && p) {
+          anchors[id].pos = anchors[id].pos || p.pos;
+          anchors[id].roleKey = resolvePlayerRoleKey(setup, id, anchors[id].pos);
+          anchors[id].teamStyle = setup.teamStyle;
+        }
       });
-      if (gkPlayer) anchors[gkPlayer.id] = { x: 50, y: gkAnchorY(side), pos: "GK" };
+      if (gkPlayer) anchors[gkPlayer.id] = { x: 50, y: gkAnchorY(side), pos: "GK", roleKey: "keeper", teamStyle: setup.teamStyle };
       return anchors;
     }
   };
@@ -1789,8 +1812,14 @@ function computeTopRatings(league, limit) {
 // Teste chaque formation, compose le meilleur onze possible pour chacune, et retient
 // celle qui maximise la force totale obtenue (plutôt qu'une formation fixe pour tous).
 function chooseAiFormation(team) {
+  const style = getTeamStyle(team);
+  const availablePlayers = team.players.filter(p => !p.injured && !p.suspended);
+  const canPlayNaturally = slots => POSITIONS.every(pos =>
+    availablePlayers.filter(p => p.pos === pos).length >= slots.filter(slot => slot.pos === pos).length);
+  const hasNaturalFormation = Object.values(FORMATION_SLOTS).some(canPlayNaturally);
   let bestKey = "1-2-2-2", bestScore = -Infinity, bestAssignments = null;
   Object.keys(FORMATION_SLOTS).forEach(key => {
+    if (hasNaturalFormation && !canPlayNaturally(FORMATION_SLOTS[key])) return;
     const used = new Set();
     let score = 0;
     const assignments = FORMATION_SLOTS[key].map(slot => {
@@ -1805,6 +1834,9 @@ function chooseAiFormation(team) {
       return candidates[0].id;
     });
     if (assignments.some(id => id === null)) return; // effectif insuffisant pour cette formation
+    // L'identité départage des compositions de niveau voisin, sans forcer un
+    // gardien dans le champ ni sacrifier une formation naturelle disponible.
+    if (key === style.formation) score += 12;
     if (score > bestScore) {
       bestScore = score;
       bestKey = key;
@@ -1824,8 +1856,17 @@ function chooseAiFormation(team) {
 // --- IA: choix des plans tactiques selon le rapport de force avec l'adversaire ---
 // Une équipe plus faible joue le contre (direct/transition + bloc bas), une équipe plus
 // forte impose son jeu (possession + pressing haut). Rapport de force équilibré = aléatoire.
-function chooseAiPlans(teamStrength, oppStrength) {
+function chooseAiPlans(teamStrength, oppStrength, team) {
   const diff = teamStrength.overall - oppStrength.overall;
+  if (team) {
+    const style = getTeamStyle(team);
+    return {
+      attackPlan: style.attackPlan,
+      defensePlan: diff < -10 && style.defensePlan === "high" ? "zone" : style.defensePlan,
+      mentality: diff < -10 ? "cautious" : diff > 10 && style.key !== "compact" ? "attacking" : style.mentality,
+      teamStyle: style.key
+    };
+  }
   const plans = ["direct", "possession", "transition"];
   const defPlans = ["low", "high", "zone"];
   if (diff > 4) {
@@ -1856,15 +1897,15 @@ function simulateAIMatch(homeTeam, awayTeam) {
   const awayLineup = awayChoice.assignments.filter(Boolean);
   const homeStrength = computeTeamStrength(homeTeam, homeLineup);
   const awayStrength = computeTeamStrength(awayTeam, awayLineup);
-  const homePlans = chooseAiPlans(homeStrength, awayStrength);
-  const awayPlans = chooseAiPlans(awayStrength, homeStrength);
+  const homePlans = chooseAiPlans(homeStrength, awayStrength, homeTeam);
+  const awayPlans = chooseAiPlans(awayStrength, homeStrength, awayTeam);
 
   // `assignments` (poste -> slot FORMATION_SLOTS) est indispensable à computeSideAnchors pour
   // positionner les joueurs en formation complète plutôt que de retomber sur la disposition de
   // secours "effectif réduit" (confinée à sa propre moitié de terrain, voir anchorToY) — sans lui,
   // le moteur d'actions ne pouvait jamais faire progresser une équipe IA jusqu'au tiers offensif.
-  const homeSetup = { lineup: homeLineup, assignments: homeChoice.assignments, formation: homeChoice.formation, attackPlan: homePlans.attackPlan, defensePlan: homePlans.defensePlan, mentality: "balanced", autoCoach: true };
-  const awaySetup = { lineup: awayLineup, assignments: awayChoice.assignments, formation: awayChoice.formation, attackPlan: awayPlans.attackPlan, defensePlan: awayPlans.defensePlan, mentality: "balanced", autoCoach: true };
+  const homeSetup = { lineup: homeLineup, assignments: homeChoice.assignments, formation: homeChoice.formation, attackPlan: homePlans.attackPlan, defensePlan: homePlans.defensePlan, mentality: homePlans.mentality, teamStyle: homePlans.teamStyle, autoCoach: true };
+  const awaySetup = { lineup: awayLineup, assignments: awayChoice.assignments, formation: awayChoice.formation, attackPlan: awayPlans.attackPlan, defensePlan: awayPlans.defensePlan, mentality: awayPlans.mentality, teamStyle: awayPlans.teamStyle, autoCoach: true };
   const result = simulateMatch(homeTeam, homeSetup, awayTeam, awaySetup);
   applyMatchPlayerStats(homeTeam, homeSetup, result);
   applyMatchPlayerStats(awayTeam, awaySetup, result);
@@ -1878,9 +1919,16 @@ function simulateAIMatch(homeTeam, awayTeam) {
 // les moyennes utiles pour ajuster MATCH_BALANCE (matchengine-actions.js) sans y jouer à la main :
 // buts/tirs/xG par match, taux de passes réussies, avantage du terrain, fréquence de victoire du
 // favori, fréquence des scores extrêmes. Utilisable depuis la console ou `node tests-node.js` :
+// Par défaut, chaque effectif rencontre équitablement les cinq identités de jeu :
+// l'outil mesure l'effet du niveau et du terrain, sans confondre ces effets avec
+// le duel arbitraire des deux profils de club. Un cycle de 25 essais couvre les
+// 25 paires ; chaque bloc de 5 donne les cinq profils à chaque camp.
+// Pour mesurer spécifiquement les clubs avec leur identité : { clubStyles: true }.
 //   runBalanceSimulation(LEAGUES.france.teams[0], LEAGUES.france.teams[1], 200)
-function runBalanceSimulation(templateHomeTeam, templateAwayTeam, n) {
+function runBalanceSimulation(templateHomeTeam, templateAwayTeam, n, options) {
   n = n || 200;
+  const clubStyles = !!(options && options.clubStyles);
+  const styleKeys = Object.keys(TEAM_STYLES);
   let totalGoals = 0, totalShots = 0, totalXG = 0, totalPassesAtt = 0, totalPassesComp = 0;
   let homeWins = 0, awayWins = 0, favoriteWins = 0, blowouts = 0, noDraws = 0;
   const homeOverall = templateHomeTeam.players.reduce((s, p) => s + p.overall, 0) / templateHomeTeam.players.length;
@@ -1890,16 +1938,20 @@ function runBalanceSimulation(templateHomeTeam, templateAwayTeam, n) {
   for (let i = 0; i < n; i++) {
     const home = JSON.parse(JSON.stringify(templateHomeTeam));
     const away = JSON.parse(JSON.stringify(templateAwayTeam));
+    if (!clubStyles) {
+      home.playStyle = styleKeys[i % styleKeys.length];
+      away.playStyle = styleKeys[(i + Math.floor(i / styleKeys.length)) % styleKeys.length];
+    }
     const homeChoice = chooseAiFormation(home);
     const awayChoice = chooseAiFormation(away);
     const homeLineup = homeChoice.assignments.filter(Boolean);
     const awayLineup = awayChoice.assignments.filter(Boolean);
     const homeStrength = computeTeamStrength(home, homeLineup);
     const awayStrength = computeTeamStrength(away, awayLineup);
-    const homePlans = chooseAiPlans(homeStrength, awayStrength);
-    const awayPlans = chooseAiPlans(awayStrength, homeStrength);
-    const homeSetup = { lineup: homeLineup, assignments: homeChoice.assignments, formation: homeChoice.formation, attackPlan: homePlans.attackPlan, defensePlan: homePlans.defensePlan };
-    const awaySetup = { lineup: awayLineup, assignments: awayChoice.assignments, formation: awayChoice.formation, attackPlan: awayPlans.attackPlan, defensePlan: awayPlans.defensePlan };
+    const homePlans = chooseAiPlans(homeStrength, awayStrength, home);
+    const awayPlans = chooseAiPlans(awayStrength, homeStrength, away);
+    const homeSetup = { lineup: homeLineup, assignments: homeChoice.assignments, formation: homeChoice.formation, attackPlan: homePlans.attackPlan, defensePlan: homePlans.defensePlan, mentality: homePlans.mentality, teamStyle: homePlans.teamStyle, autoCoach: true };
+    const awaySetup = { lineup: awayLineup, assignments: awayChoice.assignments, formation: awayChoice.formation, attackPlan: awayPlans.attackPlan, defensePlan: awayPlans.defensePlan, mentality: awayPlans.mentality, teamStyle: awayPlans.teamStyle, autoCoach: true };
     const result = simulateMatch(home, homeSetup, away, awaySetup);
 
     totalGoals += result.homeGoals + result.awayGoals;
@@ -1916,6 +1968,7 @@ function runBalanceSimulation(templateHomeTeam, templateAwayTeam, n) {
 
   return {
     matches: n,
+    styleSampling: clubStyles ? "club" : "balanced",
     avgGoalsPerMatch: totalGoals / n,
     avgShotsPerMatch: totalShots / n,
     avgXGPerMatch: totalXG / n,
