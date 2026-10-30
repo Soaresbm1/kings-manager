@@ -197,6 +197,10 @@ mode de débogage visuel (touche **D** pendant un match, voir `app.js:PITCH_DEBU
 
 - **Tableau tactique** : consignes, terrain horizontal et effectif filtrable dans trois panneaux.
   Le gardien est à gauche, l'attaque à droite ; seule la projection d'affichage change.
+  La classe `coach-pitch` partage ce terrain horizontal avec la préparation et les
+  ajustements en match. Leurs terrains se dimensionnent dans l'espace disponible ;
+  sur petit écran, le terrain de 600 px défile horizontalement, l'écran ou le modal
+  reste seul responsable du défilement vertical. Les coordonnées du moteur restent intactes.
   Une seule composition et un seul bouton de poste par joueur servent dans l'onglet,
   en préparation et pendant le match. `sanitizeTactic` reprend la composition principale
   des anciennes carrières ; `syncSingleComposition` maintient `formationOOP` et

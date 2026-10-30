@@ -666,21 +666,22 @@ button.secondary.selected { border-color: var(--accent2); background: rgba(255,1
 .phase-dot { width: 6px; height: 6px; border-radius: 50%; flex: 0 0 6px; }
 .phase-dot-in { background: #e7ca64; }
 .phase-dot-out { background: #9fcee3; }
-#tab-tactics .pitch-field { flex: 0 0 auto; width: min(calc((100cqh - 30px) * 1.6), calc(100cqw - 8px)); max-width: 100%; aspect-ratio: 8 / 5; height: auto; min-height: 0; border: 1px solid #839579; border-radius: 6px; background: repeating-linear-gradient(90deg, #2c5736 0 12.5%, #284f32 12.5% 25%); box-shadow: inset 0 0 60px #0a251a77; container-type: inline-size; }
-#tab-tactics .pitch-field::before { inset: 3.5%; border: 1px solid #b8d1a966; background: linear-gradient(#b8d1a966, #b8d1a966) center / 1px 100% no-repeat; pointer-events: none; }
-#tab-tactics .pitch-field::after { height: 27%; width: auto; border-width: 1px; border-color: #b8d1a966; pointer-events: none; }
+.coach-pitch { aspect-ratio: 8 / 5; border: 1px solid #839579; border-radius: 6px; background: repeating-linear-gradient(90deg, #2c5736 0 12.5%, #284f32 12.5% 25%); box-shadow: inset 0 0 60px #0a251a77; container-type: inline-size; }
+#tab-tactics .pitch-field { flex: 0 0 auto; width: min(calc((100cqh - 30px) * 1.6), calc(100cqw - 8px)); max-width: 100%; height: auto; min-height: 0; aspect-ratio: 8 / 5; }
+.coach-pitch::before { inset: 3.5%; border: 1px solid #b8d1a966; background: linear-gradient(#b8d1a966, #b8d1a966) center / 1px 100% no-repeat; pointer-events: none; }
+.coach-pitch::after { height: 27%; width: auto; border-width: 1px; border-color: #b8d1a966; pointer-events: none; }
 .pitch-goal-area, .pitch-penalty-area { position: absolute; left: 50%; transform: translateX(-50%); border: 1px solid #b8d1a966; pointer-events: none; }
 .pitch-penalty-area { width: 54%; height: 14%; }
 .pitch-goal-area { width: 24%; height: 5.5%; }
 .pitch-penalty-area.top, .pitch-goal-area.top { top: 3.5%; border-top: 0; }
 .pitch-penalty-area.bottom, .pitch-goal-area.bottom { bottom: 3.5%; border-bottom: 0; }
-#tab-tactics .pitch-penalty-area, #tab-tactics .pitch-goal-area { top: 50%; bottom: auto; left: auto; transform: translateY(-50%); border: 1px solid #b8d1a966; }
-#tab-tactics .pitch-penalty-area { width: 14%; height: 54%; }
-#tab-tactics .pitch-goal-area { width: 5.5%; height: 24%; }
-#tab-tactics .pitch-penalty-area.top, #tab-tactics .pitch-goal-area.top { left: 3.5%; border-left: 0; }
-#tab-tactics .pitch-penalty-area.bottom, #tab-tactics .pitch-goal-area.bottom { right: 3.5%; border-right: 0; }
-#tab-tactics .pitch-slot.pos-GK { transform: translate(-50%, -50%); }
-#tab-tactics .pitch-slot { width: clamp(76px, 17cqw, 118px); }
+.coach-pitch .pitch-penalty-area, .coach-pitch .pitch-goal-area { top: 50%; bottom: auto; left: auto; transform: translateY(-50%); border: 1px solid #b8d1a966; }
+.coach-pitch .pitch-penalty-area { width: 14%; height: 54%; }
+.coach-pitch .pitch-goal-area { width: 5.5%; height: 24%; }
+.coach-pitch .pitch-penalty-area.top, .coach-pitch .pitch-goal-area.top { left: 3.5%; border-left: 0; }
+.coach-pitch .pitch-penalty-area.bottom, .coach-pitch .pitch-goal-area.bottom { right: 3.5%; border-right: 0; }
+.coach-pitch .pitch-slot.pos-GK { transform: translate(-50%, -50%); }
+.coach-pitch .pitch-slot { width: clamp(76px, 17cqw, 118px); }
 #tab-tactics .tactics-pitch-row.view-both { flex-direction: column; overflow-y: auto; gap: 20px; }
 #tab-tactics .tactics-pitch-row.view-both > div { flex: 0 0 auto; }
 #tab-tactics .tactics-pitch-row.view-both h4 > span:last-child { display: none; }
@@ -704,13 +705,13 @@ button.secondary.selected { border-color: var(--accent2); background: rgba(255,1
 /* Le profil adverse peut se déplier sans écraser les cartes de composition. */
 #screen-lineup.active { overflow-y: auto; }
 #screen-lineup > .tactics-toolbar { flex-shrink: 0; }
-#screen-lineup > .tactics-layout { flex: 0 0 auto; min-height: 540px; }
-#screen-lineup .tactics-pitch-panel, #screen-lineup .tactics-bench-panel { height: 540px; }
+#screen-lineup > .tactics-layout { flex: 1 0 380px; min-height: 380px; }
+#screen-lineup .tactics-pitch-panel, #screen-lineup .tactics-bench-panel { height: auto; }
 #screen-lineup > div:last-child { flex-shrink: 0; padding-bottom: 5px; }
 @media (max-width: 1100px) {
-  #screen-lineup .tactics-layout { min-height: 0; }
+  #screen-lineup > .tactics-layout { flex: 0 0 auto; min-height: 0; }
   #screen-lineup .tactics-bench-panel { flex: 0 0 430px; }
-  #screen-lineup .tactics-pitch-panel { flex: 0 0 540px; }
+  #screen-lineup .tactics-pitch-panel { flex: 0 0 auto; }
 }
 @media (max-width: 720px) {
   .tactic-role-select { min-height: 44px; font-size: 0.72rem; }
@@ -889,6 +890,23 @@ body.tactic-is-dragging .pitch-slot.tactic-drop-invalid { cursor: not-allowed !i
   #tab-tactics, #tab-tactics *, #tab-tactics *::before, #tab-tactics *::after { animation: none; transition: none; }
 }
 
+/* Les trois éditeurs partagent le même repère horizontal. */
+.tactics-layout .tactics-pitch-row { container-type: size; }
+.tactics-layout .iop-wrap { align-items: center; justify-content: center; min-width: 0; }
+.tactics-layout .pitch-field.coach-pitch { flex: 0 0 auto; width: min(calc(100cqh * 1.6), calc(100cqw - 2px)); max-width: 100%; height: auto; min-height: 0; aspect-ratio: 8 / 5; }
+@media (max-width: 1100px) {
+  .tactics-layout .tactics-pitch-row { flex: 0 0 auto; container-type: inline-size; }
+  .tactics-layout .iop-wrap { flex: 0 0 auto; width: 100%; overflow-x: auto; overflow-y: hidden; align-items: flex-start; }
+  .tactics-layout .pitch-field.coach-pitch { width: 600px; max-width: none; }
+}
+@container (max-height: 400px) {
+  .tactics-layout .coach-pitch .pitch-slot { padding: 3px 3px 4px; gap: 1px; }
+  .tactics-layout .coach-pitch .slot-portrait { width: 31px; height: 33px; }
+  .tactics-layout .coach-pitch .slot-copy { gap: 1px; }
+  .tactics-layout .coach-pitch .slot-name { font-size: 10px; line-height: 1.14; }
+  .tactics-layout .coach-pitch .slot-tag { font-size: 0.44rem; padding: 1px 4px; }
+  .tactics-layout .coach-pitch .slot-overall { top: 3px; right: 3px; min-width: 15px; padding: 1px 2px; font-size: 0.52rem; }
+}
 /* Bannière indiquant à qui c'est le tour, mise à jour par updateTurnBanner() à chaque
    changement de tour (beginTurn) et à la mise en pause. */
 .turn-banner {
@@ -1371,11 +1389,11 @@ body.tactic-is-dragging .pitch-slot.tactic-drop-invalid { cursor: not-allowed !i
 .compare-value.compare-worse { color: #ffd6d6; opacity: 0.75; }
 
 .modal-tactics { max-width: 90vw; width: 1400px; max-height: 90vh; overflow-y: auto; }
-.modal-tactics-layout { height: 50vh; min-height: 500px; flex-shrink: 0; }
+.modal-tactics-layout { height: 56vh; min-height: 380px; flex-shrink: 0; }
 .modal-tactics-layout .pitch-field { min-height: 0; }
 @media (max-width: 1100px) {
   .modal-tactics-layout { height: auto; min-height: 0; }
-  .modal-tactics-layout .tactics-pitch-panel { flex: 0 0 540px; }
+  .modal-tactics-layout .tactics-pitch-panel { flex: 0 0 auto; }
   .modal-tactics-layout .tactics-bench-panel { flex: 0 0 430px; }
 }
 
