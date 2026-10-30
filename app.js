@@ -2718,7 +2718,14 @@ function buildTacticSlot(setup, ids, slot, index, phase, player) {
     <span class="${player ? "slot-name" : "slot-empty"}">${player ? tacticText(player.name) : "Choisir"}</span>
     ${role ? `<span class="slot-role" title="${tacticText(role.description)}">${tacticText(role.name)}</span>` : ""}${warning}</span>`;
   button.onclick = event => { if (!consumeTacticDragClick(event)) selectSlot(setup, ids, index, phase); };
-  if (ids === TACTICS_IDS && player) bindTacticDrag(button, setup, ids, player.id);
+  const unavailable = player && getTacticUnavailablePlayers(setup, ids).get(player.id);
+  if (unavailable) {
+    button.disabled = true;
+    button.classList.add("tactic-player-unavailable");
+    button.title = `${player.name} — ${tacticUnavailableLabel(unavailable)}`;
+    button.setAttribute("aria-label", `${button.getAttribute("aria-label")}, ${tacticUnavailableLabel(unavailable)}`);
+  }
+  if (player && !unavailable) bindTacticDrag(button, setup, ids, player.id);
   return button;
 }
 
@@ -2727,8 +2734,7 @@ function renderTacticPitchLines(container) {
 }
 
 function renderTacticSelectionHint(setup, ids) {
-  if (ids !== TACTICS_IDS) return;
-  const hint = document.getElementById("tactics-selection-hint");
+  const hint = ids.hint && document.getElementById(ids.hint);
   if (!hint) return;
   if (setup.selectedSlot == null) {
     hint.textContent = "Glisse un joueur sur un poste pour modifier ta composition. Sur écran tactile, maintiens la carte. Au clavier, sélectionne deux cartes.";
@@ -2761,6 +2767,7 @@ function renderBench(setup, ids) {
   const team = getUserTeam();
   const container = document.getElementById(ids.bench);
   const scrollTop = container.scrollTop;
+  const unavailablePlayers = getTacticUnavailablePlayers(setup, ids);
   container.innerHTML = "";
 
   if (ids === TACTICS_IDS) renderTacticBenchFilters(setup, ids);
@@ -2779,7 +2786,8 @@ function renderBench(setup, ids) {
     // s'il y était déjà — cas rare où il se blesse en cours de saison alors qu'il était titulaire
     // d'un plan sauvegardé) ; reste visible dans la liste, juste non cliquable, pour que l'utilisateur
     // comprenne pourquoi il ne peut pas le sélectionner plutôt que de le voir disparaître.
-    const blocked = p.injured && !isStarter;
+    const unavailable = unavailablePlayers.get(p.id);
+    const blocked = !!unavailable;
 
     const row = document.createElement("div");
     const compatible = !selectedPosition || (ids === TACTICS_IDS
@@ -2790,7 +2798,7 @@ function renderBench(setup, ids) {
     row.dataset.position = p.pos;
     const injuryBadge = p.injured
       ? `<span class="injury-badge" title="Blessure ${p.injurySeverity} — indisponible encore ${p.injuryDaysLeft} jour(s)">🩹 ${p.injuryDaysLeft}j</span>`
-      : "";
+      : unavailable ? `<span class="injury-badge">${tacticText(tacticUnavailableLabel(unavailable))}</span>` : "";
     row.innerHTML = `<button type="button" class="tactic-player-main" aria-label="Choisir ${tacticText(p.name)}"${blocked || !compatible ? " disabled" : ""}>
       ${renderTacticPortrait(p, team, "tactic-player-photo")}
       <span class="tactic-player-copy"><span class="tactic-player-name">${tacticText(p.name)}</span>
@@ -2809,6 +2817,7 @@ function renderBench(setup, ids) {
       editor.className = "tactic-role-editor";
       editor.innerHTML = `<label class="tactic-role-label"><span>Rôle</span><select class="tactic-role-select" data-player-id="${tacticText(p.id)}" aria-label="Rôle de ${tacticText(p.name)}">${options.map(option => `<option value="${option.key}"${role.key === option.key ? " selected" : ""}>${tacticText(option.name)}</option>`).join("")}</select></label><p class="tactic-role-description">${tacticText(role.description)}</p>`;
       const select = editor.querySelector("select");
+      select.disabled = blocked;
       select.onchange = () => {
         if (!options.some(option => option.key === select.value)) return;
         setup.playerRoles = { ...setup.playerRoles, [p.id]: select.value };
@@ -2825,7 +2834,7 @@ function renderBench(setup, ids) {
       row.appendChild(editor);
     }
     if (blocked) {
-      row.title = `Blessé (${p.injurySeverity}) — indisponible encore ${p.injuryDaysLeft} jour(s)`;
+      row.title = tacticUnavailableLabel(unavailable);
     } else {
       row.querySelector(".phase-in").onclick = (e) => {
         e.stopPropagation();
@@ -2833,7 +2842,7 @@ function renderBench(setup, ids) {
       };
       const main = row.querySelector(".tactic-player-main");
       main.onclick = event => { if (!consumeTacticDragClick(event)) handlePlayerClick(setup, ids, p, row); };
-      if (ids === TACTICS_IDS && !main.disabled) bindTacticDrag(main, setup, ids, p.id);
+      if (!main.disabled) bindTacticDrag(main, setup, ids, p.id);
     }
     container.appendChild(row);
   });
@@ -2872,6 +2881,8 @@ function closePositionPicker() {
 
 function showPositionPicker(setup, ids, player, rowEl, phase) {
   closePositionPicker();
+  const unavailable = getTacticUnavailablePlayers(setup, ids);
+  if (unavailable.has(player.id)) return;
   const team = getUserTeam();
   const formationKey = phase === "out" ? setup.formationOOP : setup.formation;
   const assignments = phase === "out" ? setup.assignmentsOOP : setup.assignments;
@@ -2903,17 +2914,13 @@ function showPositionPicker(setup, ids, player, rowEl, phase) {
     btn.innerHTML = `<span class="position-picker-tag">${slotShortTag(slots[i])}</span>
       <span class="position-picker-occupant">${occupant ? tacticText(occupant.name) : "Vide"}</span>`;
     btn.title = slotRoleLabel(slots[i]);
+    btn.disabled = occupantId !== player.id && !planTacticDropForScreen(setup, ids, player.id, i, phase).valid;
     btn.onclick = (e) => {
       e.stopPropagation();
-      const previousIndex = assignments.indexOf(player.id);
-      if (previousIndex >= 0 && previousIndex !== i) {
-        assignments[previousIndex] = occupant && ELIGIBLE_POS[occupant.pos].includes(slots[previousIndex].pos) ? occupant.id : null;
+      if (occupantId === player.id || moveTacticPlayer(setup, ids, player.id, i, phase)) {
+        closePositionPicker();
+        focusTacticPlayerControl(ids, player.id, ".phase-in");
       }
-      assignments[i] = player.id;
-      setup.selectedSlot = null;
-      closePositionPicker();
-      applyAssignmentChange(setup, ids, phase);
-      focusTacticPlayerControl(ids, player.id, ".phase-in");
     };
     picker.appendChild(btn);
   });
@@ -2984,14 +2991,34 @@ function focusTacticPlayerControl(ids, playerId, selector) {
   if (row) row.querySelector(selector).focus();
 }
 
+function getTacticUnavailablePlayers(setup, ids) {
+  const unavailable = new Map(getUserTeam().players.filter(player => player.injured || player.suspended)
+    .map(player => [player.id, { playerId: player.id, reason: player.injured ? "injury" : "suspended" }]));
+  if (ids === MATCH_TACTICS_IDS && matchState && matchEngine && typeof matchEngine.getUnavailablePlayers === "function") {
+    matchEngine.getUnavailablePlayers(matchState.userSide, matchState.minute).forEach(entry => unavailable.set(entry.playerId, entry));
+  }
+  return unavailable;
+}
+
+function tacticUnavailableLabel(entry) {
+  return ({ red: "Expulsé pour ce match", yellow: "Exclu temporairement", injury: "Blessé", suspended: "Suspendu" })[entry.reason] || "Indisponible";
+}
+
+function planTacticDropForScreen(setup, ids, playerId, index, phase) {
+  const unavailable = [...getTacticUnavailablePlayers(setup, ids).values()];
+  return planTacticDrop(setup, playerId, index, phase, unavailable.map(entry => entry.playerId),
+    unavailable.filter(entry => entry.reason === "injury" || entry.reason === "suspended").map(entry => entry.playerId));
+}
+
 // Prépare les deux dispositions sans les modifier : un dépôt est atomique, même
 // lorsque les formations n'ont pas les mêmes indices de poste.
-function planTacticDrop(setup, playerId, targetIndex, phase) {
+function planTacticDrop(setup, playerId, targetIndex, phase, unavailableIds = [], replaceableIds = []) {
   const team = getUserTeam();
   const players = new Map(team.players.map(player => [player.id, player]));
   const player = players.get(playerId);
+  const unavailable = new Set(unavailableIds);
   const invalid = { valid: false, reason: "Déplacement impossible vers ce poste." };
-  if (!player || player.injured || !["in", "out"].includes(phase)) return invalid;
+  if (!player || player.injured || player.suspended || unavailable.has(playerId) || !["in", "out"].includes(phase)) return invalid;
   const draft = { ...setup, assignments: [...setup.assignments], assignmentsOOP: [...setup.assignmentsOOP] };
   syncStartersAcrossPhases(draft, phase);
   const slots = FORMATION_SLOTS[phase === "out" ? draft.formationOOP : draft.formation];
@@ -3002,6 +3029,8 @@ function planTacticDrop(setup, playerId, targetIndex, phase) {
   if (!Number.isInteger(targetIndex) || !fits(playerId, slots[targetIndex])) return invalid;
   const sourceIndex = own.indexOf(playerId);
   const displacedId = own[targetIndex];
+  // Une exclusion impose l'infériorité numérique ; une blessure autorise un remplaçant.
+  if (unavailable.has(displacedId) && !(sourceIndex < 0 && replaceableIds.includes(displacedId))) return invalid;
   if (displacedId === playerId) return { valid: false, unchanged: true };
   if (sourceIndex >= 0 && displacedId && !fits(displacedId, slots[sourceIndex])) return invalid;
   own[targetIndex] = playerId;
@@ -3031,17 +3060,32 @@ function planTacticDrop(setup, playerId, targetIndex, phase) {
       if (otherSource >= 0) other[otherSource] = previous || null;
     } else if (otherSource < 0) return invalid;
   }
-  const validPhase = (assignments, phaseSlots) => assignments.length === phaseSlots.length
+  const validPhase = (assignments, phaseSlots, original) => assignments.length === phaseSlots.length
     && new Set(assignments.filter(Boolean)).size === assignments.filter(Boolean).length
-    && assignments.every((id, i) => !id || (fits(id, phaseSlots[i]) && !players.get(id).injured));
+    && assignments.every((id, i) => !id || (fits(id, phaseSlots[i]) && (unavailable.has(id)
+      ? original[i] === id : !players.get(id).injured && !players.get(id).suspended)));
   const samePlayers = [...own].filter(Boolean).sort().join("|") === [...other].filter(Boolean).sort().join("|");
-  if (!samePlayers || !validPhase(own, slots) || !validPhase(other, otherSlots)) return invalid;
+  const originalOwn = phase === "out" ? setup.assignmentsOOP : setup.assignments;
+  const originalOther = phase === "out" ? setup.assignments : setup.assignmentsOOP;
+  if (!samePlayers || !validPhase(own, slots, originalOwn) || !validPhase(other, otherSlots, originalOther)) return invalid;
   return { valid: true, assignments: draft.assignments, assignmentsOOP: draft.assignmentsOOP };
 }
 
 function moveTacticPlayer(setup, ids, playerId, index, phase) {
-  const plan = planTacticDrop(setup, playerId, index, phase);
-  if (!plan.valid) return false;
+  const plan = planTacticDropForScreen(setup, ids, playerId, index, phase);
+  const hint = ids.hint && document.getElementById(ids.hint);
+  if (!plan.valid) {
+    if (hint && plan.reason) hint.textContent = plan.reason;
+    return false;
+  }
+  const previous = setup.assignments.filter(Boolean);
+  const incoming = plan.assignments.filter(id => id && !previous.includes(id));
+  const outgoing = previous.filter(id => !plan.assignments.includes(id));
+  const replacements = new Map(outgoing.map((id, i) => [id, incoming[i]]));
+  ["activeOverride", "escalierOrder", "matchballOrder"].forEach(key => {
+    if (Array.isArray(setup[key])) setup[key] = [...new Set(setup[key].map(id => replacements.has(id) ? replacements.get(id) : id)
+      .filter(id => id && plan.assignments.includes(id)))];
+  });
   setup.assignments = plan.assignments;
   setup.assignmentsOOP = plan.assignmentsOOP;
   setup.selectedSlot = null;
@@ -3049,8 +3093,7 @@ function moveTacticPlayer(setup, ids, playerId, index, phase) {
   applyAssignmentChange(setup, ids, phase);
   const pitch = document.getElementById(ids.pitch);
   pitch.querySelector(`[data-slot-index="${index}"]`)?.focus({ preventScroll: true });
-  const hint = document.getElementById("tactics-selection-hint");
-  if (hint) hint.textContent = "Composition mise à jour. Tactique enregistrée.";
+  if (hint) hint.textContent = setup.persist ? "Composition mise à jour. Tactique enregistrée." : "Composition modifiée pour ce match.";
   return true;
 }
 
@@ -3096,7 +3139,7 @@ function bindTacticDrag(source, setup, ids, playerId) {
     const targets = Array.from(document.querySelectorAll(`#${ids.pitch} .pitch-slot`));
     let active = false, ghost = null, target = null, timer = null, finished = false, scrollFrame = null;
     let pointerX = startX, pointerY = startY;
-    const planFor = element => planTacticDrop(setup, playerId, Number(element.dataset.slotIndex), element.dataset.phase);
+    const planFor = element => planTacticDropForScreen(setup, ids, playerId, Number(element.dataset.slotIndex), element.dataset.phase);
     const locate = (x, y) => {
       pointerX = x; pointerY = y;
       ghost.style.left = x - (startX - rect.left) + "px";
@@ -3110,7 +3153,8 @@ function bindTacticDrag(source, setup, ids, playerId) {
     };
     const scrollAtEdge = () => {
       const hit = document.elementFromPoint(pointerX, pointerY);
-      const containers = [hit?.closest(".iop-wrap, .oop-preview"), hit?.closest(".tactics-bench-list"), document.getElementById("tab-tactics")];
+      const scrollRoot = source.closest(".modal-tactics, #screen-lineup, #tab-tactics");
+      const containers = [hit?.closest(".iop-wrap, .oop-preview"), hit?.closest(".tactics-bench-list"), scrollRoot];
       const speed = (position, start, end) => position < start + 30 ? -12 : position > end - 30 ? 12 : 0;
       let scrolled = false;
       containers.filter(Boolean).forEach(container => {
@@ -3181,7 +3225,7 @@ function bindTacticDrag(source, setup, ids, playerId) {
 }
 
 function selectSlot(setup, ids, i, phase = "in") {
-  if (ids === TACTICS_IDS && setup.selectedSlot != null && (setup.selectedSlot !== i || (setup.selectedPhase || "in") !== phase)) {
+  if (setup.selectedSlot != null && (setup.selectedSlot !== i || (setup.selectedPhase || "in") !== phase)) {
     const selectedPhase = setup.selectedPhase || "in";
     const selectedAssignments = selectedPhase === "out" ? setup.assignmentsOOP : setup.assignments;
     const playerId = selectedAssignments[setup.selectedSlot];
@@ -3208,25 +3252,8 @@ function handlePlayerClick(setup, ids, p, rowEl) {
   closePositionPicker();
 
   if (setup.selectedSlot != null) {
-    if (ids === TACTICS_IDS) {
-      moveTacticPlayer(setup, ids, p.id, setup.selectedSlot, phase);
-      return;
-    }
-    const slot = slots[setup.selectedSlot];
-    if (!ELIGIBLE_POS[p.pos].includes(slot.pos)) {
-      showAlert(`Ce poste nécessite un joueur "${slot.pos}" (${slotRoleLabel(slot)}).`);
-      return;
-    }
-    if (currentIdx >= 0) {
-      // échange avec le joueur déjà sur le slot sélectionné, s'il peut occuper l'ancien poste de p
-      const tmp = assignments[setup.selectedSlot];
-      const tmpPlayer = tmp ? getUserTeam().players.find(pl => pl.id === tmp) : null;
-      assignments[setup.selectedSlot] = p.id;
-      assignments[currentIdx] = (tmpPlayer && ELIGIBLE_POS[tmpPlayer.pos].includes(slots[currentIdx].pos)) ? tmp : null;
-    } else {
-      assignments[setup.selectedSlot] = p.id;
-    }
-    setup.selectedSlot = null;
+    moveTacticPlayer(setup, ids, p.id, setup.selectedSlot, phase);
+    return;
   } else if (currentIdx >= 0) {
     // retire le joueur titulaire vers le banc
     assignments[currentIdx] = null;
@@ -3243,7 +3270,8 @@ function handlePlayerClick(setup, ids, p, rowEl) {
       showAlert("Aucun poste libre pour cette position. Sélectionne d'abord un emplacement sur le terrain.");
       return;
     } else if (sameIndices.length === 1) {
-      assignments[sameIndices[0]] = p.id;
+      moveTacticPlayer(setup, ids, p.id, sameIndices[0], phase);
+      return;
     } else {
       // plusieurs emplacements compatibles : affiche un sélecteur cliquable (GK, DEF (D), DEF (G)...)
       showPositionPicker(setup, ids, p, rowEl, phase);
@@ -3350,8 +3378,8 @@ function renderMentalityChoices(setup, containerId) {
 }
 
 // IDs des éléments DOM pour chaque écran utilisant le plateau tactique
-const LINEUP_IDS = { formation: "formation-choice", pitch: "pitch-field", bench: "bench-list", attack: "attack-plan-choice", defense: "defense-plan-choice", mentality: "mentality-choice", count: "lineup-count" };
-const TACTICS_IDS = { formation: "tactics-formation-choice", pitch: "tactics-pitch-field", bench: "tactics-bench-list", attack: "tactics-attack-plan-choice", defense: "tactics-defense-plan-choice", mentality: "tactics-mentality-choice" };
+const LINEUP_IDS = { formation: "formation-choice", pitch: "pitch-field", bench: "bench-list", attack: "attack-plan-choice", defense: "defense-plan-choice", mentality: "mentality-choice", count: "lineup-count", hint: "lineup-selection-hint" };
+const TACTICS_IDS = { formation: "tactics-formation-choice", pitch: "tactics-pitch-field", bench: "tactics-bench-list", attack: "tactics-attack-plan-choice", defense: "tactics-defense-plan-choice", mentality: "tactics-mentality-choice", hint: "tactics-selection-hint" };
 
 // ===================== SÉLECTION DU XI (avant match) =====================
 function openLineupScreen() {
@@ -3499,7 +3527,7 @@ const SHOOTOUT_TICK_MS = 1300;
 // Au-delà du temps réglementaire, le Matchball joue en prolongation jusqu'au but décisif :
 // ce plafond n'est qu'un garde-fou pour éviter une boucle infinie en cas de scénario extrême.
 const MAX_MATCH_MINUTE = 200;
-const MATCH_TACTICS_IDS = { formation: "match-formation-choice", pitch: "match-tactics-pitch-field", bench: "match-tactics-bench-list", attack: "match-attack-plan-choice", defense: "match-defense-plan-choice", mentality: "match-mentality-choice" };
+const MATCH_TACTICS_IDS = { formation: "match-formation-choice", pitch: "match-tactics-pitch-field", bench: "match-tactics-bench-list", attack: "match-attack-plan-choice", defense: "match-defense-plan-choice", mentality: "match-mentality-choice", hint: "match-tactics-selection-hint" };
 
 let matchEngine = null;
 let matchState = null;
@@ -3941,6 +3969,7 @@ function pitchFrameLoop(ts) {
     }
     if (matchState.sequenceActive && choreo.isSequenceDone()) {
       matchState.sequenceActive = false;
+      syncPendingMatchTactics();
       matchState.completedMinute = matchState.minute;
       refreshScoreDisplay();
       updateMatchDashboard(true);
@@ -4662,6 +4691,12 @@ function togglePauseMatch() {
 }
 
 // Ouvre le panneau tactique en cours de match (mise en pause automatique)
+function syncPendingMatchTactics() {
+  if (!matchState || matchState.sequenceActive || !matchState.pendingTacticsSync) return;
+  matchState.pendingTacticsSync = false;
+  syncChoreoAnchors(matchState.minute);
+}
+
 function openMatchTactics() {
   if (!matchState || matchState.finished || phaseLineupState) return;
   matchState.paused = true;
@@ -4678,9 +4713,13 @@ function openMatchTactics() {
 }
 
 function closeMatchTactics() {
+  if (tacticDrag) tacticDrag.cancel();
   document.getElementById("match-tactics-modal").classList.remove("active");
-  lineupSetup.lineup = lineupSetup.assignments.filter(Boolean);
-  syncChoreoAnchors(matchState.minute);
+  const unavailable = getTacticUnavailablePlayers(lineupSetup, MATCH_TACTICS_IDS);
+  lineupSetup.lineup = lineupSetup.assignments.filter(id => id && (!unavailable.has(id) || unavailable.get(id).reason === "yellow"));
+  // La séquence affichée est déjà calculée : ses acteurs restent jusqu'à sa fin.
+  matchState.pendingTacticsSync = true;
+  syncPendingMatchTactics();
   updateMatchDashboard(false);
 
   if (matchState.atHalfTime) {

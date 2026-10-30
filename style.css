@@ -778,11 +778,16 @@ button.option-card { appearance: none; color: inherit; font-family: inherit; tex
 
 /* Glisser-déposer : les cartes restent en place pendant que leur copie suit le pointeur.
    Seules les cartes capturent le geste tactile ; le fond du terrain reste défilable. */
-#tab-tactics .pitch-slot.filled,
-#tab-tactics .tactic-player-main:not(:disabled) {
+.coach-pitch .pitch-slot.filled:not(:disabled),
+#tab-tactics .tactic-player-main:not(:disabled),
+#screen-lineup .tactic-player-main:not(:disabled),
+#match-tactics-modal .tactic-player-main:not(:disabled) {
   cursor: grab; touch-action: none;
   user-select: none; -webkit-user-select: none; -webkit-touch-callout: none;
 }
+.pitch-slot.tactic-player-unavailable { cursor: not-allowed; opacity: 0.55; border-style: dashed; }
+.coach-pitch .pitch-slot:disabled { transform: translate(-50%, -50%) !important; }
+.tactic-drag-status { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .pitch-slot.tactic-drag-source, .tactic-player-main.tactic-drag-source { opacity: 0.38; }
 .pitch-slot.tactic-drag-source { border-style: dashed; }
 .pitch-slot.tactic-drop-valid {
