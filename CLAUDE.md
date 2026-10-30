@@ -205,7 +205,10 @@ mode de débogage visuel (touche **D** pendant un match, voir `app.js:PITCH_DEBU
   en préparation et pendant le match. `sanitizeTactic` reprend la composition principale
   des anciennes carrières ; `syncSingleComposition` maintient `formationOOP` et
   `assignmentsOOP` comme miroirs exacts pour le moteur, même avec `persist:false`.
-  Le glisser-déposer de l'onglet Tactique échange les joueurs ou aligne un remplaçant.
+  Le glisser-déposer des trois éditeurs échange les joueurs ou aligne un remplaçant.
+  Le modal de match verrouille les exclusions via `getUnavailablePlayers`, conserve le
+  retour des jaunes et les priorités des formats réduits. Le roster visuel se synchronise
+  après la séquence déjà calculée, avant la suivante ; aucune action jouée n'est réécrite.
   `planTacticDrop` valide l'opération avant toute mutation (gardien uniquement au but).
   Souris, appui tactile prolongé et sélection de deux cartes au clavier sont disponibles ;
   Échap ou un dépôt hors poste annule le geste. Les cartes seules capturent le tactile,

@@ -360,6 +360,27 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
     return [...outfield].sort((a, b) => b.overall - a.overall).slice(0, cap).map(p => p.id);
   }
 
+  // Lecture seule pour les choix du coach, y compris les joueurs du banc. Une
+  // exclusion n'est pas un simple joueur hors du format réduit de la minute.
+  function getUnavailablePlayers(side, minute) {
+    const team = side === "home" ? homeTeam : awayTeam;
+    const at = Number.isFinite(minute) ? minute : lastMinute;
+    const sanctions = cardSanctions[side === "home" ? "home" : "away"];
+    const expelled = sentOff[side === "home" ? "home" : "away"];
+    return team.players.flatMap(player => {
+      if (expelled.has(player.id)) {
+        const penalty = sanctions.redActive.find(entry => entry.playerId === player.id);
+        return [{ playerId: player.id, reason: "red", ...(penalty ? { until: penalty.until } : {}) }];
+      }
+      if (player.injured) return [{ playerId: player.id, reason: "injury" }];
+      if (player.suspended) return [{ playerId: player.id, reason: "suspended" }];
+      const activeYellows = sanctions.yellow.filter(entry => entry.playerId === player.id && at <= entry.until);
+      return activeYellows.length
+        ? [{ playerId: player.id, reason: "yellow", until: Math.max(...activeYellows.map(entry => entry.until)) }]
+        : [];
+    });
+  }
+
   function isGlobalDoubleGoalActive(minute) { return globalDoubleGoalActive && minute <= HALF_TIME; }
   function isInWindow(minute, [start, end]) { return minute >= start && minute <= end; }
   // Fenêtre d'activation : Cartes Secrètes (5-17 puis 23-36) et Penalty du Président
@@ -1511,6 +1532,7 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
     activateCard,
     getAttackers: (side) => getAttackers(side === "home" ? homeTeam : awayTeam, side === "home" ? homeSetup : awaySetup),
     getGK: (side) => getGK(side === "home" ? homeTeam : awayTeam, side === "home" ? homeSetup : awaySetup),
+    getUnavailablePlayers,
     // Joueurs réellement sur le terrain à la minute donnée (GK + joueurs de champ actifs) :
     // tient compte de l'escalier de départ, du Dé Géant et de l'escalier inversé du Matchball.
     getActiveLineupIds: (side, minute) => {

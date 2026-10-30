@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kings Manager 7v7</title>
   <link rel="icon" href="images/favicon.png">
-  <link rel="stylesheet" href="style.css?v=20261030-lineup">
+  <link rel="stylesheet" href="style.css?v=20261030-live-drag">
 </head>
 
 <body>
@@ -430,7 +430,8 @@
       <div id="opponent-style-preview" class="opponent-style-preview"></div>
       <div class="tactics-layout">
         <div class="panel tactics-pitch-panel">
-          <h3>Composition (<span id="lineup-count">0</span>/7)</h3>
+          <h3 title="Glisse un joueur sur un poste. Appui prolongé sur mobile.">Composition (<span id="lineup-count">0</span>/7)</h3>
+          <p class="tactic-drag-status" id="lineup-selection-hint" aria-live="polite"></p>
           <div class="tactics-pitch-row">
             <div class="iop-wrap">
               <div class="pitch-field coach-pitch" id="pitch-field"></div>
@@ -554,6 +555,7 @@
 
           <div class="tactics-layout modal-tactics-layout">
             <div class="panel tactics-pitch-panel">
+              <p class="tactic-drag-status" id="match-tactics-selection-hint" aria-live="polite"></p>
               <div class="tactics-pitch-row">
                 <div class="iop-wrap">
                   <div class="pitch-field coach-pitch" id="match-tactics-pitch-field"></div>
@@ -725,9 +727,9 @@
   <script src="data.js?v=20261028-roles"></script>
   <script src="player-photos.js"></script>
   <script src="matchengine-actions.js?v=20261028-roles"></script>
-  <script src="engine.js?v=20261028-roles"></script>
+  <script src="engine.js?v=20261030-live-drag"></script>
   <script src="matchchoreo.js?v=20261028-roles"></script>
-  <script src="app.js?v=20261030-lineup"></script>
+  <script src="app.js?v=20261030-live-drag"></script>
 </body>
 
 </html>
