@@ -2704,8 +2704,8 @@ function buildTacticSlot(setup, ids, slot, index, phase, player) {
   button.dataset.playerId = player ? player.id : "";
   // Le tableau se lit du gardien à gauche vers l'attaque à droite. Les coordonnées
   // de formation restent intactes pour les rôles, les sauvegardes et le moteur.
-  button.style.left = (ids === TACTICS_IDS ? 100 - slot.y : slot.x) + "%";
-  button.style.top = (ids === TACTICS_IDS ? slot.x : slot.y) + "%";
+  button.style.left = (100 - slot.y) + "%";
+  button.style.top = slot.x + "%";
   const role = player ? getPlayerRole(setup, player.id, slot.pos) : null;
   button.setAttribute("aria-label", `${slotRoleLabel(slot)}, ${player ? player.name + ", " + role.name : "Emplacement vide"}`);
   button.setAttribute("aria-pressed", String(selected));
