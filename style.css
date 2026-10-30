@@ -685,6 +685,37 @@ button.secondary.selected { border-color: var(--accent2); background: rgba(255,1
 #tab-tactics .tactics-pitch-row.view-both > div { flex: 0 0 auto; }
 #tab-tactics .tactics-pitch-row.view-both h4 > span:last-child { display: none; }
 .tactics-selection-hint { flex-shrink: 0; color: #bec8b9; border-top: 1px solid #333e31; font-size: 0.69rem; line-height: 1.55; padding-top: 11px; margin-top: 10px; }
+.slot-role { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; max-width: 100%; color: #dfd6ae; font-size: clamp(7px, 1.5cqw, 8px); line-height: 1.12; font-weight: 400; }
+.tactics-bench-list .player-row.has-tactical-role { flex-wrap: wrap; }
+.tactic-role-editor { flex: 0 0 100%; min-width: 0; border-top: 1px solid #48513c; margin-top: 2px; padding-top: 5px; }
+.tactic-role-label { display: flex; align-items: center; gap: 8px; color: #cad1bb; font-size: 0.61rem; }
+.tactic-role-select { appearance: auto; min-width: 0; flex: 1; min-height: 32px; padding: 5px 7px; border: 1px solid #68704e; border-radius: 5px; background: #1c241d; color: #f2e8c2; font: 500 0.66rem "Poppins", sans-serif; }
+.tactic-role-select:focus-visible { outline: 2px solid #fff0b6; outline-offset: 2px; }
+.tactic-role-description { margin: 4px 0 0; color: #acb7a3; font-size: 0.59rem; line-height: 1.5; }
+.club-style-card { color: #c9d2c1; border: 1px solid #414c3b; border-radius: 6px; padding: 8px; background: #1c241d; font-size: 0.66rem; line-height: 1.55; }
+.club-style-card summary { cursor: pointer; color: #bdc9b2; }
+.club-style-card summary strong { display: block; color: #f3dfa0; font-size: 0.73rem; font-weight: 600; margin-top: 2px; }
+.club-style-card p { margin: 8px 0 0; }
+.club-style-card b { color: #e3e7d6; font-weight: 600; }
+.club-style-card small { display: block; color: #8e9e87; font-size: 0.57rem; margin-top: 7px; }
+.opponent-style-preview { flex: 0 0 auto; margin-bottom: 10px; }
+.opponent-style-preview .club-style-card { padding: 7px 12px; }
+.opponent-style-preview summary strong { display: inline; margin: 0 0 0 10px; }
+/* Le profil adverse peut se déplier sans écraser les cartes de composition. */
+#screen-lineup.active { overflow-y: auto; }
+#screen-lineup > .tactics-toolbar { flex-shrink: 0; }
+#screen-lineup > .tactics-layout { flex: 0 0 auto; min-height: 540px; }
+#screen-lineup .tactics-pitch-panel, #screen-lineup .tactics-bench-panel { height: 540px; }
+#screen-lineup > div:last-child { flex-shrink: 0; padding-bottom: 5px; }
+@media (max-width: 1100px) {
+  #screen-lineup .tactics-layout { min-height: 0; }
+  #screen-lineup .tactics-bench-panel { flex: 0 0 430px; }
+  #screen-lineup .tactics-pitch-panel { flex: 0 0 540px; }
+}
+@media (max-width: 720px) {
+  .tactic-role-select { min-height: 44px; font-size: 0.72rem; }
+  .tactic-role-description { font-size: 0.66rem; }
+}
 .tactics-workspace > .tactics-bench-panel { max-width: none; display: flex; flex-direction: column; min-height: 0; padding: 16px 12px 12px; }
 .tactics-squad-status { margin-left: auto; font-size: 0.65rem; color: #c5cdbf; white-space: nowrap; }
 .tactics-squad-overview { flex-shrink: 0; margin-top: 15px; border-top: 1px solid #30372e; border-bottom: 1px solid #30372e; }
@@ -1340,8 +1371,13 @@ body.tactic-is-dragging .pitch-slot.tactic-drop-invalid { cursor: not-allowed !i
 .compare-value.compare-worse { color: #ffd6d6; opacity: 0.75; }
 
 .modal-tactics { max-width: 90vw; width: 1400px; max-height: 90vh; overflow-y: auto; }
-.modal-tactics-layout { height: 50vh; min-height: 360px; }
+.modal-tactics-layout { height: 50vh; min-height: 500px; flex-shrink: 0; }
 .modal-tactics-layout .pitch-field { min-height: 0; }
+@media (max-width: 1100px) {
+  .modal-tactics-layout { height: auto; min-height: 0; }
+  .modal-tactics-layout .tactics-pitch-panel { flex: 0 0 540px; }
+  .modal-tactics-layout .tactics-bench-panel { flex: 0 0 430px; }
+}
 
 #offer-amount {
   background: rgba(255,255,255,0.07); color: #eee; border: 1px solid var(--panel-border) !important;

@@ -42,6 +42,8 @@ statique.
    `runBalanceSimulation(homeTeam, awayTeam, n)` simule un grand nombre de matchs et agrège les
    moyennes utiles (buts/tirs/xG par match, taux de passes réussies, avantage du terrain, taux de
    victoire du favori...) pour ajuster `MATCH_BALANCE` sans y jouer à la main.
+   Cet outil croise les cinq profils de jeu pour isoler l'effet du niveau des joueurs ;
+   `{ clubStyles: true }` en quatrième argument mesure les profils propres aux deux clubs.
    Conserve `possessionState` (camp, porteur, ballon, positions, reprise) entre les
    séquences et les minutes. `getPossessionState`/`getLiveStats` renvoient des copies
    de lecture ; ne jamais appeler `finalize` pour rafraîchir une statistique en direct.
@@ -107,8 +109,19 @@ publié non ambigu). Les ligues déjà sauvegardées conservent leurs transferts
 
 - `chooseAiFormation(team)` — teste les 3 formations, retient celle qui maximise la force
   du meilleur onze possible avec l'effectif actuel.
-- `chooseAiPlans(teamStrength, oppStrength)` — plan offensif/défensif pondéré par le
-  rapport de force (favori = possession/pressing, outsider = direct/bloc bas).
+- `getTeamStyle(team)` / `TEAM_STYLES` (`data.js`) — cinq profils de jeu générés, stables
+  par identifiant de club : maîtrise, pressing, contre-attaque, bloc compact, jeu sur les côtés.
+  Ce sont des identités de carrière, pas des descriptions documentaires des clubs réels.
+- `chooseAiPlans(teamStrength, oppStrength, team)` et `chooseAiFormation(team)` conservent
+  ce profil, tout en tenant compte de l'effectif et du rapport de force. `autoCoach` adapte
+  l'intention au score sans effacer la personnalité du club.
+- `PLAYER_ROLES` / `setup.playerRoles` — neuf rôles affectés par identité de joueur selon
+  son poste de terrain. `normalizePlayerRoles` filtre les joueurs vendus et rétablit un rôle
+  compatible après un changement de ligne. L'onglet sauvegarde les rôles ; les ajustements
+  d'avant-match ou du match restent temporaires. Les anciennes carrières reçoivent les défauts.
+  Le rôle agit sur courses, choix d'action, receveurs et dépense d'énergie ; le style agit sur
+  largeur, profondeur, pression et rythme. Aucune hausse artificielle de notes ou de xG.
+  Les instantanés du moteur font autorité pour l'animation et la simulation instantanée.
 - `app.js:maybeAdjustAiTactics(minute)` — réévaluation du plan toutes les 5 min dès la 25e.
 - `setup.autoCoach` active désormais cette adaptation dans le moteur commun aux
   matchs animés et aux ligues simulées ; le contrôle humain garde `autoCoach:false`.

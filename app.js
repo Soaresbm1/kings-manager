@@ -2586,7 +2586,7 @@ function sanitizeTactic(tactic) {
   const slots = FORMATION_SLOTS[formation];
   const assignments = sanitizeAssignments(team, slots, tactic && tactic.assignments);
 
-  return {
+  const normalized = {
     formation,
     assignments,
     attackPlan: (tactic && ATTACK_PLANS[tactic.attackPlan]) ? tactic.attackPlan : "possession",
@@ -2597,6 +2597,9 @@ function sanitizeTactic(tactic) {
     assignmentsOOP: [...assignments],
     viewMode: "in"
   };
+  normalized.playerRoles = normalizePlayerRoles(team, { ...normalized, playerRoles: tactic && tactic.playerRoles });
+  normalized.teamStyle = getTeamStyle(team).key;
+  return normalized;
 }
 
 function syncSingleComposition(setup) {
@@ -2604,6 +2607,8 @@ function syncSingleComposition(setup) {
   setup.assignmentsOOP = [...setup.assignments];
   setup.viewMode = "in";
   setup.selectedPhase = "in";
+  setup.playerRoles = normalizePlayerRoles(getUserTeam(), setup);
+  setup.teamStyle = getTeamStyle(getUserTeam()).key;
 }
 
 function getSavedTacticOrDefault() {
@@ -2623,6 +2628,7 @@ function saveTactic(setup) {
     attackPlan: setup.attackPlan,
     defensePlan: setup.defensePlan,
     mentality: normalizeMentality(setup.mentality),
+    playerRoles: { ...setup.playerRoles },
     formationOOP: setup.formationOOP || setup.formation,
     assignmentsOOP: [...setup.assignmentsOOP],
     viewMode: setup.viewMode || "in"
@@ -2700,7 +2706,8 @@ function buildTacticSlot(setup, ids, slot, index, phase, player) {
   // de formation restent intactes pour les rôles, les sauvegardes et le moteur.
   button.style.left = (ids === TACTICS_IDS ? 100 - slot.y : slot.x) + "%";
   button.style.top = (ids === TACTICS_IDS ? slot.x : slot.y) + "%";
-  button.setAttribute("aria-label", `${slotRoleLabel(slot)}, ${player ? player.name : "Emplacement vide"}`);
+  const role = player ? getPlayerRole(setup, player.id, slot.pos) : null;
+  button.setAttribute("aria-label", `${slotRoleLabel(slot)}, ${player ? player.name + ", " + role.name : "Emplacement vide"}`);
   button.setAttribute("aria-pressed", String(selected));
   button.title = `${slotRoleLabel(slot)} — ${player ? player.name : "Choisir un joueur"}`;
   const warning = player && player.pos !== slot.pos
@@ -2708,7 +2715,8 @@ function buildTacticSlot(setup, ids, slot, index, phase, player) {
   button.innerHTML = `${player ? renderTacticPortrait(player, getUserTeam(), "slot-portrait") : '<span class="slot-portrait slot-placeholder" aria-hidden="true">+</span>'}
     ${player ? `<span class="slot-overall ${overallClass(player.overall)}" aria-label="Niveau ${player.overall}">${player.overall}</span>` : ""}
     <span class="slot-copy"><span class="slot-tag pos-${slot.pos}">${slotShortTag(slot)}</span>
-    <span class="${player ? "slot-name" : "slot-empty"}">${player ? tacticText(player.name) : "Choisir"}</span>${warning}</span>`;
+    <span class="${player ? "slot-name" : "slot-empty"}">${player ? tacticText(player.name) : "Choisir"}</span>
+    ${role ? `<span class="slot-role" title="${tacticText(role.description)}">${tacticText(role.name)}</span>` : ""}${warning}</span>`;
   button.onclick = event => { if (!consumeTacticDragClick(event)) selectSlot(setup, ids, index, phase); };
   if (ids === TACTICS_IDS && player) bindTacticDrag(button, setup, ids, player.id);
   return button;
@@ -2777,7 +2785,7 @@ function renderBench(setup, ids) {
     const compatible = !selectedPosition || (ids === TACTICS_IDS
       ? (selectedPosition === "GK") === (p.pos === "GK")
       : ELIGIBLE_POS[p.pos].includes(selectedPosition));
-    row.className = "player-row" + (isStarter ? " selected" : "") + (blocked ? " player-row-injured" : "") + (selectedPosition && !compatible ? " player-row-incompatible" : "");
+    row.className = "player-row" + (isStarter ? " selected has-tactical-role" : "") + (blocked ? " player-row-injured" : "") + (selectedPosition && !compatible ? " player-row-incompatible" : "");
     row.dataset.playerId = p.id;
     row.dataset.position = p.pos;
     const injuryBadge = p.injured
@@ -2793,6 +2801,29 @@ function renderBench(setup, ids) {
           <button type="button" class="phase-square phase-in${inIdx >= 0 ? " filled" : ""}" aria-label="Poste de ${tacticText(p.name)} : ${inTag}" title="Modifier le poste"${blocked ? " disabled" : ""}><span class="phase-label">Poste</span><span class="phase-position">${inTag}</span></button>
         </div>
       </div>`;
+    if (isStarter) {
+      const slotPosition = FORMATION_SLOTS[setup.formation][inIdx].pos;
+      const role = getPlayerRole(setup, p.id, slotPosition);
+      const options = Object.values(PLAYER_ROLES).filter(option => option.positions.includes(slotPosition));
+      const editor = document.createElement("div");
+      editor.className = "tactic-role-editor";
+      editor.innerHTML = `<label class="tactic-role-label"><span>Rôle</span><select class="tactic-role-select" data-player-id="${tacticText(p.id)}" aria-label="Rôle de ${tacticText(p.name)}">${options.map(option => `<option value="${option.key}"${role.key === option.key ? " selected" : ""}>${tacticText(option.name)}</option>`).join("")}</select></label><p class="tactic-role-description">${tacticText(role.description)}</p>`;
+      const select = editor.querySelector("select");
+      select.onchange = () => {
+        if (!options.some(option => option.key === select.value)) return;
+        setup.playerRoles = { ...setup.playerRoles, [p.id]: select.value };
+        syncSingleComposition(setup);
+        renderPitch(setup, ids);
+        renderBench(setup, ids);
+        saveTactic(setup);
+        focusTacticPlayerControl(ids, p.id, ".tactic-role-select");
+        if (ids === TACTICS_IDS) {
+          const hint = document.getElementById("tactics-selection-hint");
+          hint.textContent = `${p.name} : ${getPlayerRole(setup, p.id, slotPosition).name}. Rôle enregistré.`;
+        }
+      };
+      row.appendChild(editor);
+    }
     if (blocked) {
       row.title = `Blessé (${p.injurySeverity}) — indisponible encore ${p.injuryDaysLeft} jour(s)`;
     } else {
@@ -3334,6 +3365,7 @@ function openLineupScreen() {
   lineupSetup = {
     lineup: [], formation: tactic.formation, attackPlan: tactic.attackPlan, defensePlan: tactic.defensePlan, mentality: tactic.mentality,
     isHome, opponentId: opponent.id, userMatch,
+    playerRoles: { ...tactic.playerRoles }, teamStyle: tactic.teamStyle,
     assignments: tactic.assignments, selectedSlot: null,
     formationOOP: tactic.formationOOP, assignmentsOOP: tactic.assignmentsOOP, viewMode: tactic.viewMode
   };
@@ -3348,6 +3380,7 @@ function openLineupScreen() {
   renderPlanChoices(lineupSetup, LINEUP_IDS);
   updateLineupCount(lineupSetup, LINEUP_IDS);
   renderSecretCardChoice(lineupSetup);
+  renderClubStyle(opponent, "opponent-style-preview", true);
 
   showScreen("screen-lineup");
 }
@@ -3366,6 +3399,7 @@ function openTournamentLineupScreen(match) {
   lineupSetup = {
     lineup: [], formation: tactic.formation, attackPlan: tactic.attackPlan, defensePlan: tactic.defensePlan, mentality: tactic.mentality,
     isHome, opponentId: opponent.id, userMatch: null, tournamentOpponent: opponent,
+    playerRoles: { ...tactic.playerRoles }, teamStyle: tactic.teamStyle,
     assignments: tactic.assignments, selectedSlot: null,
     formationOOP: tactic.formationOOP, assignmentsOOP: tactic.assignmentsOOP, viewMode: tactic.viewMode
   };
@@ -3380,6 +3414,7 @@ function openTournamentLineupScreen(match) {
   renderPlanChoices(lineupSetup, LINEUP_IDS);
   updateLineupCount(lineupSetup, LINEUP_IDS);
   renderSecretCardChoice(lineupSetup);
+  renderClubStyle(opponent, "opponent-style-preview", true);
 
   showScreen("screen-lineup");
 }
@@ -3416,6 +3451,7 @@ function renderTacticsTab() {
   tacticsSetup = {
     formation: tactic.formation, attackPlan: tactic.attackPlan, defensePlan: tactic.defensePlan, mentality: tactic.mentality,
     assignments: tactic.assignments, selectedSlot: null,
+    playerRoles: { ...tactic.playerRoles }, teamStyle: tactic.teamStyle,
     formationOOP: tactic.formationOOP, assignmentsOOP: tactic.assignmentsOOP, viewMode: tactic.viewMode,
     persist: true
   };
@@ -3425,6 +3461,17 @@ function renderTacticsTab() {
   renderBench(tacticsSetup, TACTICS_IDS);
   renderPlanChoices(tacticsSetup, TACTICS_IDS);
   renderPositionOverview();
+  renderClubStyle(getUserTeam(), "tactics-team-style", false);
+}
+
+// Le profil de jeu est une identité de carrière, stable même sur une ancienne sauvegarde.
+function renderClubStyle(team, containerId, opponent) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  const style = getTeamStyle(team);
+  container.innerHTML = `<details class="club-style-card"><summary><span>${opponent ? tacticText(team.name) : "Identité du club"}</span><strong>${tacticText(style.name)}</strong></summary>
+    <p>${tacticText(style.description)}</p><p><b>Point fort</b> · ${tacticText(style.strength)}</p>
+    <p><b>Point faible</b> · ${tacticText(style.weakness)}</p><small>Profil de jeu pour cette carrière.</small></details>`;
 }
 
 // Aperçu rapide de la force de l'effectif par poste (moyenne d'overall + effectif dispo), pour
@@ -3480,6 +3527,8 @@ function startMatch() {
 
   lineupSetup.lineup = lineupSetup.assignments.filter(Boolean);
   lineupSetup.autoCoach = false;
+  lineupSetup.playerRoles = normalizePlayerRoles(team, lineupSetup);
+  lineupSetup.teamStyle = getTeamStyle(team).key;
 
   // l'IA adverse choisit la formation qui exploite le mieux son effectif, puis un plan
   // tactique adapté au rapport de force avec l'équipe du joueur (cf. chooseAiFormation /
@@ -3489,7 +3538,7 @@ function startMatch() {
   const aiLineup = aiAssignments.filter(Boolean);
   const humanStrength = computeTeamStrength(team, lineupSetup.lineup);
   const aiStrength = computeTeamStrength(opponent, aiLineup);
-  const aiPlans = chooseAiPlans(aiStrength, humanStrength);
+  const aiPlans = chooseAiPlans(aiStrength, humanStrength, opponent);
   const aiSetup = {
     lineup: aiLineup,
     assignments: aiAssignments,
@@ -3497,8 +3546,10 @@ function startMatch() {
     attackPlan: aiPlans.attackPlan,
     defensePlan: aiPlans.defensePlan,
     mentality: normalizeMentality(aiPlans.mentality),
+    teamStyle: getTeamStyle(opponent).key,
     autoCoach: true
   };
+  aiSetup.playerRoles = createAiPlayerRoles(opponent, aiSetup);
 
   const homeTeam = lineupSetup.isHome ? team : opponent;
   const awayTeam = lineupSetup.isHome ? opponent : team;
@@ -3853,8 +3904,8 @@ function syncChoreoAnchors(minute) {
   if (!choreo || !matchEngine || !matchState) return;
   choreo.setAnchors(matchEngine.getFormationAnchors("home", minute), matchEngine.getFormationAnchors("away", minute));
   choreo.setTactics(
-    { attackPlan: matchState.homeSetup.attackPlan, defensePlan: matchState.homeSetup.defensePlan },
-    { attackPlan: matchState.awaySetup.attackPlan, defensePlan: matchState.awaySetup.defensePlan }
+    { attackPlan: matchState.homeSetup.attackPlan, defensePlan: matchState.homeSetup.defensePlan, playerRoles: matchState.homeSetup.playerRoles, teamStyle: matchState.homeSetup.teamStyle, mentality: matchState.homeSetup.mentality },
+    { attackPlan: matchState.awaySetup.attackPlan, defensePlan: matchState.awaySetup.defensePlan, playerRoles: matchState.awaySetup.playerRoles, teamStyle: matchState.awaySetup.teamStyle, mentality: matchState.awaySetup.mentality }
   );
 }
 
