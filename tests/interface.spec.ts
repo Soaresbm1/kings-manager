@@ -188,6 +188,22 @@ test('les données difficiles, vides et uniques ne cassent pas les composants r�
   await expect(frame.locator('#player-info-body')).not.toContainText(/NaN|undefined|Infinity/);
 });
 
+test('les portraits retirés supportent la fin tardive de leur chargement', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', error => errors.push(error.message));
+  await career(page);
+  await page.locator('[data-tab="tactics"]').click();
+  const portraits = page.locator('img[onload]');
+  expect(await portraits.count()).toBeGreaterThan(0);
+  // Une vue détruite peut encore recevoir les événements des images en cours.
+  await portraits.evaluateAll(images => images.forEach(image => {
+    image.remove();
+    image.dispatchEvent(new Event('load'));
+    image.dispatchEvent(new Event('error'));
+  }));
+  expect(errors).toEqual([]);
+});
+
 test('les noms importés restent du texte et une carrière mal structurée est refusée', async ({ page }) => {
   await career(page);
   await page.evaluate(() => {

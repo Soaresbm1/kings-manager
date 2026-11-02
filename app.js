@@ -1186,7 +1186,7 @@ function renderNotifPlayerRow(player, team) {
     <div class="avatar-sm notif-player-avatar">
       <div class="avatar-sm-fallback">${playerInitials(player.name)}</div>
       <img src="${playerPhotoUrl(player, team)}" alt="" class="avatar-sm-img"
-        onload="this.style.display='block'; this.previousElementSibling.style.display='none';"
+        onload="this.style.display='block'; this.previousElementSibling?.style.setProperty('display','none');"
         onerror="this.style.display='none';">
     </div>
     <div class="notif-player-id">
@@ -1224,7 +1224,7 @@ function renderCurrentNotification() {
           <div class="avatar-sm notif-player-avatar">
             <div class="avatar-sm-fallback">${playerInitials(player.name)}</div>
             <img src="${playerPhotoUrl(player, team)}" alt="" class="avatar-sm-img"
-              onload="this.style.display='block'; this.previousElementSibling.style.display='none';"
+              onload="this.style.display='block'; this.previousElementSibling?.style.setProperty('display','none');"
               onerror="this.style.display='none';">
           </div>
           <div class="notif-player-id">
@@ -1816,7 +1816,7 @@ function renderStatsTable(tableId, rows, formatStat) {
           <div class="avatar-sm">
             <div class="avatar-sm-fallback">${playerInitials(p.name)}</div>
             <img src="${playerPhotoUrl(p, team)}" alt="" class="avatar-sm-img"
-              onload="this.style.display='block'; this.previousElementSibling.style.display='none';"
+              onload="this.style.display='block'; this.previousElementSibling?.style.setProperty('display','none');"
               onerror="this.style.display='none';">
           </div>
           <span class="player-cell-name">${tacticText(p.name || "Sans nom")}</span>
@@ -1866,7 +1866,7 @@ function renderSquadTab() {
           <div class="avatar-sm">
             <div class="avatar-sm-fallback">${playerInitials(p.name)}</div>
             <img src="${playerPhotoUrl(p, team)}" alt="" class="avatar-sm-img"
-              onload="this.style.display='block'; this.previousElementSibling.style.display='none';"
+              onload="this.style.display='block'; this.previousElementSibling?.style.setProperty('display','none');"
               onerror="this.style.display='none';">
           </div>
           <span class="player-cell-name">${tacticText(p.name || "Sans nom")}</span>
@@ -2121,7 +2121,7 @@ function renderMarketTable(team) {
           <div class="avatar-sm">
             <div class="avatar-sm-fallback">${playerInitials(p.name)}</div>
             <img src="${playerPhotoUrl(p, otherTeam)}" alt="" class="avatar-sm-img" loading="lazy" decoding="async" width="34" height="34"
-              onload="this.style.display='block'; this.previousElementSibling.style.display='none';"
+              onload="this.style.display='block'; this.previousElementSibling?.style.setProperty('display','none');"
               onerror="this.style.display='none';">
           </div>
           <span class="player-cell-name">${tacticText(p.name || "Sans nom")}</span>
@@ -2382,7 +2382,7 @@ function buildCompareModalHTML(pA, teamA, pB, teamB) {
       <div class="compare-photo">
         <div class="player-photo-fallback-lg">${playerInitials(p.name)}</div>
         <img src="${playerPhotoUrl(p, t)}" alt="" class="player-photo-lg"
-          onload="this.style.display='block'; this.previousElementSibling.style.display='none';"
+          onload="this.style.display='block'; this.previousElementSibling?.style.setProperty('display','none');"
           onerror="this.style.display='none';">
       </div>
       <span class="pos-tag pos-${p.pos}">${p.pos}</span>
@@ -2766,7 +2766,7 @@ function tacticText(value) {
 function renderTacticPortrait(player, team, className) {
   const url = playerPhotoUrl(player, team);
   return `<span class="${className}" aria-hidden="true"><span>${tacticText(playerInitials(player.name))}</span>${url
-    ? `<img src="${tacticText(url)}" alt="" draggable="false" width="64" height="72" decoding="async" style="display:none" onload="this.style.display='block';this.previousElementSibling.style.display='none';" onerror="this.style.display='none';this.previousElementSibling.style.display='';">` : ""}</span>`;
+    ? `<img src="${tacticText(url)}" alt="" draggable="false" width="64" height="72" decoding="async" style="display:none" onload="this.style.display='block';this.previousElementSibling?.style.setProperty('display','none');" onerror="this.style.display='none';this.previousElementSibling?.style.setProperty('display','');">` : ""}</span>`;
 }
 
 function buildTacticSlot(setup, ids, slot, index, phase, player) {
@@ -3929,7 +3929,7 @@ function renderTeamCrest(team, sizeClass) {
   return `<span class="crest-wrap ${sizeClass}">
     <span class="crest-fallback" style="background:linear-gradient(135deg, ${team.color || "#8b5cf6"}, #05070d);">${teamInitials(team.name)}</span>
     <img src="${teamCrestUrl(team)}" alt="" class="crest-img"
-      onload="this.style.display='block'; this.previousElementSibling.style.display='none';"
+      onload="this.style.display='block'; this.previousElementSibling?.style.setProperty('display','none');"
       onerror="this.style.display='none';">
   </span>`;
 }
@@ -3947,7 +3947,7 @@ function buildPlayerCardHTML(player, team, extraHtml) {
       <div class="player-card-photo-col">
         <div class="player-photo-fallback-lg">${playerInitials(player.name)}</div>
         <img src="${playerPhotoUrl(player, team)}" alt="" class="player-photo-lg"
-          onload="this.style.display='block'; this.previousElementSibling.style.display='none';"
+          onload="this.style.display='block'; this.previousElementSibling?.style.setProperty('display','none');"
           onerror="this.style.display='none';">
       </div>
       <div class="player-card-info-col">
