@@ -68,6 +68,8 @@ Avec Node.js, `npm run dev` démarre également le jeu sur `http://127.0.0.1:417
 - `data.js` — données des ligues, équipes, joueurs, formations et plans tactiques
 - `engine.js` — moteur de simulation (calendrier, matchs, classement, IA)
 - `app.js` — logique de l'interface et gestion de l'état du jeu
+- `interface.js` / `interface.css` — accessibilité des fenêtres, tableaux mobiles et présentation commune ; aucune logique de simulation
+- `prototypes/` — laboratoires isolés, sans accès aux carrières enregistrées
 
 ## Notes
 
@@ -85,4 +87,25 @@ npm run test:e2e         # vrais parcours du jeu dans trois navigateurs
 ```
 
 La CI exécute les simulations avant les tests navigateur pour chaque push et pull request. Un contrôle quotidien teste aussi le moteur ; il ne modifie ni les données ni les sauvegardes. Aucun service payant ni backend n'est requis.
+
+## Interface et laboratoires de comparaison
+
+Le centre de match garde le score et les commandes accessibles sur téléphone. Le porteur du ballon est repéré sur le terrain ; les annonces suivent les événements déjà joués. La pause suspend le dessin continu. Les préférences de mouvement réduit suppriment les effets décoratifs, tout en conservant les déplacements utiles à la lecture du match.
+
+Le marché affiche 40 joueurs par page. Les filtres et le tri portent toujours sur l'ensemble des joueurs. Sur mobile, l'effectif et le marché proposent une vue synthétique et un bouton **Toutes les statistiques**. Les fenêtres gèrent le focus et Échap ; un geste tactique ou un sélecteur de poste garde la priorité pour son annulation.
+
+Avec `npm run dev`, ouvrir :
+
+- [Variantes du centre de match](http://127.0.0.1:4173/prototypes/match-center/) — touches 1–3, flèches et R pour rejouer ; `?v=2` conserve la sélection.
+- [Laboratoire de robustesse](http://127.0.0.1:4173/prototypes/robustness/) — données normales, difficiles, vides ou uniques, sur les composants réels. L'écran et le jeu de données sont conservés dans l'URL.
+
+| Variante | Axe | Compromis |
+| --- | --- | --- |
+| Banc du coach | Terrain dominant et consignes à proximité | Moins de place pour les statistiques |
+| Régie du match | Observation, avec fil du match repliable | Un geste supplémentaire pour ouvrir les détails |
+| Analyse tactique | Chronologie et indicateurs plus présents | Lecture plus dense |
+
+Les laboratoires exécutent le vrai jeu dans une iframe d'origine opaque, avec un stockage en mémoire et une graine fixe. Ils ne sont pas importés par l'application. Les trois variantes restent disponibles pour comparaison ; aucune sélection n'est imposée à la carrière.
+
+`node scripts/profile-interface.cjs` compare le HEAD Git et les fichiers de travail dans Chromium, avec un processeur ralenti ×4 et le réseau externe bloqué. Le rapport est écrit dans `test-results/interface-profile.json`. Ces mesures de bureau ne remplacent pas une vérification sur téléphone physique : clavier virtuel, encoche, barres du navigateur, défilement et gestes.
 

@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Kings Manager — laboratoire de robustesse</title>
+  <link rel="stylesheet" href="../lab.css">
+  <script src="../lab-runtime.js" defer></script>
+  <script src="robustness.js" defer></script>
+</head>
+<body>
+  <header class="lab-header robustness-header">
+    <h1>Robustesse de l'interface</h1>
+    <p>Données de test isolées. Aucune carrière enregistrée. <a href="../match-center/">Comparer les variantes du match</a></p>
+    <div class="lab-controls">
+      <label>Écran <select id="lab-screen"><option value="squad">Effectif</option><option value="market">Mercato</option><option value="tactics">Tactique</option><option value="player">Fiche joueur</option><option value="match">Match</option><option value="summary">Résumé</option></select></label>
+      <label>Données <select id="lab-data"><option value="demo">Demo data</option><option value="worst">Worst case</option><option value="empty">Vide</option><option value="one">Un joueur</option></select></label>
+      <button type="button" id="lab-reload">Rejouer</button>
+    </div>
+    <p>Noms longs et courts, accents, portraits absents, blessure, budget élevé et statistiques partielles. Le marché complet couvre 849 joueurs.</p>
+  </header>
+  <main id="stage" aria-label="Interface avec les données de test"></main>
+</body>
+</html>

@@ -1,0 +1,10 @@
+/* Axe : densité de lecture, indicateurs et événements simultanés. */
+@media (min-width: 1101px) {
+  .match-layout { flex-direction: row-reverse; }
+  .match-center { flex: 1; max-width: 540px; }
+  .match-pitch-panel { flex: 1.1; }
+  #commentary { font-size: 0.85rem; }
+  .match-live-stats > div { background: #26342b; padding: 12px; }
+  .match-scoreboard .match-live-context { text-align: left; }
+  .match-scoreboard .match-live-phase-line { justify-content: flex-start; }
+}

@@ -290,7 +290,7 @@ function importSaveFile(file) {
     try {
       const parsed = JSON.parse(reader.result);
       const entry = parsed && parsed.data ? parsed : { meta: {}, data: parsed };
-      if (!entry.data || !entry.data.league || !entry.data.schedule) {
+      if (!isPlayableCareerData(entry.data)) {
         throw new Error("format invalide");
       }
       const slotId = generateSlotId();
@@ -317,6 +317,17 @@ function importSaveFile(file) {
   reader.readAsText(file);
 }
 
+// Validation de structure uniquement : les migrations historiques restent dans applySaveData.
+function isPlayableCareerData(data) {
+  if (!data || !data.league || !Array.isArray(data.league.teams) || !Array.isArray(data.schedule)) return false;
+  const teams = data.league.teams;
+  if (teams.length < 2 || !teams.some(team => team && team.id === data.userTeamId)) return false;
+  if (!teams.every(team => team && typeof team.id === "string" && Array.isArray(team.players)
+    && team.players.every(player => player && typeof player.id === "string" && POSITIONS.includes(player.pos)))) return false;
+  const ids = new Set(teams.map(team => team.id));
+  return data.schedule.every(round => Array.isArray(round) && round.every(match => match && ids.has(match.home) && ids.has(match.away)));
+}
+
 // ----------------- NAVIGATION -----------------
 function showScreen(id) {
   document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
@@ -324,7 +335,11 @@ function showScreen(id) {
 }
 
 function showTab(name) {
-  document.querySelectorAll(".nav button").forEach(b => b.classList.toggle("active", b.dataset.tab === name));
+  document.querySelectorAll(".nav button").forEach(b => {
+    b.classList.toggle("active", b.dataset.tab === name);
+    if (b.dataset.tab === name) b.setAttribute("aria-current", "page");
+    else b.removeAttribute("aria-current");
+  });
   document.querySelectorAll(".tab").forEach(t => t.classList.toggle("active", t.id === "tab-" + name));
   if (name === "calendar") renderCalendarTab();
   if (name === "standings") renderStandingsTab();
@@ -382,7 +397,7 @@ function renderSavesList() {
     const meta = entry.meta || {};
     const row = document.createElement("div");
     row.className = "transfer-row";
-    row.innerHTML = `<div><b>${meta.teamName || "?"}</b> — ${meta.leagueName || ""}
+    row.innerHTML = `<div><b>${tacticText(meta.teamName || "?")}</b> — ${tacticText(meta.leagueName || "")}
         <div class="stats">Saison ${meta.season || 1} — Journée ${(meta.round || 0) + 1} / ${meta.totalRounds || "?"}</div></div>
       <div class="actions">
         <button class="primary" data-action="continue">Continuer</button>
@@ -422,7 +437,8 @@ function initHomeScreen() {
   const sortedKeys = Object.keys(LEAGUES).sort((a, b) => LEAGUES[a].name.localeCompare(LEAGUES[b].name, "fr"));
   sortedKeys.forEach(key => {
     const league = LEAGUES[key];
-    const row = document.createElement("div");
+    const row = document.createElement("button");
+    row.type = "button";
     row.className = "league-row";
     row.dataset.key = key;
     row.innerHTML = `<span class="league-row-flag">${LEAGUE_FLAGS[key] || "⚽"}</span>
@@ -440,6 +456,7 @@ function selectLeague(key) {
   STATE.leagueKey = key;
   document.querySelectorAll("#league-sidebar .league-row").forEach(row => {
     row.classList.toggle("selected", row.dataset.key === key);
+    row.setAttribute("aria-pressed", String(row.dataset.key === key));
   });
   const league = LEAGUES[key];
   document.getElementById("team-select-header").innerHTML =
@@ -467,9 +484,12 @@ function selectLeague(key) {
   teamChoice.innerHTML = "";
   const sortedTeams = [...league.teams].sort((a, b) => a.name.localeCompare(b.name, "fr"));
   sortedTeams.forEach(team => {
-    const div = document.createElement("div");
+    const div = document.createElement("button");
+    div.type = "button";
     div.className = "card team-card";
-    div.innerHTML = `${renderTeamCrest(team, "crest-lg")}<h3>${team.name}</h3>`;
+    div.dataset.teamId = team.id;
+    div.setAttribute("aria-pressed", "false");
+    div.innerHTML = `${renderTeamCrest(team, "crest-lg")}<h3>${tacticText(team.name || "Sans nom")}</h3>`;
     div.onclick = () => selectTeam(team.id);
     teamChoice.appendChild(div);
   });
@@ -480,7 +500,9 @@ function selectLeague(key) {
 function selectTeam(teamId) {
   STATE.userTeamId = teamId;
   document.querySelectorAll("#team-choice .card").forEach(c => {
-    c.classList.toggle("selected", c.querySelector("h3").textContent === LEAGUES[STATE.leagueKey].teams.find(t => t.id === teamId).name);
+    const selected = c.dataset.teamId === teamId;
+    c.classList.toggle("selected", selected);
+    c.setAttribute("aria-pressed", String(selected));
   });
   document.getElementById("btn-start").disabled = false;
 }
@@ -1437,7 +1459,7 @@ function updateTopbar() {
 }
 
 function formatMoney(v) {
-  return "€" + Math.round(v).toLocaleString("fr-FR");
+  return Number.isFinite(v) ? "€" + Math.round(v).toLocaleString("fr-FR") : "—";
 }
 
 // ----------------- ONGLET CALENDRIER -----------------
@@ -1448,7 +1470,7 @@ function renderCalendarTab() {
 
   if (STATE.notifications.length > 0) {
     nextPanel.innerHTML = `<h3>🔔 ${formatGameDate(STATE.currentDay)}</h3>
-      <p style="margin:8px 0;">Tu as ${STATE.notifications.length} notification(s) en attente. Consulte-les pour pouvoir continuer.</p>
+      <p style="margin:8px 0;">${STATE.notifications.length} notification${STATE.notifications.length > 1 ? "s" : ""} en attente. Consulte-les pour pouvoir continuer.</p>
       <button class="primary" id="btn-view-notifications">Voir mes notifications</button>`;
     document.getElementById("btn-view-notifications").onclick = openNotificationModal;
   } else if (STATE.currentRound >= totalRounds) {
@@ -1711,7 +1733,7 @@ function renderStandingsTab() {
     const diffColor = row.diff > 0 ? "#00ff88" : row.diff < 0 ? "#ff5a5a" : "#8391a8";
     const diffText = row.diff > 0 ? `+${row.diff}` : row.diff;
     tr.innerHTML = `<td class="standing-pos">${idx + 1}</td>
-      <td class="name"><div class="market-club-cell">${renderTeamCrest(row, "crest-sm")}<span>${row.name}</span></div></td>
+      <td class="name"><div class="market-club-cell">${renderTeamCrest(row, "crest-sm")}<span>${tacticText(row.name || "Sans nom")}</span></div></td>
       <td>${row.played}</td><td>${row.won}</td><td>${row.draw}</td><td>${row.lost}</td>
       <td>${row.goalsFor}</td><td>${row.goalsAgainst}</td>
       <td class="standing-diff" style="color:${diffColor};">${diffText}</td>
@@ -1797,10 +1819,10 @@ function renderStatsTable(tableId, rows, formatStat) {
               onload="this.style.display='block'; this.previousElementSibling.style.display='none';"
               onerror="this.style.display='none';">
           </div>
-          <span class="player-cell-name">${p.name}</span>
+          <span class="player-cell-name">${tacticText(p.name || "Sans nom")}</span>
         </div>
       </td>
-      <td><div class="market-club-cell">${renderTeamCrest(team, "crest-sm")}<span>${team.name}</span></div></td>
+      <td><div class="market-club-cell">${renderTeamCrest(team, "crest-sm")}<span>${tacticText(team.name || "Sans nom")}</span></div></td>
       <td>${p.matches}</td>
       <td class="standing-pts">${formatStat(p)}</td>`;
     tr.onclick = () => openPlayerInfoModal(p, team);
@@ -1835,7 +1857,7 @@ function renderSquadTab() {
   sorted.forEach(p => {
     const tr = document.createElement("tr");
     tr.className = "clickable" + (p.injured ? " squad-row-injured" : "");
-    const avgRating = p.matches > 0 ? (p.ratingSum / p.matches).toFixed(1) : "-";
+    const avgRating = p.matches > 0 && Number.isFinite(p.ratingSum) ? (p.ratingSum / p.matches).toFixed(1) : "—";
     const injuryBadge = p.injured
       ? `<span class="injury-badge" title="Blessure ${p.injurySeverity} — indisponible encore ${p.injuryDaysLeft} jour(s)">🩹 ${p.injuryDaysLeft}j</span>`
       : "";
@@ -1847,7 +1869,7 @@ function renderSquadTab() {
               onload="this.style.display='block'; this.previousElementSibling.style.display='none';"
               onerror="this.style.display='none';">
           </div>
-          <span class="player-cell-name">${p.name}</span>
+          <span class="player-cell-name">${tacticText(p.name || "Sans nom")}</span>
           ${injuryBadge}
         </div>
       </td>
@@ -1872,6 +1894,8 @@ function renderSquadTab() {
 function bindSortableTable(tableId, sortState, rerender) {
   document.querySelectorAll(`#${tableId} th.sortable`).forEach(th => {
     const isActive = th.dataset.sortKey === sortState.key;
+    th.setAttribute("aria-sort", isActive ? (sortState.dir === 1 ? "ascending" : "descending") : "none");
+    th.tabIndex = 0;
     th.classList.toggle("sort-active", isActive);
     th.classList.toggle("sort-asc", isActive && sortState.dir === 1);
     th.classList.toggle("sort-desc", isActive && sortState.dir === -1);
@@ -1883,6 +1907,10 @@ function bindSortableTable(tableId, sortState, rerender) {
         sortState.dir = (th.dataset.sortKey === "name" || th.dataset.sortKey === "pos" || th.dataset.sortKey === "club") ? 1 : -1;
       }
       rerender();
+      document.querySelector(`#${tableId} th[data-sort-key="${sortState.key}"]`)?.focus({ preventScroll: true });
+    };
+    th.onkeydown = event => {
+      if (event.key === "Enter" || event.key === " ") { event.preventDefault(); th.click(); }
     };
   });
 }
@@ -1895,6 +1923,7 @@ function bindSortableTable(tableId, sortState, rerender) {
 const STAR_RATING_MIN = 60;
 const STAR_RATING_MAX = 95;
 function renderStarRating(overall) {
+  if (!Number.isFinite(overall)) return '<span class="rating-chip rc-none">—</span>';
   const pct = Math.max(0, Math.min(100, (overall - STAR_RATING_MIN) / (STAR_RATING_MAX - STAR_RATING_MIN) * 100));
   return `<span class="star-rating" title="${overall}/100">
     <span class="star-bg">★★★★★</span>
@@ -1903,13 +1932,15 @@ function renderStarRating(overall) {
 }
 
 function renderFormBar(form) {
+  if (!Number.isFinite(form)) return '<span class="rating-chip rc-none">—</span>';
+  form = Math.max(0, Math.min(100, form));
   const color = form >= 80 ? "#00ff88" : form >= 60 ? "#ffaa00" : "#ff4444";
   return `<div class="form-bar"><div class="fill" style="width:${form}%; background:${color};"></div></div> ${form}`;
 }
 
 // Chip de note moyenne façon Football Manager (banc/effectif), sur les vrais matchs déjà joués.
 function renderRatingChip(player) {
-  if (player.matches <= 0) return `<span class="rating-chip rc-none">-</span>`;
+  if (!(player.matches > 0) || !Number.isFinite(player.ratingSum)) return `<span class="rating-chip rc-none">—</span>`;
   const avg = player.ratingSum / player.matches;
   const cls = avg >= 7 ? "rc-high" : avg >= 6 ? "rc-mid" : "rc-low";
   return `<span class="rating-chip ${cls}">${avg.toFixed(2).replace(".", ",")}</span>`;
@@ -1928,17 +1959,22 @@ function renderOverallBadge(overall) {
 
 // Attribut individuel façon fiche joueur FM : badge coloré (mêmes seuils que la note générale) + libellé.
 function renderAttributeTile(label, value) {
+  if (!Number.isFinite(value)) value = "—";
   return `<div class="attr-tile"><span class="ovr-badge ${overallClass(value)}">${value}</span><span class="attr-tile-label">${label}</span></div>`;
 }
 
 // Tuile stat façon fiche joueur FM (âge, valeur, buts, passes, note moy.).
 function renderStatTile(value, label) {
+  if (value == null || (typeof value === "number" && !Number.isFinite(value))) value = "—";
   return `<div class="stat-tile"><span class="stat-tile-value">${value}</span><span class="stat-tile-label">${label}</span></div>`;
 }
 
 // ----------------- ONGLET MERCATO -----------------
 // Tri courant de la table de recherche (pas sauvegardé).
 let marketSortState = { key: "overall", dir: -1 };
+const MARKET_PAGE_SIZE = 40;
+let marketPage = 0;
+let marketQueryKey = "";
 
 function renderTransfersTab() {
   const team = getUserTeam();
@@ -2032,6 +2068,8 @@ function renderMarketTable(team) {
   const ovrFilter = parseInt(document.getElementById("filter-ovr").value, 10);
   const nameFilter = document.getElementById("filter-name").value.trim().toLowerCase();
   const leagueFilter = document.getElementById("filter-league").value;
+  const queryKey = JSON.stringify([posFilter, ovrFilter, nameFilter, leagueFilter, marketSortState, STATE.currentSlotId]);
+  if (queryKey !== marketQueryKey) { marketPage = 0; marketQueryKey = queryKey; }
 
   const entries = [];
   const addFromTeam = (otherTeam, leagueKey, leagueName) => {
@@ -2040,7 +2078,7 @@ function renderMarketTable(team) {
     otherTeam.players.forEach(p => {
       if (posFilter !== "all" && p.pos !== posFilter) return;
       if (p.overall < ovrFilter) return;
-      if (nameFilter && !p.name.toLowerCase().includes(nameFilter)) return;
+      if (nameFilter && !String(p.name || "").toLocaleLowerCase("fr").includes(nameFilter)) return;
       entries.push({ p, team: otherTeam, leagueKey, leagueName });
     });
   };
@@ -2059,7 +2097,20 @@ function renderMarketTable(team) {
 
   emptyMsg.style.display = entries.length ? "none" : "block";
 
-  entries.forEach(({ p, team: otherTeam, leagueKey, leagueName }) => {
+  const pageCount = Math.max(1, Math.ceil(entries.length / MARKET_PAGE_SIZE));
+  marketPage = Math.max(0, Math.min(marketPage, pageCount - 1));
+  const pageStart = marketPage * MARKET_PAGE_SIZE;
+  const pageEntries = entries.slice(pageStart, pageStart + MARKET_PAGE_SIZE);
+  const status = document.getElementById("market-page-status");
+  if (status) status.textContent = entries.length
+    ? `${pageStart + 1}–${pageStart + pageEntries.length} sur ${entries.length} joueurs · Page ${marketPage + 1}/${pageCount}`
+    : "0 joueur";
+  const previous = document.getElementById("market-page-prev");
+  const next = document.getElementById("market-page-next");
+  if (previous) previous.disabled = marketPage === 0;
+  if (next) next.disabled = marketPage >= pageCount - 1;
+
+  pageEntries.forEach(({ p, team: otherTeam, leagueKey, leagueName }) => {
     const tr = document.createElement("tr");
     tr.className = "clickable";
     tr.title = "Voir la fiche technique";
@@ -2069,14 +2120,14 @@ function renderMarketTable(team) {
         <div class="player-cell">
           <div class="avatar-sm">
             <div class="avatar-sm-fallback">${playerInitials(p.name)}</div>
-            <img src="${playerPhotoUrl(p, otherTeam)}" alt="" class="avatar-sm-img"
+            <img src="${playerPhotoUrl(p, otherTeam)}" alt="" class="avatar-sm-img" loading="lazy" decoding="async" width="34" height="34"
               onload="this.style.display='block'; this.previousElementSibling.style.display='none';"
               onerror="this.style.display='none';">
           </div>
-          <span class="player-cell-name">${p.name}</span>
+          <span class="player-cell-name">${tacticText(p.name || "Sans nom")}</span>
         </div>
       </td>
-      <td><div class="market-club-cell">${renderTeamCrest(otherTeam, "crest-sm")}<span>${otherTeam.name}</span>${leagueTag}</div></td>
+      <td><div class="market-club-cell">${renderTeamCrest(otherTeam, "crest-sm")}<span>${tacticText(otherTeam.name || "Sans nom")}</span>${leagueTag}</div></td>
       <td><span class="pos-tag pos-${p.pos}">${p.pos}</span></td>
       <td>${renderStarRating(p.overall)}</td>
       <td>${renderFormBar(p.form)}</td>
@@ -2105,6 +2156,30 @@ function renderMarketTable(team) {
   });
 
   bindSortableTable("market-table", marketSortState, () => renderMarketTable(team));
+  refreshMarketActionButtons();
+}
+
+function changeMarketPage(delta) {
+  marketPage += delta;
+  renderMarketTable(getUserTeam());
+  const scroll = document.querySelector("#market-table")?.closest(".table-scroll");
+  if (scroll) scroll.scrollTop = 0;
+}
+
+// Les commandes de suivi ne reconstruisent pas les quarante lignes et leurs images.
+function refreshMarketActionButtons() {
+  document.querySelectorAll('#market-list [data-action="shortlist"]').forEach(button => {
+    const selected = STATE.shortlist.includes(button.dataset.player);
+    button.classList.toggle("selected", selected);
+    button.textContent = selected ? "✓ Dans ma liste" : "+ Ajouter";
+    button.setAttribute("aria-pressed", String(selected));
+  });
+  document.querySelectorAll('#market-list [data-action="compare"]').forEach(button => {
+    const selected = compareIds.includes(button.dataset.player);
+    button.classList.toggle("selected", selected);
+    button.setAttribute("aria-pressed", String(selected));
+    button.setAttribute("aria-label", selected ? "Retirer de la comparaison" : "Ajouter à la comparaison");
+  });
 }
 
 // Retrouve un joueur n'importe où dans la ligue du joueur ou les 5 autres ligues (les shortlists
@@ -2130,7 +2205,7 @@ function toggleShortlist(playerId) {
   if (selectedShortlistId === playerId && idx !== -1) selectedShortlistId = null;
   saveGame();
   const team = getUserTeam();
-  renderMarketTable(team);
+  refreshMarketActionButtons();
   renderShortlistTable(team);
   updateShortlistCount();
 }
@@ -2196,7 +2271,7 @@ function renderShortlistTable(team) {
     const interest = computeShortlistInterest(p.id);
     row.innerHTML = `${renderTeamCrest(otherTeam, "crest-sm")}
       <span class="pos-tag pos-${p.pos}">${p.pos}</span>
-      <span class="shortlist-row-name">${p.name}</span>
+      <span class="shortlist-row-name">${tacticText(p.name || "Sans nom")}</span>
       ${shortlistInterestBadgeHTML(interest, true)}
       <span class="shortlist-row-age">${p.age} ans</span>
       <span class="shortlist-row-ovr">${p.overall}</span>`;
@@ -2250,7 +2325,7 @@ function toggleCompare(playerId) {
   }
   const team = getUserTeam();
   renderCompareTray();
-  renderMarketTable(team);
+  refreshMarketActionButtons();
   renderShortlistTable(team);
 }
 
@@ -2311,7 +2386,7 @@ function buildCompareModalHTML(pA, teamA, pB, teamB) {
           onerror="this.style.display='none';">
       </div>
       <span class="pos-tag pos-${p.pos}">${p.pos}</span>
-      <div class="compare-player-name">${p.name}</div>
+      <div class="compare-player-name">${tacticText(p.name || "Sans nom")}</div>
       <div class="player-card-club" style="justify-content:center;">${renderTeamCrest(t, "crest-sm")}<span>${t.name}</span></div>
       ${renderStarRating(p.overall)}
     </div>`;
@@ -3142,8 +3217,7 @@ function bindTacticDrag(source, setup, ids, playerId) {
     const planFor = element => planTacticDropForScreen(setup, ids, playerId, Number(element.dataset.slotIndex), element.dataset.phase);
     const locate = (x, y) => {
       pointerX = x; pointerY = y;
-      ghost.style.left = x - (startX - rect.left) + "px";
-      ghost.style.top = y - (startY - rect.top) + "px";
+      ghost.style.transform = `translate3d(${x - (startX - rect.left)}px, ${y - (startY - rect.top)}px, 0)`;
       const hit = document.elementFromPoint(x, y)?.closest(".pitch-slot");
       target = targets.includes(hit) ? hit : null;
       targets.forEach(element => {
@@ -3531,6 +3605,11 @@ const MATCH_TACTICS_IDS = { formation: "match-formation-choice", pitch: "match-t
 
 let matchEngine = null;
 let matchState = null;
+const pitchPlayerIndex = new Map();
+let pitchGeometry = null;
+let pitchMarkingsLayer = null;
+let matchNoticeTimer = null;
+let commentaryFollowsLive = true;
 
 // Mode de débogage visuel du terrain (désactivé par défaut, touche "D" pour basculer pendant un
 // match) : affiche la cible dynamique de chaque joueur (voir matchchoreo.js:computeDynamicTarget),
@@ -3541,6 +3620,7 @@ document.addEventListener("keydown", e => {
   if (e.key === "d" || e.key === "D") {
     if (!document.getElementById("screen-match").classList.contains("active")) return;
     PITCH_DEBUG = !PITCH_DEBUG;
+    startMatchPitchLoop();
   }
 });
 
@@ -3601,6 +3681,14 @@ function startMatch() {
     dashboardStats: null, dashboardUpdatedAt: 0, completedMinute: 0,
     displayedScore: { homeGoals: 0, awayGoals: 0 }, pendingSpecialActions: []
   };
+  pitchPlayerIndex.clear();
+  [...homeTeam.players, ...awayTeam.players].forEach(player => pitchPlayerIndex.set(player.id, player));
+  pitchGeometry = null;
+  pitchMarkingsLayer = null;
+  commentaryFollowsLive = true;
+  if (typeof clearTimeout === "function") clearTimeout(matchNoticeTimer);
+  const notice = document.getElementById("match-event-notice");
+  if (notice) { notice.hidden = true; notice.textContent = ""; }
 
   // Armes secrètes : sélection du joueur + tirage IA, révélées simultanément au coup d'envoi
   const aiSide = matchState.userSide === "home" ? "away" : "home";
@@ -3812,15 +3900,17 @@ function legacyPlayerPhotoUrl(player, team) {
 }
 
 function playerInitials(name) {
-  const parts = name.replace(/['"]/g, "").trim().split(/\s+/);
-  const first = parts[0] ? parts[0][0] : "";
-  const last = parts.length > 1 ? parts[parts.length - 1][0] : "";
-  return (first + last).toUpperCase();
+  const parts = String(name || "").replace(/['"]/g, "").trim().split(/\s+/).filter(Boolean);
+  if (!parts.length) return "?";
+  const firstGrapheme = word => typeof Intl.Segmenter === "function"
+    ? new Intl.Segmenter("fr", { granularity: "grapheme" }).segment(word)[Symbol.iterator]().next().value.segment
+    : Array.from(word)[0];
+  return (firstGrapheme(parts[0]) + (parts.length > 1 ? firstGrapheme(parts[parts.length - 1]) : "")).toUpperCase();
 }
 
 // Initiales pour le blason généré (utilisées tant qu'aucun fichier logo réel n'est fourni).
 function teamInitials(name) {
-  const words = name.replace(/['"]/g, "").trim().split(/\s+/).filter(Boolean);
+  const words = String(name || "Club").replace(/['"]/g, "").trim().split(/\s+/).filter(Boolean);
   return words.slice(0, 3).map(w => w[0]).join("").toUpperCase();
 }
 
@@ -3849,9 +3939,9 @@ function renderTeamCrest(team, sizeClass) {
 // renderShortlistDetail). extraHtml s'insère en bas de la colonne info (live-stat de match,
 // étiquette de ligue, boutons d'action...).
 function buildPlayerCardHTML(player, team, extraHtml) {
-  const avgRating = player.matches > 0 ? (player.ratingSum / player.matches).toFixed(1) : "-";
+  const avgRating = player.matches > 0 && Number.isFinite(player.ratingSum) ? (player.ratingSum / player.matches).toFixed(1) : "—";
   const careerMatches = player.careerMatches || 0;
-  const careerAvgRating = careerMatches > 0 ? (player.careerRatingSum / careerMatches).toFixed(1) : "-";
+  const careerAvgRating = careerMatches > 0 && Number.isFinite(player.careerRatingSum) ? (player.careerRatingSum / careerMatches).toFixed(1) : "—";
   return `
     <div class="player-card-layout">
       <div class="player-card-photo-col">
@@ -3863,9 +3953,9 @@ function buildPlayerCardHTML(player, team, extraHtml) {
       <div class="player-card-info-col">
         <div class="player-card-name-row">
           <span class="pos-tag pos-${player.pos}">${player.pos}</span>
-          <span class="player-card-name">${player.name}</span>
+          <span class="player-card-name">${tacticText(player.name || "Sans nom")}</span>
         </div>
-        <div class="player-card-club">${renderTeamCrest(team, "crest-sm")}<span>${team.name}</span></div>
+        <div class="player-card-club">${renderTeamCrest(team, "crest-sm")}<span>${tacticText(team.name || "Sans nom")}</span></div>
         <div class="player-card-stars">${renderStarRating(player.overall)}<span class="star-rating-num">${player.overall}/100</span></div>
         ${player.injured ? `<div class="player-card-injury">🩹 Blessure ${player.injurySeverity} — indisponible encore ${player.injuryDaysLeft} jour${player.injuryDaysLeft > 1 ? "s" : ""}</div>` : ""}
 
@@ -3919,7 +4009,7 @@ function closePlayerInfoModal() {
 // runMinute()/advanceToMinute() demandent au moteur (engine.js:simulateMinute avec
 // {withSequence:true}) la chorégraphie de la minute à venir, la chargent dans `choreo`, et la
 // boucle continue ci-dessous l'anime jusqu'à son terme avant d'enchaîner sur la suivante. Le
-// canvas dessine à la fois le terrain et les acteurs, transposés dans un affichage paysage.
+// Deux couches canvas partagent le repère paysage : décor statique et acteurs animés.
 
 // Ancre chaque joueur actif de la minute donnée à sa STRUCTURE DE BASE de formation (voir
 // engine.js:getFormationAnchors) — les joueurs déjà affichés ne sont jamais téléportés (leur cible
@@ -3943,9 +4033,15 @@ function stopMatchPitch() {
 }
 
 function startMatchPitchLoop() {
+  if (pitchRaf || typeof requestAnimationFrame !== "function") return;
   lastPitchTs = null;
-  if (pitchRaf) cancelAnimationFrame(pitchRaf);
   pitchRaf = requestAnimationFrame(pitchFrameLoop);
+}
+
+function invalidatePitchGeometry() {
+  pitchGeometry = null;
+  pitchMarkingsLayer = null;
+  if (choreo) startMatchPitchLoop();
 }
 
 // Boucle continue : fait avancer l'animation (à la vitesse de lecture choisie) tant que le match
@@ -3954,7 +4050,7 @@ function startMatchPitchLoop() {
 // quand la séquence en cours est entièrement jouée. Les actions spéciales attendent cette
 // frontière afin de respecter l'ordre réel de résolution des actions.
 function pitchFrameLoop(ts) {
-  if (!choreo) return;
+  if (!choreo) { pitchRaf = null; return; }
   if (lastPitchTs !== null && matchState && !matchState.paused) {
     const dt = Math.min(0.1, (ts - lastPitchTs) / 1000) * (matchState.playbackSpeed || 1);
     choreo.step(dt);
@@ -3984,7 +4080,8 @@ function pitchFrameLoop(ts) {
     updateMatchContext();
   }
   renderMatchPitchFrame();
-  pitchRaf = requestAnimationFrame(pitchFrameLoop);
+  pitchRaf = matchState && !matchState.paused && !matchState.finished
+    ? requestAnimationFrame(pitchFrameLoop) : null;
 }
 
 // Charge une chorégraphie et rappelle `onDone` une fois qu'elle est entièrement jouée (utilisé
@@ -3995,6 +4092,7 @@ function playSequence(beats, onDone) {
   matchState.sequenceActive = true;
   matchState.onSequenceDone = onDone;
   choreo.loadSequence(beats || []);
+  startMatchPitchLoop();
 }
 
 // Les annonces générées par une Arme Secrète/le Penalty du Président (activateCard/
@@ -4008,7 +4106,7 @@ function tagCardBeats(seqBeats) {
 
 function findPitchPlayer(id) {
   if (!matchState) return null;
-  return matchState.homeTeam.players.find(p => p.id === id) || matchState.awayTeam.players.find(p => p.id === id) || null;
+  return pitchPlayerIndex.get(id) || matchState.homeTeam.players.find(p => p.id === id) || matchState.awayTeam.players.find(p => p.id === id) || null;
 }
 
 // Cache des photos des disques du plateau physique (playerId -> HTMLImageElement prête, ou
@@ -4022,7 +4120,10 @@ function getPitchPhotoImage(player, team) {
   if (cached) return (cached.complete && cached.naturalWidth > 0) ? cached : null;
   const img = new Image();
   img.onerror = () => pitchPhotoCache.set(player.id, "error");
-  img.src = playerPhotoUrl(player, team);
+  img.onload = () => { if (matchState && !matchState.finished) startMatchPitchLoop(); };
+  const url = playerPhotoUrl(player, team);
+  if (!url) { pitchPhotoCache.set(player.id, "error"); return null; }
+  img.src = url;
   pitchPhotoCache.set(player.id, img);
   return null;
 }
@@ -4032,7 +4133,10 @@ function getPitchPhotoImage(player, team) {
 // pendant son absence puis reprend normalement dès qu'il revient (dt resynchronisé pour éviter un
 // gros saut d'un coup après une longue pause).
 document.addEventListener("visibilitychange", () => {
-  if (document.visibilityState === "visible") lastPitchTs = null;
+  if (document.visibilityState === "visible") {
+    lastPitchTs = null;
+    if (choreo && matchState && !matchState.finished) startMatchPitchLoop();
+  } else stopMatchPitch();
 });
 
 // Dessine les marquages dans le repère écran paysage. Le moteur reste volontairement dans son
@@ -4083,17 +4187,25 @@ function renderMatchPitchFrame() {
   if (!canvas || !choreo) return;
   const state = choreo.getState();
   const ctx = canvas.getContext("2d");
-  const rect = canvas.getBoundingClientRect();
-  const dpr = window.devicePixelRatio || 1;
-  const wantW = Math.max(1, Math.round(rect.width * dpr));
-  const wantH = Math.max(1, Math.round(rect.height * dpr));
+  const dpr = Math.min(2, window.devicePixelRatio || 1);
+  if (!pitchGeometry || pitchGeometry.dpr !== dpr) {
+    const rect = canvas.getBoundingClientRect();
+    pitchGeometry = { width: rect.width, height: rect.height, dpr };
+  }
+  const wantW = Math.max(1, Math.round(pitchGeometry.width * dpr));
+  const wantH = Math.max(1, Math.round(pitchGeometry.height * dpr));
   if (canvas.width !== wantW || canvas.height !== wantH) { canvas.width = wantW; canvas.height = wantH; }
   const sx = canvas.width / 100;
   const sy = canvas.height / 100;
   const radiusScale = sy;
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  drawPitchMarkings(ctx, canvas.width, canvas.height);
+  if (!pitchMarkingsLayer || pitchMarkingsLayer.width !== canvas.width || pitchMarkingsLayer.height !== canvas.height) {
+    pitchMarkingsLayer = document.getElementById("match-pitch-markings");
+    pitchMarkingsLayer.width = canvas.width;
+    pitchMarkingsLayer.height = canvas.height;
+    drawPitchMarkings(pitchMarkingsLayer.getContext("2d"), canvas.width, canvas.height);
+  }
 
   const gkIds = new Set();
   if (matchEngine) {
@@ -4107,6 +4219,10 @@ function renderMatchPitchFrame() {
     const r = (gkIds.has(d.id) ? PITCH_GK_R : PITCH_PLAYER_R) * radiusScale;
     const cx = d.y * sx, cy = d.x * sy;
     const photo = (player && team) ? getPitchPhotoImage(player, team) : null;
+    if (d.id === state.ballCarrierId) {
+      ctx.beginPath(); ctx.arc(cx, cy, r + 0.9 * radiusScale, 0, Math.PI * 2);
+      ctx.strokeStyle = "#f3d479"; ctx.lineWidth = Math.max(1.5, 0.4 * radiusScale); ctx.stroke();
+    }
 
     // fond plein couleur d'équipe, toujours dessiné en premier (même avec une photo : on garde
     // un anneau de fond visible autour du visage plutôt que la photo pleine largeur du disque).
@@ -4234,11 +4350,11 @@ function setupMatchPitchPointerEvents() {
   canvas.onclick = evt => {
     if (!choreo || !matchState) return;
     const rect = canvas.getBoundingClientRect();
-    const pt = {
-      x: (evt.clientY - rect.top) / rect.height * 100,
-      y: (evt.clientX - rect.left) / rect.width * 100
-    };
-    const found = choreo.getState().players.find(p => Math.hypot(p.x - pt.x, p.y - pt.y) <= PITCH_GK_R + 1.5);
+    const hitRadius = window.matchMedia("(pointer: coarse)").matches ? 22 : Math.max(10, rect.height * 0.05);
+    const closest = choreo.getState().players.map(player => ({ player,
+      distance: Math.hypot(rect.left + player.y / 100 * rect.width - evt.clientX, rect.top + player.x / 100 * rect.height - evt.clientY)
+    })).sort((a, b) => a.distance - b.distance)[0];
+    const found = closest && closest.distance <= hitRadius ? closest.player : null;
     if (!found) return;
     const player = findPitchPlayer(found.id);
     if (!player) return;
@@ -4253,7 +4369,25 @@ function appendCommentaryEvent(ev) {
   div.className = "ev " + ev.type;
   div.textContent = ev.text;
   commentary.appendChild(div);
-  commentary.scrollTop = commentary.scrollHeight;
+  if (commentaryFollowsLive) commentary.scrollTop = commentary.scrollHeight;
+  showMatchEventNotice(ev);
+}
+
+// Retour visuel uniquement : aucun accès au résultat futur ni au hasard du moteur.
+function showMatchEventNotice(ev) {
+  const notice = document.getElementById("match-event-notice");
+  if (matchState && matchState.minute === 0) return;
+  if (!notice || !/(^|\s)(goal|owngoal|red|yellow|phase)(\s|$)/.test(ev.type || "")) return;
+  notice.textContent = ev.text;
+  notice.hidden = false;
+  notice.dataset.kind = /goal/.test(ev.type) ? "goal" : "phase";
+  if (typeof clearTimeout === "function") clearTimeout(matchNoticeTimer);
+  if (typeof notice.animate === "function" && typeof window !== "undefined" && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    notice.getAnimations().forEach(animation => animation.cancel());
+    notice.animate([{ opacity: 0, transform: "translateY(4px)" }, { opacity: 1, transform: "translateY(0)" }],
+      { duration: 200, easing: "cubic-bezier(0.23, 1, 0.32, 1)" });
+  }
+  if (typeof setTimeout === "function") matchNoticeTimer = setTimeout(() => { notice.hidden = true; }, 4500);
 }
 
 // Bannière au-dessus du terrain : seul le statut pause/lecture a encore un sens (le joueur ne
@@ -4396,6 +4530,7 @@ function resumeMatchFlow() {
   document.getElementById("btn-pause-match").textContent = "⏸ Pause";
   updateMatchStatusBanner();
   continueMatchFlow();
+  startMatchPitchLoop();
 }
 
 // Demande au moteur la minute suivante, dès que la précédente (ou le coup d'envoi) est terminée.
@@ -4556,15 +4691,19 @@ function renderPhaseLineupList() {
     const { players, order } = phaseLineupState;
     [...players].sort((a, b) => b.overall - a.overall).forEach(p => {
       const rank = order.indexOf(p.id);
-      const row = document.createElement("div");
+      const row = document.createElement("button");
+      row.type = "button";
+      row.dataset.phasePlayer = p.id;
+      row.setAttribute("aria-pressed", String(rank >= 0));
       row.className = "player-row" + (rank >= 0 ? " selected" : "");
       const rankBadge = rank >= 0 ? `<span class="phase-tag">#${rank + 1}</span>` : "";
-      row.innerHTML = `<span><span class="pos-tag pos-${p.pos}">${p.pos}</span> ${p.name} ${rankBadge}</span>${renderOverallBadge(p.overall)}`;
+      row.innerHTML = `<span><span class="pos-tag pos-${p.pos}">${p.pos}</span> ${tacticText(p.name)} ${rankBadge}</span>${renderOverallBadge(p.overall)}`;
       row.onclick = () => {
         const idx = order.indexOf(p.id);
         if (idx >= 0) order.splice(idx, 1);
         else order.push(p.id);
         renderPhaseLineupList();
+        list.querySelector(`[data-phase-player="${p.id}"]`)?.focus({ preventScroll: true });
       };
       list.appendChild(row);
     });
@@ -4574,9 +4713,12 @@ function renderPhaseLineupList() {
 
   const { players, selected, cap } = phaseLineupState;
   [...players].sort((a, b) => b.overall - a.overall).forEach(p => {
-    const row = document.createElement("div");
+    const row = document.createElement("button");
+    row.type = "button";
+    row.dataset.phasePlayer = p.id;
+    row.setAttribute("aria-pressed", String(selected.has(p.id)));
     row.className = "player-row" + (selected.has(p.id) ? " selected" : "");
-    row.innerHTML = `<span><span class="pos-tag pos-${p.pos}">${p.pos}</span> ${p.name}</span>${renderOverallBadge(p.overall)}`;
+    row.innerHTML = `<span><span class="pos-tag pos-${p.pos}">${p.pos}</span> ${tacticText(p.name)}</span>${renderOverallBadge(p.overall)}`;
     row.onclick = () => {
       if (selected.has(p.id)) {
         selected.delete(p.id);
@@ -4584,6 +4726,7 @@ function renderPhaseLineupList() {
         selected.add(p.id);
       }
       renderPhaseLineupList();
+      list.querySelector(`[data-phase-player="${p.id}"]`)?.focus({ preventScroll: true });
     };
     list.appendChild(row);
   });
@@ -4663,6 +4806,7 @@ function continueAfterHalfTime() {
   document.getElementById("btn-pause-match").textContent = "⏸ Pause";
   updateMatchStatusBanner();
   runMinute();
+  startMatchPitchLoop();
 }
 
 const MATCH_SPEED_STEPS = [1, 2, 4];
@@ -4688,6 +4832,7 @@ function togglePauseMatch() {
     btn.textContent = "⏸ Pause";
     resumeMatchFlow();
   }
+  startMatchPitchLoop();
 }
 
 // Ouvre le panneau tactique en cours de match (mise en pause automatique)
@@ -5073,6 +5218,7 @@ function completeMatch(shootout) {
   document.getElementById("match-minute").textContent = matchState.minute + "'";
   matchState.completedMinute = matchState.minute;
   updateMatchDashboard(true);
+  document.getElementById("turn-banner").style.display = "none";
   const div = document.createElement("div");
   div.className = "ev";
   div.style.fontWeight = "bold";
@@ -5321,6 +5467,15 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("btn-secret-card-confirm").onclick = confirmSecretCard;
 
   setupMatchPitchPointerEvents();
+  if (typeof ResizeObserver === "function") new ResizeObserver(invalidatePitchGeometry).observe(document.getElementById("match-pitch-canvas"));
+  window.addEventListener("resize", invalidatePitchGeometry);
+  const commentary = document.getElementById("commentary");
+  const follow = document.getElementById("btn-commentary-follow");
+  commentary.addEventListener("scroll", () => {
+    commentaryFollowsLive = commentary.scrollHeight - commentary.clientHeight - commentary.scrollTop < 48;
+    follow.hidden = commentaryFollowsLive;
+  }, { passive: true });
+  follow.onclick = () => { commentaryFollowsLive = true; commentary.scrollTop = commentary.scrollHeight; follow.hidden = true; };
 
   document.getElementById("btn-player-info-close").onclick = closePlayerInfoModal;
 
@@ -5336,10 +5491,13 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("offer-cancel").onclick = closeOfferModal;
   document.getElementById("offer-submit").onclick = submitOffer;
 
-  document.getElementById("filter-pos").onchange = renderTransfersTab;
-  document.getElementById("filter-ovr").onchange = renderTransfersTab;
-  document.getElementById("filter-name").oninput = renderTransfersTab;
-  document.getElementById("filter-league").onchange = renderTransfersTab;
+  const filterMarket = () => renderMarketTable(getUserTeam());
+  document.getElementById("filter-pos").onchange = filterMarket;
+  document.getElementById("filter-ovr").onchange = filterMarket;
+  document.getElementById("filter-name").oninput = filterMarket;
+  document.getElementById("filter-league").onchange = filterMarket;
+  document.getElementById("market-page-prev").onclick = () => changeMarketPage(-1);
+  document.getElementById("market-page-next").onclick = () => changeMarketPage(1);
 
   document.querySelectorAll(".mercato-subtab-btn").forEach(btn => {
     btn.onclick = () => showMercatoSubtab(btn.dataset.subtab);

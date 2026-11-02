@@ -157,7 +157,7 @@ function main() {
   const outputs = [["player-photos.js", render(result.runtime)], ["research/player-photos-report.json", JSON.stringify(result.report, null, 2) + "\n"]];
   for (const [name, content] of outputs) {
     const filename = path.join(ROOT, name);
-    if (process.argv.includes("--check")) { if (fs.readFileSync(filename, "utf8") !== content) throw new Error(`Fichier non reproductible : ${name}`); }
+    if (process.argv.includes("--check")) { if (fs.readFileSync(filename, "utf8").replace(/\r\n/g, "\n") !== content.replace(/\r\n/g, "\n")) throw new Error(`Fichier non reproductible : ${name}`); }
     else fs.writeFileSync(filename, content);
   }
   console.log(JSON.stringify({ verified: result.report.verifiedPlayers, unresolved: result.report.unresolvedPlayers, byLeague: result.report.byLeague }));

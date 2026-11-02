@@ -3,10 +3,13 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
+  <meta name="theme-color" content="#111512">
+  <meta name="color-scheme" content="dark">
   <title>Kings Manager 7v7</title>
   <link rel="icon" href="images/favicon.png">
-  <link rel="stylesheet" href="style.css?v=20261030-live-drag">
+  <link rel="stylesheet" href="style.css?v=20261102-interface">
+  <link rel="stylesheet" href="interface.css?v=20261102-interface">
 </head>
 
 <body>
@@ -21,13 +24,13 @@
         <div class="transfer-list" id="saves-list"></div>
       </div>
 
-      <div class="panel">
-        <h2>Importer une carrière</h2>
+      <details class="panel import-panel">
+        <summary>Importer une carrière</summary>
         <p style="margin-bottom:10px; font-size:0.9em; color:#aaa;">Récupère un fichier de sauvegarde exporté depuis un
           autre PC pour continuer ta carrière ici.</p>
         <input type="file" id="import-save-input" accept=".json" style="color:#eee;">
         <p id="import-save-feedback" style="margin-top:8px; font-size:0.85em; font-weight:600;"></p>
-      </div>
+      </details>
 
       <div class="panel team-select-panel">
         <h2>Choisis ta ligue et ton équipe</h2>
@@ -248,14 +251,14 @@
               <div class="filter-tile">
                 <span class="filter-tile-icon">🔎</span>
                 <div class="filter-tile-body">
-                  <label>Nom</label>
-                  <input type="text" id="filter-name" placeholder="Nom du joueur...">
+                  <label for="filter-name">Nom</label>
+                  <input type="search" id="filter-name" placeholder="Nom du joueur..." autocomplete="off" enterkeyhint="search">
                 </div>
               </div>
               <div class="filter-tile">
                 <span class="filter-tile-icon">🧤</span>
                 <div class="filter-tile-body">
-                  <label>Poste</label>
+                  <label for="filter-pos">Poste</label>
                   <select id="filter-pos">
                     <option value="all">Tous</option>
                     <option value="GK">GK</option>
@@ -268,7 +271,7 @@
               <div class="filter-tile">
                 <span class="filter-tile-icon">⭐</span>
                 <div class="filter-tile-body">
-                  <label>Note min.</label>
+                  <label for="filter-ovr">Note min.</label>
                   <select id="filter-ovr">
                     <option value="0">Toutes</option>
                     <option value="60">60+</option>
@@ -283,7 +286,7 @@
               <div class="filter-tile">
                 <span class="filter-tile-icon">🏆</span>
                 <div class="filter-tile-body">
-                  <label>Ligue</label>
+                  <label for="filter-league">Ligue</label>
                   <select id="filter-league">
                     <option value="all">Toutes</option>
                   </select>
@@ -308,6 +311,13 @@
               </table>
             </div>
             <p class="mercato-empty" id="market-empty" style="display:none;">Aucun joueur ne correspond à ces filtres.</p>
+            <nav class="market-pagination" aria-label="Pages des joueurs">
+              <p id="market-page-status" role="status" aria-live="polite"></p>
+              <div class="market-page-actions">
+                <button class="secondary" id="market-page-prev" type="button">← Précédent</button>
+                <button class="secondary" id="market-page-next" type="button">Suivant →</button>
+              </div>
+            </nav>
           </div>
         </div>
 
@@ -451,14 +461,31 @@
 
     <!-- ÉCRAN MATCH -->
     <div class="screen" id="screen-match">
+      <header class="panel match-scoreboard" aria-label="Score et contexte du match">
+        <div class="match-header">
+          <div class="team-name" id="match-home-name"></div>
+          <div class="score-block">
+            <div class="score" id="match-score">0 - 0</div>
+            <div class="match-minute" id="match-minute">0'</div>
+          </div>
+          <div class="team-name" id="match-away-name"></div>
+        </div>
+        <div class="match-live-context">
+          <div class="match-live-phase-line"><span id="match-live-format">7 contre 7</span><span id="match-live-phase">Coup d'envoi</span></div>
+          <p id="match-live-carrier">Les deux équipes se mettent en place.</p>
+        </div>
+      </header>
       <div class="match-layout">
         <div class="panel match-pitch-panel">
           <div class="turn-banner" id="turn-banner"></div>
           <div class="pitch-field match-pitch" id="match-pitch">
-            <!-- Les marquages et les acteurs sont dessinés ensemble sur le canvas afin de
-                 conserver leurs proportions quand le terrain logique est affiché en paysage. -->
-            <canvas id="match-pitch-canvas"></canvas>
+            <!-- Deux couches de mêmes dimensions : marquages statiques et acteurs animés.
+                 Leur repère reste commun, sans redessiner le décor à chaque image. -->
+            <canvas id="match-pitch-markings" aria-hidden="true"></canvas>
+            <canvas id="match-pitch-canvas" role="img" aria-label="Terrain du match : domicile en bleu, extérieur en rouge. Les joueurs sont aussi consultables dans le panneau Tactique."></canvas>
           </div>
+          <p class="pitch-legend"><span class="legend-home">Domicile</span><span class="legend-away">Extérieur</span><span>◉ Porteur du ballon</span></p>
+          <p id="match-event-notice" class="match-event-notice" role="status" aria-live="polite" hidden></p>
           <aside class="touchline-panel" aria-label="Banc de touche">
             <div class="touchline-heading">
               <h3 id="live-mentality-label">Banc de touche</h3>
@@ -471,20 +498,7 @@
         </div>
 
         <div class="panel match-center">
-          <div class="match-header">
-            <div class="team-name" id="match-home-name"></div>
-            <div class="score-block">
-              <div class="score" id="match-score">0 - 0</div>
-              <div class="match-minute" id="match-minute">0'</div>
-            </div>
-            <div class="team-name" id="match-away-name"></div>
-          </div>
-
-          <div class="match-live-context">
-            <div class="match-live-phase-line"><span id="match-live-format">7 contre 7</span><span id="match-live-phase">Coup d'envoi</span></div>
-            <p id="match-live-carrier">Les deux équipes se mettent en place.</p>
-          </div>
-
+          <h3 class="match-panel-title">Le fil du match</h3>
           <dl class="match-live-stats" aria-label="Statistiques des séquences terminées, domicile puis extérieur">
             <div><dt>Possession</dt><dd id="match-live-possession">50% — 50%</dd></div>
             <div><dt>Tirs</dt><dd id="match-live-shots">0 — 0</dd></div>
@@ -492,8 +506,11 @@
           </dl>
 
           <div id="commentary" role="log" aria-label="Commentaires du match" aria-live="off"></div>
-
-          <div class="match-controls">
+          <button class="secondary commentary-follow" id="btn-commentary-follow" type="button" hidden>↓ Revenir au direct</button>
+        </div>
+      </div>
+      <footer class="match-command-bar">
+          <div class="match-controls" aria-label="Commandes du match">
             <button class="secondary" id="btn-pause-match">⏸ Pause</button>
             <button class="secondary" id="btn-tactics-match">🔄 Tactique</button>
             <button class="secondary" id="btn-secret-card">🃏 Activer l'Arme Secrète</button>
@@ -501,9 +518,9 @@
             <button class="secondary" id="btn-match-speed">▶ x1</button>
             <button class="primary" id="btn-skip-match">Avancer rapidement</button>
           </div>
+          <p class="match-action-help" id="match-action-help">Arme secrète : 5’–17’ puis 23’–36’. Penalty du président : 5’–17’ puis 23’–35’.</p>
           <p class="match-special-status" id="match-special-status" role="status" hidden></p>
-        </div>
-      </div>
+      </footer>
 
       <!-- Modal Arme Secrète -->
       <div id="secret-card-modal" class="match-overlay">
@@ -712,7 +729,8 @@
       <div class="modal-box">
         <h3 id="offer-title"></h3>
         <p id="offer-text" style="margin: 10px 0;"></p>
-        <input type="number" id="offer-amount"
+        <label for="offer-amount" class="offer-amount-label">Montant de l'offre (€)</label>
+        <input type="number" id="offer-amount" inputmode="numeric" min="1" step="1"
           style="width:100%; padding:8px; border-radius:6px; border:none; margin-bottom:10px;">
         <div style="display:flex; gap:10px; justify-content:flex-end;">
           <button class="secondary" id="offer-cancel">Annuler</button>
@@ -729,7 +747,8 @@
   <script src="matchengine-actions.js?v=20261028-roles"></script>
   <script src="engine.js?v=20261030-live-drag"></script>
   <script src="matchchoreo.js?v=20261028-roles"></script>
-  <script src="app.js?v=20261030-live-drag"></script>
+  <script src="app.js?v=20261102-interface"></script>
+  <script src="interface.js?v=20261102-interface"></script>
 </body>
 
 </html>

@@ -18,8 +18,8 @@ test("les 865 joueurs ont un statut vérifiable, sans promesse de portrait pour 
   assert.ok(generated.report.unresolvedPlayers > 0);
 });
 test("la génération est reproductible sans réseau ni dossier de collecte", () => {
-  assert.equal(sync.render(generated.runtime), source);
-  assert.equal(sync.render(sync.build(leagues, observations).runtime), source);
+  assert.equal(sync.render(generated.runtime), source.replace(/\r\n/g, "\n"));
+  assert.equal(sync.render(sync.build(leagues, observations).runtime), source.replace(/\r\n/g, "\n"));
   assert.deepEqual(generated.report, JSON.parse(fs.readFileSync(path.join(root, "research/player-photos-report.json"), "utf8")));
   assert.deepEqual(observations.imageRejections, JSON.parse(fs.readFileSync(path.join(root, "research/player-photo-rejections.json"), "utf8")));
 });

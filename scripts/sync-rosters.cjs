@@ -184,7 +184,7 @@ function renderGenerated(result) {
   return chunks.join("\n");
 }
 function updateData(source, result) {
-  const block = renderGenerated(result);
+  const block = renderGenerated(result).replace(/\n/g, source.includes("\r\n") ? "\r\n" : "\n");
   if (source.includes(BEGIN)) return source.slice(0, source.indexOf(BEGIN)) + block + source.slice(source.indexOf(END) + END.length);
   const start = source.indexOf("// ---------------------- LIGUE FRANCE"), stop = source.indexOf("// Plans tactiques offensifs et défensifs");
   if (start < 0 || stop < start) throw new Error("Bornes de génération introuvables");

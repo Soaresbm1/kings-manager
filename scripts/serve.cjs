@@ -35,7 +35,7 @@ const server = http.createServer((request, response) => {
     response.writeHead(404).end("Fichier introuvable");
     return;
   }
-  const filename = path.resolve(root, "." + (pathname === "/" ? "/index.html" : pathname));
+  const filename = path.resolve(root, "." + (pathname.endsWith("/") ? pathname + "index.html" : pathname));
   if (!insideRoot(filename)) { response.writeHead(404).end("Fichier introuvable"); return; }
   fs.realpath(filename, (resolveError, realFilename) => {
     if (!resolveError && !insideRoot(realFilename)) { response.writeHead(404).end("Fichier introuvable"); return; }

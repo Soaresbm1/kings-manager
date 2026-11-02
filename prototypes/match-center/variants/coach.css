@@ -1,0 +1,6 @@
+/* Axe : décision du manager, terrain dominant et consignes proches. */
+@media (min-width: 1101px) {
+  .match-pitch-panel { flex-grow: 2.4; }
+  .match-center { max-width: 340px; }
+  .touchline-panel { border-left: 3px solid var(--accent); }
+}

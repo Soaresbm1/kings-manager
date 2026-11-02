@@ -62,7 +62,13 @@ statique.
    les anciens beats sans instantané. `restart` et `recovery` matérialisent les reprises.
 6. **`app.js`** — état du jeu (`STATE`), rendu des écrans, gestion des événements DOM,
    sauvegardes (`localStorage` + export/import JSON).
-7. **`index.html` / `style.css`** — structure des écrans et mise en forme.
+7. **`index.html` / `style.css`** — structure des écrans et styles existants.
+8. **`interface.js` / `interface.css`** — présentation commune, tableaux mobiles,
+   navigation au clavier et focus des fenêtres ; aucune décision de simulation.
+   Le canvas des marquages est statique, celui des acteurs est animé ; les deux
+   partagent leurs dimensions et le même repère. Le rendu continu s'arrête en pause.
+   `prototypes/` contient les variantes et fixtures dans des iframes isolées, avec
+   stockage en mémoire ; rien de ce dossier n'est importé par la production.
 
 Dossiers `images/players/<dossier-ligue>/<club-slug>/<joueur-slug>.png` (photos, fallback
 initiales si absentes ; le nom du dossier de ligue peut différer de la clé interne — voir

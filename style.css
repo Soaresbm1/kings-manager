@@ -1,12 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Rajdhani:wght@500;600;700&display=swap');
 
 :root {
-  --accent: #ffc700;
-  --accent2: #ffe066;
-  --bg1: #0a0a0a;
-  --bg2: #161616;
-  --panel: rgba(255,255,255,0.05);
-  --panel-border: rgba(255,199,0,0.12);
+  --accent: #e7ca64;
+  --accent2: #f7e5a7;
+  --bg1: #101411;
+  --bg2: #151a16;
+  --panel: #1b211d;
+  --panel-border: #354037;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -34,7 +34,10 @@ h3 { color: #cfe8ff; }
 ::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-track { background: rgba(255,255,255,0.03); border-radius: 8px; }
 ::-webkit-scrollbar-thumb { background: rgba(255,199,0,0.4); border-radius: 8px; }
+@media (hover: hover) and (pointer: fine) {
 ::-webkit-scrollbar-thumb:hover { background: rgba(255,199,0,0.7); }
+}
+
 
 /* Par défaut un écran actif défile lui-même (parfait pour Accueil/Résumé, simples panneaux
    empilés). Les écrans avec une mise en page interne plus riche (#screen-main, #screen-lineup,
@@ -42,7 +45,7 @@ h3 { color: #cfe8ff; }
    sous-panneaux (.tab.active, .tactics-bench-list, #commentary...), qui restent, eux, bornés et
    défilables — jamais la page entière. */
 .screen { display: none; }
-.screen.active { display: flex; flex-direction: column; flex: 1; min-height: 0; overflow-y: auto; animation: fadeIn 0.35s ease; }
+.screen.active { display: flex; flex-direction: column; flex: 1; min-height: 0; overflow-y: auto; animation: none; }
 #screen-main.active, #screen-lineup.active, #screen-match.active { overflow: hidden; }
 
 @keyframes fadeIn {
@@ -77,9 +80,12 @@ h3 { color: #cfe8ff; }
   text-align: center;
   cursor: pointer;
   box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+  transition: border-color 150ms ease, background-color 150ms ease;
 }
+@media (hover: hover) and (pointer: fine) {
 .card:hover { border-color: var(--accent); transform: translateY(-4px); box-shadow: 0 8px 20px rgba(255,199,0,0.2); }
+}
+
 .card.selected {
   border-color: var(--accent2);
   background: rgba(255,199,0,0.1);
@@ -100,7 +106,10 @@ h3 { color: #cfe8ff; }
   padding: 9px 10px; border-radius: 8px; cursor: pointer;
   border: 1px solid transparent; transition: background 0.15s ease, border-color 0.15s ease;
 }
+@media (hover: hover) and (pointer: fine) {
 .league-row:hover { background: rgba(255,255,255,0.06); }
+}
+
 .league-row.selected {
   background: rgba(255,199,0,0.15); border-color: var(--accent);
 }
@@ -175,18 +184,21 @@ h3 { color: #cfe8ff; }
   background: transparent; color: #8a8a8a; border: none; border-bottom: 3px solid transparent;
   padding: 10px 16px 8px; cursor: pointer; font-size: 0.92em;
   font-family: "Rajdhani", sans-serif; font-weight: 700; letter-spacing: 0.5px;
-  text-transform: uppercase; transition: all 0.15s ease;
+  text-transform: uppercase; transition: background-color 0.15s ease;
 }
 .nav button.active {
   background: transparent; color: #ffc700; border-bottom-color: #ffc700;
 }
+@media (hover: hover) and (pointer: fine) {
 .nav button:hover:not(.active) { color: #ffe27a; border-bottom-color: rgba(255,199,0,0.35); }
+}
+
 
 /* Même principe qu'au niveau écran : un onglet actif défile lui-même par défaut (Classement,
    Effectif, Mercato). Calendrier et Tactique gèrent leur propre défilement interne plus finement
    (voir plus bas) et désactivent donc ce défilement de premier niveau. */
 .tab { display: none; }
-.tab.active { display: flex; flex-direction: column; flex: 1; min-height: 0; overflow-y: auto; animation: fadeIn 0.3s ease; }
+.tab.active { display: flex; flex-direction: column; flex: 1; min-height: 0; overflow-y: auto; animation: none; }
 #tab-calendar.active, #tab-tactics.active { overflow: hidden; }
 
 /* ----- Tableaux ----- */
@@ -198,12 +210,21 @@ th {
   text-transform: uppercase; font-size: 0.78em;
 }
 tbody tr { transition: background 0.12s ease; }
+@media (hover: hover) and (pointer: fine) {
 tbody tr:hover { background: rgba(255,255,255,0.04); }
+}
+
 tbody tr.clickable { cursor: pointer; }
 tr.user-team { background: rgba(255,199,0,0.12); font-weight: bold; }
+@media (hover: hover) and (pointer: fine) {
 tr.user-team:hover { background: rgba(255,199,0,0.18); }
+}
+
 tr.squad-row-injured { background: rgba(255,90,90,0.06); }
+@media (hover: hover) and (pointer: fine) {
 tr.squad-row-injured:hover { background: rgba(255,90,90,0.12); }
+}
+
 td.name, th.name { text-align: left; }
 
 /* ----- Classement ----- */
@@ -220,16 +241,22 @@ button.primary {
   box-shadow: 0 4px 14px rgba(255,199,0,0.35);
   transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease;
 }
+@media (hover: hover) and (pointer: fine) {
 button.primary:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(255,199,0,0.5); }
+}
+
 button.primary:active { transform: translateY(0); }
 
 button.secondary {
   background: rgba(255,255,255,0.06); color: #eee; border: 1px solid #4a6584;
   padding: 9px 18px; border-radius: 8px; cursor: pointer;
   font-family: "Rajdhani", sans-serif; font-weight: 600; letter-spacing: 0.5px;
-  transition: all 0.15s ease;
+  transition: background-color 0.15s ease;
 }
+@media (hover: hover) and (pointer: fine) {
 button.secondary:hover { background: rgba(255,255,255,0.14); border-color: var(--accent); }
+}
+
 button:disabled { opacity: 0.35; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
 
 button.danger {
@@ -240,7 +267,10 @@ button.danger {
   box-shadow: 0 4px 14px rgba(255,68,68,0.3);
   transition: transform 0.12s ease, box-shadow 0.12s ease;
 }
+@media (hover: hover) and (pointer: fine) {
 button.danger:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(255,68,68,0.45); }
+}
+
 
 .panel {
   background: var(--panel);
@@ -298,7 +328,10 @@ button.danger:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(2
   padding: 8px 12px; border-bottom: 1px solid rgba(255,255,255,0.06); font-size: 0.9em;
   border-radius: 6px; transition: background 0.12s ease;
 }
+@media (hover: hover) and (pointer: fine) {
 .fixture:hover { background: rgba(255,255,255,0.04); }
+}
+
 .fixture.user { color: var(--accent2); font-weight: bold; background: rgba(255,199,0,0.06); }
 .fixture-team { display: inline-flex; align-items: center; gap: 6px; }
 .fixture-team.home { justify-content: flex-end; }
@@ -362,7 +395,10 @@ button.danger:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(2
   font: 600 0.78em "Poppins", "Segoe UI", sans-serif; cursor: pointer;
   transition: border-color 0.15s ease, background 0.15s ease;
 }
+@media (hover: hover) and (pointer: fine) {
 .mentality-button:hover { border-color: var(--accent); color: #fff; }
+}
+
 .mentality-button.selected { border-color: var(--accent); background: rgba(255,199,0,0.13); color: #ffe9a1; }
 .mentality-button:focus-visible { outline: 2px solid #9fd8ff; outline-offset: 3px; }
 .mentality-button:disabled { opacity: 0.55; cursor: default; }
@@ -402,7 +438,7 @@ button.secondary.selected { border-color: var(--accent2); background: rgba(255,1
 .pos-overview-bar {
   flex: 1; height: 8px; border-radius: 4px; background: rgba(255,255,255,0.08); overflow: hidden;
 }
-.pos-overview-fill { height: 100%; border-radius: 4px; transition: width 0.3s ease; }
+.pos-overview-fill { height: 100%; border-radius: 4px; transition: none; }
 .pos-overview-avg {
   min-width: 22px; text-align: right; font-weight: 800; font-family: "Rajdhani", sans-serif; color: #dde8f5;
 }
@@ -442,9 +478,12 @@ button.secondary.selected { border-color: var(--accent2); background: rgba(255,1
   width: 90px; padding: 6px 4px; border-radius: 8px;
   background: rgba(0,0,0,0.45); border: 2px solid rgba(255,255,255,0.25);
   cursor: pointer; text-align: center; font-size: 0.78em;
-  transition: all 0.12s ease; z-index: 1;
+  transition: background-color 0.12s ease; z-index: 1;
 }
+@media (hover: hover) and (pointer: fine) {
 .pitch-slot:hover { border-color: var(--accent); box-shadow: 0 0 12px rgba(255,199,0,0.3); }
+}
+
 .pitch-slot.selected {
   border-color: var(--accent2); box-shadow: 0 0 14px rgba(255,199,0,0.45);
   background: rgba(255,199,0,0.12);
@@ -464,9 +503,12 @@ button.secondary.selected { border-color: var(--accent2); background: rgba(255,1
   padding: 8px 10px; border-radius: 8px; margin-bottom: 5px;
   background: rgba(255,255,255,0.05); border: 1px solid transparent;
   cursor: pointer; font-size: 0.9em;
-  transition: all 0.12s ease;
+  transition: background-color 0.12s ease;
 }
+@media (hover: hover) and (pointer: fine) {
 .player-row:hover { background: rgba(255,255,255,0.09); border-color: rgba(255,199,0,0.3); }
+}
+
 .player-row-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
 .rating-chip {
   display: inline-block; min-width: 34px; text-align: center; padding: 4px 8px; border-radius: 8px;
@@ -477,7 +519,10 @@ button.secondary.selected { border-color: var(--accent2); background: rgba(255,1
 .rating-chip.rc-low { background: rgba(255,90,90,0.18); color: #ffd6d6; border: 1px solid rgba(255,90,90,0.4); }
 .rating-chip.rc-none { background: rgba(255,255,255,0.05); color: #888; border: 1px solid var(--panel-border); }
 .player-row-injured { cursor: not-allowed; opacity: 0.55; }
+@media (hover: hover) and (pointer: fine) {
 .player-row-injured:hover { background: rgba(255,255,255,0.05); border-color: transparent; }
+}
+
 .injury-badge {
   display: inline-block; background: rgba(255,90,90,0.18); color: #ffb3b3;
   border: 1px solid rgba(255,90,90,0.4); border-radius: 8px; padding: 2px 7px;
@@ -502,14 +547,23 @@ button.secondary.selected { border-color: var(--accent2); background: rgba(255,1
   background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.18); color: #fff;
   border-radius: 10px; padding: 5px 16px; font-family: "Rajdhani", sans-serif;
   font-weight: 700; font-size: 0.85em; letter-spacing: 0.5px; cursor: pointer;
-  transition: all 0.12s ease; white-space: nowrap;
+  transition: background-color 0.12s ease; white-space: nowrap;
 }
+@media (hover: hover) and (pointer: fine) {
 .position-picker-btn:hover { border-color: var(--accent2); background: rgba(255,199,0,0.15); color: #ffe9b3; }
+}
+
 .position-picker-occupant { font-size: 0.75em; font-weight: 600; color: #aaa; }
+@media (hover: hover) and (pointer: fine) {
 .position-picker-btn:hover .position-picker-occupant { color: #ffe9b3; }
+}
+
 .position-picker-btn.current { border-color: var(--accent2); background: rgba(255,199,0,0.12); }
 .position-picker-remove { border-color: rgba(255,90,90,0.4); }
+@media (hover: hover) and (pointer: fine) {
 .position-picker-remove:hover { border-color: #ff5a5a; background: rgba(255,90,90,0.15); color: #ffd6d6; }
+}
+
 
 /* Carrés "avec balle" / "sans balle" affichés à côté de chaque joueur de l'effectif :
    cliquer ouvre le sélecteur de poste pour la phase correspondante. */
@@ -518,9 +572,12 @@ button.secondary.selected { border-color: var(--accent2); background: rgba(255,1
   width: 46px; height: 34px; border-radius: 6px; cursor: pointer;
   background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); color: #888;
   font-family: "Rajdhani", sans-serif; font-weight: 700; font-size: 0.72em; letter-spacing: 0.3px;
-  transition: all 0.12s ease;
+  transition: background-color 0.12s ease;
 }
+@media (hover: hover) and (pointer: fine) {
 .phase-square:hover { border-color: var(--accent); box-shadow: 0 0 8px rgba(255,199,0,0.3); }
+}
+
 .phase-square.phase-in.filled { border-color: var(--accent); background: rgba(255,199,0,0.15); color: #ffe9b3; }
 .phase-square.phase-out.filled { border-color: #9fd8ff; background: rgba(159,216,255,0.15); color: #d8f3ff; }
 .pos-tag {
@@ -569,23 +626,32 @@ button.secondary.selected { border-color: var(--accent2); background: rgba(255,1
 /* Table dense façon Football Manager, réutilisée par Effectif et Mercato : en-têtes triables
    collants, lignes zébrées. */
 .fm-table thead th.sortable { cursor: pointer; user-select: none; position: relative; padding-right: 16px; }
+@media (hover: hover) and (pointer: fine) {
 .fm-table thead th.sortable:hover { color: #fff; }
+}
+
 .fm-table thead th.sortable::after { content: "↕"; position: absolute; right: 3px; opacity: 0.3; font-size: 0.85em; }
 .fm-table thead th.sortable.sort-active::after { opacity: 1; color: var(--accent2); }
 .fm-table thead th.sortable.sort-asc::after { content: "▲"; }
 .fm-table thead th.sortable.sort-desc::after { content: "▼"; }
 .fm-table thead th { position: sticky; top: 0; background: #0d1220; z-index: 1; }
 .fm-table tbody tr:nth-child(even) { background: rgba(255,255,255,0.02); }
+@media (hover: hover) and (pointer: fine) {
 .fm-table tbody tr:nth-child(even):hover { background: rgba(255,255,255,0.05); }
+}
+
 
 .options-grid { display: flex; gap: 15px; flex-wrap: wrap; margin: 10px 0; }
 .option-group { flex: 1; min-width: 220px; }
 .option-card {
   border: 2px solid #2e4258; border-radius: 10px; padding: 12px; margin-bottom: 8px; cursor: pointer;
   background: rgba(255,255,255,0.02);
-  transition: all 0.15s ease;
+  transition: background-color 0.15s ease;
 }
+@media (hover: hover) and (pointer: fine) {
 .option-card:hover { border-color: rgba(255,199,0,0.5); background: rgba(255,199,0,0.05); }
+}
+
 .option-card.selected {
   border-color: var(--accent2); background: rgba(255,199,0,0.1);
   box-shadow: 0 0 12px rgba(255,199,0,0.15);
@@ -643,7 +709,10 @@ button.secondary.selected { border-color: var(--accent2); background: rgba(255,1
 .tactics-control-panel .option-card { border: 1px solid #40453d; border-radius: 6px; background: #222620; color: #d8dfd4; padding: 9px 6px; text-align: center; box-shadow: none; min-width: 0; font: inherit; }
 .tactics-control-panel .option-card h4 { font: 600 0.72rem "Poppins", sans-serif; white-space: normal; letter-spacing: 0; line-height: 1.35; }
 #tactics-attack-plan-choice .option-card, #tactics-defense-plan-choice .option-card { text-align: left; padding: 9px 11px; }
+@media (hover: hover) and (pointer: fine) {
 .tactics-control-panel .option-card:hover { background: #30362a; border-color: #9a956a; }
+}
+
 .tactics-control-panel .option-card.selected { color: #f8e6a1; border-color: #c4ab50; background: #363421; box-shadow: inset 3px 0 #e7ca64; }
 #tactics-formation-choice .option-card.selected { box-shadow: none; }
 .tactic-plan-description { color: #aab4a7; font-size: 0.68rem; line-height: 1.65; min-height: 2.7em; }
@@ -658,7 +727,10 @@ button.secondary.selected { border-color: var(--accent2); background: rgba(255,1
 .tactics-phase-tabs .option-card { padding: 8px 5px; border: 0; border-radius: 5px; margin: 0; background: transparent; color: #aab7a8; font: inherit; box-shadow: none; }
 .tactics-phase-tabs .option-card h4 { font: 600 0.7rem "Poppins", sans-serif; white-space: normal; letter-spacing: 0; }
 .tactics-phase-tabs .option-card.selected { color: #f5e6b5; background: #354032; box-shadow: none; }
+@media (hover: hover) and (pointer: fine) {
 .tactics-phase-tabs .option-card:hover { background: #283325; }
+}
+
 #tab-tactics .tactics-pitch-row { overflow: hidden; align-items: stretch; min-height: 0; padding: 0; container-type: size; }
 #tab-tactics .iop-wrap, #tab-tactics .oop-preview { align-items: center; flex: 1 1 0; min-height: 0; min-width: 0; margin: 0; }
 #tab-tactics .iop-wrap h4, #tab-tactics .oop-preview h4 { width: 100%; display: flex; align-items: center; gap: 7px; color: #dde4d8; font: 600 0.68rem "Poppins", sans-serif; margin: 0 0 12px; }
@@ -736,7 +808,10 @@ button.option-card { appearance: none; color: inherit; font-family: inherit; tex
 .pitch-slot { appearance: none; font-family: "Poppins", "Segoe UI", sans-serif; color: #f2f5ed; border-width: 1px; width: clamp(76px, 26cqw, 118px); padding: 5px 5px 6px; gap: 2px; background: #16221ef0; border-color: #aabca38c; border-radius: 7px; box-shadow: 0 3px 9px #0a171c66; }
 .pitch-slot.pos-GK, .pitch-slot.pos-DEF, .pitch-slot.pos-MID, .pitch-slot.pos-ATT { background: #16221ef0; color: #f2f5ed; }
 .pitch-slot.pos-GK { transform: translate(-50%, -60%); }
+@media (hover: hover) and (pointer: fine) {
 .pitch-slot:hover { border-color: #f4df84; box-shadow: 0 0 0 2px #e3ce714d; }
+}
+
 .pitch-slot.selected { background: #45452bed; border-color: #ffe38a; box-shadow: 0 0 0 3px #e3ce7152; }
 .pitch-slot .slot-copy { display: flex; flex-direction: column; align-items: center; width: 100%; min-width: 0; gap: 2px; }
 .pitch-slot .slot-portrait { position: relative; display: flex; align-items: center; justify-content: center; width: clamp(30px, 11cqw, 46px); height: clamp(32px, 11.5cqw, 48px); overflow: hidden; color: #dfe5cb; font-size: 0.73rem; line-height: 1; background: #2d3c32; border-radius: 5px; }
@@ -749,7 +824,10 @@ button.option-card { appearance: none; color: inherit; font-family: inherit; tex
 .pitch-slot .slot-role-warning { color: #f6cd88; font-size: 0.5rem; }
 .tactics-bench-list .player-row { display: flex; align-items: center; gap: 5px; padding: 5px; background: #252b24; border-color: #394134; border-radius: 7px; margin: 0 0 6px; font-size: 0.88rem; box-shadow: none; cursor: default; }
 .tactics-bench-list .player-row.selected { background: #313326; border-color: #807849; box-shadow: inset 2px 0 #dcc575; }
+@media (hover: hover) and (pointer: fine) {
 .tactics-bench-list .player-row:hover { border-color: #a39b62; background: #30362b; }
+}
+
 .tactic-player-main { appearance: none; display: flex; align-items: center; gap: 8px; min-width: 0; flex: 1; text-align: left; padding: 3px 0; border: 0; color: #edf1e5; background: transparent; font: inherit; cursor: pointer; }
 .tactic-player-photo { position: relative; display: flex; align-items: center; justify-content: center; width: 37px; height: 46px; overflow: hidden; flex: 0 0 37px; color: #dcdfb9; background: #354130; border-radius: 5px; font-size: 0.72rem; }
 .tactic-player-photo img { width: 100%; height: 100%; object-fit: contain; object-position: center bottom; }
@@ -792,7 +870,7 @@ button.option-card { appearance: none; color: inherit; font-family: inherit; tex
 .pitch-slot.tactic-drag-source { border-style: dashed; }
 .pitch-slot.tactic-drop-valid {
   border-color: #8ebd8b; box-shadow: 0 0 0 1px #8ebd8b45;
-  transition: border-color 0.12s ease, box-shadow 0.12s ease, background-color 0.12s ease;
+  transition: border-color 120ms ease, background-color 120ms ease;
 }
 .pitch-slot.tactic-drop-target {
   border-color: #ffe38a; background-color: #3a482bf2;
@@ -806,9 +884,9 @@ body.tactic-is-dragging, body.tactic-is-dragging * {
 }
 body.tactic-is-dragging .pitch-slot.tactic-drop-invalid { cursor: not-allowed !important; }
 .tactic-drag-ghost {
-  position: fixed !important; z-index: 10000 !important; right: auto !important; bottom: auto !important;
+  position: fixed !important; z-index: 10000 !important; left: 0 !important; top: 0 !important; right: auto !important; bottom: auto !important;
   margin: 0 !important; max-width: none; pointer-events: none !important;
-  transform: none !important; transition: none !important; animation: none !important;
+  transition: none !important; animation: none !important;
   opacity: 0.94 !important; box-shadow: 0 12px 28px #050b08a6, 0 0 0 2px #f0d775b3;
 }
 .tactic-drag-ghost.tactic-player-main {
@@ -985,9 +1063,12 @@ body.tactic-is-dragging .pitch-slot.tactic-drop-invalid { cursor: not-allowed !i
 .secret-card {
   flex: 1; min-width: 150px; border: 2px solid #2e4258; border-radius: 10px;
   padding: 12px; cursor: pointer; background: rgba(255,255,255,0.02);
-  transition: all 0.15s ease; text-align: center;
+  transition: background-color 0.15s ease; text-align: center;
 }
+@media (hover: hover) and (pointer: fine) {
 .secret-card:hover { border-color: rgba(255,199,0,0.5); background: rgba(255,199,0,0.05); }
+}
+
 .secret-card.selected {
   border-color: var(--accent2); background: rgba(255,199,0,0.1);
   box-shadow: 0 0 12px rgba(255,199,0,0.15);
@@ -1001,7 +1082,10 @@ body.tactic-is-dragging .pitch-slot.tactic-drop-invalid { cursor: not-allowed !i
   border-style: dashed; border-color: rgba(255,255,255,0.25);
   background: repeating-linear-gradient(135deg, rgba(255,255,255,0.03) 0 10px, transparent 10px 20px);
 }
+@media (hover: hover) and (pointer: fine) {
 .secret-card-hidden:hover { border-color: var(--accent2); }
+}
+
 .secret-card-hidden .icon { opacity: 0.6; }
 
 #btn-secret-card.used, #btn-president-penalty.used { opacity: 0.5; }
@@ -1027,7 +1111,7 @@ body.tactic-is-dragging .pitch-slot.tactic-drop-invalid { cursor: not-allowed !i
   border: 1px solid var(--panel-border);
   border-radius: 10px; padding: 12px; font-size: 0.9em; line-height: 1.7;
 }
-#commentary .ev { padding: 4px 8px; border-radius: 6px; margin-bottom: 3px; animation: slideIn 0.25s ease; }
+#commentary .ev { padding: 4px 8px; border-radius: 6px; margin-bottom: 3px; animation: none; }
 #commentary .ev.goal {
   background: rgba(255,199,0,0.15); font-weight: bold; color: #ffe9b3;
   border-left: 3px solid var(--accent2);
@@ -1068,7 +1152,7 @@ body.tactic-is-dragging .pitch-slot.tactic-drop-invalid { cursor: not-allowed !i
 .stat-bar .bar-bg { flex: 1; background: rgba(255,255,255,0.08); border-radius: 6px; height: 12px; overflow: hidden; }
 .stat-bar .bar-fill {
   height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2));
-  border-radius: 6px; transition: width 0.4s ease;
+  border-radius: 6px; transition: none;
 }
 .stat-bar span:last-child { min-width: 70px; text-align: right; font-weight: 600; }
 
@@ -1139,11 +1223,17 @@ body.tactic-is-dragging .pitch-slot.tactic-drop-invalid { cursor: not-allowed !i
 .transfer-history-row {
   display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 8px;
   background: rgba(255,255,255,0.03); margin-bottom: 6px; font-size: 0.88em; flex-wrap: wrap;
-  cursor: pointer; border: 1px solid transparent; transition: all 0.12s ease;
+  cursor: pointer; border: 1px solid transparent; transition: background-color 0.12s ease;
 }
+@media (hover: hover) and (pointer: fine) {
 .transfer-history-row:hover { background: rgba(255,255,255,0.07); border-color: rgba(255,199,0,0.2); }
+}
+
 .transfer-history-row.transfer-history-user { background: rgba(255,199,0,0.08); border-color: rgba(255,199,0,0.25); }
+@media (hover: hover) and (pointer: fine) {
 .transfer-history-row.transfer-history-user:hover { background: rgba(255,199,0,0.14); }
+}
+
 .transfer-history-date { color: #8391a8; font-size: 0.85em; min-width: 100px; flex-shrink: 0; }
 .transfer-history-name { font-weight: 700; min-width: 130px; }
 .transfer-history-route { display: flex; align-items: center; gap: 8px; flex: 1; flex-wrap: wrap; color: #cfe0f5; }
@@ -1162,10 +1252,13 @@ body.tactic-is-dragging .pitch-slot.tactic-drop-invalid { cursor: not-allowed !i
   background: transparent; color: #8a8a8a; border: none; border-bottom: 3px solid transparent;
   padding: 9px 18px; cursor: pointer; font-size: 0.88em;
   font-family: "Rajdhani", sans-serif; font-weight: 700; letter-spacing: 0.5px;
-  text-transform: uppercase; transition: all 0.15s ease;
+  text-transform: uppercase; transition: background-color 0.15s ease;
 }
 .mercato-subtab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+@media (hover: hover) and (pointer: fine) {
 .mercato-subtab-btn:hover:not(.active) { color: #ffe27a; }
+}
+
 .subtab-count { color: var(--accent); font-weight: 800; }
 .mercato-subpanel { display: none; }
 .mercato-subpanel.active { display: block; }
@@ -1187,9 +1280,12 @@ body.tactic-is-dragging .pitch-slot.tactic-drop-invalid { cursor: not-allowed !i
 .shortlist-row {
   display: flex; align-items: center; gap: 8px; padding: 9px 10px; border-radius: 8px;
   background: rgba(255,255,255,0.04); border: 1px solid transparent; margin-bottom: 6px;
-  cursor: pointer; transition: all 0.12s ease;
+  cursor: pointer; transition: background-color 0.12s ease;
 }
+@media (hover: hover) and (pointer: fine) {
 .shortlist-row:hover { background: rgba(255,255,255,0.08); }
+}
+
 .shortlist-row.selected { background: rgba(255,199,0,0.12); border-color: rgba(255,199,0,0.4); }
 .shortlist-row-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
 .shortlist-row-age { font-size: 0.8em; color: #8391a8; flex-shrink: 0; }
@@ -1214,9 +1310,12 @@ body.tactic-is-dragging .pitch-slot.tactic-drop-invalid { cursor: not-allowed !i
   display: flex; justify-content: space-between; align-items: center; gap: 10px;
   padding: 10px 12px; border-radius: 8px; background: rgba(255,255,255,0.04);
   border: 1px solid transparent;
-  margin-bottom: 6px; font-size: 0.9em; transition: all 0.12s ease;
+  margin-bottom: 6px; font-size: 0.9em; transition: background-color 0.12s ease;
 }
+@media (hover: hover) and (pointer: fine) {
 .transfer-row:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,199,0,0.25); }
+}
+
 .transfer-row .actions { display: flex; gap: 5px; flex-shrink: 0; }
 .transfer-row button { font-size: 0.8em; padding: 6px 12px; }
 
@@ -1224,7 +1323,7 @@ body.tactic-is-dragging .pitch-slot.tactic-drop-invalid { cursor: not-allowed !i
   display: inline-block; width: 60px; height: 8px; border-radius: 4px;
   background: rgba(255,255,255,0.1); overflow: hidden; vertical-align: middle;
 }
-.form-bar .fill { height: 100%; transition: width 0.3s ease; }
+.form-bar .fill { height: 100%; transition: none; }
 
 #offer-modal, #market-info-modal {
   position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -1366,7 +1465,10 @@ body.tactic-is-dragging .pitch-slot.tactic-drop-invalid { cursor: not-allowed !i
   background: transparent; border: none; color: #8391a8; cursor: pointer; font-size: 1.1em;
   line-height: 1; padding: 2px 4px;
 }
+@media (hover: hover) and (pointer: fine) {
 .compare-chip-remove:hover { color: #ff5a5a; }
+}
+
 
 .modal-compare { max-width: 720px; width: 94vw; max-height: 88vh; overflow-y: auto; }
 .compare-header { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
@@ -1413,13 +1515,10 @@ body.tactic-is-dragging .pitch-slot.tactic-drop-invalid { cursor: not-allowed !i
   text-align: center; font-weight: 700; margin-bottom: 15px;
   font-family: "Rajdhani", sans-serif; letter-spacing: 1px; text-transform: uppercase;
   box-shadow: 0 4px 16px rgba(255,150,0,0.3);
-  animation: pulse 2.4s infinite ease-in-out;
+  animation: none;
 }
 
-@keyframes pulse {
-  0%, 100% { box-shadow: 0 4px 16px rgba(255,150,0,0.3); }
-  50% { box-shadow: 0 4px 24px rgba(255,150,0,0.55); }
-}
+
 
 /* ----- Import de sauvegarde ----- */
 #import-save-input {
@@ -1434,9 +1533,12 @@ body.tactic-is-dragging .pitch-slot.tactic-drop-invalid { cursor: not-allowed !i
   letter-spacing: 0.5px; margin-right: 12px;
   transition: transform 0.12s ease, box-shadow 0.12s ease;
 }
+@media (hover: hover) and (pointer: fine) {
 #import-save-input::file-selector-button:hover {
   transform: translateY(-2px); box-shadow: 0 4px 14px rgba(255,199,0,0.35);
 }
+}
+
 
 .summary-grid { display: flex; gap: 20px; flex-wrap: wrap; }
 .summary-grid > div { flex: 1; min-width: 250px; }

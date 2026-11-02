@@ -65,7 +65,7 @@ test('carrière, consignes du banc, résultat puis sauvegarde persistante', asyn
   expect(pageErrors).toEqual([]);
 });
 
-test('export et import d’une ancienne carrière sans nouvelle consigne tactique', async ({ page }) => {
+test('export et import d’une ancienne carrière sans nouvelle consigne tactique', async ({ page }, testInfo) => {
   await startCareer(page);
   await page.locator('.nav button[data-tab="tactics"]').click();
   await page.locator('#tactics-mentality-choice').getByRole('button', { name: 'Offensive', exact: true }).click();
@@ -73,9 +73,10 @@ test('export et import d’une ancienne carrière sans nouvelle consigne tactiqu
   const downloadPromise = page.waitForEvent('download');
   await page.locator('#saves-list').getByRole('button', { name: 'Exporter', exact: true }).click();
   const download = await downloadPromise;
-  const filename = await download.path();
-  expect(filename).toBeTruthy();
-  const entry = JSON.parse(await readFile(filename!, 'utf8'));
+  // Le fichier temporaire de téléchargement peut encore être verrouillé sous Windows.
+  const filename = testInfo.outputPath('carriere-exportee.json');
+  await download.saveAs(filename);
+  const entry = JSON.parse(await readFile(filename, 'utf8'));
   expect(entry.data.savedTactic.mentality).toBe('attacking');
   delete entry.data.savedTactic.mentality;
   entry.meta.teamName = 'Ancienne carrière';

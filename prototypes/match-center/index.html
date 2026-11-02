@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Kings Manager — variantes du centre de match</title>
+  <link rel="stylesheet" href="../lab.css">
+  <link rel="stylesheet" href="picker.css">
+  <script src="../lab-runtime.js" defer></script>
+  <script src="prototype.js" defer></script>
+</head>
+<body>
+  <header class="lab-header prototype-header">
+    <h1>Trois façons de vivre le match</h1>
+    <p id="variant-description">Même rencontre, mêmes commandes. Session isolée sans sauvegarde. Touches 1–3, ← → et R.</p>
+  </header>
+  <main id="stage" aria-label="Variante du centre de match"></main>
+  <nav class="proto-picker" data-position="top" aria-label="Prototype variants">
+    <span class="proto-picker-highlight" aria-hidden="true"></span>
+    <button class="proto-picker-item" data-active aria-current="true">Banc</button>
+    <button class="proto-picker-item">Régie</button>
+    <button class="proto-picker-item">Analyse</button>
+    <span class="proto-picker-divider" aria-hidden="true"></span>
+    <button class="proto-picker-item proto-picker-replay" aria-label="Replay animation (R)">↻</button>
+  </nav>
+</body>
+</html>
