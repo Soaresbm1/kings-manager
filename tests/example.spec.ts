@@ -76,7 +76,11 @@ test('export et import d’une ancienne carrière sans nouvelle consigne tactiqu
   // Le fichier temporaire de téléchargement peut encore être verrouillé sous Windows.
   const filename = testInfo.outputPath('carriere-exportee.json');
   await download.saveAs(filename);
-  const entry = JSON.parse(await readFile(filename, 'utf8'));
+  let contents = '';
+  await expect(async () => {
+    contents = await readFile(filename, 'utf8');
+  }).toPass({ timeout: 5_000, intervals: [100, 250, 500] });
+  const entry = JSON.parse(contents);
   expect(entry.data.savedTactic.mentality).toBe('attacking');
   delete entry.data.savedTactic.mentality;
   entry.meta.teamName = 'Ancienne carrière';
