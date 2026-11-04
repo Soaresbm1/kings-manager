@@ -6,6 +6,12 @@ on:
   pull_request:
     branches: [main, master]
   workflow_dispatch:
+    inputs:
+      suite:
+        description: 'Périmètre des parcours navigateur'
+        type: choice
+        default: all
+        options: [all, cloud]
   schedule:
     # Vérification quotidienne reproductible du moteur (UTC).
     - cron: '17 5 * * *'
@@ -55,7 +61,14 @@ jobs:
       - name: Installer les navigateurs de test
         run: npx playwright install --with-deps ${{ matrix.browser }}
       - name: Tester Kings Manager
-        run: npm run test:e2e -- --project=${{ matrix.browser }}
+        env:
+          TEST_SUITE: ${{ inputs.suite }}
+        run: |
+          if [ "$TEST_SUITE" = "cloud" ]; then
+            npm run test:e2e -- tests/cloud-sync.spec.ts --project=${{ matrix.browser }}
+          else
+            npm run test:e2e -- --project=${{ matrix.browser }}
+          fi
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: failure()
         with:

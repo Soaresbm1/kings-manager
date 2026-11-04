@@ -54,6 +54,7 @@ async function call(handler, { method = "GET", token = TOKEN, body, headers = {}
   };
   await handler(request, response);
   assert.match(values["cache-control"], /no-store/);
+  assert.match(values["cache-control"], /no-transform/);
   assert.equal(values["vercel-cdn-cache-control"], "no-store");
   assert.equal(values["access-control-allow-origin"], undefined);
   return { status: response.statusCode, body: response.body, headers: values };
@@ -81,17 +82,46 @@ async function main() {
     const created = await put(handler);
     assert.equal(created.status, 201);
     assert.ok(created.headers.etag);
+    assert.equal(created.headers["x-career-revision"], created.headers.etag);
     const read = await call(handler, { headers: { origin: "https://kings-manager.test" } });
     assert.equal(read.status, 200);
     assert.deepEqual(read.body, DATA);
     assert.equal(read.headers.etag, created.headers.etag);
+    assert.equal(read.headers["x-career-revision"], created.headers.etag);
     const expected = "careers/production/" + createHash("sha256").update(Buffer.from(TOKEN, "base64url")).digest("hex") + ".json";
     assert.equal(store.calls.at(-1).path, expected);
-    assert.deepEqual(store.calls.at(-1).options, { access: "private", useCache: false });
+    assert.deepEqual(store.calls.at(-1).options, { access: "private", useCache: false, headers: { "Accept-Encoding": "identity" } });
     assert.equal((await call(handler, { token: OTHER })).status, 404);
     const preview = createHandler({ store, environment: "preview", rateLimit: false });
     assert.equal((await call(preview)).status, 404);
     assert.equal(store.calls.some(value => JSON.stringify(value).includes(TOKEN)), false);
+  });
+  await test("grande copie : lecture sans compression et révision forte explicite, sans conversion des ETag faibles", async () => {
+    const store = memoryStore(), get = store.get;
+    store.get = async function (path, options) {
+      const result = await get(path, options);
+      // Reproduit le transport Blob réel : une réponse JSON compressée expose
+      // un ETag faible, impropre à la précondition d'écriture du stockage.
+      if (result && options.headers?.["Accept-Encoding"] !== "identity") result.blob.etag = "W/" + result.blob.etag;
+      return result;
+    };
+    const handler = createHandler({ store, rateLimit: false });
+    const large = { ...DATA, ciphertext: Buffer.alloc(100000, 5).toString("base64url") };
+    const created = await put(handler, { body: large });
+    assert.equal(created.status, 201);
+    const read = await call(handler);
+    assert.equal(read.status, 200);
+    assert.deepEqual(read.body, large);
+    assert.equal(read.headers["x-career-revision"], created.headers["x-career-revision"]);
+    assert.equal(read.headers["x-career-revision"].startsWith("W/"), false);
+    const update = await call(handler, { method: "PUT", body: large, headers: { "content-type": "application/json", "if-match": read.headers["x-career-revision"] } });
+    assert.equal(update.status, 200);
+    assert.notEqual(update.headers["x-career-revision"], read.headers["x-career-revision"]);
+    store.get = async function (path, options) { const result = await get(path, options); result.blob.etag = "W/" + result.blob.etag; return result; };
+    assert.equal((await call(handler)).status, 502);
+    const weakWrite = await call(handler, { method: "PUT", body: large, headers: { "content-type": "application/json", "if-match": "W/" + update.headers["x-career-revision"] } });
+    assert.equal(weakWrite.status, 428);
+    assert.equal(store.calls.filter(value => value.method === "put").length, 2);
   });
   await test("deux créations simultanées conservent la première copie, sans remplacement silencieux", async () => {
     const store = memoryStore(), handler = createHandler({ store, rateLimit: false });

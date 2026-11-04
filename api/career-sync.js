@@ -118,7 +118,7 @@ function createHandler(options = {}) {
   const allow = createLimiter(now);
   const environment = (options.environment ?? process.env.VERCEL_ENV) === "production" ? "production" : "preview";
   return async function careerSync(request, response) {
-    response.setHeader("Cache-Control", "no-store, max-age=0");
+    response.setHeader("Cache-Control", "no-store, max-age=0, no-transform");
     response.setHeader("CDN-Cache-Control", "no-store");
     response.setHeader("Vercel-CDN-Cache-Control", "no-store");
     response.setHeader("Content-Type", "application/json; charset=utf-8");
@@ -159,10 +159,13 @@ function createHandler(options = {}) {
       const serialized = method === "PUT" ? await readBody(request) : null;
       const store = options.store || defaultStore();
       if (method === "GET") {
-        const result = await store.get(pathname, { access: "private", useCache: false });
+        // La compression HTTP peut remplacer l'ETag Blob par une étiquette
+        // faible W/. Le corps et sa révision doivent provenir de la même lecture.
+        const result = await store.get(pathname, { access: "private", useCache: false, headers: { "Accept-Encoding": "identity" } });
         if (!result) fail(404, "not_found", "Aucune copie distante pour ce code.");
         const value = await readStored(result);
         response.setHeader("ETag", result.blob.etag);
+        response.setHeader("X-Career-Revision", result.blob.etag);
         send(200, value);
       } else if (method === "PUT") {
         const result = await store.put(pathname, serialized, {
@@ -172,6 +175,7 @@ function createHandler(options = {}) {
         });
         if (!validEtag(result?.etag)) fail(502, "invalid_remote", "La confirmation distante ne peut pas être vérifiée.");
         response.setHeader("ETag", result.etag);
+        response.setHeader("X-Career-Revision", result.etag);
         send(creating ? 201 : 200, { ok: true });
       } else {
         await store.del(pathname, { ifMatch: match });

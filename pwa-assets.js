@@ -1,7 +1,7 @@
 // Généré par scripts/build-pwa-assets.cjs ; ne pas modifier à la main.
 self.KINGS_PWA_ASSETS = {
   "schema": 1,
-  "revision": "86eb4a1c45461676d468565273359b7cacb36bc52f40f93e37b7a61f1c49aeff",
+  "revision": "4f08dde973c3392da6b84ebbef863227189652d9cc83c7bcc681041aa59f67ef",
   "assets": [
     {
       "url": "/app.js",
@@ -125,7 +125,7 @@ self.KINGS_PWA_ASSETS = {
     },
     {
       "url": "/cloud-sync.js",
-      "sha256": "acaf577373718c34ab3b310add5ebda9aaa1faa35d0beda7c11adc823de56b70",
+      "sha256": "1c96fa479fdcbc4263500f77d1d4e818da0732117e66e205e66c3caa844a8d37",
       "text": true
     },
     {

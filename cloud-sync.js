@@ -93,7 +93,9 @@
         const messages = { 404: 'Aucune copie distante ne correspond à ce code.', 409: 'Une autre progression est disponible. Choisis laquelle conserver.', 413: 'Copie trop volumineuse pour la synchronisation.', 429: 'Trop de demandes rapprochées. Réessaie dans une minute.', 503: 'La synchronisation est temporairement indisponible. Ta carrière locale reste disponible.' };
         throw fail(messages[response.status] || 'La synchronisation a échoué. Réessaie plus tard.', response.status);
       }
-      const nextTag = response.headers.get('ETag');
+      // Une compression HTTP peut affaiblir l'ETag de représentation. La révision
+      // explicite conserve l'identité forte du blob utilisée pour l'écriture CAS.
+      const nextTag = response.headers.get('X-Career-Revision') || response.headers.get('ETag');
       if (method !== 'DELETE' && (!nextTag || nextTag.length > 256)) throw fail('Révision distante manquante. Aucun écrasement effectué.', 'revision');
       return { envelope: method === 'GET' ? await response.json() : null, etag: nextTag };
     } catch (error) {

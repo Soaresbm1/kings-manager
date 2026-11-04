@@ -45,6 +45,12 @@ async function main() {
   assert.equal(calls[0].credentials, 'same-origin');
   assert.ok(!JSON.stringify(calls).includes(code));
   assert.deepEqual(read.envelope, envelope);
+  const compressedResponse = await Cloud.request(code, 'GET', undefined, undefined, async () => new Response(JSON.stringify(envelope), {
+    headers: { ETag: 'W/"transport-compressed"', 'X-Career-Revision': '"storage-strong"' }
+  }));
+  assert.equal(compressedResponse.etag, '"storage-strong"');
+  await Cloud.request(code, 'PUT', envelope, compressedResponse.etag, fetcher);
+  assert.equal(calls.at(-1).headers['If-Match'], '"storage-strong"');
   console.log('✓ Préconditions de création et mise à jour, capacité séparée du secret');
   await assert.rejects(() => Cloud.request(code, 'PUT', envelope, 'old', async () => new Response('{}', { status: 409 })), { code: 409 });
   await assert.rejects(() => Cloud.request(code, 'GET', undefined, undefined, async () => new Response('{}', { status: 503 })), { code: 503 });

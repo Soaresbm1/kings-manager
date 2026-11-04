@@ -21,7 +21,7 @@ async function fixture() {
   class BlobPreconditionFailedError extends Error {}
   const handler = createHandler({ rateLimit: false, environment: 'preview', store: {
     async get(name: string, options: any) {
-      expect(options).toEqual({ access: 'private', useCache: false });
+      expect(options).toEqual({ access: 'private', useCache: false, headers: { 'Accept-Encoding': 'identity' } });
       const entry = entries.get(name);
       return entry ? { statusCode: 200, blob: { etag: entry.etag, size: Buffer.byteLength(entry.body) }, stream: new Response(entry.body).body } : null;
     },
@@ -43,6 +43,10 @@ async function fixture() {
     try {
       const pathname = new URL(request.url || '/', 'http://fixture.invalid').pathname;
       if (pathname === '/api/career-sync') {
+        // Reproduit un intermédiaire qui réécrit l'ETag de transport, tandis que
+        // la révision explicite doit rester utilisable pour les écritures CAS.
+        const setHeader = response.setHeader.bind(response);
+        response.setHeader = ((name: string, value: any) => setHeader(name, name.toLowerCase() === 'etag' ? 'W/' + value : value)) as typeof response.setHeader;
         let body = '';
         request.on('data', chunk => { body += String(chunk); });
         response.once('finish', () => { if (request.method === 'PUT') writes.push({ status: response.statusCode, body, authorization: String(request.headers.authorization || '') }); });
