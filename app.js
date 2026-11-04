@@ -13,7 +13,10 @@ let STATE = {
   pendingResult: null,
   mercatoOpen: false,
   shortlist: [],        // ids de joueurs (n'importe quelle ligue) ajoutés à la liste de suivi
-  savedTactic: null,    // { formation, assignments, attackPlan, defensePlan, mentality }
+  savedTactic: null,    // miroir compatible de la tactique active
+  tacticPresets: null,
+  activeTacticPreset: "usual",
+  matchReports: [],
   currentSlotId: null,  // identifiant de la carrière active (parmi plusieurs)
   seasonPrizeAwarded: false, // évite de créditer deux fois la prime de fin de saison (voir awardSeasonPrizeMoney)
   lastSeasonPrize: null,     // détail de la dernière prime versée, pour l'affichage dans le panneau "Saison terminée"
@@ -64,6 +67,9 @@ function buildSaveData() {
     mercatoOpen: STATE.mercatoOpen,
     shortlist: STATE.shortlist,
     savedTactic: STATE.savedTactic,
+    tacticPresets: STATE.tacticPresets,
+    activeTacticPreset: STATE.activeTacticPreset,
+    matchReports: STATE.matchReports,
     otherLeagues: STATE.otherLeagues,
     tournament: STATE.tournament,
     seasonPrizeAwarded: STATE.seasonPrizeAwarded,
@@ -134,6 +140,7 @@ function applySaveData(data) {
   // JSON a rompu les références d'objets équipe du bracket (cf. relinkTournamentTeamRefs) : on
   // les ré-associe aux vraies équipes maintenant que STATE.league/STATE.otherLeagues sont prêts.
   relinkTournamentTeamRefs();
+  if (typeof initializeCareerFeatures === "function") initializeCareerFeatures(data);
 }
 
 // Migration : retire tout id de joueur en double, qu'il apparaisse deux fois dans la même équipe
@@ -489,6 +496,7 @@ function selectLeague(key) {
     div.className = "card team-card";
     div.dataset.teamId = team.id;
     div.setAttribute("aria-pressed", "false");
+    div.setAttribute("aria-label", team.name || "Sans nom");
     div.innerHTML = `${renderTeamCrest(team, "crest-lg")}<h3>${tacticText(team.name || "Sans nom")}</h3>`;
     div.onclick = () => selectTeam(team.id);
     teamChoice.appendChild(div);
@@ -551,6 +559,10 @@ function startCareer() {
   STATE.currentDay = 0;
   STATE.notifications = [];
   STATE.shortlist = [];
+  STATE.savedTactic = null;
+  STATE.tacticPresets = null;
+  STATE.activeTacticPreset = "usual";
+  STATE.matchReports = [];
   STATE.mercatoOpen = false;
   STATE.seasonPrizeAwarded = false;
   STATE.lastSeasonPrize = null;
@@ -558,6 +570,7 @@ function startCareer() {
   STATE.trophyHistory = [];
   STATE.otherLeagues = buildOtherLeagues(STATE.leagueKey);
   STATE.seasonObjective = generateSeasonObjective();
+  if (typeof initializeCareerFeatures === "function") initializeCareerFeatures();
   STATE.notifications.push({
     type: "boardObjective", title: "🎯 Objectif de la direction",
     body: "Voici l'objectif fixé par la direction pour cette première saison :",
@@ -705,6 +718,7 @@ function buildTournamentBracket() {
 // Simule un match IA vs IA du tournoi (jamais appelé si l'une des deux équipes est celle du joueur).
 function simulateTournamentMatchAuto(m) {
   const result = simulateAIMatch(m.home.team, m.away.team);
+  if (typeof archiveCareerMatch === "function") archiveCareerMatch(result, m.home.team, m.away.team, null, null, m);
   m.played = true; m.homeGoals = result.homeGoals; m.awayGoals = result.awayGoals; m.penaltyWinner = result.penaltyWinner;
   m.winner = result.homeGoals !== result.awayGoals
     ? (result.homeGoals > result.awayGoals ? m.home : m.away)
@@ -939,6 +953,7 @@ function renderTournamentScreen() {
         </div>`).join("")}
     </div>`).join("");
 
+  if (typeof addCareerTournamentReports === "function") addCareerTournamentReports();
   const actions = document.getElementById("tournament-actions");
   const pending = findPendingUserTournamentMatch();
   if (t.finished) {
@@ -1559,6 +1574,7 @@ function renderCalendarTab() {
       fixtureDiv.innerHTML = `<span class="fixture-team home">${home.name}${renderTeamCrest(home, "crest-sm")}</span>
         <span class="score">${scoreText}</span>
         <span class="fixture-team away">${renderTeamCrest(away, "crest-sm")}${away.name}</span>`;
+      if (typeof addCareerFixtureReport === "function") addCareerFixtureReport(fixtureDiv, home.id, away.id, idx);
       roundDiv.appendChild(fixtureDiv);
     });
     list.appendChild(roundDiv);
@@ -1566,6 +1582,7 @@ function renderCalendarTab() {
 
   renderMiniStandingsPanel();
   renderRecentFormPanel();
+  if (typeof renderCareerHistory === "function") renderCareerHistory();
 }
 
 // ----- Panneaux latéraux du tableau de bord Calendrier -----
@@ -1692,6 +1709,7 @@ function simulateRoundAI(excludeMatch) {
     const home = STATE.league.teams.find(t => t.id === m.home);
     const away = STATE.league.teams.find(t => t.id === m.away);
     const result = simulateAIMatch(home, away);
+    if (typeof archiveCareerMatch === "function") archiveCareerMatch(result, home, away);
     const r = STATE.league.results.find(r => r.round === STATE.currentRound && r.home === m.home && r.away === m.away);
     r.played = true; r.homeGoals = result.homeGoals; r.awayGoals = result.awayGoals; r.penaltyWinner = result.penaltyWinner;
   });
@@ -2672,6 +2690,9 @@ function sanitizeTactic(tactic) {
     assignmentsOOP: [...assignments],
     viewMode: "in"
   };
+  normalized.escalierOrder = Array.isArray(tactic && tactic.escalierOrder) ? [...tactic.escalierOrder] : null;
+  normalized.matchballOrder = Array.isArray(tactic && tactic.matchballOrder) ? [...tactic.matchballOrder] : null;
+  if (typeof KingsPreparation !== "undefined") KingsPreparation.normalizeSetupOrders(normalized, team);
   normalized.playerRoles = normalizePlayerRoles(team, { ...normalized, playerRoles: tactic && tactic.playerRoles });
   normalized.teamStyle = getTeamStyle(team).key;
   return normalized;
@@ -2684,6 +2705,7 @@ function syncSingleComposition(setup) {
   setup.selectedPhase = "in";
   setup.playerRoles = normalizePlayerRoles(getUserTeam(), setup);
   setup.teamStyle = getTeamStyle(getUserTeam()).key;
+  if (typeof KingsPreparation !== "undefined") KingsPreparation.normalizeSetupOrders(setup, getUserTeam());
 }
 
 function getSavedTacticOrDefault() {
@@ -2708,6 +2730,9 @@ function saveTactic(setup) {
     assignmentsOOP: [...setup.assignmentsOOP],
     viewMode: setup.viewMode || "in"
   };
+  STATE.savedTactic.escalierOrder = Array.isArray(setup.escalierOrder) ? [...setup.escalierOrder] : null;
+  STATE.savedTactic.matchballOrder = Array.isArray(setup.matchballOrder) ? [...setup.matchballOrder] : null;
+  if (typeof syncCareerPresetFromSetup === "function") syncCareerPresetFromSetup(setup);
   saveGame();
 }
 
@@ -2926,6 +2951,7 @@ function renderBench(setup, ids) {
     const status = document.getElementById("tactics-squad-status");
     if (status) status.textContent = `${setup.assignments.filter(Boolean).length}/7 titulaires · ${team.players.filter(p => !p.injured).length} disponibles`;
   }
+  if (typeof renderCareerPhases === "function") renderCareerPhases(setup, ids);
 }
 
 function renderTacticBenchFilters(setup, ids) {
@@ -3468,6 +3494,7 @@ function openLineupScreen() {
     lineup: [], formation: tactic.formation, attackPlan: tactic.attackPlan, defensePlan: tactic.defensePlan, mentality: tactic.mentality,
     isHome, opponentId: opponent.id, userMatch,
     playerRoles: { ...tactic.playerRoles }, teamStyle: tactic.teamStyle,
+    escalierOrder: tactic.escalierOrder, matchballOrder: tactic.matchballOrder,
     assignments: tactic.assignments, selectedSlot: null,
     formationOOP: tactic.formationOOP, assignmentsOOP: tactic.assignmentsOOP, viewMode: tactic.viewMode
   };
@@ -3483,6 +3510,7 @@ function openLineupScreen() {
   updateLineupCount(lineupSetup, LINEUP_IDS);
   renderSecretCardChoice(lineupSetup);
   renderClubStyle(opponent, "opponent-style-preview", true);
+  if (typeof renderCareerSetupTools === "function") renderCareerSetupTools(lineupSetup, LINEUP_IDS);
 
   showScreen("screen-lineup");
 }
@@ -3502,6 +3530,7 @@ function openTournamentLineupScreen(match) {
     lineup: [], formation: tactic.formation, attackPlan: tactic.attackPlan, defensePlan: tactic.defensePlan, mentality: tactic.mentality,
     isHome, opponentId: opponent.id, userMatch: null, tournamentOpponent: opponent,
     playerRoles: { ...tactic.playerRoles }, teamStyle: tactic.teamStyle,
+    escalierOrder: tactic.escalierOrder, matchballOrder: tactic.matchballOrder,
     assignments: tactic.assignments, selectedSlot: null,
     formationOOP: tactic.formationOOP, assignmentsOOP: tactic.assignmentsOOP, viewMode: tactic.viewMode
   };
@@ -3517,6 +3546,7 @@ function openTournamentLineupScreen(match) {
   updateLineupCount(lineupSetup, LINEUP_IDS);
   renderSecretCardChoice(lineupSetup);
   renderClubStyle(opponent, "opponent-style-preview", true);
+  if (typeof renderCareerSetupTools === "function") renderCareerSetupTools(lineupSetup, LINEUP_IDS);
 
   showScreen("screen-lineup");
 }
@@ -3554,6 +3584,7 @@ function renderTacticsTab() {
     formation: tactic.formation, attackPlan: tactic.attackPlan, defensePlan: tactic.defensePlan, mentality: tactic.mentality,
     assignments: tactic.assignments, selectedSlot: null,
     playerRoles: { ...tactic.playerRoles }, teamStyle: tactic.teamStyle,
+    escalierOrder: tactic.escalierOrder, matchballOrder: tactic.matchballOrder,
     formationOOP: tactic.formationOOP, assignmentsOOP: tactic.assignmentsOOP, viewMode: tactic.viewMode,
     persist: true
   };
@@ -3564,6 +3595,7 @@ function renderTacticsTab() {
   renderPlanChoices(tacticsSetup, TACTICS_IDS);
   renderPositionOverview();
   renderClubStyle(getUserTeam(), "tactics-team-style", false);
+  if (typeof renderCareerSetupTools === "function") renderCareerSetupTools(tacticsSetup, TACTICS_IDS);
 }
 
 // Le profil de jeu est une identité de carrière, stable même sur une ancienne sauvegarde.
@@ -3666,10 +3698,9 @@ function startMatch() {
 
   homeSetup.activeOverride = null;
   awaySetup.activeOverride = null;
-  homeSetup.escalierOrder = null;
-  awaySetup.escalierOrder = null;
-  homeSetup.matchballOrder = null;
-  awaySetup.matchballOrder = null;
+  aiSetup.escalierOrder = null;
+  aiSetup.matchballOrder = null;
+  if (typeof KingsPreparation !== "undefined") KingsPreparation.normalizeSetupOrders(lineupSetup, team);
 
   const userSide = lineupSetup.isHome ? "home" : "away";
   matchEngine = createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup);
@@ -3729,6 +3760,7 @@ function startMatch() {
   updateMatchStatusBanner();
 
   choreo = createChoreographer();
+  if (typeof applyPreparedCareerPhases === "function") applyPreparedCareerPhases(0);
   syncChoreoAnchors(0);
   renderMentalityChoices(lineupSetup, "live-mentality-choice");
   updateMatchDashboard(true);
@@ -4854,6 +4886,8 @@ function openMatchTactics() {
   renderBench(lineupSetup, MATCH_TACTICS_IDS);
   renderPlanChoices(lineupSetup, MATCH_TACTICS_IDS);
 
+  if (typeof renderCareerSetupTools === "function") renderCareerSetupTools(lineupSetup, MATCH_TACTICS_IDS);
+
   document.getElementById("match-tactics-modal").classList.add("active");
 }
 
@@ -5263,6 +5297,7 @@ function skipMatch() {
   // qu'un garde-fou de sécurité contre une boucle interminable en cas de scénario extrême.
   while (!matchEngine.isMatchDecided() && (matchState.minute < matchEngine.totalMinutes || matchState.minute < MAX_MATCH_MINUTE)) {
     matchState.minute++;
+    if (typeof applyPreparedCareerPhases === "function") applyPreparedCareerPhases(matchState.minute);
     const minuteEvents = matchEngine.simulateMinute(matchState.minute);
     minuteEvents.forEach(appendCommentaryEvent);
     appendCardEvents(maybeActivateAiCard(matchState.minute));
@@ -5367,7 +5402,10 @@ function showMatchSummary() {
 }
 
 function continueAfterMatch() {
+  if (!STATE.pendingResult || STATE.pendingResult.committed) return;
   const { result, homeTeam, awayTeam, homeSetup, awaySetup } = STATE.pendingResult;
+  STATE.pendingResult.committed = true;
+  if (typeof archiveCareerMatch === "function") archiveCareerMatch(result, homeTeam, awayTeam, homeSetup, awaySetup, STATE.tournamentMatchRef);
 
   // applique les stats aux joueurs (partagé avec les matchs IA vs IA, voir engine.js:applyMatchPlayerStats)
   applyMatchPlayerStats(homeTeam, homeSetup, result);
@@ -5425,6 +5463,9 @@ document.addEventListener("DOMContentLoaded", () => {
     STATE.pendingResult = null;
     STATE.mercatoOpen = false;
     STATE.savedTactic = null;
+    STATE.tacticPresets = null;
+    STATE.activeTacticPreset = "usual";
+    STATE.matchReports = [];
     STATE.currentSlotId = null;
     STATE.otherLeagues = null;
     STATE.tournament = null;

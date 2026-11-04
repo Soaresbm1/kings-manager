@@ -1,0 +1,28 @@
+.career-presets-panel, .career-phases-panel, .career-history-panel { min-width: 0; flex: 0 0 auto; }
+#tab-tactics.active { overflow-y: auto; }
+#tab-tactics > .tactics-page-heading { flex-shrink: 0; }
+@media (min-width: 1051px) {
+  #tab-tactics > .tactics-workspace { flex: 0 0 max(420px, calc(100dvh - 230px)); min-height: 420px; }
+}
+.career-presets-panel > summary, .career-history-panel > summary {
+  min-height: 44px; display: list-item; align-content: center; cursor: pointer;
+  color: var(--accent2); font-weight: 650; overflow-wrap: anywhere;
+}
+.career-presets-panel > summary:focus-visible, .career-history-panel > summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 4px; }
+.career-presets-panel[open] > summary, .career-history-panel[open] > summary { margin-bottom: 12px; }
+.career-tools-help, .career-tools-status { margin: 10px 0; color: #b2bdb5; font-size: .85rem; line-height: 1.6; overflow-wrap: anywhere; }
+.career-tools-status { color: var(--accent2); }
+.career-tools-status:empty { display: none; }
+.career-phases-panel > h3 { margin-bottom: 12px; }
+.fixture.fixture-with-report { grid-template-columns: minmax(0,1fr) auto minmax(0,1fr) auto; }
+.fixture-with-report .fixture-team { min-width: 0; overflow-wrap: anywhere; }
+.history-fixture-button { min-height: 44px; padding: 8px 12px; white-space: normal; }
+.modal-box.history-dialog { width: min(980px, calc(100vw - 32px)); max-width: 980px; max-height: 90vh; max-height: calc(100dvh - 32px); overflow: auto; }
+.history-dialog-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; position: sticky; top: 0; z-index: 1; padding: 8px 0; background: var(--bg2); }
+.history-dialog-header h3 { margin: 0; }
+.history-dialog-header button { flex-shrink: 0; min-height: 44px; }
+@media (max-width: 680px) {
+  .fixture.fixture-with-report { grid-template-columns: minmax(0,1fr) auto minmax(0,1fr); gap: 8px; }
+  .history-fixture-button { grid-column: 1 / -1; justify-self: end; }
+  .modal-box.history-dialog { padding: 14px; }
+}

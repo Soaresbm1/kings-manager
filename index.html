@@ -10,6 +10,10 @@
   <link rel="icon" href="images/favicon.png">
   <link rel="stylesheet" href="style.css?v=20261102-interface">
   <link rel="stylesheet" href="interface.css?v=20261102-interface">
+  <link rel="stylesheet" href="career-history.css?v=20261104-career">
+  <link rel="stylesheet" href="tactic-presets.css?v=20261104-career">
+  <link rel="stylesheet" href="kings-preparation.css?v=20261104-career">
+  <link rel="stylesheet" href="career-tools.css?v=20261104-career">
 </head>
 
 <body>
@@ -85,6 +89,10 @@
         <div class="dashboard-grid">
           <div class="dashboard-main">
             <div class="panel hero-match-panel" id="next-match-panel"></div>
+            <details class="panel career-history-panel">
+              <summary id="career-history-heading">Historique des rencontres</summary>
+              <div id="career-match-history"></div>
+            </details>
             <div class="panel">
               <h3>Calendrier de la saison</h3>
               <div id="calendar-list"></div>
@@ -160,7 +168,7 @@
         <div class="tactics-page-heading">
           <div>
             <h2>Tableau tactique</h2>
-            <p>Une composition, ton plan de jeu.</p>
+            <p>Ta composition, trois tactiques et tes priorités Kings.</p>
           </div>
           <span class="tactics-autosave"><span aria-hidden="true"></span>Enregistrement automatique</span>
         </div>
@@ -226,6 +234,16 @@
             <div class="tactics-bench-list" id="tactics-bench-list"></div>
           </aside>
         </div>
+        <details class="panel career-presets-panel">
+          <summary>Tactiques enregistrées · 3 emplacements</summary>
+          <p class="career-tools-help">Les modifications sont enregistrées dans la tactique active. Charge un autre emplacement pour changer de plan.</p>
+          <div id="tactics-presets"></div>
+          <p id="tactics-preset-status" class="career-tools-status" role="status"></p>
+        </details>
+        <section class="panel career-phases-panel" aria-labelledby="tactics-phase-heading">
+          <h3 id="tactics-phase-heading">Préparer les phases Kings</h3>
+          <div id="tactics-phase-preparation"></div>
+        </section>
       </div>
 
       <!-- Onglet Mercato -->
@@ -454,6 +472,16 @@
         </div>
       </div>
 
+      <details class="panel career-presets-panel">
+        <summary>Charger ou enregistrer une tactique</summary>
+        <p class="career-tools-help">Charger une tactique ici ajuste uniquement ce match.</p>
+        <div id="lineup-presets"></div>
+        <p id="lineup-preset-status" class="career-tools-status" role="status"></p>
+      </details>
+      <section class="panel career-phases-panel" aria-labelledby="lineup-phase-heading">
+        <h3 id="lineup-phase-heading">Préparer les phases Kings</h3>
+        <div id="lineup-phase-preparation"></div>
+      </section>
       <div style="text-align:center; margin-top:10px;">
         <button class="primary" id="btn-play-match" disabled>Lancer le match</button>
       </div>
@@ -585,6 +613,16 @@
             </div>
           </div>
 
+          <details class="panel career-presets-panel">
+            <summary>Charger ou enregistrer une tactique</summary>
+            <p class="career-tools-help">Chargement temporaire. Les changements prennent effet après validation, à la prochaine séquence.</p>
+            <div id="match-presets"></div>
+            <p id="match-preset-status" class="career-tools-status" role="status"></p>
+          </details>
+          <section class="panel career-phases-panel" aria-labelledby="match-phase-heading">
+            <h3 id="match-phase-heading">Priorités des phases Kings</h3>
+            <div id="match-phase-preparation"></div>
+          </section>
           <div style="text-align:center; margin-top:10px;">
             <button class="primary" id="btn-close-tactics-modal">Valider et reprendre</button>
           </div>
@@ -668,6 +706,16 @@
       <div id="tournament-actions" style="text-align:center; margin-top:10px;"></div>
     </div>
 
+    <div id="match-history-modal" class="match-overlay">
+      <div class="modal-box history-dialog">
+        <div class="history-dialog-header">
+          <h3 id="history-report-title">Rapport de match</h3>
+          <button class="secondary" id="btn-history-close" type="button">Fermer</button>
+        </div>
+        <div id="history-report-body"></div>
+      </div>
+    </div>
+
     <!-- MODAL SÉLECTION DU PRÉSIDENT -->
     <div id="president-select-modal" class="match-overlay">
       <div class="modal-box">
@@ -747,8 +795,12 @@
   <script src="matchengine-actions.js?v=20261028-roles"></script>
   <script src="engine.js?v=20261030-live-drag"></script>
   <script src="matchchoreo.js?v=20261028-roles"></script>
-  <script src="app.js?v=20261102-interface"></script>
-  <script src="interface.js?v=20261102-interface"></script>
+  <script src="career-history.js?v=20261104-career"></script>
+  <script src="tactic-presets.js?v=20261104-career"></script>
+  <script src="kings-preparation.js?v=20261104-career"></script>
+  <script src="app.js?v=20261104-career"></script>
+  <script src="career-tools.js?v=20261104-career"></script>
+  <script src="interface.js?v=20261104-career"></script>
 </body>
 
 </html>

@@ -1,6 +1,14 @@
-# Kings Manager 7v7 — 1.1
+# Kings Manager 7v7 — 1.2
 
 Jeu de gestion de football en solo inspiré du format 7v7 de la Kings League : France, Brésil, Espagne, Italie, Allemagne et Mexique. Le jeu fonctionne entièrement dans le navigateur, avec des carrières sauvegardées localement et exportables en JSON.
+
+## Nouveautés de la version 1.2
+
+- **Rapports persistants** : ouvre les rapports depuis le calendrier ou l’historique des rencontres, filtré par saison et par club. Les matchs joués à partir de cette version conservent leurs statistiques, participants, notes et événements importants, y compris les rencontres IA de ta ligue et du tournoi international. Les noms restent ceux du jour du match après un transfert ou un renommage. Les anciens scores restent disponibles sans statistiques inventées. Les 200 derniers rapports sont conservés, dans une enveloppe maximale de 900 000 caractères JSON ; aucune animation complète n’est enregistrée.
+- **Trois tactiques nommées** : Habituel, Protéger l’avance et Revenir au score. Enregistrer une configuration dans l’onglet Tactique active cet emplacement ; les changements suivants y sont sauvegardés automatiquement. Charger depuis l’avant-match ou les ajustements en direct reste temporaire. Un enregistrement explicite permet de conserver ces ajustements. Les compositions sont réparées si un joueur a quitté le club ou est blessé, et un chargement en match respecte les exclusions.
+- **Phases Kings préparées** : choisis à l’avance l’ordre d’entrée de l’Escalier et les priorités du Matchball, avec aperçu des joueurs de champ et gardien indiqué séparément. Le premier joueur de la liste entre d’abord ou reste le plus longtemps. Les priorités suivent les identités malgré les changements de composition ; les exclusions temporaires n’effacent pas l’ordre. Sans préparation, le choix pendant le match reste proposé. Les ordres sont aussi respectés en avance rapide.
+
+Les anciennes carrières migrent leur tactique dans **Habituel** ; les deux autres emplacements commencent vides. Les rapports et les tactiques voyagent avec l’export/import JSON et les rapports survivent au changement de saison.
 
 ## Nouveautés de la version 1.1
 
@@ -69,6 +77,8 @@ Avec Node.js, `npm run dev` démarre également le jeu sur `http://127.0.0.1:417
 - `engine.js` — moteur de simulation (calendrier, matchs, classement, IA)
 - `app.js` — logique de l'interface et gestion de l'état du jeu
 - `interface.js` / `interface.css` — accessibilité des fenêtres, tableaux mobiles et présentation commune ; aucune logique de simulation
+- `career-history.js`, `tactic-presets.js`, `kings-preparation.js` — rapports compacts, emplacements tactiques et préparation des phases, avec leurs feuilles CSS et tests autonomes
+- `career-tools.js` / `career-tools.css` — intégration de ces outils dans la carrière et les écrans existants
 - `prototypes/` — laboratoires isolés, sans accès aux carrières enregistrées
 
 ## Notes

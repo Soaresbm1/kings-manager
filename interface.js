@@ -6,7 +6,7 @@
       "player-info-modal": "btn-player-info-close", "compare-modal": "btn-compare-close",
       "offer-modal": "offer-cancel", "secret-card-modal": "btn-secret-card-cancel",
       "president-select-modal": "btn-president-select-cancel", "confirm-modal": "btn-confirm-cancel",
-      "match-tactics-modal": "btn-close-tactics-modal"
+      "match-tactics-modal": "btn-close-tactics-modal", "match-history-modal": "btn-history-close"
     };
     const dialogs = [...document.querySelectorAll(".match-overlay, #offer-modal")];
     const openStack = [];

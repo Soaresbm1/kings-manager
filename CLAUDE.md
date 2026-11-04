@@ -101,6 +101,20 @@ publié non ambigu). Les ligues déjà sauvegardées conservent leurs transferts
 
 ## Mécaniques de jeu (règles Kings League encodées dans `engine.js`)
 
+Les outils de carrière ajoutés en 1.2 sont chargés avant `app.js` : `career-history.js`,
+`tactic-presets.js`, `kings-preparation.js` (API globale et CommonJS, tests purs).
+`career-tools.js`, chargé après `app.js`, assure les migrations et branche leurs interfaces.
+`STATE.matchReports` conserve les snapshots des rencontres de la ligue humaine et du tournoi,
+sans séquences ni références aux effectifs vivants, au maximum 200 rapports / 900000 caractères.
+Ils survivent aux saisons ; les anciens scores ne sont pas reconstruits artificiellement.
+`STATE.tacticPresets` contient trois slots fixes (`usual`, `protect`, `chase`) ;
+`STATE.activeTacticPreset` indique le slot actif et `savedTactic` en reste le miroir compatible.
+Les réglages d’avant-match/live sont temporaires sauf enregistrement explicite.
+Les ordres `escalierOrder` / `matchballOrder` préparés sont facultatifs et suivent les joueurs,
+jamais leurs indices de poste. Les exclusions sont filtrées à l’application sans perdre la
+priorité d’un jaune. L’avance rapide applique les mêmes ordres. Aucun changement des règles
+ni du tirage aléatoire dans ces modules.
+
 - Match de 40 minutes (2 x 20), pas de match nul (tirs au but si égalité).
 - **Escalier de départ** (0'-5') : montée progressive jusqu'au 7v7.
 - **Ballon spécial** (17'-20') : tous les buts comptent double.
