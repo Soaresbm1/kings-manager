@@ -15,7 +15,8 @@
 }
 html { -webkit-tap-highlight-color: transparent; -webkit-text-size-adjust: 100%; overscroll-behavior: none; }
 body { background: var(--bg1); color: var(--text); }
-#app { max-width: 1680px; padding: 20px 28px; height: 100vh; height: 100dvh; }
+/* En paysage, un téléphone peut dépasser le breakpoint mobile et garder une encoche. */
+#app { max-width: 1680px; padding: max(20px, env(safe-area-inset-top, 0px)) max(28px, env(safe-area-inset-right, 0px)) max(20px, env(safe-area-inset-bottom, 0px)) max(28px, env(safe-area-inset-left, 0px)); height: 100vh; height: 100dvh; }
 button, input, select, textarea { font: inherit; }
 button, a, [role="button"], summary { touch-action: manipulation; }
 button, [role="button"], summary { user-select: none; -webkit-user-select: none; }

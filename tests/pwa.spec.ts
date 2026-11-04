@@ -170,10 +170,13 @@ test('le manifeste et les icônes locales rendent l’application installable sa
 });
 
 test('une carrière se recharge, joue une journée, se sauvegarde et s’exporte réellement sans réseau', async ({ page, context, baseURL, browserName }) => {
-  // WebKit's offline flag rejects even a literal SW Response before dispatch:
-  // https://github.com/microsoft/playwright/issues/42775. Stop the real origin
-  // instead; do not bypass the worker, skip the test, or relax any assertions.
-  const fixture = browserName === 'webkit' ? await createPwaFixture(baseURL!) : null;
+  // Chromium covers the network-emulation flag. Firefox/WebKit cover a real
+  // origin outage, verified below by a failing direct network request. The
+  // Firefox CI reload returned NS_ERROR_OFFLINE after SW control was confirmed;
+  // WebKit's offline-emulation limitation is also documented in #42775:
+  // https://github.com/microsoft/playwright/issues/42775. Keep every SW, career,
+  // simulation and export assertion identical across these outage methods.
+  const fixture = browserName === 'chromium' ? null : await createPwaFixture(baseURL!);
   try {
     await page.goto(fixture?.url || '/');
     await ready(page);
