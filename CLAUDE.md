@@ -350,3 +350,13 @@ Après chaque modification d’un fichier précaché : `npm run pwa:build`, puis
 automatiquement un worker en attente ni effacer le localStorage pour une mise à jour.
 La CI répartit les tests navigateur en trois jobs obligatoires, un par moteur.
 
+Version1.5 : `recruitment-advisor.js`, `player-progress.js` et `bench-advisor.js`
+sont des modules purs et déterministes. `decision-tools.js` relie leurs résultats
+aux commandes existantes. Le recrutement ne fait aucune offre automatiquement.
+`STATE.playerProgress` contient uniquement des relevés observés et bornés ; il est
+normalisé à la lecture et collecté lors des sauvegardes ou d’une reprise.
+L’énergie individuelle est relevée avec le tableau de bord après les séquences,
+jamais pendant leur animation. Un conseil de banc exige confirmation puis repasse
+par `moveTacticPlayer` et ses garde-fous. Ne pas ajouter de tirage aléatoire,
+de bonus de note, de lecture anticipée de l’énergie ni de remplacement automatique.
+

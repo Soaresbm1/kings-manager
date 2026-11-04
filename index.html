@@ -26,6 +26,7 @@
   <link rel="stylesheet" href="career-storage.css?v=20261104-insights">
   <link rel="stylesheet" href="manager-tools.css?v=20261104-insights">
   <link rel="stylesheet" href="pwa.css?v=20261104-pwa">
+  <link rel="stylesheet" href="manager-decisions.css?v=20261104-decisions">
 </head>
 
 <body>
@@ -172,6 +173,10 @@
 
       <!-- Onglet Effectif -->
       <div class="tab" id="tab-squad">
+        <details class="panel decision-panel" id="squad-progress-panel">
+          <summary>Progression de l’effectif</summary>
+          <div id="squad-progress-content"></div>
+        </details>
         <div class="panel">
           <h3>Effectif</h3>
           <table id="squad-table" class="fm-table">
@@ -298,6 +303,10 @@
         </div>
 
         <div class="mercato-subpanel active" id="mercato-subtab-search">
+          <details class="panel decision-panel" id="recruitment-advisor">
+            <summary>Recrutement ciblé</summary>
+            <div id="recruitment-advisor-content"></div>
+          </details>
           <div class="panel">
             <h3>Rechercher des joueurs</h3>
             <div class="filter-tile-grid">
@@ -558,6 +567,7 @@
             <div class="mentality-choices live-mentality-choices" id="live-mentality-choice" role="group" aria-labelledby="live-mentality-label"></div>
             <p class="mentality-description" id="match-mentality-description">Alterner conservation et progression.</p>
             <p class="match-tactical-insight" id="match-tactical-insight">Observe les premiers échanges avant d'ajuster ton équipe.</p>
+            <button class="secondary" type="button" id="btn-bench-advisor">Assistant de banc</button>
           </aside>
         </div>
 
@@ -614,6 +624,10 @@
       <div id="match-tactics-modal" class="match-overlay">
         <div class="modal-box modal-tactics">
           <h3>Ajustements tactiques</h3>
+          <details class="decision-panel bench-advisor-panel" id="bench-advisor">
+            <summary tabindex="0">Assistant de banc · énergie individuelle</summary>
+            <div id="bench-advisor-content"></div>
+          </details>
 
           <div class="panel tactics-toolbar">
             <div class="tactics-toolbar-group">
@@ -838,10 +852,14 @@
   <script src="career-history.js?v=20261104-insights"></script>
   <script src="tactic-presets.js?v=20261104-career"></script>
   <script src="kings-preparation.js?v=20261104-career"></script>
-  <script src="app.js?v=20261104-pwa"></script>
+  <script src="recruitment-advisor.js?v=20261104-decisions"></script>
+  <script src="player-progress.js?v=20261104-decisions"></script>
+  <script src="bench-advisor.js?v=20261104-decisions"></script>
+  <script src="app.js?v=20261104-decisions"></script>
   <script src="career-tools.js?v=20261104-insights"></script>
   <script src="manager-tools.js?v=20261104-insights"></script>
-  <script src="interface.js?v=20261104-career"></script>
+  <script src="decision-tools.js?v=20261104-decisions"></script>
+  <script src="interface.js?v=20261104-decisions"></script>
   <script src="pwa.js?v=20261104-pwa"></script>
 </body>
 

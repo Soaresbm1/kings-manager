@@ -2,7 +2,7 @@
 "use strict";
 importScripts("/pwa-assets.js");
 
-const VERSION = '1.4.0-20261104-pwa';
+const VERSION = '1.5.0-20261104-decisions';
 const ASSETS = self.KINGS_PWA_ASSETS;
 if (!ASSETS || ASSETS.schema !== 1 || !/^[a-f0-9]{64}$/.test(ASSETS.revision) || !Array.isArray(ASSETS.assets)
   || ASSETS.assets.length === 0 || ASSETS.assets.length > 256) {

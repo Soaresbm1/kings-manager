@@ -17,6 +17,7 @@ let STATE = {
   tacticPresets: null,
   activeTacticPreset: "usual",
   matchReports: [],
+  playerProgress: null,
   currentSlotId: null,  // identifiant de la carrière active (parmi plusieurs)
   seasonPrizeAwarded: false, // évite de créditer deux fois la prime de fin de saison (voir awardSeasonPrizeMoney)
   lastSeasonPrize: null,     // détail de la dernière prime versée, pour l'affichage dans le panneau "Saison terminée"
@@ -74,6 +75,7 @@ function buildSaveData() {
     tacticPresets: STATE.tacticPresets,
     activeTacticPreset: STATE.activeTacticPreset,
     matchReports: STATE.matchReports,
+    playerProgress: STATE.playerProgress,
     otherLeagues: STATE.otherLeagues,
     tournament: STATE.tournament,
     seasonPrizeAwarded: STATE.seasonPrizeAwarded,
@@ -86,6 +88,7 @@ function buildSaveData() {
 
 function saveGame() {
   if (!STATE.league || !STATE.currentSlotId) return;
+  if (typeof capturePlayerProgress === "function") capturePlayerProgress();
   const entry = {
     meta: {
       teamName: getUserTeam() ? getUserTeam().name : "",
@@ -121,6 +124,7 @@ function applySaveData(data) {
   STATE.notifications = data.notifications || [];
   STATE.mercatoOpen = data.mercatoOpen;
   STATE.shortlist = data.shortlist || [];
+  STATE.playerProgress = typeof PlayerProgress !== "undefined" ? PlayerProgress.normalize(data.playerProgress) : data.playerProgress || null;
   STATE.savedTactic = data.savedTactic || null;
   STATE.pendingLineup = null;
   STATE.pendingResult = null;
@@ -264,6 +268,7 @@ function loadGame(slotId) {
   if (!entry || !entry.data || !entry.data.league) return false;
   applySaveData(entry.data);
   STATE.currentSlotId = slotId;
+  if (typeof capturePlayerProgress === "function") capturePlayerProgress();
   try { localStorage.setItem(ACTIVE_SLOT_KEY, slotId); } catch (e) {}
   return true;
 }
@@ -597,6 +602,7 @@ function startCareer() {
   STATE.tacticPresets = null;
   STATE.activeTacticPreset = "usual";
   STATE.matchReports = [];
+  STATE.playerProgress = null;
   STATE.mercatoOpen = false;
   STATE.seasonPrizeAwarded = false;
   STATE.lastSeasonPrize = null;
@@ -1939,6 +1945,7 @@ function renderSquadTab() {
     btn.onclick = (e) => { e.stopPropagation(); sellPlayer(btn.dataset.player); };
   });
   bindSortableTable("squad-table", squadSortState, renderSquadTab);
+  if (typeof renderSquadProgress === "function") renderSquadProgress();
 }
 
 // En-têtes triables partagés par toutes les tables denses façon FM (Effectif, Mercato) :
@@ -2036,6 +2043,7 @@ function renderTransfersTab() {
   updateShortlistCount();
   renderCompareTray();
   renderTransferHistoryTab();
+  if (typeof renderRecruitmentAdvisor === "function") renderRecruitmentAdvisor();
 }
 
 // Un club dans une ligne d'historique : blason (résolu en direct via findLeagueTeam — le nom
@@ -2392,7 +2400,7 @@ function renderCompareTray() {
   slots.innerHTML = compareIds.map(id => {
     const found = findPlayerAnywhere(id);
     return `<span class="compare-chip">
-      <span class="pos-tag pos-${found.p.pos}">${found.p.pos}</span> ${found.p.name}
+      <span class="pos-tag pos-${found.p.pos}">${found.p.pos}</span> ${tacticText(found.p.name || "Sans nom")}
       <button class="compare-chip-remove" data-player="${id}" title="Retirer">×</button>
     </span>`;
   }).join("");
@@ -2409,6 +2417,8 @@ function renderCompareTray() {
 function compareRowHTML(label, rawA, rawB, higherBetter, displayA, displayB) {
   displayA = displayA !== undefined ? displayA : rawA;
   displayB = displayB !== undefined ? displayB : rawB;
+  displayA = tacticText(displayA == null ? "—" : String(displayA));
+  displayB = tacticText(displayB == null ? "—" : String(displayB));
   let clsA = "", clsB = "";
   if (higherBetter !== null && rawA !== rawB) {
     const aWins = higherBetter ? rawA > rawB : rawA < rawB;
@@ -2439,7 +2449,7 @@ function buildCompareModalHTML(pA, teamA, pB, teamB) {
       </div>
       <span class="pos-tag pos-${p.pos}">${p.pos}</span>
       <div class="compare-player-name">${tacticText(p.name || "Sans nom")}</div>
-      <div class="player-card-club" style="justify-content:center;">${renderTeamCrest(t, "crest-sm")}<span>${t.name}</span></div>
+      <div class="player-card-club" style="justify-content:center;">${renderTeamCrest(t, "crest-sm")}<span>${tacticText(t.name || "Sans nom")}</span></div>
       ${renderStarRating(p.overall)}
     </div>`;
 
@@ -4067,6 +4077,7 @@ function openPlayerInfoModal(player, team, liveStat) {
     ? `<p style="margin-top:10px; color:var(--accent); font-weight:700;">Ce match : ⚽ ${liveStat.goals || 0} but(s) — 🅰️ ${liveStat.assists || 0} passe(s) décisive(s)</p>`
     : "";
   document.getElementById("player-info-body").innerHTML = buildPlayerCardHTML(player, team, liveHtml);
+  if (typeof appendPlayerProgress === "function") appendPlayerProgress(player, team);
   document.getElementById("player-info-modal").classList.add("active");
 }
 
@@ -4525,6 +4536,7 @@ function updateMatchDashboard(refreshStats) {
   // Les chiffres décrivent les séquences déjà vues, jamais les actions encore en attente.
   if ((refreshStats || !matchState.dashboardStats) && typeof matchEngine.getLiveStats === "function") {
     matchState.dashboardStats = matchEngine.getLiveStats();
+    if (typeof captureBenchObservation === "function") captureBenchObservation();
   }
   const stats = matchState.dashboardStats;
   const userSetup = matchState.userSide === "home" ? matchState.homeSetup : matchState.awaySetup;
@@ -4569,6 +4581,7 @@ function updateMatchDashboard(refreshStats) {
     if (insightEl) insightEl.textContent = "Choisis une intention, observe ses effets et ajuste ton équipe pendant le match.";
   }
   updateMatchContext();
+  if (typeof renderBenchAdvisor === "function") renderBenchAdvisor();
 }
 
 function checkMatchDecidedAndMaybeFinish() {
@@ -4931,6 +4944,7 @@ function openMatchTactics() {
 
   if (typeof renderCareerSetupTools === "function") renderCareerSetupTools(lineupSetup, MATCH_TACTICS_IDS);
 
+  if (typeof renderBenchAdvisor === "function") renderBenchAdvisor();
   document.getElementById("match-tactics-modal").classList.add("active");
 }
 
@@ -5516,6 +5530,7 @@ document.addEventListener("DOMContentLoaded", () => {
     STATE.tacticPresets = null;
     STATE.activeTacticPreset = "usual";
     STATE.matchReports = [];
+    STATE.playerProgress = null;
     STATE.currentSlotId = null;
     STATE.otherLeagues = null;
     STATE.tournament = null;

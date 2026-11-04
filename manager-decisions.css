@@ -1,0 +1,35 @@
+.decision-panel > summary { min-height: 44px; cursor: pointer; color: var(--accent); font-weight: 600; overflow-wrap: anywhere; }
+.decision-panel[open] > summary { margin-bottom: 12px; }
+.decision-panel p, .decision-panel h4, .decision-panel li { overflow-wrap: anywhere; }
+.decision-panel p + p { margin-top: 8px; }
+.decision-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 12px 0; }
+.decision-toolbar label { font-size: .82rem; color: #c4d0c6; }
+.decision-toolbar select { max-width: 100%; min-width: 0; min-height: 44px; padding: 8px; color: #eee; background: #111a14; border: 1px solid #59674f; border-radius: 8px; font: inherit; }
+.decision-muted { color: #b9c9bc; font-size: .8rem; line-height: 1.65; }
+.recruitment-needs { padding-left: 20px; font-size: .8rem; line-height: 1.8; margin-bottom: 12px; }
+.recruitment-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 14px; }
+.recruitment-card, .bench-suggestion { min-width: 0; padding: 14px; border: 1px solid #46553e; border-radius: 10px; background: #151d16; }
+.recruitment-card h4 { color: #f1df98; margin-bottom: 8px; }
+.recruitment-card p { font-size: .8rem; line-height: 1.6; }
+.decision-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.decision-panel button { min-height: 44px; max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
+.decision-actions > button { flex: 1 1 120px; }
+.player-progress-panel { margin-top: 18px; padding-top: 12px; border-top: 1px solid var(--panel-border); }
+.progress-chart svg { width: 100%; max-height: 160px; display: block; margin: 10px 0; overflow: visible; }
+.progress-chart polyline { fill: none; stroke: var(--accent); stroke-width: 2; }
+.progress-chart circle { fill: var(--accent); }
+.progress-total { color: #f1df98; font-size: 1.1rem; font-variant-numeric: tabular-nums; }
+.progress-records { margin-top: 12px; }
+.progress-records > summary { min-height: 44px; cursor: pointer; font-size: .8rem; }
+.progress-records table { width: 100%; border-collapse: collapse; font-size: .8rem; table-layout: fixed; }
+.progress-records th, .progress-records td { padding: 8px 4px; border-bottom: 1px solid #354037; text-align: left; overflow-wrap: anywhere; }
+.bench-advisor-panel { margin: 14px 0; border: 1px solid #46553e; padding: 12px; border-radius: 10px; }
+.bench-suggestions { display: grid; gap: 8px; margin: 12px 0; }
+.bench-suggestion > button { margin-top: 10px; }
+.bench-energy-list { list-style: none; margin: 10px 0; }
+.bench-energy-list li { display: grid; grid-template-columns: minmax(0, 1fr) minmax(100px, 1fr); gap: 4px 10px; padding: 9px 0; border-top: 1px solid #354037; font-size: .82rem; }
+.bench-energy-list meter { width: 100%; grid-column: 1 / -1; height: 10px; accent-color: #d4bd69; }
+#btn-bench-advisor { min-height: 44px; align-self: flex-start; margin-top: 8px; font-size: .76rem; }
+@media (max-width: 1100px) { .recruitment-cards { grid-template-columns: minmax(0, 1fr); } }
+@media (pointer: coarse) { .decision-toolbar select { font-size: 16px; } }
+@media (max-width: 480px) { .decision-toolbar { align-items: stretch; flex-direction: column; } .bench-energy-list li { grid-template-columns: minmax(0, 1fr); } }

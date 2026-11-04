@@ -1,6 +1,6 @@
 {
   "name": "kings-manager",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "Jeu de gestion de football 7v7 inspiré de la Kings League, avec six ligues et simulation tactique.",
   "main": "app.js",
   "scripts": {

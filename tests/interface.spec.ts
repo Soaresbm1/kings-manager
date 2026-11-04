@@ -64,7 +64,13 @@ test('une fiche contient le focus, se ferme avec Échap et retrouve son déclenc
   await expect(page.locator('#screen-main')).toHaveAttribute('inert', '');
   await expect(page.locator('#btn-player-info-close')).toBeFocused();
   await page.keyboard.press('Tab');
-  await expect(page.locator('#btn-player-info-close')).toBeFocused();
+  const progression = dialog.locator('.player-progress-panel');
+  await expect(progression.locator(':scope > summary')).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(progression).toHaveAttribute('open', '');
+  await page.keyboard.press('Tab');
+  await expect(progression.getByLabel('Indicateur observé')).toBeFocused();
+  await page.locator('#btn-player-info-close').focus();
   await page.evaluate(() => showConfirm('Une confirmation au-dessus de la fiche', () => {}));
   await expect(page.locator('#btn-confirm-cancel')).toBeFocused();
   await page.keyboard.press('Escape');

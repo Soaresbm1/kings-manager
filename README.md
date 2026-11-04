@@ -1,6 +1,14 @@
-# Kings Manager 7v7 — 1.4
+# Kings Manager 7v7 — 1.5
 
 Jeu de gestion de football en solo inspiré du format 7v7 de la Kings League : France, Brésil, Espagne, Italie, Allemagne et Mexique. Le jeu fonctionne entièrement dans le navigateur, avec des carrières sauvegardées localement et exportables en JSON.
+
+## Nouveautés de la version 1.5
+
+- **Recrutement ciblé** : dans Mercato → Rechercher, un panneau propose jusqu’à trois joueurs selon les besoins de la composition enregistrée, les rôles et le budget. Les raisons sont affichées, avec accès à la fiche, à la comparaison, au suivi et aux offres existantes. Les valeurs sont indicatives ; les négociations et leurs probabilités restent inchangées.
+- **Progression observée** : l’onglet Effectif et les fiches des joueurs suivis présentent les relevés de note globale, attributs, forme, valeur et matchs en carrière. Le suivi commence à la création ou à la reprise, sans reconstituer des données anciennes. Les relevés voyagent avec les sauvegardes, exports et restaurations ; leur volume reste limité à 48 000 caractères, 80 joueurs et 60 observations par joueur.
+- **Assistant de banc** : les énergies individuelles et alertes sont issues des séquences déjà présentées. Jusqu’à deux remplacements compatibles et plus frais sont proposés dans les ajustements tactiques ; une confirmation est nécessaire et les commandes existantes vérifient encore les disponibilités. Les exclusions ne peuvent pas être contournées. Aucune décision automatique ni modification des calculs de simulation.
+
+Les nouvelles aides restent disponibles hors ligne. Les périodes sans relevé sont inconnues, et les observations les plus anciennes peuvent être retirées pour maintenir des sauvegardes raisonnables. Le classement de recrutement est une aide de lecture, pas un bonus ou une garantie de performance.
 
 ## Nouveautés de la version 1.4
 

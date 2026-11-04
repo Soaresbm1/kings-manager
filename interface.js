@@ -14,9 +14,16 @@
     const inertBefore = new Map();
     let lastTrigger = null;
     let activeDialog = null;
-    const focusables = element => [...element.querySelectorAll('button:not(:disabled), input:not(:disabled), select:not(:disabled), textarea:not(:disabled), a[href], [tabindex="0"]')]
-      .filter(control => !control.closest("[inert]") && control.getClientRects().length);
-    const focusDialog = dialog => (focusables(dialog)[0] || dialog.querySelector(".modal-box")).focus({ preventScroll: true });
+    const hiddenByDetails = control => {
+      for (let ancestor = control.parentElement; ancestor; ancestor = ancestor.parentElement) {
+        if (ancestor.tagName === "DETAILS" && !ancestor.open && !ancestor.querySelector(":scope > summary")?.contains(control)) return true;
+      }
+      return false;
+    };
+    const focusables = element => [...element.querySelectorAll('button:not(:disabled), input:not(:disabled), select:not(:disabled), textarea:not(:disabled), a[href], summary, [tabindex="0"]')]
+      .filter(control => !control.closest("[inert]") && !hiddenByDetails(control) && control.getClientRects().length);
+    const focusDialog = dialog => ((dialog.id === "player-info-modal" && document.getElementById("btn-player-info-close"))
+      || focusables(dialog)[0] || dialog.querySelector(".modal-box")).focus({ preventScroll: true });
     function updateDialogs() {
       const opened = dialogs.filter(dialog => dialog.classList.contains("active"));
       let restore = null;

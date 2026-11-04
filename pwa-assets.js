@@ -1,11 +1,11 @@
 // Généré par scripts/build-pwa-assets.cjs ; ne pas modifier à la main.
 self.KINGS_PWA_ASSETS = {
   "schema": 1,
-  "revision": "5f60c7d38baa88dc6686f0e06daa6d9fe2b1425a3458f5f0b6f30074f426e639",
+  "revision": "4dc2ca1600b3729e805c8bc33d9a08b11a096a9b126ee73ed8adc788a2674c41",
   "assets": [
     {
       "url": "/app.js",
-      "sha256": "347e723644a524ff9ca131ae4e9a3feb9604a104fe8c67d8e9265ddd7f929f80",
+      "sha256": "b24ef5695a5672d6564b409e17bd6d25c05ca48731764736d882a00d339d83bb",
       "text": true
     },
     {
@@ -84,6 +84,11 @@ self.KINGS_PWA_ASSETS = {
       "text": false
     },
     {
+      "url": "/bench-advisor.js",
+      "sha256": "428fd69f34dded29f6b6fd1a4f62d4aa0783bbcc790ff0951fd1d55080be2ec4",
+      "text": true
+    },
+    {
       "url": "/career-history.css",
       "sha256": "a64697888d1d665b38206465d6ee0b7bab2b02134a29ee7057ab4c7865c14a43",
       "text": true
@@ -116,6 +121,11 @@ self.KINGS_PWA_ASSETS = {
     {
       "url": "/data.js",
       "sha256": "ea706c2ed0300c54321b67fc56f0151f14fc1de6661dfe34435e97c7e9838988",
+      "text": true
+    },
+    {
+      "url": "/decision-tools.js",
+      "sha256": "b168f6af5e2110334847a6bef1bbf3df93610df18fd7d1d163a07d1f6dd10f19",
       "text": true
     },
     {
@@ -460,7 +470,7 @@ self.KINGS_PWA_ASSETS = {
     },
     {
       "url": "/index.html",
-      "sha256": "f5dc64c6257ddbc224a7ceb83f3a8f3fa4ebba96bbf4087b24bd723273a85d48",
+      "sha256": "8da094a92e1e4b750a894c311f6be4f7c990577dbdceaad9e3837073e0d2c38d",
       "text": true
     },
     {
@@ -470,7 +480,7 @@ self.KINGS_PWA_ASSETS = {
     },
     {
       "url": "/interface.js",
-      "sha256": "8f38dc176c5f2964f74dc1ac112fdcdc6c03356e84ce892d3ff479d5748f12ee",
+      "sha256": "eb0d8348433cfd7ccf59f6b5431ab9b9c5af2218482945f313dca27e91f3b788",
       "text": true
     },
     {
@@ -481,6 +491,11 @@ self.KINGS_PWA_ASSETS = {
     {
       "url": "/kings-preparation.js",
       "sha256": "63c55b50c3db079544fe17818a888f9893ca9c654e276f3fdacd7cf3260b43b3",
+      "text": true
+    },
+    {
+      "url": "/manager-decisions.css",
+      "sha256": "1b6770e75b5ffd8c8af28a76a0cf09997ba4e8a357d6c483a067e96bee426b73",
       "text": true
     },
     {
@@ -524,6 +539,11 @@ self.KINGS_PWA_ASSETS = {
       "text": true
     },
     {
+      "url": "/player-progress.js",
+      "sha256": "d79fdaf6195188e4631f676f8589d9b1cb5fa8946939478e14c2c9a49e21f79b",
+      "text": true
+    },
+    {
       "url": "/pwa.css",
       "sha256": "345379840b043ea2b1145f3ea5e2d6079f72ff0620b91acac9cb9b4868bd2325",
       "text": true
@@ -531,6 +551,11 @@ self.KINGS_PWA_ASSETS = {
     {
       "url": "/pwa.js",
       "sha256": "17c1759f992c668672187a39f662ffe9e63aca2c4f50d05acda7c3fa12e241e8",
+      "text": true
+    },
+    {
+      "url": "/recruitment-advisor.js",
+      "sha256": "9936a0a9451180ff6d43a67d83742325b0f8e5fbbc57cff12c164960cd5848a4",
       "text": true
     },
     {
