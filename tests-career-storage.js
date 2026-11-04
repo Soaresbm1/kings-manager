@@ -475,6 +475,117 @@ test("une vraie carrière est compressée sans perte et deux carrières tiennent
   console.log(`   vraie carrière ${entryChars} chars, sidecar ${compactChars} chars, pic ${peak}/${limit} octets UTF16`);
 });
 
+test("trois carrières exportées/importées gardent leurs rapports et tous leurs backups sous 5MiB UTF16", () => {
+  const original = actualCareer();
+  const limit = 5 * 1024 * 1024;
+  let peak = 0;
+  const disk = memory();
+  disk.beforeWrite = (key, raw) => {
+    const candidate = new Map(disk.values); candidate.set(key, raw);
+    const bytes = [...candidate].reduce((sum, [itemKey, value]) => sum + (itemKey.length + value.length) * 2, 0);
+    if (bytes > limit) throw error("QuotaExceededError");
+    peak = Math.max(peak, bytes);
+  };
+  const store = service(disk);
+  assert.equal(store.write("original", original).ok, true);
+  const beforeRound = JSON.parse(JSON.stringify(original));
+  const history = require("./career-history.js");
+  original.data.matchReports = original.data.schedule[0].map((match, index) => {
+    const homeTeam = original.data.league.teams.find(team => team.id === match.home);
+    const awayTeam = original.data.league.teams.find(team => team.id === match.away);
+    const participants = { home: homeTeam.players.slice(0, 8).map(player => player.id), away: awayTeam.players.slice(0, 8).map(player => player.id) };
+    const ratings = Object.fromEntries([...participants.home, ...participants.away].map(id => [id, 7.3]));
+    return history.buildReport({ fixtureKey: "league:s1:r0:" + match.home + ":" + match.away, season: 1, round: 0,
+      date: "1 Août An 1", competition: "Championnat", userTeamId: original.data.userTeamId, homeTeam, awayTeam,
+      result: { homeGoals: index + 1, awayGoals: 1, participants, ratings,
+        events: Array.from({ length: 20 }, (_, minute) => ({ type: "goal", minute: minute + 1, text: "But après une séquence collective et une frappe précise ⚽" })) } });
+  });
+  original.data.currentRound = 1;
+  assert.equal(store.write("original", original).ok, true);
+  const imported = JSON.parse(JSON.stringify(original));
+  imported.meta.teamName = "Copie avec rapports";
+  assert.equal(store.write("copy", imported).ok, true);
+  const beforeCopy = JSON.parse(JSON.stringify(imported));
+  imported.meta.updatedAt++;
+  assert.equal(store.write("copy", imported).ok, true);
+  const legacy = JSON.parse(JSON.stringify(original));
+  legacy.meta.teamName = "Ancienne carrière sans rapports";
+  delete legacy.data.matchReports;
+  assert.equal(store.write("legacy", legacy).ok, true, "Le troisième import doit tenir sans effacer les points précédents");
+  assert.deepEqual(Object.keys(store.read().map), ["original", "copy", "legacy"]);
+  assert.deepEqual(store.read().map.copy.data.matchReports, original.data.matchReports);
+  assert.equal(Object.hasOwn(store.read().map.legacy.data, "matchReports"), false);
+  assert.deepEqual(store.getRestoreInfo("original").entry, beforeRound);
+  assert.deepEqual(store.getRestoreInfo("copy").entry, beforeCopy);
+  const info = store.getRestoreInfo("original");
+  assert.equal(store.restore("original", { expectedToken: info.token }).ok, true, "La restauration garde aussi son journal temporaire dans le quota");
+  assert.deepEqual(store.read().map.original, beforeRound);
+  assert.deepEqual(store.getRestoreInfo("original").entry, original);
+  assert.deepEqual(store.getRestoreInfo("copy").entry, beforeCopy);
+  assert.deepEqual(store.read().map.legacy, legacy);
+  assert.ok(peak <= limit);
+  console.log(`   3 carrières + rapports + journal : pic ${peak}/${limit} octets UTF16, sidecar final ${disk.values.get(BACKUP).length} chars`);
+});
+
+test("LZW garde emojis/CJK/surrogates et réinitialise sans perte son dictionnaire plein", () => {
+  let seed = 9324721;
+  const chunks = [];
+  for (let i = 0; i < 180000; i++) {
+    seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
+    chunks.push(String.fromCharCode(32 + seed % 95));
+  }
+  const value = entry(0);
+  value.data.payload = "日本語 王者 🦁⚽🏆 e\u0301 \ud800 \udfff\n\"\\" + chunks.join("");
+  const disk = memory();
+  const store = service(disk);
+  assert.equal(store.write("a", value).ok, true);
+  assert.equal(store.write("a", entry(1)).ok, true);
+  const packed = JSON.parse(disk.values.get(BACKUP));
+  assert.equal(packed.codec, "lzw16-v1");
+  let buffer = 0, bits = 0, resets = 0;
+  for (const unit of packed.value) {
+    buffer |= (unit.charCodeAt(0) - 0x100) << bits; bits += 15;
+    if (bits >= 16) {
+      if ((buffer & 0xffff) === 256) resets++;
+      buffer >>>= 16; bits -= 16;
+    }
+  }
+  assert.ok(resets > 0, "Ce contenu doit réellement saturer et réinitialiser le dictionnaire");
+  assert.deepEqual(store.getRestoreInfo("a").entry, value);
+  const info = store.getRestoreInfo("a");
+  assert.equal(store.restore("a", { expectedToken: info.token }).ok, true);
+  assert.deepEqual(store.read().map.a, value);
+});
+
+test("longueur, empreinte, codes ou flux LZW altérés sont refusés sans toucher les deux clés", () => {
+  const disk = memory();
+  const store = service(disk);
+  const value = entry(0); value.data.payload = "日本語 🦁⚽ éàè ".repeat(3000);
+  store.write("a", value); store.write("a", entry(1));
+  const packed = JSON.parse(disk.values.get(BACKUP));
+  assert.equal(packed.codec, "lzw16-v1");
+  const variants = [
+    { ...packed, length: packed.length + 1 }, { ...packed, length: -1 }, { ...packed, length: 8 * 1024 * 1024 + 1 },
+    { ...packed, hash: "0".repeat(16) }, { ...packed, hash: "invalid" },
+    { ...packed, value: packed.value.slice(0, -1) }, { ...packed, value: packed.value + "\u0100" },
+    { ...packed, value: "\u00ff" + packed.value.slice(1) },
+    { ...packed, value: "\u80ff" + packed.value.slice(1) },
+    { ...packed, value: "" },
+  ];
+  for (const variant of variants) {
+    const broken = memory({ [KEY]: JSON.stringify({ a: entry(1) }), [BACKUP]: JSON.stringify(variant) });
+    const initial = new Map(broken.values);
+    const testStore = service(broken);
+    assert.equal(testStore.read().ok, true);
+    assert.equal(testStore.inspect().code, "invalid-format");
+    assert.equal(testStore.write("a", entry(2)).ok, false);
+    assert.equal(testStore.remove("a").ok, false);
+    assert.equal(testStore.restore("a", { expectedToken: "x" }).ok, false);
+    assert.deepEqual(broken.values, initial);
+    assert.equal(broken.writes.length, 0);
+  }
+});
+
 test("un codec corrompu, trop profond, mal indexé ou expansif est refusé sans écriture", () => {
   let deep = null;
   for (let i = 0; i < 100; i++) deep = [1, deep];

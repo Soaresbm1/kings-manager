@@ -24,7 +24,93 @@
   // toutes ses valeurs et leur ordre, sans répéter les index de clés. Les chaînes
   // uniques restent littérales ; aucun tableau de jeu ne ressemble à un token.
   const CODEC = "dictionary-v1";
+  const PACKED_CODEC = "lzw16-v1";
   const CODEC_LIMITS = { source: 8 * 1024 * 1024, expanded: 16 * 1024 * 1024, depth: 96, nodes: 1000000, strings: 200000 };
+
+  // LZW à codes fixes 16 bits sur les octets UTF16 du JSON de dictionnaire.
+  // Les codes sont empaquetés dans des unités 15 bits entre U+0100 et U+80FF :
+  // ni contrôles JSON, ni guillemets, ni surrogates à échapper dans localStorage.
+  // Le dictionnaire est borné à 65536 codes et réinitialisé explicitement.
+  function packSidecar(raw) {
+    if (raw.length < 1024) return raw;
+    const table = new Map(), output = [];
+    let next = 258, prefix = -1, buffer = 0, bits = 0;
+    function emit(code) {
+      buffer |= code << bits; bits += 16;
+      while (bits >= 15) { output.push(String.fromCharCode(0x100 + (buffer & 0x7fff))); buffer >>>= 15; bits -= 15; }
+    }
+    function byte(value) {
+      if (prefix < 0) { prefix = value; return; }
+      const key = prefix * 256 + value;
+      const found = table.get(key);
+      if (found !== undefined) { prefix = found; return; }
+      emit(prefix);
+      if (next < 65536) table.set(key, next++);
+      else { emit(256); table.clear(); next = 258; }
+      prefix = value;
+    }
+    for (let i = 0; i < raw.length; i++) { const unit = raw.charCodeAt(i); byte(unit & 255); byte(unit >>> 8); }
+    if (prefix >= 0) emit(prefix);
+    emit(257);
+    if (bits) output.push(String.fromCharCode(0x100 + buffer));
+    const packed = JSON.stringify({ codec: PACKED_CODEC, length: raw.length, hash: fingerprint(raw).hash, value: output.join("") });
+    return packed.length < raw.length ? packed : raw;
+  }
+
+  function unpackSidecar(envelope) {
+    const length = envelope.length, source = envelope.value;
+    if (!Number.isInteger(length) || length < 0 || length > CODEC_LIMITS.source || typeof source !== "string"
+      || source.length > CODEC_LIMITS.source || typeof envelope.hash !== "string" || !/^[0-9a-f]{16}$/.test(envelope.hash))
+      throw new Error("Enveloppe LZW invalide");
+    const prefixes = new Uint16Array(65536), suffixes = new Uint8Array(65536), units = new Uint16Array(length);
+    let position = 0, buffer = 0, bits = 0, next = 258, old = -1, first = 0, written = 0, low = -1, codes = 0;
+    function readCode() {
+      while (bits < 16) {
+        if (position >= source.length) throw new Error("Flux LZW tronqué");
+        const unit = source.charCodeAt(position++) - 0x100;
+        if (unit < 0 || unit > 0x7fff) throw new Error("Unité LZW invalide");
+        buffer |= unit << bits; bits += 15;
+      }
+      const code = buffer & 0xffff; buffer >>>= 16; bits -= 16;
+      return code;
+    }
+    function byte(value) {
+      if (low < 0) low = value;
+      else {
+        if (written >= length) throw new Error("Expansion LZW excessive");
+        units[written++] = low | value << 8; low = -1;
+      }
+    }
+    while (true) {
+      if (++codes > CODEC_LIMITS.source * 2 + 2) throw new Error("Flux LZW trop long");
+      const code = readCode();
+      if (code === 257) break;
+      if (code === 256) { next = 258; old = -1; continue; }
+      if (old < 0) {
+        if (code > 255) throw new Error("Premier code LZW invalide");
+        byte(code); first = code; old = code; continue;
+      }
+      let cursor = code;
+      const stack = [];
+      if (cursor === next && next < 65536) { stack.push(first); cursor = old; }
+      else if (cursor >= next) throw new Error("Référence LZW invalide");
+      while (cursor >= 258) {
+        if (cursor >= next || stack.length >= 65536) throw new Error("Chaîne LZW invalide");
+        stack.push(suffixes[cursor]); cursor = prefixes[cursor];
+      }
+      if (cursor > 255) throw new Error("Préfixe LZW invalide");
+      first = cursor; stack.push(first);
+      for (let i = stack.length - 1; i >= 0; i--) byte(stack[i]);
+      if (next < 65536) { prefixes[next] = old; suffixes[next] = first; next++; }
+      old = code;
+    }
+    if (written !== length || low >= 0 || position !== source.length || buffer !== 0) throw new Error("Longueur LZW invalide");
+    const chunks = [];
+    for (let i = 0; i < units.length; i += 4096) chunks.push(String.fromCharCode(...units.subarray(i, i + 4096)));
+    const raw = chunks.join("");
+    if (fingerprint(raw).hash !== envelope.hash) throw new Error("Empreinte LZW invalide");
+    return raw;
+  }
   function codecBudget() {
     let chars = 0, nodes = 0;
     return (depth, size) => {
@@ -85,7 +171,7 @@
     }
     const raw = JSON.stringify({ codec: CODEC, strings, shapes, value: encode(value) });
     if (raw.length > CODEC_LIMITS.source) throw new Error("Journal trop grand");
-    return raw;
+    return packSidecar(raw);
   }
   function decodeSidecar(envelope) {
     if (envelope.codec !== CODEC || !Array.isArray(envelope.strings) || envelope.strings.length > CODEC_LIMITS.strings || !own(envelope, "value"))
@@ -209,7 +295,10 @@
       if (!record(value)) return failure("invalid-format", "Le format des sauvegardes locales est invalide. Les données ont été conservées.", { area, raw });
       if (area === "backup") {
         if (own(value, "codec")) {
-          try { value = decodeSidecar(value); }
+          try {
+            if (value.codec === PACKED_CODEC) value = JSON.parse(unpackSidecar(value));
+            value = decodeSidecar(value);
+          }
           catch (error) { return failure("invalid-format", "Le point de restauration compressé est illisible. Il a été conservé sans modification.", { area, raw }); }
           if (!record(value)) return failure("invalid-format", "Le point de restauration compressé est invalide. Il a été conservé.", { area, raw });
         }
