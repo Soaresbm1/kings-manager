@@ -148,6 +148,7 @@
     const report = {
       version: VERSION, fixtureKey: string(options.fixtureKey, 300), season: scalar(options.season),
       round: scalar(options.round), date: scalar(options.date), competition: string(options.competition),
+      ...(normalizeRules(options.rules) ? { rules: normalizeRules(options.rules) } : {}),
       userTeamId: identifier(options.userTeamId), home: snapshotTeam(options.homeTeam, options.homeSetup, result, "home"),
       away: snapshotTeam(options.awayTeam, options.awaySetup, result, "away"), score, statistics,
       events: captured.events, eventsOmitted: captured.omitted,
@@ -171,6 +172,19 @@
       participationSource: ["engine", "ratings", "minutes"].includes(value.participationSource) ? value.participationSource : "unknown", players };
   }
 
+  function normalizeRules(value) {
+    if (!object(value) || typeof value.profileId !== "string" || !/^[a-zA-Z0-9.-]{1,64}$/.test(value.profileId) || !object(value.config)) return null;
+    const config = {};
+    for (const key of ["totalMinutes", "halfTime", "escalierEndMinute", "doubleGoalStartMinute", "diceStartMinute", "diceEndMinute", "matchballStartMinute", "presidentDeadline", "cardDuration", "starDeadline", "yellowDuration", "redDuration"]) {
+      const n = value.config[key]; if (!Number.isInteger(n) || n < 1 || n > 120) return null; config[key] = n;
+    }
+    if (!Array.isArray(value.config.specialWindows) || value.config.specialWindows.length !== 2) return null;
+    config.specialWindows = value.config.specialWindows.map(pair => Array.isArray(pair) && pair.length === 2 && pair.every(n => Number.isInteger(n) && n >= 1 && n <= 120) && pair[0] <= pair[1] ? [...pair] : null);
+    if (config.specialWindows.some(pair => !pair)) return null;
+    return { profileId: value.profileId, revision: Number.isInteger(value.revision) ? Math.max(1, Math.min(999, value.revision)) : 1,
+      label: string(value.label, 128), competition: string(value.competition, 80), season: scalar(value.season), config };
+  }
+
   function normalizeReport(value) {
     if (!object(value) || !object(value.home) || !object(value.away)) return null;
     const score = normalizeScore(value.score);
@@ -183,6 +197,7 @@
     const report = {
       version: VERSION, fixtureKey: string(value.fixtureKey, 300), season: scalar(value.season), round: scalar(value.round),
       date: scalar(value.date), competition: string(value.competition), userTeamId: identifier(value.userTeamId),
+      ...(normalizeRules(value.rules) ? { rules: normalizeRules(value.rules) } : {}),
       home: normalizeTeam(value.home), away: normalizeTeam(value.away), score, statistics,
       events: captured.events, eventsOmitted: (number(value.eventsOmitted) || 0) + captured.omitted,
       debrief: typeof TacticalDebrief !== "undefined" ? TacticalDebrief.normalize(value.debrief) : null
@@ -342,6 +357,7 @@
     container.replaceChildren(); container.classList.add("history-report");
     if (!report) { container.append(node(doc, "p", "history-empty", "Ce rapport n’est pas disponible.")); return; }
     container.append(node(doc, "p", "history-meta", details(report)));
+    if (report.rules) container.append(node(doc, "p", "history-note", `Règlement figé : ${report.rules.label || report.rules.profileId} · durée nominale ${report.rules.config.totalMinutes} min · Matchball ${report.rules.config.matchballStartMinute}’.`));
     const scoreboard = node(doc, "div", "history-scoreboard");
     scoreboard.append(node(doc, "strong", "history-team-name", name(report.home)),
       node(doc, "strong", "history-score", scoreText(report.score)), node(doc, "strong", "history-team-name", name(report.away)));

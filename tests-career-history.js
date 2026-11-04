@@ -231,4 +231,19 @@ test("le rendu est sûr et propose filtres saison/club, ouverture et rafraîchis
   history.renderReport(body, undefined); assert.ok(body.textContent.includes("pas disponible"));
 });
 
+test("les rapports figent les repères du règlement joué sans attribuer de format aux anciennes rencontres", () => {
+  const Rules = require("./competition-rules.js");
+  const snapshot = Rules.create("guide-2026-11-04", { competition: "league:france", season: 2 });
+  const rules = { ...snapshot, label: Rules.summary(snapshot).label };
+  const report = history.buildReport(fixture({ rules }));
+  const retained = history.normalizeReports(JSON.parse(JSON.stringify([report])))[0];
+  assert.equal(retained.rules.profileId, "guide-2026-11-04");
+  assert.equal(retained.rules.config.totalMinutes, 36);
+  assert.deepEqual(retained.rules.config.specialWindows, snapshot.config.specialWindows);
+  rules.label = "Autre saison";
+  assert.notEqual(retained.rules.label, rules.label);
+  assert.equal(history.buildReport(fixture()).rules, undefined);
+  assert.equal(history.normalizeReports([{ ...report, rules: { ...rules, config: { totalMinutes: Infinity } } }])[0].rules, undefined);
+});
+
 console.log(`${passed} tests d’historique réussis.`);

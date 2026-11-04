@@ -18,6 +18,10 @@ let STATE = {
   activeTacticPreset: "usual",
   matchReports: [],
   playerProgress: null,
+  clubTraining: null,
+  playerPromises: null,
+  competitionRules: null,
+  nextSeasonRules: null,
   currentSlotId: null,  // identifiant de la carrière active (parmi plusieurs)
   seasonPrizeAwarded: false, // évite de créditer deux fois la prime de fin de saison (voir awardSeasonPrizeMoney)
   lastSeasonPrize: null,     // détail de la dernière prime versée, pour l'affichage dans le panneau "Saison terminée"
@@ -76,6 +80,10 @@ function buildSaveData() {
     activeTacticPreset: STATE.activeTacticPreset,
     matchReports: STATE.matchReports,
     playerProgress: STATE.playerProgress,
+    clubTraining: STATE.clubTraining,
+    playerPromises: STATE.playerPromises,
+    competitionRules: STATE.competitionRules,
+    nextSeasonRules: STATE.nextSeasonRules,
     otherLeagues: STATE.otherLeagues,
     tournament: STATE.tournament,
     seasonPrizeAwarded: STATE.seasonPrizeAwarded,
@@ -154,6 +162,7 @@ function applySaveData(data) {
   // JSON a rompu les références d'objets équipe du bracket (cf. relinkTournamentTeamRefs) : on
   // les ré-associe aux vraies équipes maintenant que STATE.league/STATE.otherLeagues sont prêts.
   relinkTournamentTeamRefs();
+  if (typeof initializeClubManagement === "function") initializeClubManagement(data);
   if (typeof initializeCareerFeatures === "function") initializeCareerFeatures(data);
 }
 
@@ -555,6 +564,7 @@ function selectTeam(teamId) {
 }
 
 function startCareer() {
+  if (typeof cloudBusy !== "undefined" && cloudBusy) return;
   STATE.currentSlotId = generateSlotId();
   STATE.season = 1;
 
@@ -610,6 +620,7 @@ function startCareer() {
   STATE.trophyHistory = [];
   STATE.otherLeagues = buildOtherLeagues(STATE.leagueKey);
   STATE.seasonObjective = generateSeasonObjective();
+  if (typeof initializeClubManagement === "function") initializeClubManagement(null, { newCareer: true });
   if (typeof initializeCareerFeatures === "function") initializeCareerFeatures();
   STATE.notifications.push({
     type: "boardObjective", title: "🎯 Objectif de la direction",
@@ -654,7 +665,7 @@ function simulateOtherLeagueRound(ol) {
   round.forEach(m => {
     const home = ol.league.teams.find(t => t.id === m.home);
     const away = ol.league.teams.find(t => t.id === m.away);
-    const result = simulateAIMatch(home, away);
+    const result = simulateAIMatch(home, away, typeof getCareerRules === "function" ? getCareerRules("championship", ol.key) : undefined);
     const r = ol.league.results.find(r => r.round === ol.currentRound && r.home === m.home && r.away === m.away);
     r.played = true; r.homeGoals = result.homeGoals; r.awayGoals = result.awayGoals; r.penaltyWinner = result.penaltyWinner;
   });
@@ -757,7 +768,7 @@ function buildTournamentBracket() {
 
 // Simule un match IA vs IA du tournoi (jamais appelé si l'une des deux équipes est celle du joueur).
 function simulateTournamentMatchAuto(m) {
-  const result = simulateAIMatch(m.home.team, m.away.team);
+  const result = simulateAIMatch(m.home.team, m.away.team, typeof getCareerRules === "function" ? getCareerRules("tournament") : undefined);
   if (typeof archiveCareerMatch === "function") archiveCareerMatch(result, m.home.team, m.away.team, null, null, m);
   m.played = true; m.homeGoals = result.homeGoals; m.awayGoals = result.awayGoals; m.penaltyWinner = result.penaltyWinner;
   m.winner = result.homeGoals !== result.awayGoals
@@ -1268,6 +1279,7 @@ function renderCurrentNotification() {
   // transfert) au lieu du simple paragraphe de texte.
   const extra = document.getElementById("notif-extra");
   extra.innerHTML = "";
+  if (typeof renderPromisePreview === "function") renderPromisePreview(null);
   const team = getUserTeam();
   if (notif.type === "transferRequest") {
     const player = team.players.find(p => p.id === notif.playerId);
@@ -1355,6 +1367,7 @@ function renderCurrentNotification() {
     yesBtn.className = "primary";
     yesBtn.textContent = "Oui";
     yesBtn.onclick = () => respondToMessage(true);
+    if (typeof renderPromisePreview === "function") renderPromisePreview(notif, team.players.find(player => player.id === notif.playerId), yesBtn);
     actions.appendChild(infoBtn);
     actions.appendChild(noBtn);
     actions.appendChild(yesBtn);
@@ -1435,6 +1448,7 @@ function respondToMessage(accept) {
   const team = getUserTeam();
   const player = team.players.find(p => p.id === notif.playerId);
   const template = MESSAGE_TEMPLATES[notif.templateIdx];
+  if (typeof respondToPlayerPromise === "function" && respondToPlayerPromise(notif, player, accept)) return;
   if (player && template) {
     if (accept) template.yes(player); else template.no(player);
   }
@@ -1623,6 +1637,7 @@ function renderCalendarTab() {
   renderMiniStandingsPanel();
   renderRecentFormPanel();
   if (typeof renderCareerHistory === "function") renderCareerHistory();
+  if (typeof renderClubManagement === "function") renderClubManagement();
 }
 
 // ----- Panneaux latéraux du tableau de bord Calendrier -----
@@ -1699,6 +1714,7 @@ function startNewSeason() {
   STATE.currentRound = 0;
   STATE.currentDay = 0;
   STATE.season++;
+  if (typeof advanceClubManagementSeason === "function") advanceClubManagementSeason();
 
   // nouvelle saison pour toutes les ligues en arrière-plan aussi (même vieillissement/forme),
   // sans recréer leurs clubs depuis data.js — voir resetLeagueForNewSeason.
@@ -1748,7 +1764,7 @@ function simulateRoundAI(excludeMatch) {
     if (excludeMatch && m.home === excludeMatch.home && m.away === excludeMatch.away) return;
     const home = STATE.league.teams.find(t => t.id === m.home);
     const away = STATE.league.teams.find(t => t.id === m.away);
-    const result = simulateAIMatch(home, away);
+    const result = simulateAIMatch(home, away, typeof getCareerRules === "function" ? getCareerRules() : undefined);
     if (typeof archiveCareerMatch === "function") archiveCareerMatch(result, home, away);
     const r = STATE.league.results.find(r => r.round === STATE.currentRound && r.home === m.home && r.away === m.away);
     r.played = true; r.homeGoals = result.homeGoals; r.awayGoals = result.awayGoals; r.penaltyWinner = result.penaltyWinner;
@@ -3751,14 +3767,16 @@ function startMatch() {
   if (typeof KingsPreparation !== "undefined") KingsPreparation.normalizeSetupOrders(lineupSetup, team);
 
   const userSide = lineupSetup.isHome ? "home" : "away";
-  matchEngine = createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup);
+  const promiseCapture = typeof captureMatchPromises === "function" ? captureMatchPromises(team, lineupSetup, opponent, !!STATE.tournamentMatchRef) : null;
+  matchEngine = createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup,
+    typeof getCareerRules === "function" ? getCareerRules(STATE.tournamentMatchRef ? "tournament" : "championship") : undefined);
   matchState = {
     minute: 0, homeTeam, awayTeam, homeSetup, awaySetup, team, opponent,
     paused: false, userPaused: false, atHalfTime: false, finished: false, subTimers: [],
     userSide, playbackSpeed: 1, sequenceActive: false, onSequenceDone: null, pendingMinute: null,
     lastOutfieldCap: matchEngine.getOutfieldCap(0),
     dashboardStats: null, dashboardUpdatedAt: 0, completedMinute: 0,
-    displayedScore: { homeGoals: 0, awayGoals: 0 }, pendingSpecialActions: []
+    displayedScore: { homeGoals: 0, awayGoals: 0 }, pendingSpecialActions: [], promiseCapture
   };
   pitchPlayerIndex.clear();
   if (typeof startTacticalDebrief === "function") startTacticalDebrief();
@@ -3807,6 +3825,8 @@ function startMatch() {
   updateSecretCardButton();
   updatePresidentPenaltyButton();
   updateMatchStatusBanner();
+  const actionHelp = document.getElementById("match-action-help");
+  if (actionHelp && typeof matchSpecialWindowLabel === "function") actionHelp.textContent = `Arme secrète : ${matchSpecialWindowLabel("card")}. Penalty du président : ${matchSpecialWindowLabel("president")}.`;
 
   choreo = createChoreographer();
   if (typeof applyPreparedCareerPhases === "function") applyPreparedCareerPhases(0);
@@ -3855,19 +3875,21 @@ function maybeActivateAiCard(minute) {
   const winning = aiGoals > oppGoals;
 
   let shouldActivate = false;
+  const lateWindow = matchEngine.timing.specialWindows[1];
+  const losingDeadline = Math.min(35, lateWindow[1]);
   if (aiKey === "joker") {
     const userSide = matchState.userSide;
-    if (!matchEngine.isCardUsed(userSide) && matchEngine.getCards()[userSide] && minute >= 23) {
+    if (!matchEngine.isCardUsed(userSide) && matchEngine.getCards()[userSide] && minute >= lateWindow[0]) {
       shouldActivate = true;
-    } else if (losing && minute >= 25 && minute <= 35) {
+    } else if (losing && minute >= 25 && minute <= losingDeadline) {
       shouldActivate = true;
     }
   } else if (losing) {
-    shouldActivate = minute >= 25 && minute <= 35;
+    shouldActivate = minute >= 25 && minute <= losingDeadline;
   } else if (winning) {
-    shouldActivate = minute >= 30 && minute <= 36;
+    shouldActivate = minute >= 30 && minute <= lateWindow[1];
   } else {
-    shouldActivate = minute >= 30 && minute <= 36;
+    shouldActivate = minute >= 30 && minute <= lateWindow[1];
   }
 
   if (!shouldActivate) return;
@@ -4510,8 +4532,8 @@ function updateMatchContext() {
   format.textContent = `${homeCount} contre ${awayCount}`;
   let phaseLabel = "Jeu à 7";
   if (minute <= matchEngine.ESCALIER_END_MINUTE) phaseLabel = "Escalier de départ";
-  else if (minute >= 17 && minute <= 20) phaseLabel = "Ballon spécial · buts doubles";
-  else if (minute >= 21 && minute <= 23) phaseLabel = "Dé Géant";
+  else if (minute >= matchEngine.DOUBLE_GOAL_START_MINUTE && minute <= matchEngine.halfTime) phaseLabel = "Ballon spécial · buts doubles";
+  else if (minute >= matchEngine.DICE_START_MINUTE && minute <= matchEngine.DICE_END_MINUTE) phaseLabel = "Dé Géant";
   else if (minute >= matchEngine.MATCHBALL_START_MINUTE) phaseLabel = "Matchball · but décisif";
   if (matchState.atHalfTime) phaseLabel = "Mi-temps";
   if (matchState.finished) phaseLabel = "Match terminé";
@@ -4968,6 +4990,10 @@ function closeMatchTactics() {
 
 // L'Arme Secrète et le Penalty du Président ne s'activent que dans les fenêtres réglementaires
 // (5'-17' puis 23'-36', le Penalty du Président devant être déclenché avant 35:59).
+function matchSpecialWindowLabel(kind) {
+  return matchEngine.timing.specialWindows.map(([start, end]) => `${start}’–${Math.min(end, kind === "president" ? matchEngine.timing.presidentDeadline : end)}’`).join(" puis ");
+}
+
 function updateSecretCardButton() {
   const btn = document.getElementById("btn-secret-card");
   const used = matchEngine.isCardUsed(matchState.userSide);
@@ -4976,7 +5002,7 @@ function updateSecretCardButton() {
   btn.disabled = used || queued || matchState.finished || !windowOpen;
   btn.classList.toggle("used", used);
   btn.textContent = queued ? "🃏 Arme Secrète en attente" : "🃏 Activer l'Arme Secrète";
-  btn.title = queued ? "Activation à la fin de l'action en cours." : windowOpen ? "" : "Activable entre la 5e et la 17e minute, puis entre la 23e et la 36e minute.";
+  btn.title = queued ? "Activation à la fin de l'action en cours." : windowOpen ? "" : `Activable : ${matchSpecialWindowLabel("card")}.`;
 }
 
 function updatePresidentPenaltyButton() {
@@ -4987,7 +5013,7 @@ function updatePresidentPenaltyButton() {
   btn.disabled = used || queued || matchState.finished || !windowOpen;
   btn.classList.toggle("used", used);
   btn.textContent = queued ? "🛎️ Penalty en attente" : "🛎️ Penalty du Président";
-  btn.title = queued ? "Activation à la fin de l'action en cours." : windowOpen ? "" : "Activable entre la 5e et la 17e minute, puis entre la 23e et la 35e minute.";
+  btn.title = queued ? "Activation à la fin de l'action en cours." : windowOpen ? "" : `Activable : ${matchSpecialWindowLabel("president")}.`;
 }
 
 function hasPendingSpecialAction(kind) {
@@ -5304,7 +5330,8 @@ function completeMatch(shootout) {
   STATE.pendingResult = {
     result, homeTeam: matchState.homeTeam, awayTeam: matchState.awayTeam,
     homeSetup: matchState.homeSetup, awaySetup: matchState.awaySetup,
-    team: matchState.team, opponent: matchState.opponent
+    team: matchState.team, opponent: matchState.opponent,
+    promiseCapture: matchState.promiseCapture, userSide: matchState.userSide
   };
   if (typeof finishTacticalDebrief === "function") finishTacticalDebrief();
 
@@ -5477,6 +5504,7 @@ function continueAfterMatch() {
 
   updateFormAfterMatch(homeTeam, homeSetup, result.homeGoals, result.awayGoals, result.ratings);
   updateFormAfterMatch(awayTeam, awaySetup, result.awayGoals, result.homeGoals, result.ratings);
+  if (typeof evaluateMatchPromises === "function") evaluateMatchPromises(result, STATE.pendingResult.promiseCapture, STATE.pendingResult.userSide);
 
   // match du tournoi de fin de saison (pas un match de championnat) : résout le match du bracket
   // concerné et retourne à l'écran du tournoi plutôt qu'au calendrier.
@@ -5532,6 +5560,7 @@ document.addEventListener("DOMContentLoaded", () => {
     STATE.activeTacticPreset = "usual";
     STATE.matchReports = [];
     STATE.playerProgress = null;
+    if (typeof resetClubManagement === "function") resetClubManagement();
     STATE.currentSlotId = null;
     STATE.otherLeagues = null;
     STATE.tournament = null;

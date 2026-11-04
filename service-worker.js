@@ -2,7 +2,7 @@
 "use strict";
 importScripts("/pwa-assets.js");
 
-const VERSION = '1.5.0-20261104-decisions';
+const VERSION = '1.6.0-20261104-club-cloud';
 const ASSETS = self.KINGS_PWA_ASSETS;
 if (!ASSETS || ASSETS.schema !== 1 || !/^[a-f0-9]{64}$/.test(ASSETS.revision) || !Array.isArray(ASSETS.assets)
   || ASSETS.assets.length === 0 || ASSETS.assets.length > 256) {
@@ -148,6 +148,7 @@ self.addEventListener("fetch", event => {
   if (request.method !== "GET" || request.headers.has("range")) return;
   const url = new URL(request.url);
   if (url.origin !== ORIGIN) return;
+  if (url.pathname.startsWith("/api/") || request.headers.has("authorization")) return;
   const document = request.mode === "navigate";
   if (document) {
     if (url.pathname === "/" || url.pathname === "/index.html") event.respondWith(coreResponse(CORE.get("/index.html"), true));

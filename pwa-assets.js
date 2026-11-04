@@ -1,11 +1,11 @@
 // Généré par scripts/build-pwa-assets.cjs ; ne pas modifier à la main.
 self.KINGS_PWA_ASSETS = {
   "schema": 1,
-  "revision": "9c8b458147d2f7dfa48fab39eea6d64766461032ae73ff768b9b3d557ad21b01",
+  "revision": "01131d82f4f9fb8de538952565b7522536dfe7a3e45fb54dd80c12fbf9761b6e",
   "assets": [
     {
       "url": "/app.js",
-      "sha256": "53f6d65842fd8e9052ded800d1c3277d50009b22e4910bc1f1837932d43082b7",
+      "sha256": "e9015893eb24f1676c4dfb9f169b23bab86096974a73c2e1511217690bbaf50c",
       "text": true
     },
     {
@@ -95,7 +95,7 @@ self.KINGS_PWA_ASSETS = {
     },
     {
       "url": "/career-history.js",
-      "sha256": "e4107a135892667b2dfeeffe94d6992ebf67cc1bdb73b70a45c8893b7c2faecc",
+      "sha256": "592e9e342220588e3b9a2ae34f4d7d786a06a4da091a4b1530f93f422cba1db9",
       "text": true
     },
     {
@@ -115,7 +115,52 @@ self.KINGS_PWA_ASSETS = {
     },
     {
       "url": "/career-tools.js",
-      "sha256": "18c88472fb95cbc3f97c3a9cc24e27d46cea4f4e1487a40b221a83c3366b5e6b",
+      "sha256": "7198bce7f3ccc6469c09fe5981266099d20ee26ae8614d1a8eca4349d9e8b07a",
+      "text": true
+    },
+    {
+      "url": "/cloud-sync.css",
+      "sha256": "43fb06e3b6418c1c19ce2c7168a632b74aa60fac50c1173bbd1637bf52996255",
+      "text": true
+    },
+    {
+      "url": "/cloud-sync.js",
+      "sha256": "acaf577373718c34ab3b310add5ebda9aaa1faa35d0beda7c11adc823de56b70",
+      "text": true
+    },
+    {
+      "url": "/cloud-tools.js",
+      "sha256": "73bc283de7d43988f5a0c88e66bd1fed25a0a08517bb329b3fa1f09296b8b327",
+      "text": true
+    },
+    {
+      "url": "/club-management.css",
+      "sha256": "36ceee15f4380887df95a0e073b9f15437b91d84b0160688bea50c56cf0fd63d",
+      "text": true
+    },
+    {
+      "url": "/club-management.js",
+      "sha256": "cb07288f50ed45b32d8aa639a2da443efc4c1529dcdf49192b760653a9a1cd6e",
+      "text": true
+    },
+    {
+      "url": "/club-training.css",
+      "sha256": "d42a97cb628cc5d286eb27fbcf850d93783a5e5b90ce9fd0f77d77b957e734d0",
+      "text": true
+    },
+    {
+      "url": "/club-training.js",
+      "sha256": "53cd7ad71c1a85bedd83b5cce0c74c66238b7e80bf72e024e20ab9421af597d9",
+      "text": true
+    },
+    {
+      "url": "/competition-rules.css",
+      "sha256": "193e96595c2bd2d1d6a55a63398267cf956a2868d0aabdc59eb5725338afcb89",
+      "text": true
+    },
+    {
+      "url": "/competition-rules.js",
+      "sha256": "e361edcf26e025d8f4e7af8a1df5d581214fee6a80607a3aa8a3b6078860b814",
       "text": true
     },
     {
@@ -130,7 +175,7 @@ self.KINGS_PWA_ASSETS = {
     },
     {
       "url": "/engine.js",
-      "sha256": "6c2f4454a7e33d760f32469800c0a07229d3934ebe7bd4326bae2246aaefa216",
+      "sha256": "366ccc83880d24d8a44176753faa75b367145fca6be45bdc915680695fc83307",
       "text": true
     },
     {
@@ -470,7 +515,7 @@ self.KINGS_PWA_ASSETS = {
     },
     {
       "url": "/index.html",
-      "sha256": "8da094a92e1e4b750a894c311f6be4f7c990577dbdceaad9e3837073e0d2c38d",
+      "sha256": "62897c1442749e18c267ee6e5e73c2d5cfa02e9da9ebe23804399bb3e7a5c7d8",
       "text": true
     },
     {
@@ -505,7 +550,7 @@ self.KINGS_PWA_ASSETS = {
     },
     {
       "url": "/manager-tools.js",
-      "sha256": "01b0ecacb7cf63b5926a21089044e396c9bd41b99e1f2a3038f33921374ca4a5",
+      "sha256": "c03e9c68b9609104fe63bfb2a8e0b6a943bcb31b3cbbae4f6eccc96acaa1aeca",
       "text": true
     },
     {
@@ -541,6 +586,16 @@ self.KINGS_PWA_ASSETS = {
     {
       "url": "/player-progress.js",
       "sha256": "d79fdaf6195188e4631f676f8589d9b1cb5fa8946939478e14c2c9a49e21f79b",
+      "text": true
+    },
+    {
+      "url": "/player-promises.css",
+      "sha256": "42a66368bdfc616baee672126cc828afffd03f139d9b0b11b1fb3272a8a4d641",
+      "text": true
+    },
+    {
+      "url": "/player-promises.js",
+      "sha256": "5508d78480eac01477f3aab147f708ffc6a442be5c7e7a5018776419f33860c6",
       "text": true
     },
     {

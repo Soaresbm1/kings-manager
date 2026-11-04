@@ -8,3 +8,8 @@ node_modules/
 /playwright/.cache/
 /playwright/.auth/
 
+# Secrets locaux et association Vercel
+.env
+.env.*
+.vercel/
+

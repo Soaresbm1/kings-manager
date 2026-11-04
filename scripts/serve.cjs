@@ -24,6 +24,14 @@ function insideRoot(filename) {
   return relative !== ".." && !relative.startsWith(".." + path.sep) && !path.isAbsolute(relative);
 }
 const server = http.createServer((request, response) => {
+  if (request.url?.split("?")[0] === "/api/career-sync") {
+    // Le cloud local nécessite le véritable stockage privé ; aucun faux succès.
+    if (!process.env.BLOB_READ_WRITE_TOKEN && !process.env.BLOB_STORE_ID) {
+      response.writeHead(503, { "Content-Type": "application/json", "Cache-Control": "no-store" });
+      response.end(JSON.stringify({ error: "unavailable", message: "Le stockage cloud n’est pas configuré sur ce serveur local." }));
+    } else require("../api/career-sync.js")(request, response);
+    return;
+  }
   if (request.method !== "GET" && request.method !== "HEAD") {
     response.writeHead(405, { Allow: "GET, HEAD" }).end();
     return;

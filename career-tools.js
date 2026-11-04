@@ -133,6 +133,7 @@ function careerTournamentFixtureKey(match) {
 
 function archiveCareerMatch(result, homeTeam, awayTeam, homeSetup, awaySetup, tournamentMatch) {
   const round = tournamentMatch ? (STATE.tournament?.rounds || []).findIndex(entry => entry.matches.includes(tournamentMatch)) : STATE.currentRound;
+  const ruleSnapshot = typeof getCareerRules === "function" ? getCareerRules(tournamentMatch ? "tournament" : "championship") : null;
   const report = CareerHistory.buildReport({
     result, homeTeam, awayTeam, homeSetup, awaySetup, season: STATE.season,
     round: tournamentMatch ? STATE.tournament?.rounds[round]?.name || "Tournoi" : round,
@@ -140,6 +141,7 @@ function archiveCareerMatch(result, homeTeam, awayTeam, homeSetup, awaySetup, to
     competition: tournamentMatch ? "Tournoi international" : STATE.league.name,
     fixtureKey: tournamentMatch ? careerTournamentFixtureKey(tournamentMatch) : careerLeagueFixtureKey(homeTeam.id, awayTeam.id, round),
     userTeamId: STATE.userTeamId,
+    rules: ruleSnapshot ? { ...ruleSnapshot, label: CompetitionRules.summary(ruleSnapshot).label } : null,
     debrief: typeof TacticalDebrief !== "undefined" ? (STATE.pendingResult?.result === result
       ? STATE.pendingResult.debrief : TacticalDebrief.build({ result })) : null
   });

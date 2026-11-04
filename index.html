@@ -27,6 +27,11 @@
   <link rel="stylesheet" href="manager-tools.css?v=20261104-insights">
   <link rel="stylesheet" href="pwa.css?v=20261104-pwa">
   <link rel="stylesheet" href="manager-decisions.css?v=20261104-decisions">
+  <link rel="stylesheet" href="player-promises.css?v=20261104-club">
+  <link rel="stylesheet" href="club-training.css?v=20261104-club">
+  <link rel="stylesheet" href="competition-rules.css?v=20261104-club">
+  <link rel="stylesheet" href="club-management.css?v=20261104-club">
+  <link rel="stylesheet" href="cloud-sync.css?v=20261104-cloud">
 </head>
 
 <body>
@@ -84,6 +89,17 @@
             <div class="team-choice" id="team-choice"></div>
           </div>
         </div>
+        <details class="club-new-rules" id="new-career-rules">
+          <summary>Règlements de la nouvelle carrière</summary>
+          <p class="club-muted">Le format historique est sélectionné par défaut. Chaque choix reste fixé pendant la saison. Le championnat utilise le même profil dans les six ligues simulées.</p>
+          <div class="club-rules-pickers">
+            <label class="rules-picker" for="rules-new-championship">Championnats<select id="rules-new-championship"></select></label>
+            <label class="rules-picker" for="rules-new-tournament">Tournoi international<select id="rules-new-tournament"></select></label>
+          </div>
+          <p class="club-muted">Le guide de novembre 2026 propose 36 minutes nominales et des fenêtres de cartes adaptées. Ce format de jeu s’inspire du guide général et ne certifie pas les règles propres à chaque ligue.</p>
+          <p class="club-muted">« Saison 1 » désigne l’année de ta carrière. La date 2026 identifie la source du profil, qui reste enregistrée avec la carrière.</p>
+          <div id="rules-new-preview"></div>
+        </details>
       </div>
 
       <div style="text-align:center; margin-top:20px;">
@@ -125,6 +141,14 @@
         <div class="dashboard-grid">
           <div class="dashboard-main">
             <div class="panel hero-match-panel" id="next-match-panel"></div>
+            <details class="panel club-management" id="club-management">
+              <summary>Gestion du club</summary>
+              <div class="club-management-body">
+                <details id="club-training"><summary>Entraînement entre les matchs</summary><div id="club-training-content"></div></details>
+                <details id="club-promises"><summary>Promesses aux joueurs</summary><div id="club-promises-content"></div></details>
+                <details id="competition-rules"><summary>Règlements de la saison</summary><div id="competition-rules-content"></div></details>
+              </div>
+            </details>
             <details class="panel career-history-panel">
               <summary id="career-history-heading">Historique des rencontres</summary>
               <div id="career-match-history"></div>
@@ -799,6 +823,7 @@
         </div>
         <div id="notif-extra"></div>
         <p id="notif-body"></p>
+        <div id="notif-promise-preview" hidden></div>
         <div id="notif-actions" class="notif-actions"></div>
       </div>
     </div>
@@ -844,6 +869,7 @@
   <script src="data.js?v=20261028-roles"></script>
   <script src="player-photos.js"></script>
   <script src="matchengine-actions.js?v=20261028-roles"></script>
+  <script src="competition-rules.js?v=20261104-club"></script>
   <script src="engine.js?v=20261030-live-drag"></script>
   <script src="matchchoreo.js?v=20261028-roles"></script>
   <script src="opponent-report.js?v=20261104-insights"></script>
@@ -855,11 +881,16 @@
   <script src="recruitment-advisor.js?v=20261104-decisions"></script>
   <script src="player-progress.js?v=20261104-decisions"></script>
   <script src="bench-advisor.js?v=20261104-decisions"></script>
+  <script src="player-promises.js?v=20261104-club"></script>
+  <script src="club-training.js?v=20261104-club"></script>
   <script src="app.js?v=20261104-decisions"></script>
+  <script src="club-management.js?v=20261104-club"></script>
   <script src="career-tools.js?v=20261104-insights"></script>
   <script src="manager-tools.js?v=20261104-insights"></script>
   <script src="decision-tools.js?v=20261104-decisions"></script>
   <script src="interface.js?v=20261104-decisions"></script>
+  <script src="cloud-sync.js?v=20261104-cloud"></script>
+  <script src="cloud-tools.js?v=20261104-cloud"></script>
   <script src="pwa.js?v=20261104-pwa"></script>
 </body>
 

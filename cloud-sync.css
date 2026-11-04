@@ -1,0 +1,14 @@
+.cloud-panel p { color: #b0bdcc; line-height: 1.6; overflow-wrap: anywhere; }
+.cloud-panel .cloud-detail { font-size: .83rem; }
+.cloud-panel label { display: block; margin: 18px 0 8px; color: #edf2f7; font-weight: 600; }
+.cloud-panel input,.cloud-panel select { width: 100%; max-width: 100%; min-height: 44px; background: #101822; color: #edf2f7; border: 1px solid #3d5067; border-radius: 9px; padding: 10px 12px; font: inherit; font-size: 16px; }
+.cloud-panel input[readonly] { font-family: monospace; font-size: max(16px, .88rem); }
+.cloud-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0; }
+.cloud-actions button { white-space: normal; overflow-wrap: anywhere; min-height: 44px; }
+.cloud-panel hr { border: 0; border-top: 1px solid #304155; margin: 22px 0; }
+#cloud-status { color: #c0e8d7; min-height: 24px; }
+#cloud-join { margin-top: 12px; }
+#cloud-resolution { border: 1px solid #786340; border-radius: 10px; padding: 14px; margin-top: 14px; }
+.cloud-active-status { font-size: .78rem; color: #94a7ba; padding: 0 12px; overflow-wrap: anywhere; }
+.cloud-panel [hidden] { display: none !important; }
+@media (max-width: 560px) { .cloud-actions > button { flex: 1 1 100%; } }

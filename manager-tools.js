@@ -61,11 +61,13 @@ function writeCareerSave(slotId, entry) {
     if (slotId === STATE.currentSlotId && STATE.league) saveGame();
     else { const retried = writeCareerSave(slotId, entry); if (retried.ok) renderSavesList(); }
   });
+  if (result.ok && typeof queueCloudSave === "function") queueCloudSave(slotId);
   return result;
 }
 
 function removeCareerSave(slotId) {
   const result = getManagerStorage().remove(slotId);
+  if (result.ok && typeof forgetCloudCareer === "function") forgetCloudCareer(slotId);
   showCareerSaveResult(result, () => { if (deleteSaveSlot(slotId)) renderSavesList(); });
   return result;
 }

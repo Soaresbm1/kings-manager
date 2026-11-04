@@ -1,6 +1,23 @@
-# Kings Manager 7v7 — 1.5
+# Kings Manager 7v7 — 1.6
 
-Jeu de gestion de football en solo inspiré du format 7v7 de la Kings League : France, Brésil, Espagne, Italie, Allemagne et Mexique. Le jeu fonctionne entièrement dans le navigateur, avec des carrières sauvegardées localement et exportables en JSON.
+Jeu de gestion de football en solo inspiré du format 7v7 de la Kings League : France, Brésil, Espagne, Italie, Allemagne et Mexique. Les matchs et la gestion fonctionnent dans le navigateur, avec des carrières locales exportables en JSON et une synchronisation chiffrée facultative.
+
+## Nouveautés de la version 1.6
+
+- **Promesses suivies** : chaque accord affiche son objectif avant la réponse. Temps de jeu, repos, titularisation et rôle offensif sont évalués sur les rencontres effectivement validées. L’accord ne donne plus de bonus immédiat ; une promesse tenue donne +2 de forme, une promesse manquée −3, dans les limites habituelles. Les indisponibilités et départs sont pris en compte. Le suivi voyage dans les sauvegardes et reste borné à 12 000 caractères.
+- **Entraînement facultatif** : une séance par journée de championnat, avec sélection des joueurs, aperçu des effets et confirmation. La récupération donne +2 de forme. Technique et physique coûtent 2 de forme et donnent un point d’attribut après quatre séances du même type, avec recalcul selon la valorisation existante. Aucun entraînement automatique ni guérison artificielle.
+- **PC et mobile** : dans Mes carrières → Synchroniser PC et mobile, active une carrière puis saisis son code personnel sur l’autre appareil. Les données sont chiffrées avant l’envoi au stockage privé. Les versions concurrentes déclenchent un choix explicite ; télécharger une version crée une carrière distincte. Le jeu continue hors ligne, puis les sauvegardes locales vérifiées sont envoyées avec la connexion. L’installation seule n’active pas la synchronisation.
+- **Règlements épinglés** : les profils de championnat et de tournoi sont enregistrés par compétition et saison. Le format historique reste le défaut des anciennes et nouvelles carrières. Une adaptation du guide général Kings League vérifié le 4 novembre 2026 peut être choisie explicitement ; elle ne prétend pas certifier le règlement particulier de chaque ligue. Les choix pour la saison suivante ne changent pas les matchs en cours.
+
+Le code personnel donne accès à la carrière distante : garde-le privé. Il est mémorisé localement lors de l’appairage et exclu des exports JSON. Sans ce code, aucune récupération du coffre chiffré n’est possible. Un code correspond à une carrière ; déconnecter un appareil conserve les copies, supprimer la copie distante exige une confirmation et une révision encore à jour.
+
+### Déploiement du service facultatif
+
+`api/career-sync.js` utilise Node.js et `@vercel/blob`, avec un store **privé** connecté au projet Vercel. Le jeton `BLOB_READ_WRITE_TOKEN` reste une variable serveur ; aucune variable publique ni clé cloud ne doit être ajoutée au dépôt. Les espaces `production` et `preview` sont séparés. Le serveur local renvoie une indisponibilité explicite tant qu’un véritable stockage n’est pas configuré.
+
+Les écritures sont atomiques avec précondition ETag, et les lectures privées désactivent le cache. Les réponses API et le service worker excluent ces transferts du cache hors ligne. Le chiffrement AES-GCM emploie une clé dérivée par HKDF distincte de la capacité d’accès envoyée au serveur ; le serveur ne reçoit pas le secret maître. Les copies sont compressées lorsque le navigateur le permet, avec des limites de 4 Mio décompressés et 3 Mio pour la requête. Un limiteur en mémoire complète les protections Vercel sans constituer une limite distribuée. Une panne ou un quota distant ne remplace jamais la sauvegarde locale.
+
+Après une sauvegarde vérifiée, l’envoi attend 30 secondes sans nouvelle écriture. Le rechargement et le retour en ligne reprennent les envois depuis la carrière locale, sans dupliquer les grosses sauvegardes dans une seconde file. Les anciennes photos, sauvegardes locales et fichiers JSON continuent de fonctionner sans service distant.
 
 ## Nouveautés de la version 1.5
 
@@ -16,7 +33,7 @@ Les nouvelles aides restent disponibles hors ligne. Les périodes sans relevé s
 - **Jeu hors ligne** : après un premier chargement connecté et l’indication « Prêt hors ligne », création et reprise de carrière, tactiques, matchs, historique, sauvegardes et imports/exports restent disponibles. Le cœur du jeu, les polices et les blasons sont conservés localement. Les portraits consultés sont mis en cache dans une limite de 72 photos ; une photo absente garde le rendu de remplacement existant.
 - **Mises à jour différées** : chaque version possède une copie cohérente de ses fichiers, vérifiés par SHA-256 avant l’installation. Une version attendante ne recharge jamais une partie. L’application de la mise à jour se fait depuis l’accueil, après la fin des imports et des éventuelles sauvegardes en échec, avec les autres onglets fermés. Fermer toutes les fenêtres du jeu permet aussi la mise à jour au prochain lancement.
 
-Les carrières restent dans le stockage existant du navigateur, séparé du cache applicatif. L’installation ne synchronise pas plusieurs appareils ou navigateurs : exporter puis importer une carrière permet son transfert. Un navigateur peut libérer son cache sous pression de stockage ; l’application vérifie sa disponibilité et propose de le préparer de nouveau. Conserver un export de ses carrières reste possible sans connexion.
+Les carrières restent dans le stockage existant du navigateur, séparé du cache applicatif. L’installation seule ne synchronise pas plusieurs appareils ou navigateurs : la synchronisation facultative de la version 1.6 ou l’export/import permet leur transfert. Un navigateur peut libérer son cache sous pression de stockage ; l’application vérifie sa disponibilité et propose de le préparer de nouveau. Conserver un export de ses carrières reste possible sans connexion.
 
 Après toute modification d’un fichier précaché, exécuter `npm run pwa:build`, puis `npm run pwa:check`. La suite de tests vérifie aussi que l’inventaire est à jour. Les polices locales conservent leurs licences OFL dans `assets/fonts/` ; leurs sources et les scripts de génération des icônes sont documentés sur place.
 
@@ -26,7 +43,7 @@ Après toute modification d’un fichier précaché, exécuter `npm run pwa:buil
 - **Débrief tactique** : le résumé et les nouveaux rapports archivés présentent la chronologie des faits marquants, des formats Kings et des décisions humaines. Les statistiques sont relevées aux frontières de séquences et pendant l’avance rapide ; les fenêtres avant/après reposent uniquement sur ces relevés. Elles décrivent une évolution sans prouver un lien causal. Les anciens rapports et les matchs IA sans relevés conservent leurs faits réels, sans courbe inventée.
 - **Sauvegardes vérifiées** : la confirmation apparaît après écriture et relecture. Le point précédent de chaque carrière peut être restauré depuis Mes carrières après confirmation ; l’état remplacé devient le nouveau point de retour. Les erreurs de quota, de lecture ou de stockage restent visibles. Le nouvel essai sauvegarde la progression en mémoire ; l’export reste possible. Une progression non enregistrée est protégée à la sortie. Une importation refusée ne peut pas annoncer un succès.
 
-Les sauvegardes principales gardent leur format et leur clé existants. Un journal local séparé, compacté sans perte, conserve au maximum une révision précédente par carrière et permet de reconnaître une écriture interrompue ; une donnée corrompue n’est jamais remplacée automatiquement par une carrière vide. Les anciens journaux non compactés restent lisibles. Aucun compte ni service de synchronisation n’est ajouté.
+Les sauvegardes principales gardent leur format et leur clé existants. Un journal local séparé, compacté sans perte, conserve au maximum une révision précédente par carrière et permet de reconnaître une écriture interrompue ; une donnée corrompue n’est jamais remplacée automatiquement par une carrière vide. Les anciens journaux non compactés restent lisibles. La version 1.3 n’ajoutait pas encore de service de synchronisation.
 
 ## Nouveautés de la version 1.2
 

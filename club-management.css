@@ -1,0 +1,22 @@
+.club-management > summary { font-weight: 700; }
+.club-management-body { display: grid; gap: .75rem; padding-top: .9rem; min-width: 0; }
+.club-management-body > details { border: 1px solid var(--border, #343947); border-radius: .7rem; padding: .8rem; min-width: 0; }
+.club-management-body > details > summary { min-height: 28px; cursor: pointer; font-weight: 600; }
+.club-management-body > details > div { margin-top: .75rem; }
+.club-muted { color: var(--text-muted, #b1b6c4); font-size: .85rem; line-height: 1.55; overflow-wrap: anywhere; }
+.club-new-rules { margin-top: 1rem; }
+.club-new-rules > summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; }
+.club-rules-pickers, .club-rules-next { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem; }
+.club-rules-next { min-width: 0; padding: .8rem; border: 1px solid var(--border, #343947); border-radius: .7rem; }
+.club-rules-next legend { font-size: .9rem; padding-inline: .3rem; }
+.club-rules-next button { grid-column: 1 / -1; justify-self: start; min-height: 44px; max-width: 100%; white-space: normal; }
+#competition-rules-content, #rules-new-preview { display: grid; gap: 1.2rem; min-width: 0; }
+#notif-promise-preview { padding: .8rem; border: 1px solid var(--border, #343947); border-radius: .65rem; text-align: left; font-size: .85rem; line-height: 1.5; overflow-wrap: anywhere; }
+#notif-promise-preview p { margin-top: .45rem; }
+#notif-promise-preview[hidden] { display: none; }
+.rules-picker select, .club-rules-next button { touch-action: manipulation; }
+@media (max-width: 540px) {
+  .club-rules-pickers, .club-rules-next { grid-template-columns: minmax(0, 1fr); }
+  .club-management-body > details { padding: .7rem; }
+}
+@media (pointer: coarse) { .club-management-body > details > summary { min-height: 44px; } }

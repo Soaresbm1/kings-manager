@@ -287,6 +287,7 @@ function installSpecialScenario(run) {
       return events;
     }
     matchEngine = {
+      timing: { specialWindows: [[5,17],[23,36]], presidentDeadline: 35 },
       isSpecialActionWindowOpen: minute => minute >= 5 && minute <= 17,
       isCardUsed: () => cardUsed, isPresidentPenaltyUsed: () => presidentUsed,
       isMatchDecided: () => decided,

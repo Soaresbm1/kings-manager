@@ -1,0 +1,14 @@
+/* Le règlement reste lisible sans mouvement : décision occasionnelle, valeurs utiles. */
+.rules-summary { display: grid; gap: .75rem; min-width: 0; }
+.rules-summary__header { display: flex; align-items: flex-start; justify-content: space-between; gap: .75rem; flex-wrap: wrap; }
+.rules-summary__title { margin: 0; overflow-wrap: anywhere; }
+.rules-summary__status { border: 1px solid var(--border, #343947); border-radius: 999px; padding: .2rem .55rem; font-size: .75rem; white-space: nowrap; }
+.rules-summary__metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(7.5rem, 1fr)); gap: .5rem; margin: 0; }
+.rules-summary__metrics > div { padding: .65rem .75rem; border: 1px solid var(--border, #343947); border-radius: .65rem; min-width: 0; }
+.rules-summary__metrics dt { color: var(--text-muted, #b1b6c4); font-size: .75rem; }
+.rules-summary__metrics dd { margin: .25rem 0 0; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.rules-summary__notes { margin: 0; padding-inline-start: 1.1rem; color: var(--text-muted, #b1b6c4); font-size: .8rem; line-height: 1.55; }
+.rules-summary__source { font-size: .8rem; overflow-wrap: anywhere; }
+.rules-summary__source a { text-underline-offset: .2em; }
+.rules-picker { display: grid; gap: .45rem; min-width: 0; }
+.rules-picker select { min-height: 44px; width: 100%; max-width: 100%; font-size: 1rem; }

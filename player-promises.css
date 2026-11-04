@@ -1,0 +1,16 @@
+.player-promises { min-width: 0; }
+.player-promises p, .player-promises h4 { overflow-wrap: anywhere; line-height: 1.65; }
+.player-promises p + p { margin-top: 7px; }
+.promise-muted { color: #b9c9bc; font-size: .8rem; line-height: 1.65; }
+.promise-active-list, .promise-history-list { list-style: none; display: grid; gap: 10px; margin-top: 12px; padding: 0; }
+.promise-card { min-width: 0; border: 1px solid #46553e; border-radius: 10px; padding: 12px; background: #151d16; }
+.promise-card h4 { color: #f1df98; margin-bottom: 7px; }
+.promise-status { font-size: .82rem; font-weight: 600; color: #f1df98; }
+.promise-kept .promise-status { color: #bce7c0; }
+.promise-broken .promise-status { color: #ffd0c4; }
+.promise-cancelled .promise-status { color: #c5d0c8; }
+.promise-card button { min-height: 44px; margin-top: 10px; max-width: 100%; white-space: normal; }
+.promise-history { margin-top: 14px; }
+.promise-history > summary { min-height: 44px; cursor: pointer; color: var(--accent); }
+.promise-history-list { max-height: 360px; overflow-y: auto; overscroll-behavior: contain; padding-right: 3px; }
+#notif-promise-preview { margin-top: 12px; padding: 12px; border: 1px solid #46553e; border-radius: 10px; font-size: .82rem; line-height: 1.65; overflow-wrap: anywhere; }

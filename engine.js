@@ -111,14 +111,24 @@ function positionFitFactor(team, setup, playerId) {
 // dribble, tir, tacle...) consommée par matchchoreo.js/app.js pour animer le match à l'écran.
 // simulateMinute(minute) sans option (utilisée par simulateMatch/simulateAIMatch, matchs IA en
 // arrière-plan) ne construit aucune séquence : comportement et coût strictement inchangés.
-function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
+function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup, competitionRules) {
   [[homeTeam, homeSetup], [awayTeam, awaySetup]].forEach(([team, setup]) => {
     if (!Object.prototype.hasOwnProperty.call(TEAM_STYLES, setup.teamStyle)) setup.teamStyle = getTeamStyle(team).key;
     setup.playerRoles = setup.autoCoach && !setup.playerRoles
       ? createAiPlayerRoles(team, setup) : normalizePlayerRoles(team, setup);
   });
-  const TOTAL_MINUTES = 40;
-  const HALF_TIME = 20;
+  // Facultatif pour les imports historiques du moteur. Sans module de règlement,
+  // on conserve exactement le format 1.5, sans consommer de hasard supplémentaire.
+  const rules = typeof CompetitionRules !== "undefined"
+    ? CompetitionRules.normalize(competitionRules)
+    : { schema: 1, profileId: "legacy-v1.5", revision: 1, competition: "championship", season: 1,
+      config: { totalMinutes: 40, halfTime: 20, escalierEndMinute: 5, doubleGoalStartMinute: 17,
+        diceStartMinute: 21, diceEndMinute: 23, matchballStartMinute: 36,
+        specialWindows: [[5, 17], [23, 36]], presidentDeadline: 35,
+        cardDuration: 4, starDeadline: 38, yellowDuration: 2, redDuration: 5 } };
+  const timing = rules.config;
+  const TOTAL_MINUTES = timing.totalMinutes;
+  const HALF_TIME = timing.halfTime;
   const homeBonus = 1.08;
   const initialAiPlans = {
     home: { attackPlan: homeSetup.attackPlan, defensePlan: homeSetup.defensePlan, mentality: homeSetup.mentality || "balanced" },
@@ -131,16 +141,16 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
   const EARLY_PHASE_END_MINUTE = 7;
   const EARLY_PHASE_GOAL_BOOST = 1.5;
 
-  // --- Règlement Kings League : repères temporels officiels ---
-  const ESCALIER_END_MINUTE = 5;        // 0'-5' : montée en puissance jusqu'au 7v7
-  const DOUBLE_GOAL_START_MINUTE = 17;  // 17'-20' : tous les buts comptent double
-  const DICE_START_MINUTE = 21;         // 20'-23' (reprise de la 2e mi-temps) : le Dé Géant
-  const DICE_END_MINUTE = 23;
-  const MATCHBALL_START_MINUTE = 36;    // 36'+ : Matchball, escalier inversé jusqu'au 1v1
+  // --- Copie du règlement épinglé à la compétition/saison ---
+  const ESCALIER_END_MINUTE = timing.escalierEndMinute;
+  const DOUBLE_GOAL_START_MINUTE = timing.doubleGoalStartMinute;
+  const DICE_START_MINUTE = timing.diceStartMinute;
+  const DICE_END_MINUTE = timing.diceEndMinute;
+  const MATCHBALL_START_MINUTE = timing.matchballStartMinute;
   // Fenêtres d'activation des Cartes Secrètes / Penalty du Président
-  const SPECIAL_WINDOW_1 = [5, 17];
-  const SPECIAL_WINDOW_2 = [23, 36];
-  const PRESIDENT_PENALTY_DEADLINE = 35; // doit être activé avant 35:59 (donc <= 35)
+  const SPECIAL_WINDOW_1 = timing.specialWindows[0];
+  const SPECIAL_WINDOW_2 = timing.specialWindows[1];
+  const PRESIDENT_PENALTY_DEADLINE = timing.presidentDeadline;
 
   const events = [];
   let homeGoals = 0, awayGoals = 0;
@@ -329,7 +339,8 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
       return Math.max(1, 6 - (minute - (MATCHBALL_START_MINUTE - 1)));
     }
     // Escalier de départ : 1v1 au coup d'envoi, 7v7 atteint à la 5e minute.
-    let cap = Math.min(6, minute + 1);
+    const escalierMinute = ESCALIER_END_MINUTE === 5 ? minute : Math.floor(minute * 5 / ESCALIER_END_MINUTE);
+    let cap = Math.min(6, escalierMinute + 1);
     if (minute >= DICE_START_MINUTE && minute <= DICE_END_MINUTE) {
       cap = Math.min(cap, ensureDiceRolled());
     }
@@ -387,8 +398,8 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
   // (5-17 puis 23-35, doit être déclenché avant 35:59 — interdit pendant escalier/dé/Matchball).
   function isSpecialActionWindowOpen(minute, kind) {
     if (isMatchDecided()) return false;
-    const deadline = kind === "president" ? PRESIDENT_PENALTY_DEADLINE : SPECIAL_WINDOW_2[1];
-    return isInWindow(minute, SPECIAL_WINDOW_1) || isInWindow(minute, [SPECIAL_WINDOW_2[0], deadline]);
+    return [SPECIAL_WINDOW_1, SPECIAL_WINDOW_2].some(([start, end]) =>
+      isInWindow(minute, [start, kind === "president" ? Math.min(end, PRESIDENT_PENALTY_DEADLINE) : end]));
   }
 
   function isMatchDecided() { return matchballDecided; }
@@ -455,7 +466,7 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
     if (minute <= cs.doubleUntil) {
       extra = 1;
       tag = " (BUT DOUBLE — Carte But Double !)";
-    } else if (scorerId && cs.starPlayerId === scorerId && !cs.starUsed && minute <= 38) {
+    } else if (scorerId && cs.starPlayerId === scorerId && !cs.starUsed && minute <= timing.starDeadline) {
       extra = 1;
       cs.starUsed = true;
       cs.starPlayerId = null;
@@ -716,15 +727,15 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
 
     switch (key) {
       case "doubleGoal": {
-        cardState[side].doubleUntil = minute + 4;
-        const ev = { minute, type: "phase", text: `🟡 ${team.name} active la Carte But Double ! Pendant 4 minutes, chaque but marqué comptera double.` };
+        cardState[side].doubleUntil = minute + timing.cardDuration;
+        const ev = { minute, type: "phase", text: `🟡 ${team.name} active la Carte But Double ! Pendant ${timing.cardDuration} minutes, chaque but marqué comptera double.` };
         evts.push(ev); announce(ev);
         break;
       }
       case "sanction": {
-        cardState[opp].sanctionUntil = minute + 4;
+        cardState[opp].sanctionUntil = minute + timing.cardDuration;
         const targetName = options.targetName || "un joueur adverse";
-        const ev = { minute, type: "phase", text: `🔴 ${team.name} active la Carte Sanction sur ${targetName} ! ${oppTeam.name} joue à 6 contre 7 pendant 4 minutes.` };
+        const ev = { minute, type: "phase", text: `🔴 ${team.name} active la Carte Sanction sur ${targetName} ! ${oppTeam.name} joue à 6 contre 7 pendant ${timing.cardDuration} minutes.` };
         evts.push(ev); announce(ev);
         break;
       }
@@ -775,7 +786,7 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
         if (p) {
           cardState[side].starPlayerId = p.id;
           cardState[side].starUsed = false;
-          const ev = { minute, type: "phase", text: `⭐ ${team.name} active la Carte Joueur Étoile sur ${p.name} ! Son prochain but avant la 38e minute comptera double.` };
+          const ev = { minute, type: "phase", text: `⭐ ${team.name} active la Carte Joueur Étoile sur ${p.name} ! Son prochain but avant la ${timing.starDeadline}e minute comptera double.` };
           evts.push(ev); announce(ev);
         }
         break;
@@ -838,10 +849,10 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
         if (seq) seq.push(...(shootoutEvts.sequence || []));
       }
     } else {
-      cardSanctions[side].yellow.push({ playerId: victim.id, until: minute + 2 });
+      cardSanctions[side].yellow.push({ playerId: victim.id, until: minute + timing.yellowDuration });
       const ev = {
         minute, type: "yellow", team: teamRef.name, side, playerId: victim.id,
-        text: `${minute}' — 🟨 Carton jaune pour ${victim.name} (${teamRef.name}) : exclu 2 minutes, ${teamRef.name} joue en infériorité numérique !`
+        text: `${minute}' — 🟨 Carton jaune pour ${victim.name} (${teamRef.name}) : exclu ${timing.yellowDuration} minutes, ${teamRef.name} joue en infériorité numérique !`
       };
       minuteEvents.push(ev);
       if (seq) {
@@ -1126,7 +1137,7 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
       const count = ensureDiceRolled();
       const ev = {
         minute, type: "phase",
-        text: `🎲 LE DÉ GÉANT tombe sur ${count} ! ${count} joueur${count > 1 ? "s" : ""} de champ et un gardien par équipe (${count + 1}v${count + 1}) jusqu'à la 23e minute !`
+        text: `🎲 LE DÉ GÉANT tombe sur ${count} ! ${count} joueur${count > 1 ? "s" : ""} de champ et un gardien par équipe (${count + 1}v${count + 1}) jusqu'à la ${DICE_END_MINUTE}e minute !`
       };
       minuteEvents.push(ev);
       if (withSequence) announce(ev);
@@ -1260,7 +1271,7 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
           if (withSequence) sequence.push(...(penaltyEvts.sequence || []));
         } else {
           // 5 minutes à un de moins, puis remplacé par le banc (retour à l'effectif complet).
-          cardSanctions[side].redActive.push({ playerId: victim.id, pos: victim.pos, until: minute + 5 });
+          cardSanctions[side].redActive.push({ playerId: victim.id, pos: victim.pos, until: minute + timing.redDuration });
         }
       }
     }
@@ -1517,6 +1528,8 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
   }
 
   return {
+    rules,
+    timing,
     totalMinutes: TOTAL_MINUTES,
     halfTime: HALF_TIME,
     simulateMinute,
@@ -1549,6 +1562,9 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
     // seul ordre de priorité suffit pour toute la montée/descente) d'un changement ponctuel
     // (Dé Géant) qui appelle une sélection à effectif fixe.
     ESCALIER_END_MINUTE,
+    DOUBLE_GOAL_START_MINUTE,
+    DICE_START_MINUTE,
+    DICE_END_MINUTE,
     MATCHBALL_START_MINUTE,
     // Joueurs de champ disponibles (hors GK, hors suspendus) pour le côté donné : la base dans
     // laquelle l'utilisateur choisit manuellement sa composition à chaque changement de phase.
@@ -1597,8 +1613,8 @@ function createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup) {
 // --- Simulation instantanée d'un match complet (utilisé pour les matchs IA) ---
 const MAX_SIM_MATCH_MINUTE = 200; // garde-fou : le Matchball décide normalement bien avant
 
-function simulateMatch(homeTeam, homeSetup, awayTeam, awaySetup) {
-  const engine = createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup);
+function simulateMatch(homeTeam, homeSetup, awayTeam, awaySetup, competitionRules) {
+  const engine = createMatchEngine(homeTeam, homeSetup, awayTeam, awaySetup, competitionRules);
   // Le Matchball (dès la 36e minute) garantit une équipe gagnante : on simule en prolongation
   // au-delà du temps réglementaire si besoin, jusqu'au but décisif.
   for (let minute = 1; minute <= engine.totalMinutes || (!engine.isMatchDecided() && minute <= MAX_SIM_MATCH_MINUTE); minute++) {
@@ -1912,7 +1928,7 @@ function chooseAiPlans(teamStrength, oppStrength, team) {
 // --- IA: simulation rapide d'un match entre IA (pour les autres équipes de la journée) ---
 // Chaque équipe choisit sa meilleure formation possible puis un plan tactique adapté
 // au rapport de force avec son adversaire (au lieu d'un même schéma figé pour tous).
-function simulateAIMatch(homeTeam, awayTeam) {
+function simulateAIMatch(homeTeam, awayTeam, competitionRules) {
   const homeChoice = chooseAiFormation(homeTeam);
   const awayChoice = chooseAiFormation(awayTeam);
   const homeLineup = homeChoice.assignments.filter(Boolean);
@@ -1928,7 +1944,7 @@ function simulateAIMatch(homeTeam, awayTeam) {
   // le moteur d'actions ne pouvait jamais faire progresser une équipe IA jusqu'au tiers offensif.
   const homeSetup = { lineup: homeLineup, assignments: homeChoice.assignments, formation: homeChoice.formation, attackPlan: homePlans.attackPlan, defensePlan: homePlans.defensePlan, mentality: homePlans.mentality, teamStyle: homePlans.teamStyle, autoCoach: true };
   const awaySetup = { lineup: awayLineup, assignments: awayChoice.assignments, formation: awayChoice.formation, attackPlan: awayPlans.attackPlan, defensePlan: awayPlans.defensePlan, mentality: awayPlans.mentality, teamStyle: awayPlans.teamStyle, autoCoach: true };
-  const result = simulateMatch(homeTeam, homeSetup, awayTeam, awaySetup);
+  const result = simulateMatch(homeTeam, homeSetup, awayTeam, awaySetup, competitionRules);
   applyMatchPlayerStats(homeTeam, homeSetup, result);
   applyMatchPlayerStats(awayTeam, awaySetup, result);
   updateFormAfterMatch(homeTeam, homeSetup, result.homeGoals, result.awayGoals, result.ratings);
