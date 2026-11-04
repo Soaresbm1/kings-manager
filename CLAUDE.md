@@ -339,3 +339,14 @@ GitHub lance les simulations avant le navigateur et un contrôle quotidien du mo
 `npm run dev` sert le dépôt sur localhost:4173, `dev:assets` autorise explicitement
 le repli vers les images de production pour une copie partielle de développement.
 
+Version1.4 : `pwa.js` ajoute installation et état hors ligne sans écrire les carrières.
+Le manifeste et les icônes permettent le lancement autonome. `service-worker.js`
+précache le shell, les polices locales et les blasons à partir de `pwa-assets.js` ;
+les SHA-256 vérifient une version complète avant son activation. Les anciennes
+pages gardent leur version jusqu’à la fermeture ou la mise à jour explicite depuis
+l’accueil, sans autre onglet, partie active, import ou sauvegarde en attente.
+Après chaque modification d’un fichier précaché : `npm run pwa:build`, puis
+`npm run pwa:check` (vérifié aussi par `tests-pwa-worker.js`). Ne jamais activer
+automatiquement un worker en attente ni effacer le localStorage pour une mise à jour.
+La CI répartit les tests navigateur en trois jobs obligatoires, un par moteur.
+

@@ -1,11 +1,13 @@
 {
   "name": "kings-manager",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "Jeu de gestion de football 7v7 inspiré de la Kings League, avec six ligues et simulation tactique.",
   "main": "app.js",
   "scripts": {
     "dev": "node scripts/serve.cjs",
     "dev:assets": "node scripts/serve.cjs --remote-assets",
+    "pwa:build": "node scripts/build-pwa-assets.cjs",
+    "pwa:check": "node scripts/build-pwa-assets.cjs --check",
     "test": "node scripts/test.cjs",
     "test:matrix": "node scripts/test.cjs --matrix",
     "test:e2e": "playwright test"

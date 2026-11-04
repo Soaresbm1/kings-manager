@@ -6,9 +6,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
   <meta name="theme-color" content="#111512">
   <meta name="color-scheme" content="dark">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Kings Manager">
   <title>Kings Manager 7v7</title>
   <link rel="icon" href="images/favicon.png">
-  <link rel="stylesheet" href="style.css?v=20261102-interface">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/pwa/apple-touch-icon.png">
+  <link rel="stylesheet" href="assets/fonts/fonts.css?v=20261104-pwa">
+  <link rel="stylesheet" href="style.css?v=20261104-pwa">
   <link rel="stylesheet" href="interface.css?v=20261102-interface">
   <link rel="stylesheet" href="career-history.css?v=20261104-career">
   <link rel="stylesheet" href="tactic-presets.css?v=20261104-career">
@@ -18,6 +25,7 @@
   <link rel="stylesheet" href="tactical-debrief.css?v=20261104-insights">
   <link rel="stylesheet" href="career-storage.css?v=20261104-insights">
   <link rel="stylesheet" href="manager-tools.css?v=20261104-insights">
+  <link rel="stylesheet" href="pwa.css?v=20261104-pwa">
 </head>
 
 <body>
@@ -39,6 +47,28 @@
           autre PC pour continuer ta carrière ici.</p>
         <input type="file" id="import-save-input" accept=".json" style="color:#eee;">
         <p id="import-save-feedback" style="margin-top:8px; font-size:0.85em; font-weight:600;"></p>
+      </details>
+
+      <details class="panel pwa-panel" id="pwa-panel">
+        <summary>Installation et hors ligne <span class="pwa-state-label" id="pwa-state-label" aria-hidden="true">Préparation…</span></summary>
+        <p id="pwa-status" role="status" aria-live="polite" data-pwa-ready="false">Préparation du jeu pour le mode hors ligne…</p>
+        <p class="pwa-detail">Après la préparation, le jeu, les matchs et les sauvegardes fonctionnent sans connexion. Une photo absente est remplacée par les initiales du joueur.</p>
+        <p class="pwa-detail">Tes carrières restent sur cet appareil et dans ce navigateur. Pour les transférer, exporte une copie puis importe-la dans l’autre navigateur ou appareil.</p>
+        <p id="pwa-update-status" role="status" aria-live="polite" hidden></p>
+        <div class="pwa-actions">
+          <button type="button" class="primary" id="pwa-install" hidden>Installer Kings Manager</button>
+          <button type="button" class="secondary" id="pwa-retry" hidden>Réessayer la préparation</button>
+          <button type="button" class="secondary" id="pwa-update" hidden>Appliquer la mise à jour</button>
+        </div>
+        <p id="pwa-install-feedback" class="pwa-detail" role="status" aria-live="polite"></p>
+        <details class="pwa-install-help" id="pwa-install-help">
+          <summary>Comment installer le jeu ?</summary>
+          <ol>
+            <li>Sur Chrome ou Edge, utilise le bouton Installer lorsqu’il apparaît, ou l’option d’installation dans le menu du navigateur.</li>
+            <li>Sur iPhone ou iPad, ouvre le jeu dans Safari, puis choisis Partager → Sur l’écran d’accueil. Active « Ouvrir comme app » si cette option apparaît.</li>
+            <li>Ouvre le jeu une première fois avec une connexion et attends l’indication « Prêt hors ligne » avant de partir sans réseau.</li>
+          </ol>
+        </details>
       </details>
 
       <div class="panel team-select-panel">
@@ -808,10 +838,11 @@
   <script src="career-history.js?v=20261104-insights"></script>
   <script src="tactic-presets.js?v=20261104-career"></script>
   <script src="kings-preparation.js?v=20261104-career"></script>
-  <script src="app.js?v=20261104-insights"></script>
+  <script src="app.js?v=20261104-pwa"></script>
   <script src="career-tools.js?v=20261104-insights"></script>
   <script src="manager-tools.js?v=20261104-insights"></script>
   <script src="interface.js?v=20261104-career"></script>
+  <script src="pwa.js?v=20261104-pwa"></script>
 </body>
 
 </html>

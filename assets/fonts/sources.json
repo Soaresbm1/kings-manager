@@ -1,0 +1,131 @@
+{
+  "stylesheet": "https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Rajdhani:wght@500;600;700&display=swap",
+  "fonts": [
+    {
+      "family": "Poppins",
+      "weight": 400,
+      "subset": "latin-ext",
+      "filename": "poppins-400-latin-ext.woff2",
+      "source": "https://fonts.gstatic.com/s/poppins/v24/pxiEyp8kv8JHgFVrJJnecmNE.woff2",
+      "bytes": 5644,
+      "sha256": "0b1fcab42c18b69bcfe9ce4799fcbff5af1621c53ffcfdc4723c6f5ec4ee3ffb"
+    },
+    {
+      "family": "Poppins",
+      "weight": 400,
+      "subset": "latin",
+      "filename": "poppins-400-latin.woff2",
+      "source": "https://fonts.gstatic.com/s/poppins/v24/pxiEyp8kv8JHgFVrJJfecg.woff2",
+      "bytes": 7884,
+      "sha256": "7d93459d86585bfcdbb7e0376056226adb25821ee54b96236fe2123e9560929f"
+    },
+    {
+      "family": "Poppins",
+      "weight": 600,
+      "subset": "latin-ext",
+      "filename": "poppins-600-latin-ext.woff2",
+      "source": "https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1JlFc-K.woff2",
+      "bytes": 5524,
+      "sha256": "bb1f2d582e7fba586ab70c91ef062d3becaf78b887654953863521b73665d171"
+    },
+    {
+      "family": "Poppins",
+      "weight": 600,
+      "subset": "latin",
+      "filename": "poppins-600-latin.woff2",
+      "source": "https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2",
+      "bytes": 8000,
+      "sha256": "f4e80d9dfd374d02989b87a27b5ed4cb78fbb177c27f1478e9a8b0afb7513149"
+    },
+    {
+      "family": "Poppins",
+      "weight": 700,
+      "subset": "latin-ext",
+      "filename": "poppins-700-latin-ext.woff2",
+      "source": "https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1JlFc-K.woff2",
+      "bytes": 5432,
+      "sha256": "ccfd87f69ef00d811da3d06488cec4e79ec99d289cfbcbe4be42031cecae775a"
+    },
+    {
+      "family": "Poppins",
+      "weight": 700,
+      "subset": "latin",
+      "filename": "poppins-700-latin.woff2",
+      "source": "https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2",
+      "bytes": 7816,
+      "sha256": "9338e65fc077355c7a87ae0d64cc101e23b9bf8ad78ae65f0f319c857311b526"
+    },
+    {
+      "family": "Poppins",
+      "weight": 800,
+      "subset": "latin-ext",
+      "filename": "poppins-800-latin-ext.woff2",
+      "source": "https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLDD4Z1JlFc-K.woff2",
+      "bytes": 5492,
+      "sha256": "a72eccfa6cfa9c26b4004e98dbf8592ea0fb3704b2fc749e8bd60a996e2e5a7c"
+    },
+    {
+      "family": "Poppins",
+      "weight": 800,
+      "subset": "latin",
+      "filename": "poppins-800-latin.woff2",
+      "source": "https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLDD4Z1xlFQ.woff2",
+      "bytes": 7824,
+      "sha256": "60bf0aba6526436f3930c58c12047687fbb6bff4dd180cce4613458ed3439ea2"
+    },
+    {
+      "family": "Rajdhani",
+      "weight": 500,
+      "subset": "latin-ext",
+      "filename": "rajdhani-500-latin-ext.woff2",
+      "source": "https://fonts.gstatic.com/s/rajdhani/v17/LDI2apCSOBg7S-QT7pb0EPOleef2kg.woff2",
+      "bytes": 12380,
+      "sha256": "16fd373954f7569ad294444531caa2e7e5ffd1a6798c6df3f56b9faf691190c2"
+    },
+    {
+      "family": "Rajdhani",
+      "weight": 500,
+      "subset": "latin",
+      "filename": "rajdhani-500-latin.woff2",
+      "source": "https://fonts.gstatic.com/s/rajdhani/v17/LDI2apCSOBg7S-QT7pb0EPOreec.woff2",
+      "bytes": 15084,
+      "sha256": "23afdb9b5b89b878fab04d80cc30bf41bb4f3f7e8be88e5f16a7cc7671cdb2dc"
+    },
+    {
+      "family": "Rajdhani",
+      "weight": 600,
+      "subset": "latin-ext",
+      "filename": "rajdhani-600-latin-ext.woff2",
+      "source": "https://fonts.gstatic.com/s/rajdhani/v17/LDI2apCSOBg7S-QT7pbYF_Oleef2kg.woff2",
+      "bytes": 13124,
+      "sha256": "f57c2b379ba92460d25730ef1f7b8745afb4eadb401d652900f2059f8ee2f2b6"
+    },
+    {
+      "family": "Rajdhani",
+      "weight": 600,
+      "subset": "latin",
+      "filename": "rajdhani-600-latin.woff2",
+      "source": "https://fonts.gstatic.com/s/rajdhani/v17/LDI2apCSOBg7S-QT7pbYF_Oreec.woff2",
+      "bytes": 15732,
+      "sha256": "433a7007e4747a02a790167a6efa2625855f013970ba49b9b739a5d3db8b2601"
+    },
+    {
+      "family": "Rajdhani",
+      "weight": 700,
+      "subset": "latin-ext",
+      "filename": "rajdhani-700-latin-ext.woff2",
+      "source": "https://fonts.gstatic.com/s/rajdhani/v17/LDI2apCSOBg7S-QT7pa8FvOleef2kg.woff2",
+      "bytes": 12964,
+      "sha256": "c6b9df58743ccca1236e9521720b135138309bc4149d5d027a9bd10183cc8ed5"
+    },
+    {
+      "family": "Rajdhani",
+      "weight": 700,
+      "subset": "latin",
+      "filename": "rajdhani-700-latin.woff2",
+      "source": "https://fonts.gstatic.com/s/rajdhani/v17/LDI2apCSOBg7S-QT7pa8FvOreec.woff2",
+      "bytes": 15688,
+      "sha256": "5b7e4a6f97163c2636724d4de90304fc895653dcfe64c67a7a22f26331ca5c5f"
+    }
+  ]
+}

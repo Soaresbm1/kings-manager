@@ -33,11 +33,15 @@ jobs:
         run: npm run test:matrix
 
   navigateur:
-    name: Parcours navigateur
+    name: Parcours navigateur (${{ matrix.browser }})
     needs: simulation
     if: github.event_name != 'schedule'
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox, webkit]
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
@@ -49,13 +53,13 @@ jobs:
       - name: Installer les dépendances verrouillées
         run: npm ci --ignore-scripts
       - name: Installer les navigateurs de test
-        run: npx playwright install --with-deps chromium firefox webkit
+        run: npx playwright install --with-deps ${{ matrix.browser }}
       - name: Tester Kings Manager
-        run: npm run test:e2e
+        run: npm run test:e2e -- --project=${{ matrix.browser }}
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: failure()
         with:
-          name: playwright-report
+          name: playwright-report-${{ matrix.browser }}
           path: |
             playwright-report/
             test-results/

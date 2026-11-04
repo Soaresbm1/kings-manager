@@ -1,0 +1,21 @@
+.pwa-panel summary { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; cursor: pointer; min-height: 44px; }
+.pwa-panel summary::before { content: "▸"; color: var(--accent); }
+.pwa-panel[open] summary::before { content: "▾"; }
+.pwa-panel summary::marker { content: ""; }
+.pwa-panel summary::-webkit-details-marker { display: none; }
+.pwa-state-label { margin-left: auto; color: #b9c9bc; font-size: 0.75rem; font-weight: 400; }
+.pwa-panel p { margin-top: 12px; line-height: 1.65; overflow-wrap: anywhere; }
+.pwa-panel .pwa-detail { color: #b9c9bc; font-size: 0.85rem; }
+.pwa-panel .pwa-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.pwa-panel button { min-height: 44px; max-width: 100%; white-space: normal; }
+.pwa-panel [hidden] { display: none !important; }
+.pwa-panel [data-pwa-ready="true"] { color: #c9e5c7; }
+.pwa-panel .pwa-install-help { margin-top: 12px; }
+.pwa-install-help summary { font-size: 0.85rem; color: var(--accent); }
+.pwa-panel .pwa-install-help ol { padding-left: 22px; margin-top: 8px; font-size: 0.85rem; line-height: 1.65; }
+.pwa-panel .pwa-install-help li + li { margin-top: 6px; }
+@media (max-width: 480px) {
+  .pwa-panel summary { gap: 8px; }
+  .pwa-state-label { font-size: 0.7rem; }
+  .pwa-panel .pwa-actions > button { flex: 1 1 140px; }
+}

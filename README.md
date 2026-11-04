@@ -1,6 +1,16 @@
-# Kings Manager 7v7 — 1.3
+# Kings Manager 7v7 — 1.4
 
 Jeu de gestion de football en solo inspiré du format 7v7 de la Kings League : France, Brésil, Espagne, Italie, Allemagne et Mexique. Le jeu fonctionne entièrement dans le navigateur, avec des carrières sauvegardées localement et exportables en JSON.
+
+## Nouveautés de la version 1.4
+
+- **Application installable** : manifeste, icônes adaptées à l’écran d’accueil et lancement autonome. Le panneau « Installation et hors ligne » propose le bouton d’installation quand le navigateur le permet, ainsi que les instructions Chrome, Edge et Safari.
+- **Jeu hors ligne** : après un premier chargement connecté et l’indication « Prêt hors ligne », création et reprise de carrière, tactiques, matchs, historique, sauvegardes et imports/exports restent disponibles. Le cœur du jeu, les polices et les blasons sont conservés localement. Les portraits consultés sont mis en cache dans une limite de 72 photos ; une photo absente garde le rendu de remplacement existant.
+- **Mises à jour différées** : chaque version possède une copie cohérente de ses fichiers, vérifiés par SHA-256 avant l’installation. Une version attendante ne recharge jamais une partie. L’application de la mise à jour se fait depuis l’accueil, après la fin des imports et des éventuelles sauvegardes en échec, avec les autres onglets fermés. Fermer toutes les fenêtres du jeu permet aussi la mise à jour au prochain lancement.
+
+Les carrières restent dans le stockage existant du navigateur, séparé du cache applicatif. L’installation ne synchronise pas plusieurs appareils ou navigateurs : exporter puis importer une carrière permet son transfert. Un navigateur peut libérer son cache sous pression de stockage ; l’application vérifie sa disponibilité et propose de le préparer de nouveau. Conserver un export de ses carrières reste possible sans connexion.
+
+Après toute modification d’un fichier précaché, exécuter `npm run pwa:build`, puis `npm run pwa:check`. La suite de tests vérifie aussi que l’inventaire est à jour. Les polices locales conservent leurs licences OFL dans `assets/fonts/` ; leurs sources et les scripts de génération des icônes sont documentés sur place.
 
 ## Nouveautés de la version 1.3
 

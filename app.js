@@ -308,6 +308,8 @@ function exportSaveSlot(slotId) {
 function importSaveFile(file) {
   const feedback = document.getElementById("import-save-feedback");
   const reader = new FileReader();
+  feedback.dataset.importing = "true";
+  reader.addEventListener("loadend", () => { delete feedback.dataset.importing; });
   reader.onload = () => {
     delete feedback.dataset.saveError;
     try {
