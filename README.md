@@ -1,6 +1,14 @@
-# Kings Manager 7v7 — 1.2
+# Kings Manager 7v7 — 1.3
 
 Jeu de gestion de football en solo inspiré du format 7v7 de la Kings League : France, Brésil, Espagne, Italie, Allemagne et Mexique. Le jeu fonctionne entièrement dans le navigateur, avec des carrières sauvegardées localement et exportables en JSON.
+
+## Nouveautés de la version 1.3
+
+- **Rapport adverse** : les cinq derniers résultats réellement joués, les séances de tirs au but, les buteurs de la saison, les absences et la comparaison des lignes sont disponibles dans la préparation du match. En tournoi, les résultats proviennent de la ligue de l’adversaire. Les données absentes restent signalées ; aucune composition IA n’est annoncée comme certaine.
+- **Débrief tactique** : le résumé et les nouveaux rapports archivés présentent la chronologie des faits marquants, des formats Kings et des décisions humaines. Les statistiques sont relevées aux frontières de séquences et pendant l’avance rapide ; les fenêtres avant/après reposent uniquement sur ces relevés. Elles décrivent une évolution sans prouver un lien causal. Les anciens rapports et les matchs IA sans relevés conservent leurs faits réels, sans courbe inventée.
+- **Sauvegardes vérifiées** : la confirmation apparaît après écriture et relecture. Le point précédent de chaque carrière peut être restauré depuis Mes carrières après confirmation ; l’état remplacé devient le nouveau point de retour. Les erreurs de quota, de lecture ou de stockage restent visibles. Le nouvel essai sauvegarde la progression en mémoire ; l’export reste possible. Une progression non enregistrée est protégée à la sortie. Une importation refusée ne peut pas annoncer un succès.
+
+Les sauvegardes principales gardent leur format et leur clé existants. Un journal local séparé, compacté sans perte, conserve au maximum une révision précédente par carrière et permet de reconnaître une écriture interrompue ; une donnée corrompue n’est jamais remplacée automatiquement par une carrière vide. Les anciens journaux non compactés restent lisibles. Aucun compte ni service de synchronisation n’est ajouté.
 
 ## Nouveautés de la version 1.2
 
@@ -79,6 +87,8 @@ Avec Node.js, `npm run dev` démarre également le jeu sur `http://127.0.0.1:417
 - `interface.js` / `interface.css` — accessibilité des fenêtres, tableaux mobiles et présentation commune ; aucune logique de simulation
 - `career-history.js`, `tactic-presets.js`, `kings-preparation.js` — rapports compacts, emplacements tactiques et préparation des phases, avec leurs feuilles CSS et tests autonomes
 - `career-tools.js` / `career-tools.css` — intégration de ces outils dans la carrière et les écrans existants
+- `opponent-report.js`, `tactical-debrief.js`, `career-storage.js` — rapport adverse, analyse des relevés et stockage vérifié, avec leurs styles et tests purs
+- `manager-tools.js` / `manager-tools.css` — branchement des analyses, retours de sauvegarde et restauration dans les écrans existants
 - `prototypes/` — laboratoires isolés, sans accès aux carrières enregistrées
 
 ## Notes

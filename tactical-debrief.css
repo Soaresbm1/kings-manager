@@ -1,0 +1,35 @@
+/* Données de lecture fréquente : aucun mouvement, valeurs et libellés explicites. */
+.debrief-root { min-width: 0; max-width: 100%; color: #e1e8df; overflow-wrap: anywhere; }
+.debrief-title, .debrief-subtitle { margin: 0 0 8px; color: #e1eadf; font-family: "Rajdhani", "Poppins", sans-serif; font-size: 1.2rem; line-height: 1.35; }
+.debrief-subtitle { font-size: 1.05rem; }
+.debrief-note, .debrief-empty { margin: 6px 0; color: #b8c3ba; font-size: .78rem; line-height: 1.65; }
+.debrief-empty { padding: 10px 0; font-size: .84rem; }
+.debrief-timeline { list-style: none; padding: 0; margin: 16px 0; }
+.debrief-moment { display: grid; grid-template-columns: minmax(34px, 70px) minmax(0, 1fr); gap: 12px; border-top: 1px solid var(--panel-border, #354037); padding: 12px 0; }
+.debrief-minute { color: var(--accent2, #f7e5a7); font-size: .78rem; line-height: 1.6; font-variant-numeric: tabular-nums; }
+.debrief-content { min-width: 0; }
+.debrief-kind { display: block; color: #b8c3ba; font-size: .7rem; font-weight: 600; line-height: 1.5; margin-bottom: 3px; }
+.debrief-human .debrief-kind { color: var(--accent2, #f7e5a7); }
+.debrief-description { margin: 0; color: #e1e8df; font-size: .83rem; line-height: 1.65; }
+.debrief-score { color: var(--accent2, #f7e5a7); font-size: .78rem; line-height: 1.6; margin: 5px 0 0; font-variant-numeric: tabular-nums; }
+.debrief-section { margin-top: 22px; min-width: 0; }
+.debrief-interval { min-width: 0; border: 1px solid var(--panel-border, #354037); border-radius: 8px; background: rgba(255, 255, 255, .025); padding: 11px; margin-top: 9px; }
+.debrief-interval-title { color: #dce6dc; margin: 0 0 4px; font-size: .8rem; font-weight: 600; line-height: 1.6; }
+.debrief-stats { width: 100%; table-layout: fixed; border-collapse: collapse; font-size: .78rem; line-height: 1.5; font-variant-numeric: tabular-nums; margin-top: 8px; }
+.debrief-stats th, .debrief-stats td { padding: 7px 4px; text-align: right; vertical-align: top; border-top: 1px solid rgba(255, 255, 255, .08); }
+.debrief-stats th { color: #c8d3c8; font-weight: 600; }
+.debrief-stats th:first-child { text-align: left; width: 49%; }
+.debrief-stats thead th { font-size: .7rem; }
+.debrief-team { overflow-wrap: anywhere; }
+.debrief-comparison { min-width: 0; margin-top: 16px; }
+.debrief-decision-title { margin: 0; font: 600 .84rem/1.6 "Poppins", "Segoe UI", sans-serif; color: var(--accent2, #f7e5a7); }
+.debrief-comparison-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; min-width: 0; }
+.debrief-sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+@media (max-width: 640px) {
+  .debrief-comparison-grid { grid-template-columns: minmax(0, 1fr); gap: 0; }
+}
+@media (max-width: 360px) {
+  .debrief-moment { grid-template-columns: 36px minmax(0, 1fr); gap: 8px; }
+  .debrief-interval { padding: 9px; }
+  .debrief-stats th:first-child { width: 43%; }
+}

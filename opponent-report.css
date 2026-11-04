@@ -1,0 +1,49 @@
+/* Préparation adverse : lecture rapide, détails natifs et aucune animation. */
+.scout-report { min-width: 0; max-width: 100%; color: #e1e8df; border: 1px solid #55502f; border-radius: 10px; background: var(--bg2, #151a16); overflow-wrap: anywhere; }
+.scout-toggle { min-height: 44px; padding: 12px 14px; cursor: pointer; color: var(--accent2, #f7e5a7); line-height: 1.5; }
+.scout-toggle::marker { color: var(--accent, #e7ca64); }
+.scout-toggle:focus-visible { outline: 2px solid var(--accent, #e7ca64); outline-offset: 3px; border-radius: 8px; }
+.scout-heading { font-weight: 650; }
+.scout-opponent { margin-left: 8px; color: #d8dfd9; font-size: .88rem; }
+.scout-brief { display: block; padding-top: 3px; color: #b2bdb5; font-size: .8rem; }
+.scout-body { min-width: 0; padding: 0 14px 14px; border-top: 1px solid rgba(231,202,100,.12); }
+.scout-section { min-width: 0; margin-top: 18px; }
+.scout-section-title { margin: 0 0 7px; color: #e1eadf; font-family: "Rajdhani", "Poppins", sans-serif; font-size: 1.08rem; line-height: 1.4; }
+.scout-note, .scout-meta, .scout-player-stat, .scout-limit-list { color: #b2bdb5; font-size: .78rem; line-height: 1.6; }
+.scout-note { margin: 8px 0; }
+.scout-results, .scout-player-list { display: grid; gap: 0; list-style: none; padding: 0; margin: 8px 0; }
+.scout-result { display: grid; grid-template-columns: 60px minmax(0, 1fr) auto; align-items: center; gap: 8px 12px; min-width: 0; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,.08); }
+.scout-result:last-child, .scout-player:last-child { border-bottom: 0; }
+.scout-outcome { padding: 4px 5px; border: 1px solid #4f5b50; border-radius: 5px; text-align: center; font-size: .7rem; line-height: 1.5; }
+.scout-outcome-win { background: rgba(78,151,93,.12); border-color: #4b7251; color: #b6dfbb; }
+.scout-outcome-loss { background: rgba(199,128,108,.08); border-color: #795a4c; color: #edbda8; }
+.scout-outcome-unknown { color: #d1c8a3; }
+.scout-result-info, .scout-name { min-width: 0; }
+.scout-name { display: block; color: #e1e8df; font-size: .85rem; line-height: 1.55; overflow-wrap: anywhere; }
+.scout-meta { display: block; }
+.scout-score { color: var(--accent2, #f7e5a7); font-size: 1rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.scout-player { display: flex; align-items: baseline; justify-content: space-between; gap: 8px 16px; min-width: 0; padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,.08); }
+.scout-player-stat { flex-shrink: 0; max-width: 60%; text-align: right; font-variant-numeric: tabular-nums; }
+.scout-table { width: 100%; table-layout: fixed; margin-top: 10px; border-collapse: collapse; font-size: .8rem; font-variant-numeric: tabular-nums; }
+.scout-table th, .scout-table td { border-bottom: 1px solid rgba(255,255,255,.08); padding: 10px 8px; vertical-align: top; text-align: center; overflow-wrap: anywhere; }
+.scout-table th { color: #d8dfd9; font-size: .75rem; font-weight: 600; }
+.scout-table th:first-child { width: 48px; text-align: left; }
+.scout-table thead { background: rgba(255,255,255,.025); }
+.scout-table tbody tr:last-child th, .scout-table tbody tr:last-child td { border-bottom: 0; }
+.scout-average { color: var(--accent2, #f7e5a7); font-size: 1rem; }
+.scout-caption { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+.scout-limitations { border-top: 1px solid rgba(255,255,255,.08); padding-top: 12px; }
+.scout-limit-list { margin: 0; padding-left: 18px; }
+.scout-limit-list li + li { margin-top: 5px; }
+@media (hover: hover) and (pointer: fine) { .scout-toggle:hover { background: rgba(231,202,100,.04); } }
+@media (max-width: 480px) {
+  .scout-toggle { padding: 11px 10px; }
+  .scout-opponent { display: block; margin-left: 0; padding-top: 3px; }
+  .scout-body { padding: 0 10px 12px; }
+  .scout-result { grid-template-columns: 60px minmax(0, 1fr) auto; gap: 8px; }
+  .scout-outcome { padding-inline: 2px; }
+  .scout-player { display: block; }
+  .scout-player-stat { display: block; max-width: 100%; text-align: left; margin-top: 3px; }
+  .scout-table th, .scout-table td { padding: 9px 5px; }
+  .scout-table th:first-child { width: 39px; }
+}

@@ -1,0 +1,10 @@
+#career-save-status { flex: 0 0 auto; }
+#career-save-status[hidden] { display: none; }
+#career-save-status.save-status { margin: 0 0 8px; padding: 8px 12px; font-size: .78rem; }
+#opponent-report { flex: 0 0 auto; min-width: 0; margin-bottom: 10px; }
+#summary-tactical-debrief { margin-top: 24px; min-width: 0; }
+.transfer-row:has(.save-restore-button) { flex-wrap: wrap; gap: 10px; }
+.transfer-row > .actions { flex-wrap: wrap; }
+.save-restore-button { min-height: 44px; }
+.history-debrief { border-top: 1px solid var(--panel-border); padding-top: 20px; }
+.history-dialog-header::before { content: ""; position: absolute; left: 0; right: 0; top: -24px; height: 24px; background: var(--bg2); pointer-events: none; }

@@ -101,6 +101,26 @@ publié non ambigu). Les ligues déjà sauvegardées conservent leurs transferts
 
 ## Mécaniques de jeu (règles Kings League encodées dans `engine.js`)
 
+Version1.3 : `opponent-report.js`, `tactical-debrief.js`, `career-storage.js` sont chargés
+avant `career-history.js` et `app.js` ; `manager-tools.js` après `career-tools.js`.
+Le rapport adverse lit la ligue réelle de l’adversaire, y compris en tournoi.
+Le débrief est un snapshot borné, conservé dans `matchReports[].debrief` : collecter seulement
+aux frontières, jamais par frame ni avec `finalize` en direct. Les décisions humaines sont
+regroupées puis enregistrées avant la prochaine minute simulée, avec relevés identiques
+avant/après la décision ; les événements ne viennent qu’ensuite de la lecture déjà jouée.
+Les anciennes données n’acquièrent jamais de séries temporelles inventées.
+`CareerStorage` garde la map primaire `kingsManager7v7_saves` et un sidecar
+`kingsManager7v7_saves_recovery`. Journal vérifié avant écriture, empreinte after compacte,
+primaire relu puis journal finalisé ; pas de verrou atomique multi-onglet promis.
+Seul le sidecar est compacté sans perte (dictionnaire de chaînes et schémas de clés,
+avec décodage borné) ; primaire et exports restent en JSON legacy. Les anciens sidecars
+bruts sont toujours lus. Utiliser inspect()/getRestoreInfo(), jamais interpréter le sidecar
+directement dans les écrans ou les tests d’interface.
+La restauration exige le token de la révision confirmée et garde l’état remplacé.
+`saveGame()` renvoie false si non confirmé. Toute UI de succès doit respecter ce résultat ;
+les erreurs ne doivent jamais écraser automatiquement les données illisibles et la progression
+reste exportable en mémoire.
+
 Les outils de carrière ajoutés en 1.2 sont chargés avant `app.js` : `career-history.js`,
 `tactic-presets.js`, `kings-preparation.js` (API globale et CommonJS, tests purs).
 `career-tools.js`, chargé après `app.js`, assure les migrations et branche leurs interfaces.

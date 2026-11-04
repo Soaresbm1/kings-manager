@@ -14,10 +14,15 @@
   <link rel="stylesheet" href="tactic-presets.css?v=20261104-career">
   <link rel="stylesheet" href="kings-preparation.css?v=20261104-career">
   <link rel="stylesheet" href="career-tools.css?v=20261104-career">
+  <link rel="stylesheet" href="opponent-report.css?v=20261104-insights">
+  <link rel="stylesheet" href="tactical-debrief.css?v=20261104-insights">
+  <link rel="stylesheet" href="career-storage.css?v=20261104-insights">
+  <link rel="stylesheet" href="manager-tools.css?v=20261104-insights">
 </head>
 
 <body>
   <div id="app">
+    <div id="career-save-status" hidden></div>
 
     <!-- ÉCRAN D'ACCUEIL -->
     <div class="screen active" id="screen-home">
@@ -456,6 +461,7 @@
       </div>
 
       <div id="opponent-style-preview" class="opponent-style-preview"></div>
+      <div id="opponent-report"></div>
       <div class="tactics-layout">
         <div class="panel tactics-pitch-panel">
           <h3 title="Glisse un joueur sur un poste. Appui prolongé sur mobile.">Composition (<span id="lineup-count">0</span>/7)</h3>
@@ -696,6 +702,7 @@
         <div style="text-align:center; margin-top:15px;">
           <button class="primary" id="btn-continue">Continuer</button>
         </div>
+        <div id="summary-tactical-debrief"></div>
       </div>
     </div>
 
@@ -795,11 +802,15 @@
   <script src="matchengine-actions.js?v=20261028-roles"></script>
   <script src="engine.js?v=20261030-live-drag"></script>
   <script src="matchchoreo.js?v=20261028-roles"></script>
-  <script src="career-history.js?v=20261104-career"></script>
+  <script src="opponent-report.js?v=20261104-insights"></script>
+  <script src="tactical-debrief.js?v=20261104-insights"></script>
+  <script src="career-storage.js?v=20261104-insights"></script>
+  <script src="career-history.js?v=20261104-insights"></script>
   <script src="tactic-presets.js?v=20261104-career"></script>
   <script src="kings-preparation.js?v=20261104-career"></script>
-  <script src="app.js?v=20261104-career"></script>
-  <script src="career-tools.js?v=20261104-career"></script>
+  <script src="app.js?v=20261104-insights"></script>
+  <script src="career-tools.js?v=20261104-insights"></script>
+  <script src="manager-tools.js?v=20261104-insights"></script>
   <script src="interface.js?v=20261104-career"></script>
 </body>
 

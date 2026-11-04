@@ -38,6 +38,7 @@ const SAVES_KEY = "kingsManager7v7_saves";
 const ACTIVE_SLOT_KEY = "kingsManager7v7_activeSlot";
 
 function getSavesMap() {
+  if (typeof readCareerSaveMap === "function") return readCareerSaveMap();
   try {
     const raw = localStorage.getItem(SAVES_KEY);
     return raw ? JSON.parse(raw) : {};
@@ -48,9 +49,12 @@ function getSavesMap() {
 
 function persistSavesMap(map) {
   try {
-    localStorage.setItem(SAVES_KEY, JSON.stringify(map));
+    const raw = JSON.stringify(map);
+    localStorage.setItem(SAVES_KEY, raw);
+    return localStorage.getItem(SAVES_KEY) === raw;
   } catch (e) {
     console.warn("Impossible de sauvegarder la partie :", e);
+    return false;
   }
 }
 
@@ -82,8 +86,7 @@ function buildSaveData() {
 
 function saveGame() {
   if (!STATE.league || !STATE.currentSlotId) return;
-  const map = getSavesMap();
-  map[STATE.currentSlotId] = {
+  const entry = {
     meta: {
       teamName: getUserTeam() ? getUserTeam().name : "",
       leagueName: STATE.league.name,
@@ -94,8 +97,15 @@ function saveGame() {
     },
     data: buildSaveData()
   };
-  persistSavesMap(map);
+  if (typeof writeCareerSave === "function") {
+    if (!writeCareerSave(STATE.currentSlotId, entry).ok) return false;
+  } else {
+    const map = getSavesMap();
+    map[STATE.currentSlotId] = entry;
+    if (!persistSavesMap(map)) return false;
+  }
   try { localStorage.setItem(ACTIVE_SLOT_KEY, STATE.currentSlotId); } catch (e) {}
+  return true;
 }
 
 function applySaveData(data) {
@@ -259,14 +269,19 @@ function loadGame(slotId) {
 }
 
 function deleteSaveSlot(slotId) {
-  const map = getSavesMap();
-  delete map[slotId];
-  persistSavesMap(map);
+  if (typeof removeCareerSave === "function") {
+    if (!removeCareerSave(slotId).ok) return false;
+  } else {
+    const map = getSavesMap();
+    delete map[slotId];
+    if (!persistSavesMap(map)) return false;
+  }
   let activeSlot = null;
   try { activeSlot = localStorage.getItem(ACTIVE_SLOT_KEY); } catch (e) {}
   if (activeSlot === slotId) {
     try { localStorage.removeItem(ACTIVE_SLOT_KEY); } catch (e) {}
   }
+  return true;
 }
 
 function generateSlotId() {
@@ -294,6 +309,7 @@ function importSaveFile(file) {
   const feedback = document.getElementById("import-save-feedback");
   const reader = new FileReader();
   reader.onload = () => {
+    delete feedback.dataset.saveError;
     try {
       const parsed = JSON.parse(reader.result);
       const entry = parsed && parsed.data ? parsed : { meta: {}, data: parsed };
@@ -301,8 +317,7 @@ function importSaveFile(file) {
         throw new Error("format invalide");
       }
       const slotId = generateSlotId();
-      const map = getSavesMap();
-      map[slotId] = {
+      const importedEntry = {
         meta: Object.assign({
           teamName: "",
           leagueName: entry.data.league.name,
@@ -312,7 +327,23 @@ function importSaveFile(file) {
         }, entry.meta || {}),
         data: entry.data
       };
-      persistSavesMap(map);
+      if (typeof writeCareerSave === "function") {
+        const stored = writeCareerSave(slotId, importedEntry);
+        if (!stored.ok) {
+          feedback.style.color = "#ff9990";
+          feedback.textContent = "Importation non enregistrée. " + stored.message;
+          feedback.dataset.saveError = slotId;
+          return;
+        }
+      } else {
+        const map = getSavesMap();
+        map[slotId] = importedEntry;
+        if (!persistSavesMap(map)) {
+          feedback.style.color = "#ff9990";
+          feedback.textContent = "Importation non enregistrée : stockage indisponible.";
+          return;
+        }
+      }
       feedback.style.color = "#00ff88";
       feedback.textContent = "Carrière importée avec succès !";
       renderSavesList();
@@ -392,7 +423,7 @@ function renderSavesList() {
   const panel = document.getElementById("saves-panel");
   const list = document.getElementById("saves-list");
   const map = getSavesMap();
-  const slots = Object.entries(map).sort((a, b) => (b[1].meta.updatedAt || 0) - (a[1].meta.updatedAt || 0));
+  const slots = Object.entries(map).sort((a, b) => (b[1].meta?.updatedAt || 0) - (a[1].meta?.updatedAt || 0));
 
   if (!slots.length) {
     panel.style.display = "none";
@@ -425,6 +456,7 @@ function renderSavesList() {
         renderSavesList();
       }, { title: "Supprimer cette carrière ?", confirmLabel: "Supprimer", danger: true });
     };
+    if (typeof addCareerRestoreControl === "function") addCareerRestoreControl(row, slotId, entry);
     list.appendChild(row);
   });
 }
@@ -2718,6 +2750,7 @@ function getSavedTacticOrDefault() {
 // que pour le match en cours et ne doivent jamais écraser la tactique sauvegardée.
 function saveTactic(setup) {
   syncSingleComposition(setup);
+  if (typeof queueHumanTacticDecision === "function") queueHumanTacticDecision(setup);
   if (!setup.persist) return;
   STATE.savedTactic = {
     formation: setup.formation,
@@ -2733,7 +2766,7 @@ function saveTactic(setup) {
   STATE.savedTactic.escalierOrder = Array.isArray(setup.escalierOrder) ? [...setup.escalierOrder] : null;
   STATE.savedTactic.matchballOrder = Array.isArray(setup.matchballOrder) ? [...setup.matchballOrder] : null;
   if (typeof syncCareerPresetFromSetup === "function") syncCareerPresetFromSetup(setup);
-  saveGame();
+  return saveGame();
 }
 
 function renderFormationChoice(setup, ids) {
@@ -2924,11 +2957,11 @@ function renderBench(setup, ids) {
         syncSingleComposition(setup);
         renderPitch(setup, ids);
         renderBench(setup, ids);
-        saveTactic(setup);
+        const saved = saveTactic(setup);
         focusTacticPlayerControl(ids, p.id, ".tactic-role-select");
         if (ids === TACTICS_IDS) {
           const hint = document.getElementById("tactics-selection-hint");
-          hint.textContent = `${p.name} : ${getPlayerRole(setup, p.id, slotPosition).name}. Rôle enregistré.`;
+          hint.textContent = `${p.name} : ${getPlayerRole(setup, p.id, slotPosition).name}. ${saved ? "Rôle enregistré." : "Rôle en mémoire, non enregistré."}`;
         }
       };
       row.appendChild(editor);
@@ -3510,6 +3543,7 @@ function openLineupScreen() {
   updateLineupCount(lineupSetup, LINEUP_IDS);
   renderSecretCardChoice(lineupSetup);
   renderClubStyle(opponent, "opponent-style-preview", true);
+  if (typeof renderOpponentCareerReport === "function") renderOpponentCareerReport(opponent);
   if (typeof renderCareerSetupTools === "function") renderCareerSetupTools(lineupSetup, LINEUP_IDS);
 
   showScreen("screen-lineup");
@@ -3546,6 +3580,7 @@ function openTournamentLineupScreen(match) {
   updateLineupCount(lineupSetup, LINEUP_IDS);
   renderSecretCardChoice(lineupSetup);
   renderClubStyle(opponent, "opponent-style-preview", true);
+  if (typeof renderOpponentCareerReport === "function") renderOpponentCareerReport(opponent);
   if (typeof renderCareerSetupTools === "function") renderCareerSetupTools(lineupSetup, LINEUP_IDS);
 
   showScreen("screen-lineup");
@@ -3713,6 +3748,7 @@ function startMatch() {
     displayedScore: { homeGoals: 0, awayGoals: 0 }, pendingSpecialActions: []
   };
   pitchPlayerIndex.clear();
+  if (typeof startTacticalDebrief === "function") startTacticalDebrief();
   [...homeTeam.players, ...awayTeam.players].forEach(player => pitchPlayerIndex.set(player.id, player));
   pitchGeometry = null;
   pitchMarkingsLayer = null;
@@ -4097,6 +4133,7 @@ function pitchFrameLoop(ts) {
     }
     if (matchState.sequenceActive && choreo.isSequenceDone()) {
       matchState.sequenceActive = false;
+      if (typeof sampleTacticalDebrief === "function") sampleTacticalDebrief(matchState.minute);
       syncPendingMatchTactics();
       matchState.completedMinute = matchState.minute;
       refreshScoreDisplay();
@@ -4396,6 +4433,7 @@ function setupMatchPitchPointerEvents() {
 }
 
 function appendCommentaryEvent(ev) {
+  if (typeof captureDebriefEvent === "function") captureDebriefEvent(ev);
   const commentary = document.getElementById("commentary");
   const div = document.createElement("div");
   div.className = "ev " + ev.type;
@@ -4585,6 +4623,7 @@ function runMinute() {
 // éventuels beats sont donc joués en premier dans la séquence de la minute.
 function advanceToMinute(nextMinute) {
   matchState.minute = nextMinute;
+  if (typeof flushHumanTacticDecision === "function") flushHumanTacticDecision(nextMinute);
   document.getElementById("match-minute").textContent = matchState.minute + "'";
 
   const combined = [];
@@ -4775,6 +4814,7 @@ function closePhaseModalAndResume() {
 function applyPhaseLineupSelection(ids) {
   const setup = phaseLineupState.side === "home" ? matchState.homeSetup : matchState.awaySetup;
   setup.activeOverride = ids;
+  if (typeof recordPhaseDebriefDecision === "function") recordPhaseDebriefDecision("Composition du Dé Géant", setup);
   closePhaseModalAndResume();
 }
 
@@ -4791,6 +4831,7 @@ function applyPhaseOrderSelection(rankedIds) {
 
   const poolIds = phaseLineupState.players.map(p => p.id);
   setup.activeOverride = applyOrderToCap(order, poolIds, matchState.lastOutfieldCap);
+  if (typeof recordPhaseDebriefDecision === "function") recordPhaseDebriefDecision(kind === "escalier" ? "Ordre d’entrée de l’Escalier" : "Priorités du Matchball", setup);
   closePhaseModalAndResume();
 }
 
@@ -5242,11 +5283,13 @@ function completeMatch(shootout) {
   refreshPendingSpecialStatus();
   stopMatchPitch();
   const result = matchEngine.finalize(shootout);
+  if (typeof sampleTacticalDebrief === "function") sampleTacticalDebrief(matchState.minute);
   STATE.pendingResult = {
     result, homeTeam: matchState.homeTeam, awayTeam: matchState.awayTeam,
     homeSetup: matchState.homeSetup, awaySetup: matchState.awaySetup,
     team: matchState.team, opponent: matchState.opponent
   };
+  if (typeof finishTacticalDebrief === "function") finishTacticalDebrief();
 
   document.getElementById("match-score").textContent = `${result.homeGoals} - ${result.awayGoals}`;
   document.getElementById("match-minute").textContent = matchState.minute + "'";
@@ -5291,6 +5334,7 @@ function skipMatch() {
   matchState.paused = true;
 
   playPendingSpecialActions(null, false);
+  if (typeof sampleTacticalDebrief === "function") sampleTacticalDebrief(matchState.minute);
 
   // Le Matchball garantit une équipe gagnante avant la fin du temps réglementaire (40') : on
   // simule donc en prolongation au-delà si besoin, jusqu'au but décisif. MAX_MATCH_MINUTE n'est
@@ -5298,11 +5342,13 @@ function skipMatch() {
   while (!matchEngine.isMatchDecided() && (matchState.minute < matchEngine.totalMinutes || matchState.minute < MAX_MATCH_MINUTE)) {
     matchState.minute++;
     if (typeof applyPreparedCareerPhases === "function") applyPreparedCareerPhases(matchState.minute);
+    if (typeof flushHumanTacticDecision === "function") flushHumanTacticDecision(matchState.minute);
     const minuteEvents = matchEngine.simulateMinute(matchState.minute);
     minuteEvents.forEach(appendCommentaryEvent);
     appendCardEvents(maybeActivateAiCard(matchState.minute));
     appendCardEvents(maybeActivatePresidentPenaltyAi(matchState.minute));
     maybeAdjustAiTactics(matchState.minute);
+    if (typeof sampleTacticalDebrief === "function") sampleTacticalDebrief(matchState.minute);
     if (matchEngine.isMatchDecided()) break;
   }
 
@@ -5397,6 +5443,7 @@ function showMatchSummary() {
   }
   renderRatings(homeTeam, homeSetup, "home", "summary-home-ratings");
   renderRatings(awayTeam, awaySetup, "away", "summary-away-ratings");
+  if (typeof renderSummaryDebrief === "function") renderSummaryDebrief();
 
   showScreen("screen-summary");
 }
@@ -5452,6 +5499,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.getElementById("btn-start").onclick = startCareer;
   document.getElementById("btn-restart").onclick = () => {
+    const leave = () => {
     STATE.leagueKey = null;
     STATE.league = null;
     STATE.userTeamId = null;
@@ -5472,6 +5520,9 @@ document.addEventListener("DOMContentLoaded", () => {
     STATE.tournamentMatchRef = null;
     initHomeScreen();
     showScreen("screen-home");
+    };
+    if (typeof confirmUnsavedCareerExit === "function") confirmUnsavedCareerExit(leave);
+    else leave();
   };
 
   document.getElementById("import-save-input").onchange = (e) => {

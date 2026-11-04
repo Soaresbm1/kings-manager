@@ -150,7 +150,8 @@
       round: scalar(options.round), date: scalar(options.date), competition: string(options.competition),
       userTeamId: identifier(options.userTeamId), home: snapshotTeam(options.homeTeam, options.homeSetup, result, "home"),
       away: snapshotTeam(options.awayTeam, options.awaySetup, result, "away"), score, statistics,
-      events: captured.events, eventsOmitted: captured.omitted
+      events: captured.events, eventsOmitted: captured.omitted,
+      debrief: typeof TacticalDebrief !== "undefined" ? TacticalDebrief.normalize(options.debrief) : null
     };
     report.id = fixtureIdentity(report);
     return report;
@@ -183,7 +184,8 @@
       version: VERSION, fixtureKey: string(value.fixtureKey, 300), season: scalar(value.season), round: scalar(value.round),
       date: scalar(value.date), competition: string(value.competition), userTeamId: identifier(value.userTeamId),
       home: normalizeTeam(value.home), away: normalizeTeam(value.away), score, statistics,
-      events: captured.events, eventsOmitted: (number(value.eventsOmitted) || 0) + captured.omitted
+      events: captured.events, eventsOmitted: (number(value.eventsOmitted) || 0) + captured.omitted,
+      debrief: typeof TacticalDebrief !== "undefined" ? TacticalDebrief.normalize(value.debrief) : null
     };
     report.id = fixtureIdentity(report);
     return report;
@@ -377,6 +379,12 @@
       else section.append(node(doc, "p", "history-empty", "Aucun participant enregistré."));
       container.append(section);
     }
+    if (report.debrief && typeof TacticalDebrief !== "undefined") {
+      const debrief = node(doc, "section", "history-section history-debrief");
+      TacticalDebrief.render(debrief, report.debrief);
+      container.append(debrief);
+      return;
+    }
     const eventsSection = node(doc, "section", "history-section");
     eventsSection.append(node(doc, "h4", "history-section-title", "Faits marquants"));
     if (report.eventsOmitted) eventsSection.append(node(doc, "p", "history-note", `${report.eventsOmitted} événement(s) ancien(s) omis pour limiter la taille du rapport.`));
@@ -390,6 +398,11 @@
     if (report.events.length) eventsSection.append(timeline);
     else eventsSection.append(node(doc, "p", "history-empty", "Aucun événement important enregistré."));
     container.append(eventsSection);
+    if (typeof TacticalDebrief !== "undefined") {
+      const missing = node(doc, "section", "history-section history-debrief");
+      TacticalDebrief.render(missing, null);
+      container.append(missing);
+    }
   }
 
   return Object.freeze({ VERSION, MAX_REPORTS, MAX_STORAGE_CHARS, MAX_EVENTS, buildReport, normalizeReports, addReport, renderList, renderReport });

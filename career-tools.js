@@ -35,10 +35,11 @@ function renderCareerPresets(setup, ids) {
         STATE.tacticPresets = TacticPresets.upsert(STATE.tacticPresets, id, snapshot);
         if (setup.persist) STATE.activeTacticPreset = id;
         if (id === STATE.activeTacticPreset) STATE.savedTactic = TacticPresets.capture(snapshot);
-        saveGame();
+        const saved = saveGame();
         renderCareerPresets(setup, ids);
         const status = document.getElementById(prefix + "-preset-status");
-        if (status) status.textContent = "Configuration enregistrée dans « " + TacticPresets.getPreset(STATE.tacticPresets, id).name + " ».";
+        if (status) status.textContent = saved ? "Configuration enregistrée dans « " + TacticPresets.getPreset(STATE.tacticPresets, id).name + " »." : "Configuration en mémoire, mais non enregistrée sur cet appareil.";
+        if (status) { if (saved) delete status.dataset.saveError; else status.dataset.saveError = "true"; }
       };
       const previous = TacticPresets.getPreset(STATE.tacticPresets, id);
       if (previous?.tactic && JSON.stringify(previous.tactic) !== JSON.stringify(TacticPresets.capture(setup))) {
@@ -51,6 +52,7 @@ function renderCareerPresets(setup, ids) {
       renderCareerPresets(setup, ids);
     }
   });
+  if (typeof updateCareerPresetPersistenceLabels === "function") updateCareerPresetPersistenceLabels();
 }
 
 function loadCareerPreset(id, setup, ids) {
@@ -77,9 +79,11 @@ function loadCareerPreset(id, setup, ids) {
   }
   Object.assign(setup, target, { careerPresetId: id, selectedSlot: null });
   syncSingleComposition(setup);
+  if (typeof queueHumanTacticDecision === "function") queueHumanTacticDecision(setup);
+  let saved = true;
   if (setup.persist) {
     STATE.activeTacticPreset = id;
-    saveTactic(setup);
+    saved = saveTactic(setup);
   }
   renderFormationChoice(setup, ids);
   renderPitch(setup, ids);
@@ -89,7 +93,8 @@ function loadCareerPreset(id, setup, ids) {
   renderCareerSetupTools(setup, ids);
   const prefix = careerSetupContext(ids);
   const status = document.getElementById(prefix + "-preset-status");
-  if (status) status.textContent = "« " + preset.name + " » chargée." + (setup.persist ? " Tactique active enregistrée." : ids === MATCH_TACTICS_IDS ? " Valide pour l'appliquer à la prochaine séquence." : " Pour ce match uniquement.");
+  if (status) status.textContent = "« " + preset.name + " » chargée." + (setup.persist ? saved ? " Tactique active enregistrée." : " Configuration en mémoire, non enregistrée." : ids === MATCH_TACTICS_IDS ? " Valide pour l'appliquer à la prochaine séquence." : " Pour ce match uniquement.");
+  if (status) { if (saved || !setup.persist) delete status.dataset.saveError; else status.dataset.saveError = "true"; }
   document.querySelector("#" + prefix + "-presets [data-preset-id='" + id + "'][data-preset-action='load']")?.focus({ preventScroll: true });
 }
 
@@ -134,7 +139,9 @@ function archiveCareerMatch(result, homeTeam, awayTeam, homeSetup, awaySetup, to
     date: formatGameDate(STATE.currentDay, STATE.season),
     competition: tournamentMatch ? "Tournoi international" : STATE.league.name,
     fixtureKey: tournamentMatch ? careerTournamentFixtureKey(tournamentMatch) : careerLeagueFixtureKey(homeTeam.id, awayTeam.id, round),
-    userTeamId: STATE.userTeamId
+    userTeamId: STATE.userTeamId,
+    debrief: typeof TacticalDebrief !== "undefined" ? (STATE.pendingResult?.result === result
+      ? STATE.pendingResult.debrief : TacticalDebrief.build({ result })) : null
   });
   STATE.matchReports = CareerHistory.addReport(STATE.matchReports, report);
   if (tournamentMatch && report) tournamentMatch.reportId = report.id;
