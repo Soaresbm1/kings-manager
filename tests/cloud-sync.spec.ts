@@ -6,6 +6,7 @@ import path from 'node:path';
 const { createHandler } = require('../api/career-sync.js');
 declare const STATE: any;
 declare const cloudLinks: Record<string, any>;
+declare const cloudBusy: boolean;
 declare function flushCloudQueue(): Promise<void>;
 declare function cloudTask(action: () => Promise<void>): Promise<void>;
 const SAVES = 'kingsManager7v7_saves';
@@ -326,4 +327,35 @@ test('une déconnexion non enregistrée garde le lien et ne prétend pas avoir r
   await expect(page.locator('#cloud-code-output')).toHaveValue(connected.code);
   expect(await page.evaluate(key => localStorage.getItem(key), LINKS)).toBe(registry);
   expect(cloud.writes).toHaveLength(1);
+});
+
+test('sans lien cloud un flush vide ne prend aucun verrou et laisse démarrer une carrière', async ({ page, cloud }) => {
+  await page.addInitScript(() => {
+    const locks = navigator.locks as any;
+    const original = locks.request;
+    (window as any).__emptyCloudLockCalls = 0;
+    locks.request = function (name: string, ...args: any[]) {
+      if (name === 'kings-manager-cloud-registry-v1') {
+        (window as any).__emptyCloudLockCalls++;
+        // Un verrou cloud contentieux ne doit jamais concerner une personne
+        // qui joue uniquement en local. L'ancienne version resterait occupée.
+        return new Promise(() => {});
+      }
+      return original.apply(this, [name, ...args]);
+    };
+  });
+  await page.goto(cloud.url);
+  const before = await page.evaluate(async () => {
+    void flushCloudQueue();
+    await Promise.resolve();
+    return { calls: (window as any).__emptyCloudLockCalls, busy: cloudBusy, links: Object.keys(cloudLinks).length };
+  });
+  expect(before).toEqual({ calls: 0, busy: false, links: 0 });
+  await page.locator('#league-sidebar').getByRole('button', { name: /France/ }).click();
+  await page.locator('#team-choice').getByRole('heading', { name: 'FC Silmi', exact: true }).click();
+  await expect(page.locator('#btn-start')).toBeEnabled();
+  await page.locator('#btn-start').click();
+  await expect(page.locator('#screen-main')).toBeVisible();
+  expect(await page.evaluate(() => ({ calls: (window as any).__emptyCloudLockCalls, busy: cloudBusy }))).toEqual({ calls: 0, busy: false });
+  expect(cloud.entries.size).toBe(0); expect(cloud.writes).toHaveLength(0);
 });

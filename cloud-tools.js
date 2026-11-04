@@ -123,14 +123,14 @@ async function uploadCloudCareer(slot) {
 }
 function queueCloudSave(slot) {
   if (cloudLinksStale) return;
-  if (!cloudLinks[slot]) { renderCloudControls(true); return; }
+  if (!cloudLinks[slot]) { renderCloudControls(document.getElementById('screen-home')?.classList.contains('active')); return; }
   clearTimeout(cloudTimer);
   cloudMessage = 'Progression enregistrée sur cet appareil · envoi cloud en attente.';
-  renderCloudControls(true);
+  renderCloudControls(document.getElementById('screen-home')?.classList.contains('active'));
   cloudTimer = setTimeout(() => flushCloudQueue(), 30000);
 }
 async function flushCloudQueue() {
-  if (cloudBusy || cloudLinksStale || navigator.onLine === false) return;
+  if (cloudBusy || cloudLinksStale || navigator.onLine === false || Object.keys(cloudLinks).length === 0) return;
   cloudBusy = true; renderCloudControls();
   try {
     await withCloudRegistryLock(async () => {
@@ -276,6 +276,7 @@ function initializeCloudUI() {
     if (cloudAtHome()) { renderCloudControls(true); if (panel.open) flushCloudQueue(); }
     else { document.getElementById('cloud-code-display').hidden = true; document.getElementById('cloud-code-output').value = ''; }
   }).observe(document.getElementById('screen-home'), { attributes: true, attributeFilter: ['class'] });
+  new MutationObserver(() => renderCloudControls()).observe(document.getElementById('import-save-feedback'), { attributes: true, attributeFilter: ['data-importing', 'data-save-error'] });
   renderCloudControls(true);
   // La carrière locale est aussi la file durable : un rechargement reprend les envois.
   setTimeout(() => flushCloudQueue(), 1000);

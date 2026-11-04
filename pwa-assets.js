@@ -1,11 +1,11 @@
 // Généré par scripts/build-pwa-assets.cjs ; ne pas modifier à la main.
 self.KINGS_PWA_ASSETS = {
   "schema": 1,
-  "revision": "01131d82f4f9fb8de538952565b7522536dfe7a3e45fb54dd80c12fbf9761b6e",
+  "revision": "86eb4a1c45461676d468565273359b7cacb36bc52f40f93e37b7a61f1c49aeff",
   "assets": [
     {
       "url": "/app.js",
-      "sha256": "e9015893eb24f1676c4dfb9f169b23bab86096974a73c2e1511217690bbaf50c",
+      "sha256": "8e9332c5ef8c3cef1cf5daf28f0f7ed76a1367993257f24b37dcc5757d896c2b",
       "text": true
     },
     {
@@ -130,7 +130,7 @@ self.KINGS_PWA_ASSETS = {
     },
     {
       "url": "/cloud-tools.js",
-      "sha256": "73bc283de7d43988f5a0c88e66bd1fed25a0a08517bb329b3fa1f09296b8b327",
+      "sha256": "5235e61d76d85e99d3f192c09e17b3e1b897b935ffd175d7fa4171b1e6d422f2",
       "text": true
     },
     {
@@ -550,7 +550,7 @@ self.KINGS_PWA_ASSETS = {
     },
     {
       "url": "/manager-tools.js",
-      "sha256": "c03e9c68b9609104fe63bfb2a8e0b6a943bcb31b3cbbae4f6eccc96acaa1aeca",
+      "sha256": "f454b240517f2c3adcdcc39c3f484e82a8b2876c32f0ea6f5eeb2f8f09887578",
       "text": true
     },
     {

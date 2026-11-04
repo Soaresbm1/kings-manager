@@ -122,6 +122,7 @@ function addCareerRestoreControl(row, slotId) {
       const result = getManagerStorage().restore(slotId, { expectedToken: current.token, entry: current.entry });
       showCareerSaveResult(result);
       if (!result.ok) return;
+      if (typeof queueCloudSave === "function") queueCloudSave(slotId);
       renderSavesList();
       if (loadGame(slotId)) { showScreen("screen-main"); showTab("calendar"); updateTopbar(); }
     }, { title: "Restaurer cette carrière ?", confirmLabel: "Restaurer" });

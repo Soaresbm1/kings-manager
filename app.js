@@ -560,7 +560,7 @@ function selectTeam(teamId) {
     c.classList.toggle("selected", selected);
     c.setAttribute("aria-pressed", String(selected));
   });
-  document.getElementById("btn-start").disabled = false;
+  document.getElementById("btn-start").disabled = typeof cloudBusy !== "undefined" && cloudBusy;
 }
 
 function startCareer() {
