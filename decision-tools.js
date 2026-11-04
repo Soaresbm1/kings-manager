@@ -21,6 +21,14 @@ function decisionValue(value, field) {
   if (!Number.isFinite(value)) return "Non mesuré";
   return field === "value" ? formatMoney(value) : String(Math.round(value * 10) / 10);
 }
+function refreshRecruitmentActions() {
+  document.querySelectorAll("#recruitment-advisor-content [data-recruit-follow]").forEach(button => {
+    const selected = STATE.shortlist.includes(button.dataset.recruitFollow);
+    button.textContent = selected ? "Retirer du suivi" : "Suivre";
+    button.setAttribute("aria-pressed", String(selected));
+    button.classList.toggle("selected", selected);
+  });
+}
 function capturePlayerProgress() {
   const team = getUserTeam();
   if (!team) return;
@@ -86,8 +94,6 @@ function renderRecruitmentAdvisor() {
     const follow = decisionButton(STATE.shortlist.includes(candidate.id) ? "Retirer du suivi" : "Suivre", () => {
       if (!current()) return;
       toggleShortlist(candidate.id);
-      follow.textContent = STATE.shortlist.includes(candidate.id) ? "Retirer du suivi" : "Suivre";
-      follow.setAttribute("aria-pressed", String(STATE.shortlist.includes(candidate.id)));
     });
     follow.setAttribute("aria-pressed", String(STATE.shortlist.includes(candidate.id))); follow.dataset.recruitFollow = candidate.id;
     actions.append(follow);
@@ -97,6 +103,7 @@ function renderRecruitmentAdvisor() {
   }
   if (!report.candidates.length) cards.append(decisionElement("p", "Aucune piste disponible dans ce budget pour ce besoin. Les joueurs indisponibles et les clubs de sept joueurs sont écartés."));
   container.append(cards);
+  refreshRecruitmentActions();
 }
 
 function renderPlayerProgress(container, player) {

@@ -1,11 +1,11 @@
 // Généré par scripts/build-pwa-assets.cjs ; ne pas modifier à la main.
 self.KINGS_PWA_ASSETS = {
   "schema": 1,
-  "revision": "4dc2ca1600b3729e805c8bc33d9a08b11a096a9b126ee73ed8adc788a2674c41",
+  "revision": "9c8b458147d2f7dfa48fab39eea6d64766461032ae73ff768b9b3d557ad21b01",
   "assets": [
     {
       "url": "/app.js",
-      "sha256": "b24ef5695a5672d6564b409e17bd6d25c05ca48731764736d882a00d339d83bb",
+      "sha256": "53f6d65842fd8e9052ded800d1c3277d50009b22e4910bc1f1837932d43082b7",
       "text": true
     },
     {
@@ -125,7 +125,7 @@ self.KINGS_PWA_ASSETS = {
     },
     {
       "url": "/decision-tools.js",
-      "sha256": "b168f6af5e2110334847a6bef1bbf3df93610df18fd7d1d163a07d1f6dd10f19",
+      "sha256": "0bb6cb59aa274e2a834f2a678dbacd7fe2cb42c1b33858742ca8cb1e5bd85e32",
       "text": true
     },
     {

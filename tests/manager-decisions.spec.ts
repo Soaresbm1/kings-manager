@@ -83,6 +83,13 @@ test('trois pistes réelles, abordables et comparables rejoignent le suivi sans 
   await expect(page.locator('#compare-modal')).toBeVisible(); await page.locator('#btn-compare-close').click();
   await cards.first().getByRole('button', { name: 'Suivre', exact: true }).click();
   await expect(cards.first().getByRole('button', { name: 'Retirer du suivi', exact: true })).toHaveAttribute('aria-pressed', 'true');
+  const targetName = await cards.first().locator('h4').innerText();
+  await page.locator('#filter-name').fill(targetName);
+  const marketFollow = page.locator(`#market-list [data-action="shortlist"][data-player="${ids[0]}"]`);
+  await marketFollow.click();
+  await expect(cards.first().getByRole('button', { name: 'Suivre', exact: true })).toHaveAttribute('aria-pressed', 'false');
+  await marketFollow.click();
+  await expect(cards.first().getByRole('button', { name: 'Retirer du suivi', exact: true })).toHaveAttribute('aria-pressed', 'true');
   expect(await page.evaluate(() => { const t = STATE.league.teams.find((t: any) => t.id === STATE.userTeamId); return { budget: t.budget, players: t.players.map((p: any) => p.id) }; })).toEqual(before);
   await page.reload();
   await page.locator('#saves-list').getByRole('button', { name: 'Continuer', exact: true }).first().click();

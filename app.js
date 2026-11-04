@@ -2240,6 +2240,7 @@ function refreshMarketActionButtons() {
     button.setAttribute("aria-pressed", String(selected));
     button.setAttribute("aria-label", selected ? "Retirer de la comparaison" : "Ajouter à la comparaison");
   });
+  if (typeof refreshRecruitmentActions === "function") refreshRecruitmentActions();
 }
 
 // Retrouve un joueur n'importe où dans la ligue du joueur ou les 5 autres ligues (les shortlists
